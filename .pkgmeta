@@ -1,4 +1,4 @@
-package-as: MUI
+package-as: mUI
 
 externals:
   Libs/AceAddon-3.0: https://repos.curseforge.com/wow/ace3/trunk/AceAddon-3.0
