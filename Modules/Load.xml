@@ -1,14 +1,3 @@
-<Ui xmlns='http://www.blizzard.com/wow/ui/'>
-    <Include file='General\Load.xml'/>
-    <Include file='Unitframes\Load.xml'/>
-    <Include file='PartyRaidFrames\Load.xml'/>
-    <Include file='BuffsDebuffs\Load.xml'/>
-    <Include file='Nameplates\Load.xml'/>
-    <Include file='Actionbars\Load.xml'/>
-    <Include file='Castbars\Load.xml'/>
-    <Include file='Tooltips\Load.xml'/>
-    <Include file='MapMinimap\Load.xml'/>
-    <Include file='Chat\Load.xml'/>
-    <Include file='Miscellaneous\Load.xml'/>
-    <Include file='Theme\Load.xml'/>
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Include file="General\Load.xml" />
 </Ui>

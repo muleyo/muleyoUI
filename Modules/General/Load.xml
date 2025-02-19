@@ -1,10 +1,4 @@
-<Ui xmlns='http://www.blizzard.com/wow/ui/'>
-    <Include file='Cinematic.lua'/>
-    <Include file='Delete.lua'/>
-    <Include file='Invite.lua'/>
-    <Include file='Itemlevel.lua'/>
-    <Include file='Repair.lua'/>
-    <Include file='Sell.lua'/>
-    <Include file='Talkinghead.lua'/>
-    <Include file='XPBar.lua'/>
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Include file="Theme.lua" />
+    <Include file="Font.lua" />
 </Ui>

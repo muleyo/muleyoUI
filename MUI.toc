@@ -1,19 +1,31 @@
-## Interface: 100002
+## Interface: 110007
 ## Author: muleyo
 ## Version: 1.0.0
-## Title: |cff009cffMUI|r
+## Title: |cff009cffmuleyo|rUI
 ## Notes: Unleash your real potential
-#SavedVariablees: MUIDB
-## X-Curse-Project-ID: 729146
+## SavedVariables: mUIDB
+## X-Curse-Project-ID: 737373
 
 ## LIBS
 Libs\Load.xml
 
-## CONFIG
+## Init
 Core\Load.xml
 
+## Database
+Config\Database.lua
+
+## Core
+Core.lua
+
 ## Media
-Media\Load.xml
+#Media\Load.xml
+
+## Data
+#Data\Load.xml
 
 ## Modules
 Modules\Load.xml
+
+## Config
+Config\Load.xml
