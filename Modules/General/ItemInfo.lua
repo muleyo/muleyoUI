@@ -657,6 +657,8 @@ function ItemInfo:OnInitialize()
 end
 
 function ItemInfo:OnEnable()
+    C_AddOns.LoadAddOn("Blizzard_InspectUI")
+
     mUI:SecureHook("PaperDollItemSlotButton_Update", function(button)
         self:updateButton(button, "player")
     end)
@@ -672,8 +674,9 @@ function ItemInfo:OnEnable()
     end)
 
     local talentButton = InspectPaperDollItemsFrame.InspectTalents
-    if (talentButton) then
-        self:MoveTalentButton(talentButton)
+    self:MoveTalentButton(talentButton)
+
+    if not mUI.db.profile.general.theme == "Disabled" then
         mUI:Skin(talentButton)
     end
 

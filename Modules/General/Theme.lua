@@ -4,123 +4,6 @@ function Theme:OnInitialize()
     -- Initialize Database
     self.db = mUI.db.profile.general
 
-    -- Load AddOns
-    C_AddOns.LoadAddOn("Blizzard_AchievementUI")
-    C_AddOns.LoadAddOn("Blizzard_ProfessionsCustomerOrders")
-    C_AddOns.LoadAddOn("Blizzard_AuctionHouseUI")
-    C_AddOns.LoadAddOn("Blizzard_AlliedRacesUI")
-    C_AddOns.LoadAddOn("Blizzard_ArchaeologyUI")
-    C_AddOns.LoadAddOn("Blizzard_Calendar")
-    C_AddOns.LoadAddOn("Blizzard_ChallengesUI")
-    C_AddOns.LoadAddOn("Blizzard_ItemSocketingUI")
-    C_AddOns.LoadAddOn("Blizzard_TrainerUI")
-    C_AddOns.LoadAddOn("Blizzard_Collections")
-    C_AddOns.LoadAddOn("Blizzard_EncounterJournal")
-    C_AddOns.LoadAddOn("Blizzard_FlightMap")
-    C_AddOns.LoadAddOn("Blizzard_GarrisonUI")
-    C_AddOns.LoadAddOn("Blizzard_GuildBankUI")
-    C_AddOns.LoadAddOn("Blizzard_Professions")
-    C_AddOns.LoadAddOn("Blizzard_IslandsQueueUI")
-    C_AddOns.LoadAddOn("Blizzard_PVPUI")
-    C_AddOns.LoadAddOn("Blizzard_MacroUI")
-    C_AddOns.LoadAddOn("Blizzard_ScrappingMachineUI")
-    C_AddOns.LoadAddOn("Blizzard_ProfessionsBook")
-    C_AddOns.LoadAddOn("Blizzard_PlayerSpells")
-    C_AddOns.LoadAddOn("Blizzard_TimeManager")
-    C_AddOns.LoadAddOn("Blizzard_TradeSkillUI")
-    C_AddOns.LoadAddOn("Blizzard_Wardrobe")
-    C_AddOns.LoadAddOn("Blizzard_WeeklyRewards")
-    C_AddOns.LoadAddOn("Blizzard_InspectUI")
-    C_AddOns.LoadAddOn("Blizzard_ItemUpgradeUI")
-
-    -- Forbidden Frames which are not affected by Themes
-    self.forbiddenFrames = {
-        ["CalendarCreateEventIcon"] = true,
-        ["FriendsFrameIcon"] = true,
-        ["MacroFramePortrait"] = true,
-        ["StaticPopup1AlertIcon"] = true,
-        ["StaticPopup2AlertIcon"] = true,
-        ["StaticPopup3AlertIcon"] = true,
-        ["PVPReadyDialogBackground"] = true,
-        ["LFGDungeonReadyDialogBackground"] = true,
-        ["QuestFrameDetailPanelBg"] = true,
-        [select(3, GossipFrame:GetRegions())] = true,
-        [select(3, DressUpFrame:GetRegions())] = true,
-        [select(2, ChatFrame1EditBox:GetRegions())] = true,
-        [select(2, ChatFrame2EditBox:GetRegions())] = true,
-        [select(2, ChatFrame3EditBox:GetRegions())] = true,
-        [select(2, ChatFrame4EditBox:GetRegions())] = true,
-        [select(2, ChatFrame5EditBox:GetRegions())] = true,
-        [select(2, ChatFrame6EditBox:GetRegions())] = true,
-        [select(2, ChatFrame7EditBox:GetRegions())] = true,
-        [select(1, TradeFrame.RecipientOverlay:GetRegions())] = true,
-        [select(4, LFGListInviteDialog:GetRegions())] = true,
-        [select(8, AchievementFrame.Header:GetRegions())] = true,
-        [select(2, MountJournal.BottomLeftInset.SlotButton:GetRegions())] = true,
-        [select(4, PlayerSpellsFrame.TalentsFrame:GetRegions())] = true,
-        [select(1, ContainerFrame1.Bg:GetRegions())] = true,
-        [select(2, ContainerFrame1.Bg:GetRegions())] = true,
-        [select(1, ContainerFrame2.Bg:GetRegions())] = true,
-        [select(2, ContainerFrame2.Bg:GetRegions())] = true,
-        [select(1, ContainerFrame3.Bg:GetRegions())] = true,
-        [select(2, ContainerFrame3.Bg:GetRegions())] = true,
-        [select(1, ContainerFrame4.Bg:GetRegions())] = true,
-        [select(2, ContainerFrame4.Bg:GetRegions())] = true,
-        [select(1, ContainerFrame5.Bg:GetRegions())] = true,
-        [select(2, ContainerFrame5.Bg:GetRegions())] = true,
-        [select(1, ContainerFrame6.Bg:GetRegions())] = true,
-        [select(2, ContainerFrame6.Bg:GetRegions())] = true,
-        [select(1, ContainerFrame7.Bg:GetRegions())] = true,
-        [select(2, ContainerFrame7.Bg:GetRegions())] = true,
-        [select(1, ContainerFrame8.Bg:GetRegions())] = true,
-        [select(2, ContainerFrame8.Bg:GetRegions())] = true,
-        [select(1, ContainerFrame9.Bg:GetRegions())] = true,
-        [select(2, ContainerFrame9.Bg:GetRegions())] = true,
-        [select(1, ContainerFrame10.Bg:GetRegions())] = true,
-        [select(2, ContainerFrame10.Bg:GetRegions())] = true,
-        [select(1, ContainerFrame11.Bg:GetRegions())] = true,
-        [select(2, ContainerFrame11.Bg:GetRegions())] = true,
-        [select(1, ContainerFrame12.Bg:GetRegions())] = true,
-        [select(2, ContainerFrame12.Bg:GetRegions())] = true,
-        [select(1, ContainerFrame13.Bg:GetRegions())] = true,
-        [select(2, ContainerFrame13.Bg:GetRegions())] = true,
-        [select(1, ContainerFrameCombinedBags.Bg:GetRegions())] = true,
-        [select(2, ContainerFrameCombinedBags.Bg:GetRegions())] = true,
-        [select(9, ChatConfigCategoryFrame.NineSlice:GetRegions())] = true,
-        [select(9, ChatConfigBackgroundFrame.NineSlice:GetRegions())] = true,
-        [select(2, CommunitiesFrame.ChatTab:GetRegions())] = true,
-        [select(2, CommunitiesFrame.RosterTab:GetRegions())] = true,
-        [select(2, CommunitiesFrame.GuildBenefitsTab:GetRegions())] = true,
-        [select(2, CommunitiesFrame.GuildInfoTab:GetRegions())] = true,
-        [select(2, ClubFinderCommunityAndGuildFinderFrame.ClubFinderSearchTab:GetRegions())] = true,
-        [select(2, ClubFinderCommunityAndGuildFinderFrame.ClubFinderPendingTab:GetRegions())] = true,
-        [select(2, ClubFinderGuildFinderFrame.ClubFinderSearchTab:GetRegions())] = true,
-        [select(2, ClubFinderGuildFinderFrame.ClubFinderPendingTab:GetRegions())] = true,
-        [select(9, CommunitiesGuildLogFrame.Container.NineSlice:GetRegions())] = true,
-        [select(1, PlayerFrame.PlayerFrameContainer:GetRegions())] = true,
-        [select(1, TargetFrame.TargetFrameContainer:GetRegions())] = true,
-        [select(1, FocusFrame.TargetFrameContainer:GetRegions())] = true,
-        [select(1, Boss1TargetFrame.TargetFrameContainer:GetRegions())] = true,
-        [select(1, Boss2TargetFrame.TargetFrameContainer:GetRegions())] = true,
-        [select(1, Boss3TargetFrame.TargetFrameContainer:GetRegions())] = true,
-        [select(1, Boss4TargetFrame.TargetFrameContainer:GetRegions())] = true,
-        [select(3, CalendarClassButton1:GetRegions())] = true,
-        [select(3, CalendarClassButton2:GetRegions())] = true,
-        [select(3, CalendarClassButton3:GetRegions())] = true,
-        [select(3, CalendarClassButton4:GetRegions())] = true,
-        [select(3, CalendarClassButton5:GetRegions())] = true,
-        [select(3, CalendarClassButton6:GetRegions())] = true,
-        [select(3, CalendarClassButton7:GetRegions())] = true,
-        [select(3, CalendarClassButton8:GetRegions())] = true,
-        [select(3, CalendarClassButton9:GetRegions())] = true,
-        [select(3, CalendarClassButton10:GetRegions())] = true,
-        [select(3, CalendarClassButton11:GetRegions())] = true,
-        [select(3, CalendarClassButton12:GetRegions())] = true,
-        [select(3, CalendarClassButton13:GetRegions())] = true,
-        [select(5, CommunitiesFrame.GuildBenefitsFrame.FactionFrame.Bar:GetRegions())] = true,
-        [select(9, MacroFrameTextBackground.NineSlice:GetRegions())] = true,
-    }
-
     -- Hook Checks
     local dragonriding = false
     local classHook = false
@@ -1318,6 +1201,123 @@ function Theme:OnInitialize()
 end
 
 function Theme:OnEnable()
+    -- Load AddOns
+    C_AddOns.LoadAddOn("Blizzard_AchievementUI")
+    C_AddOns.LoadAddOn("Blizzard_ProfessionsCustomerOrders")
+    C_AddOns.LoadAddOn("Blizzard_AuctionHouseUI")
+    C_AddOns.LoadAddOn("Blizzard_AlliedRacesUI")
+    C_AddOns.LoadAddOn("Blizzard_ArchaeologyUI")
+    C_AddOns.LoadAddOn("Blizzard_Calendar")
+    C_AddOns.LoadAddOn("Blizzard_ChallengesUI")
+    C_AddOns.LoadAddOn("Blizzard_ItemSocketingUI")
+    C_AddOns.LoadAddOn("Blizzard_TrainerUI")
+    C_AddOns.LoadAddOn("Blizzard_Collections")
+    C_AddOns.LoadAddOn("Blizzard_EncounterJournal")
+    C_AddOns.LoadAddOn("Blizzard_FlightMap")
+    C_AddOns.LoadAddOn("Blizzard_GarrisonUI")
+    C_AddOns.LoadAddOn("Blizzard_GuildBankUI")
+    C_AddOns.LoadAddOn("Blizzard_Professions")
+    C_AddOns.LoadAddOn("Blizzard_IslandsQueueUI")
+    C_AddOns.LoadAddOn("Blizzard_PVPUI")
+    C_AddOns.LoadAddOn("Blizzard_MacroUI")
+    C_AddOns.LoadAddOn("Blizzard_ScrappingMachineUI")
+    C_AddOns.LoadAddOn("Blizzard_ProfessionsBook")
+    C_AddOns.LoadAddOn("Blizzard_PlayerSpells")
+    C_AddOns.LoadAddOn("Blizzard_TimeManager")
+    C_AddOns.LoadAddOn("Blizzard_TradeSkillUI")
+    C_AddOns.LoadAddOn("Blizzard_Wardrobe")
+    C_AddOns.LoadAddOn("Blizzard_WeeklyRewards")
+    C_AddOns.LoadAddOn("Blizzard_InspectUI")
+    C_AddOns.LoadAddOn("Blizzard_ItemUpgradeUI")
+
+    -- Forbidden Frames which are not affected by Themes
+    self.forbiddenFrames = {
+        ["CalendarCreateEventIcon"] = true,
+        ["FriendsFrameIcon"] = true,
+        ["MacroFramePortrait"] = true,
+        ["StaticPopup1AlertIcon"] = true,
+        ["StaticPopup2AlertIcon"] = true,
+        ["StaticPopup3AlertIcon"] = true,
+        ["PVPReadyDialogBackground"] = true,
+        ["LFGDungeonReadyDialogBackground"] = true,
+        ["QuestFrameDetailPanelBg"] = true,
+        [select(3, GossipFrame:GetRegions())] = true,
+        [select(3, DressUpFrame:GetRegions())] = true,
+        [select(2, ChatFrame1EditBox:GetRegions())] = true,
+        [select(2, ChatFrame2EditBox:GetRegions())] = true,
+        [select(2, ChatFrame3EditBox:GetRegions())] = true,
+        [select(2, ChatFrame4EditBox:GetRegions())] = true,
+        [select(2, ChatFrame5EditBox:GetRegions())] = true,
+        [select(2, ChatFrame6EditBox:GetRegions())] = true,
+        [select(2, ChatFrame7EditBox:GetRegions())] = true,
+        [select(1, TradeFrame.RecipientOverlay:GetRegions())] = true,
+        [select(4, LFGListInviteDialog:GetRegions())] = true,
+        [select(8, AchievementFrame.Header:GetRegions())] = true,
+        [select(2, MountJournal.BottomLeftInset.SlotButton:GetRegions())] = true,
+        [select(4, PlayerSpellsFrame.TalentsFrame:GetRegions())] = true,
+        [select(1, ContainerFrame1.Bg:GetRegions())] = true,
+        [select(2, ContainerFrame1.Bg:GetRegions())] = true,
+        [select(1, ContainerFrame2.Bg:GetRegions())] = true,
+        [select(2, ContainerFrame2.Bg:GetRegions())] = true,
+        [select(1, ContainerFrame3.Bg:GetRegions())] = true,
+        [select(2, ContainerFrame3.Bg:GetRegions())] = true,
+        [select(1, ContainerFrame4.Bg:GetRegions())] = true,
+        [select(2, ContainerFrame4.Bg:GetRegions())] = true,
+        [select(1, ContainerFrame5.Bg:GetRegions())] = true,
+        [select(2, ContainerFrame5.Bg:GetRegions())] = true,
+        [select(1, ContainerFrame6.Bg:GetRegions())] = true,
+        [select(2, ContainerFrame6.Bg:GetRegions())] = true,
+        [select(1, ContainerFrame7.Bg:GetRegions())] = true,
+        [select(2, ContainerFrame7.Bg:GetRegions())] = true,
+        [select(1, ContainerFrame8.Bg:GetRegions())] = true,
+        [select(2, ContainerFrame8.Bg:GetRegions())] = true,
+        [select(1, ContainerFrame9.Bg:GetRegions())] = true,
+        [select(2, ContainerFrame9.Bg:GetRegions())] = true,
+        [select(1, ContainerFrame10.Bg:GetRegions())] = true,
+        [select(2, ContainerFrame10.Bg:GetRegions())] = true,
+        [select(1, ContainerFrame11.Bg:GetRegions())] = true,
+        [select(2, ContainerFrame11.Bg:GetRegions())] = true,
+        [select(1, ContainerFrame12.Bg:GetRegions())] = true,
+        [select(2, ContainerFrame12.Bg:GetRegions())] = true,
+        [select(1, ContainerFrame13.Bg:GetRegions())] = true,
+        [select(2, ContainerFrame13.Bg:GetRegions())] = true,
+        [select(1, ContainerFrameCombinedBags.Bg:GetRegions())] = true,
+        [select(2, ContainerFrameCombinedBags.Bg:GetRegions())] = true,
+        [select(9, ChatConfigCategoryFrame.NineSlice:GetRegions())] = true,
+        [select(9, ChatConfigBackgroundFrame.NineSlice:GetRegions())] = true,
+        [select(2, CommunitiesFrame.ChatTab:GetRegions())] = true,
+        [select(2, CommunitiesFrame.RosterTab:GetRegions())] = true,
+        [select(2, CommunitiesFrame.GuildBenefitsTab:GetRegions())] = true,
+        [select(2, CommunitiesFrame.GuildInfoTab:GetRegions())] = true,
+        [select(2, ClubFinderCommunityAndGuildFinderFrame.ClubFinderSearchTab:GetRegions())] = true,
+        [select(2, ClubFinderCommunityAndGuildFinderFrame.ClubFinderPendingTab:GetRegions())] = true,
+        [select(2, ClubFinderGuildFinderFrame.ClubFinderSearchTab:GetRegions())] = true,
+        [select(2, ClubFinderGuildFinderFrame.ClubFinderPendingTab:GetRegions())] = true,
+        [select(9, CommunitiesGuildLogFrame.Container.NineSlice:GetRegions())] = true,
+        [select(1, PlayerFrame.PlayerFrameContainer:GetRegions())] = true,
+        [select(1, TargetFrame.TargetFrameContainer:GetRegions())] = true,
+        [select(1, FocusFrame.TargetFrameContainer:GetRegions())] = true,
+        [select(1, Boss1TargetFrame.TargetFrameContainer:GetRegions())] = true,
+        [select(1, Boss2TargetFrame.TargetFrameContainer:GetRegions())] = true,
+        [select(1, Boss3TargetFrame.TargetFrameContainer:GetRegions())] = true,
+        [select(1, Boss4TargetFrame.TargetFrameContainer:GetRegions())] = true,
+        [select(3, CalendarClassButton1:GetRegions())] = true,
+        [select(3, CalendarClassButton2:GetRegions())] = true,
+        [select(3, CalendarClassButton3:GetRegions())] = true,
+        [select(3, CalendarClassButton4:GetRegions())] = true,
+        [select(3, CalendarClassButton5:GetRegions())] = true,
+        [select(3, CalendarClassButton6:GetRegions())] = true,
+        [select(3, CalendarClassButton7:GetRegions())] = true,
+        [select(3, CalendarClassButton8:GetRegions())] = true,
+        [select(3, CalendarClassButton9:GetRegions())] = true,
+        [select(3, CalendarClassButton10:GetRegions())] = true,
+        [select(3, CalendarClassButton11:GetRegions())] = true,
+        [select(3, CalendarClassButton12:GetRegions())] = true,
+        [select(3, CalendarClassButton13:GetRegions())] = true,
+        [select(5, CommunitiesFrame.GuildBenefitsFrame.FactionFrame.Bar:GetRegions())] = true,
+        [select(9, MacroFrameTextBackground.NineSlice:GetRegions())] = true,
+    }
+
     -- Update Theme
     self:Update()
 
