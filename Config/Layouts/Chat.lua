@@ -1,18 +1,25 @@
 local Chat = mUI:NewModule("mUI.Config.Layouts.Chat")
 
-function Chat:OnEnable()
-    -- Initialize Database
-    local db = mUI.db.profile.chat
+-- Enable Layout
+Chat:Enable()
 
-    local layout = {
+function Chat:OnInitialize()
+    -- Initialize Layout
+    self.layout = {
         type = "group",
         args = {
             enabled = {
-                name = "Enable",
-                desc = "Enable / Disable Module",
+                name = function()
+                    if mUI.db.profile.chat.enabled then
+                        return "|cFF00FF00Enabled|r"
+                    else
+                        return "|cFFFF0000Disabled|r"
+                    end
+                end,
+                desc = "|cffffff00INFO:|r Requires Reload",
                 type = "toggle",
-                set = function(_, val) db.enabled = val end,
-                get = function() return db.enabled end,
+                set = function(_, val) mUI.db.profile.chat.enabled = val end,
+                get = function() return mUI.db.profile.chat.enabled end,
                 order = 1
             },
             header1 = {
@@ -34,8 +41,8 @@ function Chat:OnEnable()
                     "mUI"
                 },
                 width = 0.5,
-                set = function(_, val) db.style = val end,
-                get = function() return db.style end,
+                set = function(_, val) mUI.db.profile.chat.style = val end,
+                get = function() return mUI.db.profile.chat.style end,
                 order = 3
             },
             header2 = {
@@ -47,38 +54,40 @@ function Chat:OnEnable()
                 name = "Input on Top",
                 desc = "Display the Input Box on Top of the Chat",
                 type = "toggle",
-                set = function(_, val) db.input = val end,
-                get = function() return db.input end,
+                set = function(_, val) mUI.db.profile.chat.input = val end,
+                get = function() return mUI.db.profile.chat.input end,
                 order = 5
             },
             link = {
                 name = "Link Copy",
                 desc = "Make Links clickable to copy them",
                 type = "toggle",
-                set = function(_, val) db.link = val end,
-                get = function() return db.link end,
+                set = function(_, val) mUI.db.profile.chat.link = val end,
+                get = function() return mUI.db.profile.chat.link end,
                 order = 6
             },
             copy = {
                 name = "Copy Chat",
                 desc = "Enable / Disable Copying of Chat History",
                 type = "toggle",
-                set = function(_, val) db.copy = val end,
-                get = function() return db.copy end,
+                set = function(_, val) mUI.db.profile.chat.copy = val end,
+                get = function() return mUI.db.profile.chat.copy end,
                 order = 7
             },
             friendlist = {
                 name = "Friendlist Button",
                 desc = "Show/Hide Friendlist Button",
                 type = "toggle",
-                set = function(_, val) db.friendlist = val end,
-                get = function() return db.friendlist end,
+                set = function(_, val) mUI.db.profile.chat.friendlist = val end,
+                get = function() return mUI.db.profile.chat.friendlist end,
                 order = 8
             }
         }
     }
+end
 
+function Chat:OnEnable()
     function self:GetOptions()
-        return layout
+        return self.layout
     end
 end

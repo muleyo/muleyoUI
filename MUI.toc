@@ -15,17 +15,20 @@ Core\Load.xml
 ## Database
 Config\Database.lua
 
+## Functions
+Functions.lua
+
+## Config
+Config\Load.xml
+
 ## Core
 Core.lua
+
+## EditMode
+EditMode.lua
 
 ## Media
 #Media\Load.xml
 
-## Data
-#Data\Load.xml
-
 ## Modules
 Modules\Load.xml
-
-## Config
-Config\Load.xml

@@ -1,4 +1,18 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Include file="Theme.lua" />
     <Include file="Font.lua" />
+    <Include file="Repair.lua" />
+    <Include file="Sell.lua" />
+    <Include file="Delete.lua" />
+    <Include file="Duel.lua" />
+    <Include file="Release.lua" />
+    <Include file="Resurrection.lua" />
+    <Include file="Invite.lua" />
+    <Include file="Cinematic.lua" />
+    <Include file="TalkingHead.lua" />
+    <Include file="ItemInfo.lua" />
+    <Include file="Stats.lua" />
+    <Include file="ErrorMessages.lua" />
+    <Include file="Friendlist.lua" />
+    <Include file="Modules.lua" />
 </Ui>

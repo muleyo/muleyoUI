@@ -1,18 +1,24 @@
 local Actionbars = mUI:NewModule("mUI.Config.Layouts.Actionbars")
 
-function Actionbars:OnEnable()
-    -- Initialize Database
-    local db = mUI.db.profile.actionbars
+-- Enable Layout
+Actionbars:Enable()
 
-    local layout = {
+function Actionbars:OnInitialize()
+    self.layout = {
         type = "group",
         args = {
             enabled = {
-                name = "Enable",
-                desc = "Enable / Disable Module",
+                name = function()
+                    if mUI.db.profile.actionbars.enabled then
+                        return "|cFF00FF00Enabled|r"
+                    else
+                        return "|cFFFF0000Disabled|r"
+                    end
+                end,
+                desc = "|cffffff00INFO:|r Requires Reload",
                 type = "toggle",
-                set = function(_, val) db.enabled = val end,
-                get = function() return db.enabled end,
+                set = function(_, val) mUI.db.profile.actionbars.enabled = val end,
+                get = function() return mUI.db.profile.actionbars.enabled end,
                 order = 1
             },
             header1 = {
@@ -24,32 +30,32 @@ function Actionbars:OnEnable()
                 name = "Hotkey Text",
                 desc = "Show Hotkey Text on Actionbuttons",
                 type = "toggle",
-                set = function(_, val) db.hotkey = val end,
-                get = function() return db.hotkey end,
+                set = function(_, val) mUI.db.profile.actionbars.hotkey = val end,
+                get = function() return mUI.db.profile.actionbars.hotkey end,
                 order = 3
             },
             macro = {
                 name = "Macro Text",
                 desc = "Show Macro Text on Actionbuttons",
                 type = "toggle",
-                set = function(_, val) db.macro = val end,
-                get = function() return db.macro end,
+                set = function(_, val) mUI.db.profile.actionbars.macro = val end,
+                get = function() return mUI.db.profile.actionbars.macro end,
                 order = 4
             },
             flash = {
                 name = "Flash Animation",
                 desc = "Flash Actionbutton on when pressing it",
                 type = "toggle",
-                set = function(_, val) db.flash = val end,
-                get = function() return db.flash end,
+                set = function(_, val) mUI.db.profile.actionbars.flash = val end,
+                get = function() return mUI.db.profile.actionbars.flash end,
                 order = 5
             },
             range = {
                 name = "Range Indicator",
                 desc = "Change button-color to red when out of range",
                 type = "toggle",
-                set = function(_, val) db.range = val end,
-                get = function() return db.range end,
+                set = function(_, val) mUI.db.profile.actionbars.range = val end,
+                get = function() return mUI.db.profile.actionbars.range end,
                 order = 6
             },
             header2 = {
@@ -61,80 +67,80 @@ function Actionbars:OnEnable()
                 name = "ActionBar 1",
                 desc = "Show Actionbar 1 on Mouseover",
                 type = "toggle",
-                set = function(_, val) db.mouseover.bar1 = val end,
-                get = function() return db.mouseover.bar1 end,
+                set = function(_, val) mUI.db.profile.actionbars.mouseover.bar1 = val end,
+                get = function() return mUI.db.profile.actionbars.mouseover.bar1 end,
                 order = 8
             },
             bar2 = {
                 name = "ActionBar 2",
                 desc = "Show Actionbar 2 on Mouseover",
                 type = "toggle",
-                set = function(_, val) db.mouseover.bar2 = val end,
-                get = function() return db.mouseover.bar2 end,
+                set = function(_, val) mUI.db.profile.actionbars.mouseover.bar2 = val end,
+                get = function() return mUI.db.profile.actionbars.mouseover.bar2 end,
                 order = 9
             },
             bar3 = {
                 name = "ActionBar 3",
                 desc = "Show Actionbar 3 on Mouseover",
                 type = "toggle",
-                set = function(_, val) db.mouseover.bar3 = val end,
-                get = function() return db.mouseover.bar3 end,
+                set = function(_, val) mUI.db.profile.actionbars.mouseover.bar3 = val end,
+                get = function() return mUI.db.profile.actionbars.mouseover.bar3 end,
                 order = 10
             },
             bar4 = {
                 name = "ActionBar 4",
                 desc = "Show Actionbar 4 on Mouseover",
                 type = "toggle",
-                set = function(_, val) db.mouseover.bar4 = val end,
-                get = function() return db.mouseover.bar4 end,
+                set = function(_, val) mUI.db.profile.actionbars.mouseover.bar4 = val end,
+                get = function() return mUI.db.profile.actionbars.mouseover.bar4 end,
                 order = 11
             },
             bar5 = {
                 name = "ActionBar 5",
                 desc = "Show Actionbar 5 on Mouseover",
                 type = "toggle",
-                set = function(_, val) db.mouseover.bar5 = val end,
-                get = function() return db.mouseover.bar5 end,
+                set = function(_, val) mUI.db.profile.actionbars.mouseover.bar5 = val end,
+                get = function() return mUI.db.profile.actionbars.mouseover.bar5 end,
                 order = 12
             },
             bar6 = {
                 name = "ActionBar 6",
                 desc = "Show Actionbar 6 on Mouseover",
                 type = "toggle",
-                set = function(_, val) db.mouseover.bar6 = val end,
-                get = function() return db.mouseover.bar6 end,
+                set = function(_, val) mUI.db.profile.actionbars.mouseover.bar6 = val end,
+                get = function() return mUI.db.profile.actionbars.mouseover.bar6 end,
                 order = 13
             },
             bar7 = {
                 name = "ActionBar 7",
                 desc = "Show Actionbar 7 on Mouseover",
                 type = "toggle",
-                set = function(_, val) db.mouseover.bar7 = val end,
-                get = function() return db.mouseover.bar7 end,
+                set = function(_, val) mUI.db.profile.actionbars.mouseover.bar7 = val end,
+                get = function() return mUI.db.profile.actionbars.mouseover.bar7 end,
                 order = 14
             },
             bar8 = {
                 name = "ActionBar 8",
                 desc = "Show Actionbar 8 on Mouseover",
                 type = "toggle",
-                set = function(_, val) db.mouseover.bar8 = val end,
-                get = function() return db.mouseover.bar8 end,
+                set = function(_, val) mUI.db.profile.actionbars.mouseover.bar8 = val end,
+                get = function() return mUI.db.profile.actionbars.mouseover.bar8 end,
                 order = 15
             },
             petbar = {
                 name = "Pet Actionbar",
                 desc = "Show Pet Actionbar on Mouseover",
                 type = "toggle",
-                set = function(_, val) db.mouseover.petbar = val end,
-                get = function() return db.mouseover.petbar end,
+                set = function(_, val) mUI.db.profile.actionbars.mouseover.petbar = val end,
+                get = function() return mUI.db.profile.actionbars.mouseover.petbar end,
                 order = 16
             },
             stancebar = {
                 name = "Stance Actionbar",
                 desc = "Show Stance Actionbar on Mouseover",
                 type = "toggle",
-                set = function(_, val) db.mouseover.stancebar = val end,
-                get = function() return db.mouseover.stancebar end,
+                set = function(_, val) mUI.db.profile.actionbars.mouseover.stancebar = val end,
+                get = function() return mUI.db.profile.actionbars.mouseover.stancebar end,
                 order = 17
             },
             micromenu = {
@@ -153,8 +159,8 @@ function Actionbars:OnEnable()
                     "Hidden"
                 },
                 --width = 0.5,
-                set = function(_, val) db.mouseover.micromenu = val end,
-                get = function() return db.mouseover.micromenu end,
+                set = function(_, val) mUI.db.profile.actionbars.mouseover.micromenu = val end,
+                get = function() return mUI.db.profile.actionbars.mouseover.micromenu end,
                 order = 18
             },
             bagbuttons = {
@@ -173,14 +179,16 @@ function Actionbars:OnEnable()
                     "Hidden"
                 },
                 --width = 0.5,
-                set = function(_, val) db.mouseover.bagbuttons = val end,
-                get = function() return db.mouseover.bagbuttons end,
+                set = function(_, val) mUI.db.profile.actionbars.mouseover.bagbuttons = val end,
+                get = function() return mUI.db.profile.actionbars.mouseover.bagbuttons end,
                 order = 19
             }
         }
     }
+end
 
+function Actionbars:OnEnable()
     function self:GetOptions()
-        return layout
+        return self.layout
     end
 end

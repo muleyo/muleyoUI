@@ -1,7 +1,11 @@
 local About = mUI:NewModule("mUI.Config.Layouts.About")
 
-function About:OnEnable()
-    local layout = {
+-- Enable Layout
+About:Enable()
+
+function About:OnInitialize()
+    -- Initialize Layout
+    self.layout = {
         type = "group",
         args = {
             header = {
@@ -42,8 +46,10 @@ function About:OnEnable()
             }
         }
     }
+end
 
+function About:OnEnable()
     function self:GetOptions()
-        return layout
+        return self.layout
     end
 end

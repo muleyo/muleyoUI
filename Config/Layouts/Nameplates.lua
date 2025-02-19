@@ -1,18 +1,25 @@
 local Nameplates = mUI:NewModule("mUI.Config.Layouts.Nameplates")
 
-function Nameplates:OnEnable()
-    -- Initialize Database
-    local db = mUI.db.profile.nameplates
+-- Enable Layout
+Nameplates:Enable()
 
-    local layout = {
+function Nameplates:OnInitialize()
+    -- Initialize Layout
+    self.layout = {
         type = "group",
         args = {
             enable = {
-                name = "Enable",
-                desc = "Enable / Disable Module",
+                name = function()
+                    if mUI.db.profile.nameplates.enabled then
+                        return "|cFF00FF00Enabled|r"
+                    else
+                        return "|cFFFF0000Disabled|r"
+                    end
+                end,
+                desc = "|cffffff00INFO:|r Requires Reload",
                 type = "toggle",
-                set = function(_, val) db.enabled = val end,
-                get = function() return db.enabled end,
+                set = function(_, val) mUI.db.profile.nameplates.enabled = val end,
+                get = function() return mUI.db.profile.nameplates.enabled end,
                 order = 1
             },
             header1 = {
@@ -34,8 +41,8 @@ function Nameplates:OnEnable()
                     "mUI"
                 },
                 width = 0.5,
-                set = function(_, val) db.style = val end,
-                get = function() return db.style end,
+                set = function(_, val) mUI.db.profile.nameplates.style = val end,
+                get = function() return mUI.db.profile.nameplates.style end,
                 order = 3
             },
             texture = {
@@ -46,8 +53,8 @@ function Nameplates:OnEnable()
                     ["Blizzard"] = "Blizzard",
                     ["mUI"] = "mUI Texture"
                 },
-                set = function(_, val) db.texture = val end,
-                get = function() return db.texture end,
+                set = function(_, val) mUI.db.profile.nameplates.texture = val end,
+                get = function() return mUI.db.profile.nameplates.texture end,
                 order = 4
             },
             decimals = {
@@ -57,8 +64,8 @@ function Nameplates:OnEnable()
                 min = 0,
                 max = 2,
                 step = 1,
-                set = function(_, val) db.decimals = val end,
-                get = function() return db.decimals end,
+                set = function(_, val) mUI.db.profile.nameplates.decimals = val end,
+                get = function() return mUI.db.profile.nameplates.decimals end,
                 order = 5
             },
             height = {
@@ -68,8 +75,8 @@ function Nameplates:OnEnable()
                 min = 1,
                 max = 5,
                 step = 1,
-                set = function(_, val) db.height = val end,
-                get = function() return db.height end,
+                set = function(_, val) mUI.db.profile.nameplates.height = val end,
+                get = function() return mUI.db.profile.nameplates.height end,
                 order = 6
             },
             width = {
@@ -79,8 +86,8 @@ function Nameplates:OnEnable()
                 min = 1,
                 max = 5,
                 step = 1,
-                set = function(_, val) db.width = val end,
-                get = function() return db.width end,
+                set = function(_, val) mUI.db.profile.nameplates.width = val end,
+                get = function() return mUI.db.profile.nameplates.width end,
                 order = 7
             },
             header2 = {
@@ -92,64 +99,64 @@ function Nameplates:OnEnable()
                 name = "Health Text",
                 desc = "Show Health Percentage on Nameplates",
                 type = "toggle",
-                set = function(_, val) db.healthtext = val end,
-                get = function() return db.healthtext end,
+                set = function(_, val) mUI.db.profile.nameplates.healthtext = val end,
+                get = function() return mUI.db.profile.nameplates.healthtext end,
                 order = 9
             },
             classcolor = {
                 name = "Names in Class Color",
                 desc = "Show Player Names in Class Colors",
                 type = "toggle",
-                set = function(_, val) db.classcolor = val end,
-                get = function() return db.classcolor end,
+                set = function(_, val) mUI.db.profile.nameplates.classcolor = val end,
+                get = function() return mUI.db.profile.nameplates.classcolor end,
                 order = 10
             },
             servername = {
                 name = "Hide Server Names",
                 desc = "Hide Server Names on Nameplates",
                 type = "toggle",
-                set = function(_, val) db.servername = val end,
-                get = function() return db.servername end,
+                set = function(_, val) mUI.db.profile.nameplates.servername = val end,
+                get = function() return mUI.db.profile.nameplates.servername end,
                 order = 11
             },
             arena = {
                 name = "Arena Numbers",
                 desc = "Show arena1/2/3 instead of enemy Player Names in Arenas",
                 type = "toggle",
-                set = function(_, val) db.arena = val end,
-                get = function() return db.arena end,
+                set = function(_, val) mUI.db.profile.nameplates.arena = val end,
+                get = function() return mUI.db.profile.nameplates.arena end,
                 order = 12
             },
             totem = {
                 name = "Totem Icons",
                 desc = "Show Totem Icons on Nameplates",
                 type = "toggle",
-                set = function(_, val) db.totem = val end,
-                get = function() return db.totem end,
+                set = function(_, val) mUI.db.profile.nameplates.totem = val end,
+                get = function() return mUI.db.profile.nameplates.totem end,
                 order = 13
             },
             casttime = {
                 name = "Cast Time",
                 desc = "Show Cast Time below the Cast Icon on Nameplates",
                 type = "toggle",
-                set = function(_, val) db.casttime = val end,
-                get = function() return db.casttime end,
+                set = function(_, val) mUI.db.profile.nameplates.casttime = val end,
+                get = function() return mUI.db.profile.nameplates.casttime end,
                 order = 14
             },
             focus = {
                 name = "Focus Highlight",
                 desc = "Highlight the Nameplate of your Focus Target with a different texture",
                 type = "toggle",
-                set = function(_, val) db.focus = val end,
-                get = function() return db.focus end,
+                set = function(_, val) mUI.db.profile.nameplates.focus = val end,
+                get = function() return mUI.db.profile.nameplates.focus end,
                 order = 15
             },
             debuffs = {
                 name = "Hide Debuffs",
                 desc = "Hide Debuffs on Nameplates",
                 type = "toggle",
-                set = function(_, val) db.debuffs = val end,
-                get = function() return db.debuffs end,
+                set = function(_, val) mUI.db.profile.nameplates.debuffs = val end,
+                get = function() return mUI.db.profile.nameplates.debuffs end,
                 order = 16
             },
             header3 = {
@@ -162,7 +169,7 @@ function Nameplates:OnEnable()
                 desc =
                 "Enable/Disable custom colors.\n\n|cffffff00INFO:|r Colors for NPCs can be edited by clicking on the 'Change NPC Colors' Button",
                 type = "toggle",
-                set = function(_, val) db.colors = val end,
+                set = function(_, val) mUI.db.profile.nameplates.colors = val end,
                 get = function() return end,
                 order = 18
             },
@@ -175,8 +182,10 @@ function Nameplates:OnEnable()
             }
         }
     }
+end
 
+function Nameplates:OnEnable()
     function self:GetOptions()
-        return layout
+        return self.layout
     end
 end

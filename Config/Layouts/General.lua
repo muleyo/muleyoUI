@@ -1,21 +1,48 @@
 local General = mUI:NewModule("mUI.Config.Layouts.General")
 
-function General:OnEnable()
-    -- Initialize Database
-    local db = mUI.db.profile.general
+-- Enable Layout
+General:Enable()
 
+function General:OnInitialize()
     -- Get Modules
-    local Theme = mUI:GetModule("mUI.Modules.General.Theme")
+    self.Module = mUI:GetModule("mUI.Modules.General")
+    self.Theme = mUI:GetModule("mUI.Modules.General.Theme")
+    self.Repair = mUI:GetModule("mUI.Modules.General.Repair")
+    self.Sell = mUI:GetModule("mUI.Modules.General.Sell")
+    self.Delete = mUI:GetModule("mUI.Modules.General.Delete")
+    self.Duel = mUI:GetModule("mUI.Modules.General.Duel")
+    self.Release = mUI:GetModule("mUI.Modules.General.Release")
+    self.Resurrection = mUI:GetModule("mUI.Modules.General.Resurrection")
+    self.Invite = mUI:GetModule("mUI.Modules.General.Invite")
+    self.Cinematic = mUI:GetModule("mUI.Modules.General.Cinematic")
+    self.TalkingHead = mUI:GetModule("mUI.Modules.General.TalkingHead")
+    self.ItemInfo = mUI:GetModule("mUI.Modules.General.ItemInfo")
+    self.Stats = mUI:GetModule("mUI.Modules.General.Stats")
 
-    local layout = {
+    -- Initialize Layout
+    self.layout = {
         type = "group",
         args = {
             enable = {
-                name = "Enable",
-                desc = "Enable / Disable Module",
+                name = function()
+                    if mUI.db.profile.general.enabled then
+                        return "|cFF00FF00Enabled|r"
+                    else
+                        return "|cFFFF0000Disabled|r"
+                    end
+                end,
+                desc = "|cffffff00INFO:|r Requires Reload",
                 type = "toggle",
-                set = function(_, val) db.enabled = val end,
-                get = function() return db.enabled end,
+                set = function(_, val)
+                    mUI.db.profile.general.enabled = val
+
+                    if val then
+                        mUI:Reload('Enable General Module')
+                    else
+                        mUI:Reload('Disable General Module')
+                    end
+                end,
+                get = function() return mUI.db.profile.general.enabled end,
                 order = 1
             },
             header1 = {
@@ -43,18 +70,22 @@ function General:OnEnable()
                 },
                 width = 0.5,
                 set = function(_, val)
-                    db.theme = val
-                    if val == "Disabled" and Theme:IsEnabled() then
-                        Theme:Disable()
+                    if mUI.db.profile.general.theme == val then return end
+                    mUI.db.profile.general.theme = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val == "Disabled" then
+                        self.Theme:Disable()
                     else
-                        if not Theme:IsEnabled() then
-                            Theme:Enable()
+                        if not self.Theme:IsEnabled() then
+                            self.Theme:Enable()
                         else
-                            Theme:Update()
+                            self.Theme:Update()
                         end
                     end
                 end,
-                get = function() return db.theme end,
+                get = function() return mUI.db.profile.general.theme end,
                 order = 3
             },
             color = {
@@ -63,42 +94,41 @@ function General:OnEnable()
                 type = "color",
                 hasAlpha = true,
                 set = function(_, r, g, b, a)
-                    db.color = { r, g, b, a }
+                    if mUI.db.profile.general.color == { r, g, b, a } then return end
+                    mUI.db.profile.general.color = { r, g, b, a }
 
-                    if db.theme == "Custom" then
-                        if not Theme:IsEnabled() then
-                            Theme:Enable()
+                    if not self.Module:IsEnabled() then return end
+
+                    if mUI.db.profile.general.theme == "Custom" then
+                        if not self.Theme:IsEnabled() then
+                            self.Theme:Enable()
                         else
-                            Theme:Update()
+                            self.Theme:Update()
                         end
                     end
                 end,
                 get = function()
-                    return db.color[1], db.color[2], db.color[3], db.color[4]
+                    return mUI.db.profile.general.color[1], mUI.db.profile.general.color[2],
+                        mUI.db.profile.general.color[3], mUI.db.profile.general.color[4]
                 end,
                 order = 4
             },
             font = {
                 name = "Font",
-                desc = "Choose a Font you like\n\n|cffff0000WARNING:|r This Font will be used for any kind of Text",
+                desc = "Choose a Font you like\n\n|cffffff00INFO:|r Requires Reload.",
                 type = "select",
                 values = {
-                    ["Arial"] = "Arial",
-                    ["Calibri"] = "Calibri",
-                    ["Comic Sans MS"] = "Comic Sans MS",
-                    ["Consolas"] = "Consolas",
-                    ["Courier New"] = "Courier New",
-                    ["DejaVu Sans"] = "DejaVu Sans",
-                    ["Georgia"] = "Georgia",
-                    ["Impact"] = "Impact",
-                    ["Lucida Console"] = "Lucida Console",
-                    ["Tahoma"] = "Tahoma",
-                    ["Times New Roman"] = "Times New Roman",
-                    ["Trebuchet MS"] = "Trebuchet MS",
-                    ["Verdana"] = "Verdana"
+                    ["Default"] = "Default",
+                    ["Interface\\AddOns\\mUI\\Media\\Fonts\\Prototype.ttf"] = "Prototype",
                 },
-                set = function(_, val) db.font = val end,
-                get = function() return db.font end,
+                set = function(_, val)
+                    mUI.db.profile.general.font = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    mUI:Reload()
+                end,
+                get = function() return mUI.db.profile.general.font end,
                 order = 5
             },
             header2 = {
@@ -122,72 +152,167 @@ function General:OnEnable()
                     "Guild"
                 },
                 width = 0.5,
-                set = function(_, val) db.automation.repair = val end,
-                get = function() return db.automation.repair end,
+                set = function(_, val)
+                    if mUI.db.profile.general.automation.repair == val then return end
+                    mUI.db.profile.general.automation.repair = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val == "Disabled" and self.Repair:IsEnabled() then
+                        self.Repair:Disable()
+                    else
+                        if not self.Repair:IsEnabled() then
+                            self.Repair:Enable()
+                        else
+                            self.Repair:Update()
+                        end
+                    end
+                end,
+                get = function() return mUI.db.profile.general.automation.repair end,
                 order = 7
             },
             sell = {
                 name = "Auto Sell",
                 desc = "Sell grey items automatically when visiting a vendor",
                 type = "toggle",
-                set = function(_, val) db.automation.sell = val end,
-                get = function() return db.automation.sell end,
+                set = function(_, val)
+                    mUI.db.profile.general.automation.sell = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Sell:Enable()
+                    else
+                        self.Sell:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.general.automation.sell end,
                 order = 8
             },
             delete = {
                 name = "Quick Delete",
                 desc = "Inserts 'DELETE' when deleting Rare+ items",
                 type = "toggle",
-                set = function(_, val) db.automation.delete = val end,
-                get = function() return db.automation.delete end,
+                set = function(_, val)
+                    mUI.db.profile.general.automation.delete = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Delete:Enable()
+                    else
+                        self.Delete:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.general.automation.delete end,
                 order = 9
             },
             duel = {
                 name = "Duel",
                 desc = "Decline duel requests automatically",
                 type = "toggle",
-                set = function(_, val) db.automation.duel = val end,
-                get = function() return db.automation.duel end,
+                set = function(_, val)
+                    mUI.db.profile.general.automation.duel = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Duel:Enable()
+                    else
+                        self.Duel:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.general.automation.duel end,
                 order = 10
             },
             release = {
                 name = "Release",
                 desc = "Release spirit automatically when you died",
                 type = "toggle",
-                set = function(_, val) db.automation.release = val end,
-                get = function() return db.automation.release end,
+                set = function(_, val)
+                    mUI.db.profile.general.automation.release = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Release:Enable()
+                    else
+                        self.Release:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.general.automation.release end,
                 order = 11
             },
             resurrect = {
                 name = "Resurrection",
                 desc = "Accept resurrections automatically",
                 type = "toggle",
-                set = function(_, val) db.automation.resurrect = val end,
-                get = function() return db.automation.resurrect end,
+                set = function(_, val)
+                    mUI.db.profile.general.automation.resurrect = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Resurrection:Enable()
+                    else
+                        self.Resurrection:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.general.automation.resurrect end,
                 order = 12
             },
             invite = {
                 name = "Invite",
                 desc = "Accept group invites from friends and guild members automatically",
                 type = "toggle",
-                set = function(_, val) db.automation.invite = val end,
-                get = function() return db.automation.invite end,
+                set = function(_, val)
+                    mUI.db.profile.general.automation.invite = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Invite:Enable()
+                    else
+                        self.Invite:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.general.automation.invite end,
                 order = 13
             },
             cinematic = {
                 name = "Cinematic",
                 desc = "Skip cinematics automatically",
                 type = "toggle",
-                set = function(_, val) db.automation.cinematic = val end,
-                get = function() return db.automation.cinematic end,
+                set = function(_, val)
+                    mUI.db.profile.general.automation.cinematic = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Cinematic:Enable()
+                    else
+                        self.Cinematic:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.general.automation.cinematic end,
                 order = 14
             },
             talkinghead = {
                 name = "Talking Head",
                 desc = "Hide the TalkingHead Frame automatically",
                 type = "toggle",
-                set = function(_, val) db.automation.talkinghead = val end,
-                get = function() return db.automation.talkinghead end,
+                set = function(_, val)
+                    mUI.db.profile.general.automation.talkinghead = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.TalkingHead:Enable()
+                    else
+                        self.TalkingHead:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.general.automation.talkinghead end,
                 order = 15
             },
             header3 = {
@@ -199,46 +324,69 @@ function General:OnEnable()
                 name = "Item Info",
                 desc = "Display item information on items and tooltips",
                 type = "toggle",
-                set = function(_, val) db.display.iteminfo = val end,
-                get = function() return db.display.iteminfo end,
+                set = function(_, val)
+                    mUI.db.profile.general.display.iteminfo = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.ItemInfo:Enable()
+                    else
+                        self.ItemInfo:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.general.display.iteminfo end,
                 order = 17
             },
             stats = {
                 name = "Stats",
                 desc = "Display current FPS/MS on the screen",
                 type = "toggle",
-                set = function(_, val) db.display.stats = val end,
-                get = function() return db.display.stats end,
+                set = function(_, val)
+                    mUI.db.profile.general.display.stats = val
+
+                    if val then
+                        self.Stats:Enable()
+                    else
+                        self.Stats:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.general.display.stats end,
                 order = 18
             },
             movementspeed = {
                 name = "Movement Speed",
-                desc = "Display current movement speed on the screen",
+                desc =
+                "Display current movement speed on the screen\n\n|cffffff00INFO:|r 'Stats' must be enabled for this feature",
                 type = "toggle",
-                set = function(_, val) db.movementspeed = val end,
-                get = function() return db.movementspeed end,
+                set = function(_, val)
+                    mUI.db.profile.general.display.movementspeed = val
+                end,
+                get = function() return mUI.db.profile.general.display.movementspeed end,
                 order = 19
             },
             errormessages = {
                 name = "Error Messages",
                 desc = "Display error messages (Out of range etc.)",
                 type = "toggle",
-                set = function(_, val) db.display.errormessages = val end,
-                get = function() return db.display.errormessages end,
+                set = function(_, val) mUI.db.profile.general.display.errormessages = val end,
+                get = function() return mUI.db.profile.general.display.errormessages end,
                 order = 20
             },
             friendlist = {
                 name = "Friendlist Class Colors",
                 desc = "Display Character Names in Class Colors on the Friendlist",
                 type = "toggle",
-                set = function(_, val) db.display.friendlist = val end,
-                get = function() return db.display.friendlist end,
+                set = function(_, val) mUI.db.profile.general.display.friendlist = val end,
+                get = function() return mUI.db.profile.general.display.friendlist end,
                 order = 21
             }
         }
     }
+end
 
+function General:OnEnable()
     function self:GetOptions()
-        return layout
+        return self.layout
     end
 end

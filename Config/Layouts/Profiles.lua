@@ -1,12 +1,17 @@
-local Profile = mUI:NewModule("mUI.Config.Layouts.Profiles")
+local Profiles = mUI:NewModule("mUI.Config.Layouts.Profiles")
 
-function Profile:OnEnable()
-    local profiles = {}
-    local function getProfiles(info)
+-- Enable Layout
+Profiles:Enable()
+
+function Profiles:OnInitialize()
+    self.profiles = {}
+
+    -- Get Profiles Function
+    local function GetProfiles(info)
         local no_current = info.arg == "no_current"
         local current_profile = mUI.db:GetCurrentProfile()
         local profile_list = {}
-        for k, v in pairs(mUI.db:GetProfiles(profiles)) do
+        for k, v in pairs(mUI.db:GetProfiles(self.profiles)) do
             if no_current and v == current_profile then
                 -- skip
             else
@@ -16,13 +21,14 @@ function Profile:OnEnable()
         return profile_list
     end
 
-    local layout = {
+    -- Initialize Layout
+    self.layout = {
         type = "group",
         args = {
             header1 = {
                 name = function()
                     local currentProfile = mUI.db:GetCurrentProfile()
-                    return "Profiles (active Profile: |cff39FF14" .. currentProfile .. "|r)"
+                    return "Profiles (active Profile: |cff00ff00" .. currentProfile .. "|r)"
                 end,
                 type = "header",
                 order = 1
@@ -62,15 +68,15 @@ function Profile:OnEnable()
             },
             changeprofile = {
                 disabled = function()
-                    local profile_list = getProfiles({ arg = "no_current" })
+                    local profile_list = GetProfiles({ arg = "no_current" })
                     return not next(profile_list)
                 end,
                 name = "Change Profile",
                 desc = "Change your active Profile",
                 type = "select",
-                values = getProfiles,
+                values = GetProfiles,
                 set = function(_, value)
-                    mUI.db:SetProfile(profiles[value])
+                    mUI.db:SetProfile(self.profiles[value])
                 end,
                 arg = "no_current",
                 order = 6
@@ -83,15 +89,15 @@ function Profile:OnEnable()
             },
             copyprofile = {
                 disabled = function()
-                    local profile_list = getProfiles({ arg = "no_current" })
+                    local profile_list = GetProfiles({ arg = "no_current" })
                     return not next(profile_list)
                 end,
                 name = "Copy From",
                 desc = "Copy a Profile into your current Profile",
                 type = "select",
-                values = getProfiles,
+                values = GetProfiles,
                 set = function(_, value)
-                    mUI.db:CopyProfile(profiles[value])
+                    mUI.db:CopyProfile(self.profiles[value])
                 end,
                 arg = "no_current",
                 order = 8
@@ -104,15 +110,15 @@ function Profile:OnEnable()
             },
             deleteprofile = {
                 disabled = function()
-                    local profile_list = getProfiles({ arg = "no_current" })
+                    local profile_list = GetProfiles({ arg = "no_current" })
                     return not next(profile_list)
                 end,
                 name = "Delete a Profile",
                 desc = "Deletes a Profile from the Database",
                 type = "select",
-                values = getProfiles,
+                values = GetProfiles,
                 set = function(_, value)
-                    mUI.db:DeleteProfile(profiles[value])
+                    mUI.db:DeleteProfile(self.profiles[value])
                 end,
                 arg = "no_current",
                 confirm = true,
@@ -140,8 +146,10 @@ function Profile:OnEnable()
             }
         }
     }
+end
 
+function Profiles:OnEnable()
     function self:GetOptions()
-        return layout
+        return self.layout
     end
 end
