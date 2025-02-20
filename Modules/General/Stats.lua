@@ -66,10 +66,6 @@ function Stats:OnInitialize()
             frame:SetHeight(mUI.statsFrame.text:GetStringHeight())
         end
     end
-
-    mUI.statsFrame:SetScript("OnUpdate", function(frame, elapsed)
-        self:Update(frame, elapsed)
-    end)
 end
 
 function Stats:OnEnable()

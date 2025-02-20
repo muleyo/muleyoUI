@@ -344,6 +344,8 @@ function General:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.general.display.stats = val
 
+                    if not self.Module:IsEnabled() then return end
+
                     if val then
                         self.Stats:Enable()
                     else
@@ -371,6 +373,8 @@ function General:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.general.display.errormessages = val
 
+                    if not self.Module:IsEnabled() then return end
+
                     if val then
                         self.ErrorMessages:Enable()
                     else
@@ -386,6 +390,8 @@ function General:OnInitialize()
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.general.display.friendlist = val
+
+                    if not self.Module:IsEnabled() then return end
 
                     if val then
                         self.Friendlist:Enable()
