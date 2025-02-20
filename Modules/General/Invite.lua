@@ -5,7 +5,7 @@ function Invite:OnInitialize()
     local hideStatic
 
     self.invite = CreateFrame("Frame")
-    self.invite:HookScript("OnEvent", function(_, event, _, _, _, _, _, _, guid)
+    function self:Invite(_, event, _, _, _, _, _, _, guid)
         if event == 'PARTY_INVITE_REQUEST' then
             if not guid or guid == '' or IsInGroup() then return end
 
@@ -24,14 +24,18 @@ function Invite:OnInitialize()
             StaticPopup_Hide('PARTY_INVITE')
             hideStatic = false
         end
-    end)
+    end
 end
 
 function Invite:OnEnable()
     self.invite:RegisterEvent("PARTY_INVITE_REQUEST")
     self.invite:RegisterEvent("GROUP_ROSTER_UPDATE")
+    mUI:HookScript(self.invite, "OnEvent", function(_, event, _, _, _, _, _, _, guid)
+        self:Invite(_, event, _, _, _, _, _, _, guid)
+    end)
 end
 
 function Invite:OnDisable()
     self.invite:UnregisterAllEvents()
+    mUI:Unhook(self.invite, "OnEvent")
 end

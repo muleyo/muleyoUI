@@ -33,7 +33,7 @@ function General:OnInitialize()
                         return "|cFFFF0000Disabled|r"
                     end
                 end,
-                desc = "|cffffff00INFO:|r Requires Reload",
+                desc = "|cffffff00Info|r Requires Reload",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.general.enabled = val
@@ -117,7 +117,7 @@ function General:OnInitialize()
             },
             font = {
                 name = "Font",
-                desc = "Choose a Font you like\n\n|cffffff00INFO:|r Requires Reload.",
+                desc = "Choose a Font you like\n\n|cffffff00Info|r Requires Reload.",
                 type = "select",
                 values = {
                     ["Default"] = "Default",
@@ -125,10 +125,7 @@ function General:OnInitialize()
                 },
                 set = function(_, val)
                     mUI.db.profile.general.font = val
-
-                    if not self.Module:IsEnabled() then return end
-
-                    mUI:Reload()
+                    mUI:Reload("Changed Font")
                 end,
                 get = function() return mUI.db.profile.general.font end,
                 order = 5
@@ -359,7 +356,7 @@ function General:OnInitialize()
             movementspeed = {
                 name = "Speed",
                 desc =
-                "Display current movement speed on the screen\n\n|cffffff00INFO:|r 'Stats' must be enabled for this feature",
+                "Display current movement speed on the screen\n\n|cffffff00Info|r 'Stats' must be enabled for this feature",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.general.display.movementspeed = val

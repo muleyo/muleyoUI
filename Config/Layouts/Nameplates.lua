@@ -16,7 +16,7 @@ function Nameplates:OnInitialize()
                         return "|cFFFF0000Disabled|r"
                     end
                 end,
-                desc = "|cffffff00INFO:|r Requires Reload",
+                desc = "|cffffff00Info|r Requires Reload",
                 type = "toggle",
                 set = function(_, val) mUI.db.profile.nameplates.enabled = val end,
                 get = function() return mUI.db.profile.nameplates.enabled end,
@@ -167,7 +167,7 @@ function Nameplates:OnInitialize()
             colors = {
                 name = "NPC Colors",
                 desc =
-                "Enable/Disable custom colors.\n\n|cffffff00INFO:|r Colors for NPCs can be edited by clicking on the 'Change NPC Colors' Button",
+                "Enable/Disable custom colors.\n\n|cffffff00Info|r Colors for NPCs can be edited by clicking on the 'Change NPC Colors' Button",
                 type = "toggle",
                 set = function(_, val) mUI.db.profile.nameplates.colors = val end,
                 get = function() return end,

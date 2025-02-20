@@ -16,7 +16,7 @@ function Misc:OnInitialize()
                         return "|cFFFF0000Disabled|r"
                     end
                 end,
-                desc = "|cffffff00INFO:|r Requires Reload",
+                desc = "|cffffff00Info|r Requires Reload",
                 type = "toggle",
                 set = function(_, val) mUI.db.profile.misc.enabled = val end,
                 get = function() return mUI.db.profile.misc.enabled end,

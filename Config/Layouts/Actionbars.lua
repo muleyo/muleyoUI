@@ -4,6 +4,11 @@ local Actionbars = mUI:NewModule("mUI.Config.Layouts.Actionbars")
 Actionbars:Enable()
 
 function Actionbars:OnInitialize()
+    -- Get Modules
+    self.Module = mUI:GetModule("mUI.Modules.Actionbars")
+    self.Mouseover = mUI:GetModule("mUI.Modules.Actionbars.Mouseover")
+
+    -- Initialize Layout
     self.layout = {
         type = "group",
         args = {
@@ -15,7 +20,7 @@ function Actionbars:OnInitialize()
                         return "|cFFFF0000Disabled|r"
                     end
                 end,
-                desc = "|cffffff00INFO:|r Requires Reload",
+                desc = "|cffffff00Info|r Requires Reload",
                 type = "toggle",
                 set = function(_, val) mUI.db.profile.actionbars.enabled = val end,
                 get = function() return mUI.db.profile.actionbars.enabled end,
@@ -67,7 +72,14 @@ function Actionbars:OnInitialize()
                 name = "ActionBar 1",
                 desc = "Show Actionbar 1 on Mouseover",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.actionbars.mouseover.bar1 = val end,
+                set = function(_, val)
+                    mUI.db.profile.actionbars.mouseover.bar1 = val
+                    if val then
+                        self.Mouseover:Update("bar1", true)
+                    else
+                        self.Mouseover:Update("bar1", false)
+                    end
+                end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar1 end,
                 order = 8
             },
@@ -75,7 +87,15 @@ function Actionbars:OnInitialize()
                 name = "ActionBar 2",
                 desc = "Show Actionbar 2 on Mouseover",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.actionbars.mouseover.bar2 = val end,
+                set = function(_, val)
+                    mUI.db.profile.actionbars.mouseover.bar2 = val
+
+                    if val then
+                        self.Mouseover:Update("bar2", true)
+                    else
+                        self.Mouseover:Update("bar2", false)
+                    end
+                end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar2 end,
                 order = 9
             },
@@ -83,7 +103,15 @@ function Actionbars:OnInitialize()
                 name = "ActionBar 3",
                 desc = "Show Actionbar 3 on Mouseover",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.actionbars.mouseover.bar3 = val end,
+                set = function(_, val)
+                    mUI.db.profile.actionbars.mouseover.bar3 = val
+
+                    if val then
+                        self.Mouseover:Update("bar3", true)
+                    else
+                        self.Mouseover:Update("bar3", false)
+                    end
+                end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar3 end,
                 order = 10
             },
@@ -91,7 +119,15 @@ function Actionbars:OnInitialize()
                 name = "ActionBar 4",
                 desc = "Show Actionbar 4 on Mouseover",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.actionbars.mouseover.bar4 = val end,
+                set = function(_, val)
+                    mUI.db.profile.actionbars.mouseover.bar4 = val
+
+                    if val then
+                        self.Mouseover:Update("bar4", true)
+                    else
+                        self.Mouseover:Update("bar4", false)
+                    end
+                end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar4 end,
                 order = 11
             },
@@ -99,7 +135,15 @@ function Actionbars:OnInitialize()
                 name = "ActionBar 5",
                 desc = "Show Actionbar 5 on Mouseover",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.actionbars.mouseover.bar5 = val end,
+                set = function(_, val)
+                    mUI.db.profile.actionbars.mouseover.bar5 = val
+
+                    if val then
+                        self.Mouseover:Update("bar5", true)
+                    else
+                        self.Mouseover:Update("bar5", false)
+                    end
+                end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar5 end,
                 order = 12
             },
@@ -107,7 +151,15 @@ function Actionbars:OnInitialize()
                 name = "ActionBar 6",
                 desc = "Show Actionbar 6 on Mouseover",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.actionbars.mouseover.bar6 = val end,
+                set = function(_, val)
+                    mUI.db.profile.actionbars.mouseover.bar6 = val
+
+                    if val then
+                        self.Mouseover:Update("bar6", true)
+                    else
+                        self.Mouseover:Update("bar6", false)
+                    end
+                end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar6 end,
                 order = 13
             },

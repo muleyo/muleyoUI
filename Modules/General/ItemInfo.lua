@@ -1,6 +1,7 @@
 local ItemInfo = mUI:NewModule("mUI.Modules.General.ItemInfo")
 
 function ItemInfo:OnInitialize()
+    -- CharacterFrame / InspectFrame Equipment Enchants, Gems and ItemLevels
     -- Variables & Tables
     self.iteminfo = CreateFrame("Frame")
     self.buttons = {}
@@ -498,7 +499,6 @@ function ItemInfo:OnInitialize()
         self.levelThresholds[i] = self.LEGENDARY_ITEM_LEVEL - (self.STEP_ITEM_LEVEL * (i - 1))
     end
 
-
     function self:UpdateInspectIlvlDisplay(unit)
         local ilvl = C_PaperDollInfo.GetInspectItemLevel(unit)
         local color
@@ -626,14 +626,12 @@ function ItemInfo:OnInitialize()
         end
     end
 
-    -- fired when enchants are applied
     function self:UNIT_INVENTORY_CHANGED(unit)
         if (unit == "player") then
             self:SOCKET_INFO_UPDATE()
         end
     end
 
-    -- There is no escaping the cache!!!
     function self:PLAYER_ENTERING_WORLD(isInitialLogin, isReloadingUi)
         for _, gemID in ipairs(self.gemsWeCareAbout) do
             C_Item.RequestLoadItemDataByID(gemID)
@@ -651,12 +649,83 @@ function ItemInfo:OnInitialize()
         CharacterStatsPane.ItemLevelFrame.Value:SetText(itemLevelText)
     end)
 
-    self.iteminfo:SetScript("OnEvent", function(_, event, ...)
-        self[event](self, ...)
-    end)
+    -- Bag/Bank/Merchant Equipment ItemLevel
+    -- Variables
+    self.levelstrings = {}
+    function self:MerchantItemlevel()
+        local numItems = GetMerchantNumItems()
+
+        for i = 1, MERCHANT_ITEMS_PER_PAGE do
+            local index = (MerchantFrame.page - 1) * MERCHANT_ITEMS_PER_PAGE + i
+            if index > numItems then return end
+
+            local button = _G["MerchantItem" .. i .. "ItemButton"]
+            if button and button:IsShown() then
+                if not button.text then
+                    button.text = button:CreateFontString(nil, "OVERLAY", "SystemFont_Outline")
+                    button.text:SetPoint("CENTER", button, "BOTTOM", 0, 8)
+                else
+                    button.text:SetText("")
+                end
+
+                local itemLink = GetMerchantItemLink(index)
+                if itemLink then
+                    local _, _, quality, itemlevel, _, _, _, _, _, _, _, itemClassID = C_Item.GetItemInfo(itemLink)
+                    if (itemlevel and itemlevel > 1) and (quality and quality > 1) and
+                        (itemClassID == LE_ITEM_CLASS_WEAPON or itemClassID == LE_ITEM_CLASS_ARMOR) then
+                        local _, _, _, color = C_Item.GetItemQualityColor(quality)
+                        button.text:SetFormattedText('|c%s%s|r', color, itemlevel or '?')
+                    end
+                end
+            end
+        end
+    end
+
+    function self:CreateItemLevelString(button)
+        button.levelString = button:CreateFontString(nil, "OVERLAY")
+        button.levelString:SetFont(STANDARD_TEXT_FONT, 13, "OUTLINE")
+        button.levelString:SetPoint("CENTER", button, "BOTTOM", 0, 8)
+
+        self.levelstrings[button.levelString] = true
+    end
+
+    function self:CheckContainerItems(item)
+        local _, _, _, equipLoc, _, itemClass, itemSubClass = C_Item.GetItemInfoInstant(item:GetItemID())
+        return (itemClass == Enum.ItemClass.Weapon or itemClass == Enum.ItemClass.Armor or (itemClass == Enum.ItemClass.Gem and itemSubClass == Enum.ItemGemSubclass.Artifactrelic))
+    end
+
+    function self:UpdateBagButton(button, item)
+        if item:IsItemEmpty() then return end
+        item:ContinueOnItemLoad(function()
+            if not self:CheckContainerItems(item) then return end
+            local quality = item:GetItemQuality()
+            if not item:GetCurrentItemLevel() then
+                button.levelString:Hide()
+            else
+                self:CreateItemLevelString(button)
+                local _, _, _, hex = C_Item.GetItemQualityColor(quality)
+                button.levelString:SetFormattedText('|c%s%s|r', hex, item:GetCurrentItemLevel() or '?')
+                button.levelString:Show()
+            end
+        end)
+    end
+
+    function self:UpdateContainerButton(button, bag, slot)
+        if button.levelString then button.levelString:Hide() end
+
+        local item = Item:CreateFromBagAndSlot(bag, slot or button:GetID())
+        self:UpdateBagButton(button, item)
+    end
+
+    function self:Update(frame)
+        for _, itemButton in frame:EnumerateValidItems() do
+            self:UpdateContainerButton(itemButton, itemButton:GetBagID(), itemButton:GetID())
+        end
+    end
 end
 
 function ItemInfo:OnEnable()
+    -- CharacterFrame / InspectFrame Equipment Enchants, Gems and ItemLevels
     C_AddOns.LoadAddOn("Blizzard_InspectUI")
 
     mUI:SecureHook("PaperDollItemSlotButton_Update", function(button)
@@ -683,15 +752,30 @@ function ItemInfo:OnEnable()
     self.iteminfo:RegisterEvent("SOCKET_INFO_UPDATE")
     self.iteminfo:RegisterEvent("UNIT_INVENTORY_CHANGED")
     self.iteminfo:RegisterEvent("PLAYER_ENTERING_WORLD")
+    mUI:RawHookScript(self.iteminfo, "OnEvent", function(_, event, ...)
+        self[event](self, ...)
+    end)
 
     for button in pairs(self.buttons) do
         if not button:IsVisible() then
             button:Show()
         end
     end
+
+    -- Bag/Bank/Merchant Equipment ItemLevel
+    mUI:SecureHook(ContainerFrameCombinedBags, "UpdateItems", function(frame)
+        self:Update(frame)
+    end)
+
+    for _, container in ipairs(ContainerFrameContainer.ContainerFrames) do
+        mUI:SecureHook(container, "UpdateItems", function(frame)
+            self:Update(frame)
+        end)
+    end
 end
 
 function ItemInfo:OnDisable()
+    -- CharacterFrame / InspectFrame Equipment Enchants, Gems and ItemLevels
     mUI:Unhook("PaperDollItemSlotButton_Update", function(button)
         self:updateButton(button, "player", true)
     end)
@@ -706,9 +790,20 @@ function ItemInfo:OnDisable()
         self:UpdateInspectIlvlDisplay(InspectFrame.unit)
     end)
 
+    mUI:Unhook(self.iteminfo, "OnEvent")
     self.iteminfo:UnregisterAllEvents()
 
     for button in pairs(self.buttons) do
         button:Hide()
+    end
+
+    -- Bag/Bank/Merchant Equipment ItemLevel
+    mUI:Unhook(ContainerFrameCombinedBags, "UpdateItems")
+    for _, container in ipairs(ContainerFrameContainer.ContainerFrames) do
+        mUI:Unhook(container, "UpdateItems")
+    end
+
+    for levelString in pairs(self.levelstrings) do
+        levelString:Hide()
     end
 end
