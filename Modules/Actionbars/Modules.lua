@@ -22,19 +22,7 @@ function Modules:OnEnable()
     if self.db.macro then
         self.Macro:Enable()
     end
-    if self.db.mouseover.bar1
-        or self.db.mouseover.bar2
-        or self.db.mouseover.bar3
-        or self.db.mouseover.bar4
-        or self.db.mouseover.bar5
-        or self.db.mouseover.bar6
-        or self.db.mouseover.bar7
-        or self.db.mouseover.bar8
-        or self.db.mouseover.petbar
-        or self.db.mouseover.stancebar
-        or self.db.mouseover.micromenu ~= "Default"
-        or self.db.mouseover.bagbar ~= "Default"
-    then
+    if self.db.mouseover.enabled then
         self.Mouseover:Enable()
     end
     if self.db.range then

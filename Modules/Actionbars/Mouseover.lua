@@ -40,7 +40,9 @@ function Mouseover:OnInitialize()
         bar7 = MultiBar6,
         bar8 = MultiBar7,
         petbar = PetActionBar,
-        stancebar = StanceBar
+        stancebar = StanceBar,
+        micromenu = MicroMenu,
+        bagbuttons = BagsBar
     }
 
     self.ACTION_BUTTONS = {
@@ -61,7 +63,8 @@ function Mouseover:OnInitialize()
 
     function self:GCD(button, showGCD)
         for i = 1, 12 do
-            if _G[button .. i .. "Cooldown"] then
+            local b = _G[button .. i .. "Cooldown"]
+            if b then
                 if showGCD then
                     _G[button .. i .. "Cooldown"]:SetDrawBling(true)
                 else
@@ -156,7 +159,7 @@ function Mouseover:OnInitialize()
     function self:SetAlpha(bar, alpha)
         if bar == "bar1" then
             for i = 1, 12 do
-                _G["ActionButton" .. i]:SetAlpha(alpha)
+                _G[self.ACTION_BUTTONS[bar] .. i]:SetAlpha(alpha)
             end
         else
             self.ACTION_BARS[bar]:SetAlpha(alpha)
@@ -164,64 +167,49 @@ function Mouseover:OnInitialize()
     end
 
     function self:Mouseover(bar)
-        if bar == "petbar" then
+        if bar == "micromenu" then
+            for i = 1, #self.MICRO_BUTTONS do
+                if not (mUI:IsHooked(_G[self.MICRO_BUTTONS[i]], "OnEnter") and mUI:IsHooked(_G[self.MICRO_BUTTONS[i]], "OnLeave")) then
+                    mUI:SecureHookScript(_G[self.MICRO_BUTTONS[i]], "OnEnter", function()
+                        mUI:CancelTimer(self.func[bar])
+                        self:SetAlpha(bar, 1)
+                    end)
+                    mUI:SecureHookScript(_G[self.MICRO_BUTTONS[i]], "OnLeave", function()
+                        self.func[bar] = mUI:ScheduleTimer(function()
+                            self:SetAlpha(bar, 0)
+                        end, 0.1)
+                    end)
+                    self.hookedBars[self.MICRO_BUTTONS[i]] = true
+                end
+            end
+        elseif bar == "bagbuttons" then
+            for i = 1, #self.BAG_BUTTONS do
+                if not (mUI:IsHooked(_G[self.BAG_BUTTONS[i]], "OnEnter") and mUI:IsHooked(_G[self.BAG_BUTTONS[i]], "OnLeave")) then
+                    mUI:SecureHookScript(_G[self.BAG_BUTTONS[i]], "OnEnter", function()
+                        mUI:CancelTimer(self.func[bar])
+                        self:SetAlpha(bar, 1)
+                    end)
+                    mUI:SecureHookScript(_G[self.BAG_BUTTONS[i]], "OnLeave", function()
+                        self.func[bar] = mUI:ScheduleTimer(function()
+                            self:SetAlpha(bar, 0)
+                        end, 0.1)
+                    end)
+                    self.hookedBars[self.BAG_BUTTONS[i]] = true
+                end
+            end
+        elseif bar == "petbar" or bar == "stancebar" then
             for i = 1, 10 do
-                if not (mUI:IsHooked(_G["PetActionButton" .. i], "OnEnter") and mUI:IsHooked(_G["PetActionButton" .. i], "OnLeave")) then
-                    mUI:SecureHookScript(_G["PetActionButton" .. i], "OnEnter", function()
+                if not (mUI:IsHooked(_G[self.ACTION_BUTTONS[bar] .. i], "OnEnter") and mUI:IsHooked(_G[self.ACTION_BUTTONS[bar] .. i], "OnLeave")) then
+                    mUI:SecureHookScript(_G[self.ACTION_BUTTONS[bar] .. i], "OnEnter", function()
                         mUI:CancelTimer(self.func[bar])
                         self:SetAlpha(bar, 1)
                     end)
-                    mUI:SecureHookScript(_G["PetActionButton" .. i], "OnLeave", function()
+                    mUI:SecureHookScript(_G[self.ACTION_BUTTONS[bar] .. i], "OnLeave", function()
                         self.func[bar] = mUI:ScheduleTimer(function()
                             self:SetAlpha(bar, 0)
                         end, 0.1)
                     end)
-                    self.hookedBars[bar] = true
-                end
-            end
-        elseif bar == "stancebar" then
-            for i = 1, 10 do
-                if not (mUI:IsHooked(_G["StanceButton" .. i], "OnEnter") and mUI:IsHooked(_G["StanceButton" .. i], "OnLeave")) then
-                    mUI:SecureHookScript(_G["StanceButton" .. i], "OnEnter", function()
-                        mUI:CancelTimer(self.func[bar])
-                        self:SetAlpha(bar, 1)
-                    end)
-                    mUI:SecureHookScript(_G["StanceButton" .. i], "OnLeave", function()
-                        self.func[bar] = mUI:ScheduleTimer(function()
-                            self:SetAlpha(bar, 0)
-                        end, 0.1)
-                    end)
-                    self.hookedBars[bar] = true
-                end
-            end
-        elseif bar == "micromenu" then
-            for i = 1, #MICRO_BUTTONS do
-                if not (mUI:IsHooked(_G[MICRO_BUTTONS[i]], "OnEnter") and mUI:IsHooked(_G[MICRO_BUTTONS[i]], "OnLeave")) then
-                    mUI:SecureHookScript(_G[MICRO_BUTTONS[i]], "OnEnter", function()
-                        mUI:CancelTimer(self.func[bar])
-                        self:SetAlpha(bar, 1)
-                    end)
-                    mUI:SecureHookScript(_G[MICRO_BUTTONS[i]], "OnLeave", function()
-                        self.func[bar] = mUI:ScheduleTimer(function()
-                            self:SetAlpha(bar, 0)
-                        end, 0.1)
-                    end)
-                    self.hookedBars[bar] = true
-                end
-            end
-        elseif bar == "bagbar" then
-            for i = 1, #BAG_BUTTONS do
-                if not (mUI:IsHooked(_G[BAG_BUTTONS[i]], "OnEnter") and mUI:IsHooked(_G[BAG_BUTTONS[i]], "OnLeave")) then
-                    mUI:SecureHookScript(_G[BAG_BUTTONS[i]], "OnEnter", function()
-                        mUI:CancelTimer(self.func[bar])
-                        self:SetAlpha(bar, 1)
-                    end)
-                    mUI:SecureHookScript(_G[BAG_BUTTONS[i]], "OnLeave", function()
-                        self.func[bar] = mUI:ScheduleTimer(function()
-                            self:SetAlpha(bar, 0)
-                        end, 0.1)
-                    end)
-                    self.hookedBars[bar] = true
+                    self.hookedBars[self.ACTION_BUTTONS[bar] .. i] = true
                 end
             end
         else
@@ -236,156 +224,72 @@ function Mouseover:OnInitialize()
                             self:SetAlpha(bar, 0)
                         end, 0.1)
                     end)
-                    self.hookedBars[bar] = true
+                    self.hookedBars[self.ACTION_BUTTONS[bar] .. i] = true
                 end
             end
         end
     end
 
-    function self:Update(bar, enabled)
-        --[[if enabled then
+    function self:UnhookBars(bar)
+        if bar == "micromenu" then
+            for i = 1, #MICRO_BUTTONS do
+                if mUI:IsHooked(_G[self.MICRO_BUTTONS[i]], "OnEnter") and mUI:IsHooked(_G[self.MICRO_BUTTONS[i]], "OnLeave") then
+                    mUI:Unhook(_G[self.MICRO_BUTTONS[i]], "OnEnter")
+                    mUI:Unhook(_G[self.MICRO_BUTTONS[i]], "OnLeave")
+                end
+            end
+        elseif bar == "bagbuttons" then
+            for i = 1, #self.BAG_BUTTONS do
+                if mUI:IsHooked(_G[self.BAG_BUTTONS[i]], "OnEnter") and mUI:IsHooked(_G[self.BAG_BUTTONS[i]], "OnLeave") then
+                    mUI:Unhook(_G[self.BAG_BUTTONS[i]], "OnEnter")
+                    mUI:Unhook(_G[self.BAG_BUTTONS[i]], "OnLeave")
+                end
+            end
+        elseif bar == "petbar" or bar == "stancebar" then
+            for i = 1, 10 do
+                if mUI:IsHooked(_G[self.ACTION_BUTTONS[bar] .. i], "OnEnter") and mUI:IsHooked(_G[self.ACTION_BUTTONS[bar] .. i], "OnLeave") then
+                    mUI:Unhook(_G[self.ACTION_BUTTONS[bar] .. i], "OnEnter")
+                    mUI:Unhook(_G[self.ACTION_BUTTONS[bar] .. i], "OnLeave")
+                end
+            end
+        else
+            for i = 1, 12 do
+                if mUI:IsHooked(_G[self.ACTION_BUTTONS[bar] .. i], "OnEnter") and mUI:IsHooked(_G[self.ACTION_BUTTONS[bar] .. i], "OnLeave") then
+                    mUI:Unhook(_G[self.ACTION_BUTTONS[bar] .. i], "OnEnter")
+                    mUI:Unhook(_G[self.ACTION_BUTTONS[bar] .. i], "OnLeave")
+                end
+            end
+        end
+    end
+
+    function self:Update(bar, state)
+        if (not state) or state == "Default" then
+            self:UnhookBars(bar)
+            self:SetAlpha(bar, 1)
+
+            if bar == "micromenu" then
+                MicroMenu:Show()
+            elseif bar == "bagbuttons" then
+                BagsBar:Show()
+            end
+        elseif state == "Hidden" then
+            self:UnhookBars(bar)
+
+            if bar == "micromenu" then
+                MicroMenu:Hide()
+            elseif bar == "bagbuttons" then
+                BagsBar:Hide()
+            end
+        else
             self:Mouseover(bar)
             self:SetAlpha(bar, 0)
-        else
-            self:SetAlpha(bar, 1)
-        end]]
-        if self.db.bar1 then
-            self:Mouseover("bar1")
-            self:SetAlpha("bar1", 0)
-        elseif not self.db.bar1 then
-            for i = 1, 12 do
-                if mUI:IsHooked(_G["ActionButton" .. i], "OnEnter") and mUI:IsHooked(_G["ActionButton" .. i], "OnLeave") then
-                    mUI:Unhook(_G["ActionButton" .. i], "OnEnter")
-                    mUI:Unhook(_G["ActionButton" .. i], "OnLeave")
-                end
+
+            if bar == "micromenu" then
+                MicroMenu:Show()
+            elseif bar == "bagbuttons" then
+                BagsBar:Show()
             end
-            self:SetAlpha("bar1", 1)
         end
-        if self.db.bar2 then
-            self:onMouseover("bar2")
-            self:SetAlpha("bar2", 0)
-        elseif not self.db.bar2 then
-            for i = 1, 12 do
-                if mUI:IsHooked(_G["MultiBarBottomLeftButton" .. i], "OnEnter") and mUI:IsHooked(_G["MultiBarBottomLeftButton" .. i], "OnLeave") then
-                    mUI:Unhook(_G["MultiBarBottomLeftButton" .. i], "OnEnter")
-                    mUI:Unhook(_G["MultiBarBottomLeftButton" .. i], "OnLeave")
-                end
-            end
-            self:SetAlpha("bar2", 1)
-        end
-        if self.db.bar3 then
-            self:onMouseover("bar3")
-            self:SetAlpha("bar3", 0)
-        elseif not self.db.bar3 then
-            for i = 1, 12 do
-                if mUI:IsHooked(_G["MultiBarBottomRightButton" .. i], "OnEnter") and mUI:IsHooked(_G["MultiBarBottomRightButton" .. i], "OnLeave") then
-                    mUI:Unhook(_G["MultiBarBottomRightButton" .. i], "OnEnter")
-                    mUI:Unhook(_G["MultiBarBottomRightButton" .. i], "OnLeave")
-                end
-            end
-            self:SetAlpha("bar3", 1)
-        end
-        if self.db.bar4 then
-            self:onMouseover("bar4")
-            self:SetAlpha("bar4", 0)
-        elseif not self.db.bar4 then
-            for i = 1, 12 do
-                if mUI:IsHooked(_G["MultiBarRightButton" .. i], "OnEnter") and mUI:IsHooked(_G["MultiBarRightButton" .. i], "OnLeave") then
-                    mUI:Unhook(_G["MultiBarRightButton" .. i], "OnEnter")
-                    mUI:Unhook(_G["MultiBarRightButton" .. i], "OnLeave")
-                end
-            end
-            self:SetAlpha("bar4", 1)
-        end
-        if self.db.bar5 then
-            self:onMouseover("bar5")
-            self:SetAlpha("bar5", 0)
-        elseif not self.db.bar5 then
-            for i = 1, 12 do
-                if mUI:IsHooked(_G["MultiBarLeftButton" .. i], "OnEnter") and mUI:IsHooked(_G["MultiBarLeftButton" .. i], "OnLeave") then
-                    mUI:Unhook(_G["MultiBarLeftButton" .. i], "OnEnter")
-                    mUI:Unhook(_G["MultiBarLeftButton" .. i], "OnLeave")
-                end
-            end
-            self:SetAlpha("bar5", 1)
-        end
-        if self.db.bar6 then
-            self:onMouseover("bar6")
-            self:SetAlpha("bar6", 0)
-        elseif not self.db.bar6 then
-            for i = 1, 12 do
-                if mUI:IsHooked(_G["MultiBar5Button" .. i], "OnEnter") and mUI:IsHooked(_G["MultiBar5Button" .. i], "OnLeave") then
-                    mUI:Unhook(_G["MultiBar5Button" .. i], "OnEnter")
-                    mUI:Unhook(_G["MultiBar5Button" .. i], "OnLeave")
-                end
-            end
-            self:SetAlpha("bar6", 1)
-        end
-        if self.db.bar7 then
-            self:onMouseover("bar7")
-            self:SetAlpha("bar7", 0)
-        elseif not self.db.bar7 then
-            for i = 1, 12 do
-                if mUI:IsHooked(_G["MultiBar6Button" .. i], "OnEnter") and mUI:IsHooked(_G["MultiBar6Button" .. i], "OnLeave") then
-                    mUI:Unhook(_G["MultiBar6Button" .. i], "OnEnter")
-                    mUI:Unhook(_G["MultiBar6Button" .. i], "OnLeave")
-                end
-            end
-            self:SetAlpha("bar7", 1)
-        end
-        if self.db.bar8 then
-            self:onMouseover("bar8")
-            self:SetAlpha("bar8", 0)
-        elseif not self.db.bar8 then
-            for i = 1, 12 do
-                if mUI:IsHooked(_G["MultiBar7Button" .. i], "OnEnter") and mUI:IsHooked(_G["MultiBar7Button" .. i], "OnLeave") then
-                    mUI:Unhook(_G["MultiBar7Button" .. i], "OnEnter")
-                    mUI:Unhook(_G["MultiBar7Button" .. i], "OnLeave")
-                end
-            end
-            self:SetAlpha("bar8", 1)
-        end
-        if self.db.petbar then
-            self:onMouseover("petbar")
-            self:SetAlpha("petbar", 0)
-        elseif not self.db.petbar then
-            for i = 1, 10 do
-                if mUI:IsHooked(_G["PetActionButton" .. i], "OnEnter") and mUI:IsHooked(_G["PetActionButton" .. i], "OnLeave") then
-                    mUI:Unhook(_G["PetActionButton" .. i], "OnEnter")
-                    mUI:Unhook(_G["PetActionButton" .. i], "OnLeave")
-                end
-            end
-            self:SetAlpha("petbar", 1)
-        end
-        if self.db.stancebar then
-            self:onMouseover("stancebar")
-            self:SetAlpha("stancebar", 0)
-        elseif not self.db.stancebar then
-            for i = 1, 10 do
-                if mUI:IsHooked(_G["StanceButton" .. i], "OnEnter") and mUI:IsHooked(_G["StanceButton" .. i], "OnLeave") then
-                    mUI:Unhook(_G["StanceButton" .. i], "OnEnter")
-                    mUI:Unhook(_G["StanceButton" .. i], "OnLeave")
-                end
-            end
-            self:SetAlpha("stancebar", 1)
-        end
-        --[[
-        if db.micromenu == "mouse_over" then
-            self:onMouseover("micromenu")
-            self:SetAlpha("micromenu", 0)
-        elseif db.micromenu == "show" then
-            self:SetAlpha("micromenu", 1)
-        elseif db.micromenu == "hide" then
-            MicroMenu:Hide()
-        end
-        if db.bagbar == "mouse_over" then
-            self:onMouseover("bagbar")
-            self:SetAlpha("bagbar", 0)
-        elseif db.bagbar == "show" then
-            self:SetAlpha("bagbar", 1)
-        elseif db.bagbar == "hide" then
-            BagsBar:Hide()
-        end]]
     end
 
     function self:ShowGrid()
@@ -394,37 +298,63 @@ function Mouseover:OnInitialize()
             mUI:Unhook(bar, "OnEnter")
             mUI:Unhook(bar, "OnLeave")
         end
-        for i = 1, 10 do
+        for i = 1, 8 do
             self:SetAlpha("bar" .. i, 1)
         end
+
+        self:SetAlpha("petbar", 1)
+        self:SetAlpha("stancebar", 1)
+        self:SetAlpha("micromenu", 1)
+        self:SetAlpha("bagbuttons", 1)
     end
 
     function self:HideGrid()
         if not KeybindFrames_InQuickKeybindMode() then
-            self:Update()
+            for bar, state in pairs(self.bars) do
+                self:Update(bar, state)
+            end
         end
     end
 end
 
 function Mouseover:OnEnable()
-    self:Update()
+    self.bars = {
+        bar1 = mUI.db.profile.actionbars.mouseover.bar1,
+        bar2 = mUI.db.profile.actionbars.mouseover.bar2,
+        bar3 = mUI.db.profile.actionbars.mouseover.bar3,
+        bar4 = mUI.db.profile.actionbars.mouseover.bar4,
+        bar5 = mUI.db.profile.actionbars.mouseover.bar5,
+        bar6 = mUI.db.profile.actionbars.mouseover.bar6,
+        bar7 = mUI.db.profile.actionbars.mouseover.bar7,
+        bar8 = mUI.db.profile.actionbars.mouseover.bar8,
+        petbar = mUI.db.profile.actionbars.mouseover.petbar,
+        stancebar = mUI.db.profile.actionbars.mouseover.stancebar,
+        micromenu = mUI.db.profile.actionbars.mouseover.micromenu,
+        bagbuttons = mUI.db.profile.actionbars.mouseover.bagbuttons
+    }
 
-    self.mouseover:RegisterEvent("ACTIONBAR_SHOWGRID", self:ShowGrid())
-    self.mouseover:RegisterEvent("ACTIONBAR_HIDEGRID", self:ShowGrid())
-    mUI:HookScript(self.mouseover, "OnEvent", function()
+    for bar, state in pairs(self.bars) do
+        self:Update(bar, state)
+    end
+
+    self.mouseover:RegisterEvent("SPELL_UPDATE_COOLDOWN")
+    self.mouseover:RegisterEvent("ACTIONBAR_SHOWGRID")
+    self.mouseover:RegisterEvent("ACTIONBAR_HIDEGRID")
+    mUI:HookScript(self.mouseover, "OnEvent", function(_, event)
         if event == "ACTIONBAR_SHOWGRID" then
             self:ShowGrid()
         elseif event == "ACTIONBAR_HIDEGRID" then
             self:HideGrid()
+        elseif event == "SPELL_UPDATE_COOLDOWN" then
+            self:GetAlpha()
         end
     end)
 end
 
 function Mouseover:OnDisable()
     -- Unhook all bars
-    for bar in pairs(self.hookedBars) do
-        mUI:Unhook(bar, "OnEnter")
-        mUI:Unhook(bar, "OnLeave")
+    for bar in pairs(self.bars) do
+        self:Update(bar, false)
     end
     mUI:Unhook(self.mouseover, "OnEvent")
     self.mouseover:UnregisterAllEvents()

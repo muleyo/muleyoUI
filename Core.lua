@@ -13,6 +13,7 @@ function Core:OnEnable()
     -- Get Modules
     self.modules = {}
     self.modules.general = mUI:GetModule("mUI.Modules.General")
+    self.modules.actionbars = mUI:GetModule("mUI.Modules.Actionbars")
 
     -- Get Layouts
     self.layouts = {}
@@ -31,6 +32,10 @@ function Core:OnEnable()
     -- Enable Modules
     if self.db.general.enabled then
         self.modules.general:Enable()
+    end
+
+    if self.db.actionbars.enabled then
+        self.modules.actionbars:Enable()
     end
 
     -- Register Options

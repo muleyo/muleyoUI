@@ -68,20 +68,45 @@ function Actionbars:OnInitialize()
                 type = "header",
                 order = 7
             },
+            enablemouseover = {
+                name = function()
+                    if mUI.db.profile.actionbars.mouseover.enabled then
+                        return "|cFF00FF00Mouseover Enabled|r"
+                    else
+                        return "|cFFFF0000Mouseover Disabled|r"
+                    end
+                end,
+                desc = "Enable/Disable Mouseover Module",
+                type = "toggle",
+                width = "full",
+                set = function(_, val)
+                    mUI.db.profile.actionbars.mouseover.enabled = val
+
+                    if val then
+                        self.Mouseover:Enable()
+                    else
+                        self.Mouseover:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.actionbars.mouseover.enabled end,
+                order = 8
+            },
             bar1 = {
                 name = "ActionBar 1",
                 desc = "Show Actionbar 1 on Mouseover",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar1 = val
-                    if val then
-                        self.Mouseover:Update("bar1", true)
-                    else
-                        self.Mouseover:Update("bar1", false)
+                    if mUI.db.profile.actionbars.mouseover.enabled then
+                        if val then
+                            self.Mouseover:Update("bar1", true)
+                        else
+                            self.Mouseover:Update("bar1", false)
+                        end
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar1 end,
-                order = 8
+                order = 9
             },
             bar2 = {
                 name = "ActionBar 2",
@@ -90,14 +115,16 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar2 = val
 
-                    if val then
-                        self.Mouseover:Update("bar2", true)
-                    else
-                        self.Mouseover:Update("bar2", false)
+                    if mUI.db.profile.actionbars.mouseover.enabled then
+                        if val then
+                            self.Mouseover:Update("bar2", true)
+                        else
+                            self.Mouseover:Update("bar2", false)
+                        end
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar2 end,
-                order = 9
+                order = 10
             },
             bar3 = {
                 name = "ActionBar 3",
@@ -106,14 +133,16 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar3 = val
 
-                    if val then
-                        self.Mouseover:Update("bar3", true)
-                    else
-                        self.Mouseover:Update("bar3", false)
+                    if mUI.db.profile.actionbars.mouseover.enabled then
+                        if val then
+                            self.Mouseover:Update("bar3", true)
+                        else
+                            self.Mouseover:Update("bar3", false)
+                        end
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar3 end,
-                order = 10
+                order = 11
             },
             bar4 = {
                 name = "ActionBar 4",
@@ -122,14 +151,16 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar4 = val
 
-                    if val then
-                        self.Mouseover:Update("bar4", true)
-                    else
-                        self.Mouseover:Update("bar4", false)
+                    if mUI.db.profile.actionbars.mouseover.enabled then
+                        if val then
+                            self.Mouseover:Update("bar4", true)
+                        else
+                            self.Mouseover:Update("bar4", false)
+                        end
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar4 end,
-                order = 11
+                order = 12
             },
             bar5 = {
                 name = "ActionBar 5",
@@ -138,14 +169,16 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar5 = val
 
-                    if val then
-                        self.Mouseover:Update("bar5", true)
-                    else
-                        self.Mouseover:Update("bar5", false)
+                    if mUI.db.profile.actionbars.mouseover.enabled then
+                        if val then
+                            self.Mouseover:Update("bar5", true)
+                        else
+                            self.Mouseover:Update("bar5", false)
+                        end
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar5 end,
-                order = 12
+                order = 13
             },
             bar6 = {
                 name = "ActionBar 6",
@@ -154,46 +187,88 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar6 = val
 
-                    if val then
-                        self.Mouseover:Update("bar6", true)
-                    else
-                        self.Mouseover:Update("bar6", false)
+                    if mUI.db.profile.actionbars.mouseover.enabled then
+                        if val then
+                            self.Mouseover:Update("bar6", true)
+                        else
+                            self.Mouseover:Update("bar6", false)
+                        end
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar6 end,
-                order = 13
+                order = 14
             },
             bar7 = {
                 name = "ActionBar 7",
                 desc = "Show Actionbar 7 on Mouseover",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.actionbars.mouseover.bar7 = val end,
+                set = function(_, val)
+                    mUI.db.profile.actionbars.mouseover.bar7 = val
+
+                    if mUI.db.profile.actionbars.mouseover.enabled then
+                        if val then
+                            self.Mouseover:Update("bar7", true)
+                        else
+                            self.Mouseover:Update("bar7", false)
+                        end
+                    end
+                end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar7 end,
-                order = 14
+                order = 15
             },
             bar8 = {
                 name = "ActionBar 8",
                 desc = "Show Actionbar 8 on Mouseover",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.actionbars.mouseover.bar8 = val end,
+                set = function(_, val)
+                    mUI.db.profile.actionbars.mouseover.bar8 = val
+
+                    if mUI.db.profile.actionbars.mouseover.enabled then
+                        if val then
+                            self.Mouseover:Update("bar8", true)
+                        else
+                            self.Mouseover:Update("bar8", false)
+                        end
+                    end
+                end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar8 end,
-                order = 15
+                order = 16
             },
             petbar = {
                 name = "Pet Actionbar",
                 desc = "Show Pet Actionbar on Mouseover",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.actionbars.mouseover.petbar = val end,
+                set = function(_, val)
+                    mUI.db.profile.actionbars.mouseover.petbar = val
+
+                    if mUI.db.profile.actionbars.mouseover.enabled then
+                        if val then
+                            self.Mouseover:Update("petbar", true)
+                        else
+                            self.Mouseover:Update("petbar", false)
+                        end
+                    end
+                end,
                 get = function() return mUI.db.profile.actionbars.mouseover.petbar end,
-                order = 16
+                order = 17
             },
             stancebar = {
                 name = "Stance Actionbar",
                 desc = "Show Stance Actionbar on Mouseover",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.actionbars.mouseover.stancebar = val end,
+                set = function(_, val)
+                    mUI.db.profile.actionbars.mouseover.stancebar = val
+
+                    if mUI.db.profile.actionbars.mouseover.enabled then
+                        if val then
+                            self.Mouseover:Update("stancebar", true)
+                        else
+                            self.Mouseover:Update("stancebar", false)
+                        end
+                    end
+                end,
                 get = function() return mUI.db.profile.actionbars.mouseover.stancebar end,
-                order = 17
+                order = 18
             },
             micromenu = {
                 name = "Micro Menu",
@@ -211,9 +286,21 @@ function Actionbars:OnInitialize()
                     "Hidden"
                 },
                 --width = 0.5,
-                set = function(_, val) mUI.db.profile.actionbars.mouseover.micromenu = val end,
+                set = function(_, val)
+                    mUI.db.profile.actionbars.mouseover.micromenu = val
+
+                    if mUI.db.profile.actionbars.mouseover.enabled then
+                        if val == "Default" then
+                            self.Mouseover:Update("micromenu", "Default")
+                        elseif val == "Hidden" then
+                            self.Mouseover:Update("micromenu", "Hidden")
+                        else
+                            self.Mouseover:Update("micromenu", "Mouseover")
+                        end
+                    end
+                end,
                 get = function() return mUI.db.profile.actionbars.mouseover.micromenu end,
-                order = 18
+                order = 19
             },
             bagbuttons = {
                 name = "Bag Buttons",
@@ -231,9 +318,21 @@ function Actionbars:OnInitialize()
                     "Hidden"
                 },
                 --width = 0.5,
-                set = function(_, val) mUI.db.profile.actionbars.mouseover.bagbuttons = val end,
+                set = function(_, val)
+                    mUI.db.profile.actionbars.mouseover.bagbuttons = val
+
+                    if mUI.db.profile.actionbars.mouseover.enabled then
+                        if val == "Default" then
+                            self.Mouseover:Update("bagbuttons", "Default")
+                        elseif val == "Hidden" then
+                            self.Mouseover:Update("bagbuttons", "Hidden")
+                        else
+                            self.Mouseover:Update("bagbuttons", "Mouseover")
+                        end
+                    end
+                end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bagbuttons end,
-                order = 19
+                order = 20
             }
         }
     }

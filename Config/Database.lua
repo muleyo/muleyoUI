@@ -38,6 +38,7 @@ local defaults = {
             flash = true,
             range = true,
             mouseover = {
+                enabled = false,
                 bar1 = false,
                 bar2 = false,
                 bar3 = false,
