@@ -18,6 +18,8 @@ function General:OnInitialize()
     self.TalkingHead = mUI:GetModule("mUI.Modules.General.TalkingHead")
     self.ItemInfo = mUI:GetModule("mUI.Modules.General.ItemInfo")
     self.Stats = mUI:GetModule("mUI.Modules.General.Stats")
+    self.ErrorMessages = mUI:GetModule("mUI.Modules.General.ErrorMessages")
+    self.Friendlist = mUI:GetModule("mUI.Modules.General.Friendlist")
 
     -- Initialize Layout
     self.layout = {
@@ -281,7 +283,7 @@ function General:OnInitialize()
             },
             cinematic = {
                 name = "Cinematic",
-                desc = "Skip cinematics automatically",
+                desc = "Skip cinematics and movies automatically",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.general.automation.cinematic = val
@@ -355,7 +357,7 @@ function General:OnInitialize()
                 order = 18
             },
             movementspeed = {
-                name = "Movement Speed",
+                name = "Speed",
                 desc =
                 "Display current movement speed on the screen\n\n|cffffff00INFO:|r 'Stats' must be enabled for this feature",
                 type = "toggle",
@@ -367,17 +369,33 @@ function General:OnInitialize()
             },
             errormessages = {
                 name = "Error Messages",
-                desc = "Display error messages (Out of range etc.)",
+                desc = "Hide Error Messages (Out of range etc.)",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.general.display.errormessages = val end,
+                set = function(_, val)
+                    mUI.db.profile.general.display.errormessages = val
+
+                    if val then
+                        self.ErrorMessages:Enable()
+                    else
+                        self.ErrorMessages:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.general.display.errormessages end,
                 order = 20
             },
             friendlist = {
-                name = "Friendlist Class Colors",
+                name = "Friends Class Colors",
                 desc = "Display Character Names in Class Colors on the Friendlist",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.general.display.friendlist = val end,
+                set = function(_, val)
+                    mUI.db.profile.general.display.friendlist = val
+
+                    if val then
+                        self.Friendlist:Enable()
+                    else
+                        self.Friendlist:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.general.display.friendlist end,
                 order = 21
             }

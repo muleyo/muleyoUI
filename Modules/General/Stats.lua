@@ -46,8 +46,12 @@ function Stats:OnInitialize()
     end
 
     function self:Stats()
-        if mUI.db.profile.general.display.stats and mUI.db.profile.general.display.movementspeed then
+        if self.db.display.stats and self.db.display.movementspeed then
             return self:GetFPS() .. " " .. self:GetLatency() .. " " .. self:GetSpeed()
+        elseif self.db.display.stats then
+            return self:GetFPS() .. " " .. self:GetLatency()
+        elseif self.db.display.movementspeed then
+            return self:GetSpeed()
         else
             return self:GetFPS() .. " " .. self:GetLatency()
         end

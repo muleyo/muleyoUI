@@ -3,7 +3,7 @@ local Database = mUI:NewModule("mUI.Config.Database")
 local defaults = {
     profile = {
         install = false,
-        newversion = false,
+        new_version = false,
         gui = {
             scale = 1
         },

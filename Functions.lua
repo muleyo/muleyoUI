@@ -1,24 +1,27 @@
 local Functions = mUI:NewModule("mUI.Functions")
 
 function Functions:OnInitialize()
+    -- Load Database
+    self.db = mUI.db.profile
+
     -- Get Modules
     local General = mUI:GetModule("mUI.Modules.General")
 
     -- Get Player Class, Colors and Theme
     local _, class = UnitClass("player")
     local classColor = RAID_CLASS_COLORS[class]
-    local customColor = mUI.db.profile.general.color
+    local customColor = self.db.general.color
     local themes = {
         Disabled = { 1, 1, 1 },
         Dark = { 0.3, 0.3, 0.3 },
         Class = { classColor.r, classColor.g, classColor.b },
         Custom = { customColor[1], customColor[2], customColor[3], customColor[4] },
     }
-    local theme = themes[mUI.db.profile.general.theme]
+    local theme = themes[self.db.general.theme]
 
     -- Debug Print Function
     function mUI:Debug(msg)
-        print("|cff009cffm|rUI:", msg)
+        print("|cff009cffm|r|cffffd100UI|r:", msg)
     end
 
     -- Version check
@@ -37,14 +40,14 @@ function Functions:OnInitialize()
     end
 
     function mUI:ReceiveVersion(_, version, _, sender)
-        if not mUI.db.profile.new_version then
+        if not self.db.new_version then
             if (version > currentVersion) then
                 mUI:Debug(
                     "A newer version is available. If you experience any errors or bugs, updating is highly recommended.")
-                mUI.db.profile.new_version = version
+                self.db.new_version = version
             end
-        elseif (mUI.db.profile.new_version == currentVersion) or (mUI.db.profile.new_version <= currentVersion) then
-            mUI.db.profile.new_version = false
+        elseif (self.db.new_version == currentVersion) or (self.db.new_version <= currentVersion) then
+            self.db.new_version = false
         end
     end
 
@@ -53,6 +56,15 @@ function Functions:OnInitialize()
     end
 
     mUI:RegisterComm("mUIVersion", "ReceiveVersion")
+    mUI:RegisterEvent("ZONE_CHANGED_NEW_AREA", function()
+        mUI:SendVersion()
+        if IsInGuild() then mUI:SendVersion("GUILD") end
+    end)
+    C_Timer.After(30, function()
+        mUI:SendVersion()
+        if IsInGuild() then mUI:SendVersion("GUILD") end
+        mUI:SendVersion("YELL")
+    end)
 
     -- Link Popup
     function mUI:Link(url)

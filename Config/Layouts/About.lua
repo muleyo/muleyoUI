@@ -15,7 +15,7 @@ function About:OnInitialize()
             },
             description = {
                 name =
-                "Thank you for using muleyoUI!\n\nIf you have any questions, suggestions, or issues, please visit the GitHub page or join the Discord Server.",
+                "Thank you for using |cff009cffmuleyo|r|cffffd100UI|r!\n\nIf you have any questions, suggestions, or issues, please visit the GitHub page or join the Discord Server.",
                 type = "description",
                 fontSize = "medium",
                 order = 2
