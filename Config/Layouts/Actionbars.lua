@@ -7,6 +7,10 @@ function Actionbars:OnInitialize()
     -- Get Modules
     self.Module = mUI:GetModule("mUI.Modules.Actionbars")
     self.Mouseover = mUI:GetModule("mUI.Modules.Actionbars.Mouseover")
+    self.Flash = mUI:GetModule("mUI.Modules.Actionbars.Flash")
+    self.Hotkey = mUI:GetModule("mUI.Modules.Actionbars.Hotkey")
+    self.Macro = mUI:GetModule("mUI.Modules.Actionbars.Macro")
+    self.Range = mUI:GetModule("mUI.Modules.Actionbars.Range")
 
     -- Initialize Layout
     self.layout = {
@@ -20,7 +24,7 @@ function Actionbars:OnInitialize()
                         return "|cFFFF0000Disabled|r"
                     end
                 end,
-                desc = "|cffffff00Info|r Requires Reload",
+                desc = "|cffffff00Info:|r Requires Reload",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.actionbars.enabled = val
@@ -40,26 +44,56 @@ function Actionbars:OnInitialize()
                 order = 2
             },
             hotkey = {
-                name = "Hotkey Text",
-                desc = "Show Hotkey Text on Actionbuttons",
+                name = "Hide HotKey Text",
+                desc = "Hide Hotkey Text on Actionbuttons",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.actionbars.hotkey = val end,
+                set = function(_, val)
+                    mUI.db.profile.actionbars.hotkey = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Hotkey:Enable()
+                    else
+                        self.Hotkey:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.actionbars.hotkey end,
                 order = 3
             },
             macro = {
-                name = "Macro Text",
-                desc = "Show Macro Text on Actionbuttons",
+                name = "Hide Macro Text",
+                desc = "Hide Macro Text on Actionbuttons",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.actionbars.macro = val end,
+                set = function(_, val)
+                    mUI.db.profile.actionbars.macro = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Macro:Enable()
+                    else
+                        self.Macro:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.actionbars.macro end,
                 order = 4
             },
             flash = {
                 name = "Flash Animation",
-                desc = "Flash Actionbutton on when pressing it",
+                desc = "Flash Actionbuttons on button press",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.actionbars.flash = val end,
+                set = function(_, val)
+                    mUI.db.profile.actionbars.flash = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Flash:Enable()
+                    else
+                        self.Flash:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.actionbars.flash end,
                 order = 5
             },
@@ -67,7 +101,17 @@ function Actionbars:OnInitialize()
                 name = "Range Indicator",
                 desc = "Change button-color to red when out of range",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.actionbars.range = val end,
+                set = function(_, val)
+                    mUI.db.profile.actionbars.range = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Range:Enable()
+                    else
+                        self.Range:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.actionbars.range end,
                 order = 6
             },
@@ -86,11 +130,10 @@ function Actionbars:OnInitialize()
                 end,
                 desc = "Enable/Disable Mouseover Module",
                 type = "toggle",
-                width = "full",
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.enabled = val
 
-                    if not mUI.db.profile.actionbars.enabled then return end
+                    if not self.Module:IsEnabled() then return end
 
                     if val then
                         self.Mouseover:Enable()
@@ -101,6 +144,11 @@ function Actionbars:OnInitialize()
                 get = function() return mUI.db.profile.actionbars.mouseover.enabled end,
                 order = 8
             },
+            spacer = {
+                name = "",
+                type = "description",
+                order = 9
+            },
             bar1 = {
                 name = "ActionBar 1",
                 desc = "Show Actionbar 1 on Mouseover",
@@ -108,7 +156,7 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar1 = val
 
-                    if not mUI.db.profile.actionbars.enabled then return end
+                    if not self.Module:IsEnabled() then return end
                     if not mUI.db.profile.actionbars.mouseover.enabled then return end
 
                     if val then
@@ -118,7 +166,7 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar1 end,
-                order = 9
+                order = 10
             },
             bar2 = {
                 name = "ActionBar 2",
@@ -127,7 +175,7 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar2 = val
 
-                    if not mUI.db.profile.actionbars.enabled then return end
+                    if not self.Module:IsEnabled() then return end
                     if not mUI.db.profile.actionbars.mouseover.enabled then return end
 
                     if val then
@@ -137,7 +185,7 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar2 end,
-                order = 10
+                order = 11
             },
             bar3 = {
                 name = "ActionBar 3",
@@ -146,7 +194,7 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar3 = val
 
-                    if not mUI.db.profile.actionbars.enabled then return end
+                    if not self.Module:IsEnabled() then return end
                     if not mUI.db.profile.actionbars.mouseover.enabled then return end
 
                     if val then
@@ -156,7 +204,7 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar3 end,
-                order = 11
+                order = 12
             },
             bar4 = {
                 name = "ActionBar 4",
@@ -165,7 +213,7 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar4 = val
 
-                    if not mUI.db.profile.actionbars.enabled then return end
+                    if not self.Module:IsEnabled() then return end
                     if not mUI.db.profile.actionbars.mouseover.enabled then return end
 
                     if val then
@@ -175,7 +223,7 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar4 end,
-                order = 12
+                order = 13
             },
             bar5 = {
                 name = "ActionBar 5",
@@ -184,7 +232,7 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar5 = val
 
-                    if not mUI.db.profile.actionbars.enabled then return end
+                    if not self.Module:IsEnabled() then return end
                     if not mUI.db.profile.actionbars.mouseover.enabled then return end
 
                     if val then
@@ -194,7 +242,7 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar5 end,
-                order = 13
+                order = 14
             },
             bar6 = {
                 name = "ActionBar 6",
@@ -203,7 +251,7 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar6 = val
 
-                    if not mUI.db.profile.actionbars.enabled then return end
+                    if not self.Module:IsEnabled() then return end
                     if not mUI.db.profile.actionbars.mouseover.enabled then return end
 
                     if val then
@@ -213,7 +261,7 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar6 end,
-                order = 14
+                order = 15
             },
             bar7 = {
                 name = "ActionBar 7",
@@ -222,7 +270,7 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar7 = val
 
-                    if not mUI.db.profile.actionbars.enabled then return end
+                    if not self.Module:IsEnabled() then return end
                     if not mUI.db.profile.actionbars.mouseover.enabled then return end
 
                     if val then
@@ -232,7 +280,7 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar7 end,
-                order = 15
+                order = 16
             },
             bar8 = {
                 name = "ActionBar 8",
@@ -241,7 +289,7 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar8 = val
 
-                    if not mUI.db.profile.actionbars.enabled then return end
+                    if not self.Module:IsEnabled() then return end
                     if not mUI.db.profile.actionbars.mouseover.enabled then return end
 
                     if val then
@@ -251,7 +299,7 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar8 end,
-                order = 16
+                order = 17
             },
             petbar = {
                 name = "Pet Actionbar",
@@ -260,7 +308,7 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.petbar = val
 
-                    if not mUI.db.profile.actionbars.enabled then return end
+                    if not self.Module:IsEnabled() then return end
                     if not mUI.db.profile.actionbars.mouseover.enabled then return end
 
                     if val then
@@ -270,7 +318,7 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.petbar end,
-                order = 17
+                order = 18
             },
             stancebar = {
                 name = "Stance Actionbar",
@@ -279,7 +327,7 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.stancebar = val
 
-                    if not mUI.db.profile.actionbars.enabled then return end
+                    if not self.Module:IsEnabled() then return end
                     if not mUI.db.profile.actionbars.mouseover.enabled then return end
 
                     if val then
@@ -289,7 +337,7 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.stancebar end,
-                order = 18
+                order = 19
             },
             micromenu = {
                 name = "Micro Menu",
@@ -309,7 +357,7 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.micromenu = val
 
-                    if not mUI.db.profile.actionbars.enabled then return end
+                    if not self.Module:IsEnabled() then return end
                     if not mUI.db.profile.actionbars.mouseover.enabled then return end
 
                     if val == "Default" then
@@ -321,7 +369,7 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.micromenu end,
-                order = 19
+                order = 20
             },
             bagbuttons = {
                 name = "Bag Buttons",
@@ -341,7 +389,7 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bagbuttons = val
 
-                    if not mUI.db.profile.actionbars.enabled then return end
+                    if not self.Module:IsEnabled() then return end
                     if not mUI.db.profile.actionbars.mouseover.enabled then return end
 
                     if val == "Default" then
@@ -353,7 +401,7 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bagbuttons end,
-                order = 20
+                order = 21
             }
         }
     }

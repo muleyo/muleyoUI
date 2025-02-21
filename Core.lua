@@ -14,6 +14,7 @@ function Core:OnEnable()
     self.modules = {}
     self.modules.general = mUI:GetModule("mUI.Modules.General")
     self.modules.actionbars = mUI:GetModule("mUI.Modules.Actionbars")
+    self.modules.unitframes = mUI:GetModule("mUI.Modules.Unitframes")
 
     -- Get Layouts
     self.layouts = {}
@@ -36,6 +37,10 @@ function Core:OnEnable()
 
     if self.db.actionbars.enabled then
         self.modules.actionbars:Enable()
+    end
+
+    if self.db.unitframes.enabled then
+        self.modules.unitframes:Enable()
     end
 
     -- Register Options

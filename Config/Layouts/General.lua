@@ -33,7 +33,7 @@ function General:OnInitialize()
                         return "|cFFFF0000Disabled|r"
                     end
                 end,
-                desc = "|cffffff00Info|r Requires Reload",
+                desc = "|cffffff00Info:|r Requires Reload",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.general.enabled = val
@@ -117,7 +117,7 @@ function General:OnInitialize()
             },
             font = {
                 name = "Font",
-                desc = "Choose a Font you like\n\n|cffffff00Info|r Requires Reload.",
+                desc = "Choose a Font you like\n\n|cffffff00Info:|r Requires Reload.",
                 type = "select",
                 values = {
                     ["Default"] = "Default",
@@ -358,7 +358,7 @@ function General:OnInitialize()
             movementspeed = {
                 name = "Speed",
                 desc =
-                "Display current movement speed on the screen\n\n|cffffff00Info|r 'Stats' must be enabled for this feature",
+                "Display current movement speed on the screen\n\n|cffffff00Info:|r 'Stats' must be enabled for this feature",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.general.display.movementspeed = val

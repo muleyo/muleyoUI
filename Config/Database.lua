@@ -60,14 +60,21 @@ local defaults = {
                 raidframes = [[Interface\Addons\mUI\Media\Textures\Status\Flat.blp]]
             },
             classcolor = true,
+            playerrepbar = true,
+            reputationcolor = false,
             pvpbadge = true,
             hitindicator = false,
             combatindicator = false,
             totemicons = false,
-            classbar = true,
+            classbar = false,
             cornericon = true,
-            buffsize = 20,
-            debuffsize = 20
+            name = false,
+            level = false,
+            buffsdebuffs = {
+                enabled = true,
+                buffsize = 20,
+                debuffsize = 20
+            }
         },
         castbars = {
             enabled = true,

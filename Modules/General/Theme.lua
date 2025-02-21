@@ -30,9 +30,11 @@ function Theme:OnInitialize()
             NormalTexture
         }, true)
 
-        Cooldown:ClearAllPoints()
-        Cooldown:SetPoint("TOPLEFT", Button, "TOPLEFT", 2, -2.5)
-        Cooldown:SetPoint("BOTTOMRIGHT", Button, "BOTTOMRIGHT", -3, 3)
+        if Type ~= "StanceOrPet" then
+            Cooldown:ClearAllPoints()
+            Cooldown:SetPoint("TOPLEFT", Button, "TOPLEFT", 2, -2.5)
+            Cooldown:SetPoint("BOTTOMRIGHT", Button, "BOTTOMRIGHT", -3, 3)
+        end
 
         Icon:SetTexCoord(.08, .92, .08, .92)
 
@@ -1125,11 +1127,11 @@ function Theme:OnInitialize()
                 local StanceButton = _G["BT4StanceButton" .. i]
 
                 if PetButton then
-                    StyleButton(PetButton, "Pet")
+                    StyleButton(PetButton, "StanceOrPet")
                 end
 
                 if StanceButton then
-                    StyleButton(StanceButton, "Stance")
+                    StyleButton(StanceButton, "StanceOrPet")
                 end
             end
         end

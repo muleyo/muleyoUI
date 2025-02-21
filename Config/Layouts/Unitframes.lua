@@ -4,6 +4,11 @@ local Unitframes = mUI:NewModule("mUI.Config.Layouts.Unitframes")
 Unitframes:Enable()
 
 function Unitframes:OnInitialize()
+    -- Get Modules
+    self.Module = mUI:GetModule("mUI.Modules.Unitframes")
+    self.Classcolor = mUI:GetModule("mUI.Modules.Unitframes.Classcolor")
+    self.Reputationcolor = mUI:GetModule("mUI.Modules.Unitframes.Reputationcolor")
+
     -- Initialize Layout
     self.layout = {
         type = "group",
@@ -16,9 +21,17 @@ function Unitframes:OnInitialize()
                         return "|cffff0000Disabled|r"
                     end
                 end,
-                desc = "|cffffff00Info|r Requires Reload",
+                desc = "|cffffff00Info:|r Requires Reload",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.unitframes.enabled = val end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.enabled = val
+
+                    if val then
+                        mUI:Reload('Enable Unitframes Module')
+                    else
+                        mUI:Reload('Disable Unitframes Module')
+                    end
+                end,
                 get = function() return mUI.db.profile.unitframes.enabled end,
                 order = 1
             },
@@ -73,27 +86,59 @@ function Unitframes:OnInitialize()
                 order = 5
             },
             classcolor = {
-                name = "Class Colors",
-                desc = "Show Healthbars in Class Colors",
+                name = "Class/Reaction Colors",
+                desc = "Show Healthbars in Class/Reaction Colors (Neutral etc.)\n\n|cffffff00Info:|r Requires Reload",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.unitframes.classcolor = val end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.classcolor = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        mUI:Reload("Enable Class Colors")
+                    else
+                        mUI:Reload("Disable Class Colors")
+                    end
+                end,
                 get = function() return mUI.db.profile.unitframes.classcolor end,
                 order = 6
             },
-            pvpbadge = {
-                name = "PvP Badge",
-                desc = "Show PvP Badge on Unitframes",
+            playerrepcolor = {
+                name = "Player Reputation Bar",
+                desc = "Show Reputation Bar on Player Unitframe",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.unitframes.pvpbadge = val end,
-                get = function() return mUI.db.profile.unitframes.pvpbadge end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.playerrepbar = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        mUI.db.profile.unitframes.reputationcolor = false
+                        self.Reputationcolor:Enable()
+                    else
+                        self.Reputationcolor:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.unitframes.playerrepbar end,
                 order = 7
             },
-            hitindicator = {
-                name = "Hit Indicator",
-                desc = "Show Hit Indicator on Player Portrait",
+            reputationcolor = {
+                name = "Hide Reputation Bars",
+                desc = "Hide Reputation Bars on Unitframes",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.unitframes.hitindicator = val end,
-                get = function() return mUI.db.profile.unitframes.hitindicator end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.reputationcolor = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        mUI.db.profile.unitframes.playerrepbar = false
+                        self.Reputationcolor:Enable()
+                    else
+                        self.Reputationcolor:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.unitframes.reputationcolor end,
                 order = 8
             },
             combatindicator = {
@@ -104,34 +149,80 @@ function Unitframes:OnInitialize()
                 get = function() return mUI.db.profile.unitframes.combatindicator end,
                 order = 9
             },
+            pvpbadge = {
+                name = "PvP Badge",
+                desc = "Hide PvP Badge on Unitframes",
+                type = "toggle",
+                set = function(_, val) mUI.db.profile.unitframes.pvpbadge = val end,
+                get = function() return mUI.db.profile.unitframes.pvpbadge end,
+                order = 10
+            },
+            hitindicator = {
+                name = "Hit Indicator",
+                desc = "Hide Hit Indicator (damage/healing numbers on the Player Portrait)",
+                type = "toggle",
+                set = function(_, val) mUI.db.profile.unitframes.hitindicator = val end,
+                get = function() return mUI.db.profile.unitframes.hitindicator end,
+                order = 11
+            },
             totemicons = {
                 name = "Totem Icons",
-                desc = "Show Totem Icons (Consecration etc.) below the Player Unitframe",
+                desc = "Hide Totem Icons (Consecration etc.) below the Player Unitframe",
                 type = "toggle",
                 set = function(_, val) mUI.db.profile.unitframes.totemicons = val end,
                 get = function() return mUI.db.profile.unitframes.totemicons end,
-                order = 10
+                order = 12
             },
             classbar = {
                 name = "Classbar",
-                desc = "Show Class Bar (Combo Points, Holy Power, etc.)",
+                desc = "Hide Class Bar (Combo Points, Holy Power, etc.)",
                 type = "toggle",
                 set = function(_, val) mUI.db.profile.unitframes.classbar = val end,
                 get = function() return mUI.db.profile.unitframes.classbar end,
-                order = 11
+                order = 13
             },
             cornericon = {
                 name = "Corner Icon",
-                desc = "Display the Corner Icon on the Player Unitframe",
+                desc = "Hide the Corner Icon on the Player Unitframe",
                 type = "toggle",
                 set = function(_, val) mUI.db.profile.unitframes.cornericon = val end,
                 get = function() return mUI.db.profile.unitframes.cornericon end,
-                order = 12
+                order = 14
+            },
+            name = {
+                name = "Name",
+                desc = "Hide Names on Unitframes",
+                type = "toggle",
+                set = function(_, val) mUI.db.profile.unitframes.name = val end,
+                get = function() return mUI.db.profile.unitframes.name end,
+                order = 15
+            },
+            level = {
+                name = "Level",
+                desc = "Hide Level-Text of max level Units",
+                type = "toggle",
+                set = function(_, val) mUI.db.profile.unitframes.level = val end,
+                get = function() return mUI.db.profile.unitframes.level end,
+                order = 16
             },
             header3 = {
                 name = "Buffs & Debuffs",
                 type = "header",
-                order = 13
+                order = 17
+            },
+            enablebuffdebuff = {
+                name = function()
+                    if mUI.db.profile.unitframes.buffsdebuffs.enabled then
+                        return "|cff00ff00Enabled|r"
+                    else
+                        return "|cffff0000Disabled|r"
+                    end
+                end,
+                desc = "Enable / Disable Buffs & Debuffs re-sizing on Unitframes",
+                type = "toggle",
+                set = function(_, val) mUI.db.profile.unitframes.buffsdebuffs.enabled = val end,
+                get = function() return mUI.db.profile.unitframes.buffsdebuffs.enabled end,
+                order = 18
             },
             buffsize = {
                 name = "Buff Size",
@@ -142,7 +233,7 @@ function Unitframes:OnInitialize()
                 step = 1,
                 set = function(_, val) mUI.db.profile.unitframes.buffsize = val end,
                 get = function() return mUI.db.profile.unitframes.buffsize end,
-                order = 14
+                order = 19
             },
             debuffsize = {
                 name = "Debuff Size",
@@ -153,7 +244,7 @@ function Unitframes:OnInitialize()
                 step = 1,
                 set = function(_, val) mUI.db.profile.unitframes.debuffsize = val end,
                 get = function() return mUI.db.profile.unitframes.buffsize end,
-                order = 15
+                order = 20
             }
         }
     }

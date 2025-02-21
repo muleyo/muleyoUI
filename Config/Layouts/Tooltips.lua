@@ -16,7 +16,7 @@ function Tooltips:OnInitialize()
                         return "|cFFFF0000Disabled|r"
                     end
                 end,
-                desc = "|cffffff00Info|r Requires Reload",
+                desc = "|cffffff00Info:|r Requires Reload",
                 type = "toggle",
                 set = function(_, val) mUI.db.profile.tooltips.enabled = val end,
                 get = function() return mUI.db.profile.tooltips.enabled end,
