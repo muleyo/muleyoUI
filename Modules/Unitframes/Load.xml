@@ -12,5 +12,6 @@
     <Include file="Totemicons.lua" />
     <Include file="Name.lua" />
     <Include file="Level.lua" />
+    <Include file="Restingtextures.lua" />
     <Include file="Modules.lua" />
 </Ui>

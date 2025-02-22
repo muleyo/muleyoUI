@@ -236,7 +236,7 @@ function Unitframes_Textures:OnInitialize()
                     [AlternatePowerBar.powerType])
                 AlternatePowerBar:SetStatusBarColor(1, 1, 1)
             else
-                AlternatePowerBar:SetStatusBarTexture(texture)
+                select(6, AlternatePowerBar:GetRegions()):SetTexture(texture)
 
                 if AlternatePowerBar.powerType == 0 then
                     AlternatePowerBar:SetStatusBarColor(0, 0.5, 1)

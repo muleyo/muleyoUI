@@ -9,19 +9,6 @@ function Unitframes:OnInitialize()
 
     -- Get Modules
     self.Module = mUI:GetModule("mUI.Modules.Unitframes")
-    self.Unitframes_Textures = mUI:GetModule("mUI.Modules.Unitframes.Unitframes_Textures")
-    self.Raidframes_Textures = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Textures")
-    self.Color = mUI:GetModule("mUI.Modules.Unitframes.Color")
-    self.Reputationcolor = mUI:GetModule("mUI.Modules.Unitframes.Reputationcolor")
-    self.Combatindicator = mUI:GetModule("mUI.Modules.Unitframes.Combatindicator")
-    self.Hitindicator = mUI:GetModule("mUI.Modules.Unitframes.Hitindicator")
-    self.Totemicons = mUI:GetModule("mUI.Modules.Unitframes.Totemicons")
-    self.Pvpbadge = mUI:GetModule("mUI.Modules.Unitframes.Pvpbadge")
-    self.Cornericon = mUI:GetModule("mUI.Modules.Unitframes.Cornericon")
-    self.Name = mUI:GetModule("mUI.Modules.Unitframes.Name")
-    self.Level = mUI:GetModule("mUI.Modules.Unitframes.Level")
-    self.Classbar = mUI:GetModule("mUI.Modules.Unitframes.Classbar")
-    self.BuffsDebuffs = mUI:GetModule("mUI.Modules.Unitframes.BuffsDebuffs")
 
     -- Initialize Layout
     self.layout = {
@@ -66,10 +53,10 @@ function Unitframes:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val == "None" then
-                        self.Unitframes_Textures:Disable()
-                        self.Unitframes_Textures:Update()
+                        self.Module.Unitframes_Textures:Disable()
+                        self.Module.Unitframes_Textures:Update()
                     else
-                        self.Unitframes_Textures:Enable()
+                        self.Module.Unitframes_Textures:Enable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.textures.unitframes end,
@@ -87,11 +74,11 @@ function Unitframes:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val == "None" then
-                        self.Raidframes_Textures:Disable()
-                        self.Raidframes_Textures:Update()
+                        self.Module.Raidframes_Textures:Disable()
+                        self.Module.Raidframes_Textures:Update()
                     else
-                        self.Raidframes_Textures:Enable()
-                        self.Raidframes_Textures:Update()
+                        self.Module.Raidframes_Textures:Enable()
+                        self.Module.Raidframes_Textures:Update()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.textures.raidframes end,
@@ -112,9 +99,9 @@ function Unitframes:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val then
-                        self.Color:Enable()
+                        self.Module.Color:Enable()
                     else
-                        self.Color:Disable()
+                        self.Module.Color:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.color end,
@@ -131,13 +118,13 @@ function Unitframes:OnInitialize()
 
                     if val then
                         mUI.db.profile.unitframes.reputationcolor = false
-                        if self.Reputationcolor:IsEnabled() then
-                            self.Reputationcolor:Update("player", true)
+                        if self.Module.Reputationcolor:IsEnabled() then
+                            self.Module.Reputationcolor:Update("player", true)
                         else
-                            self.Reputationcolor:Enable()
+                            self.Module.Reputationcolor:Enable()
                         end
                     else
-                        self.Reputationcolor:Disable()
+                        self.Module.Reputationcolor:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.playerrepcolor end,
@@ -154,13 +141,13 @@ function Unitframes:OnInitialize()
 
                     if val then
                         mUI.db.profile.unitframes.playerrepcolor = false
-                        if self.Reputationcolor:IsEnabled() then
-                            self.Reputationcolor:Update("hide", true)
+                        if self.Module.Reputationcolor:IsEnabled() then
+                            self.Module.Reputationcolor:Update("hide", true)
                         else
-                            self.Reputationcolor:Enable()
+                            self.Module.Reputationcolor:Enable()
                         end
                     else
-                        self.Reputationcolor:Disable()
+                        self.Module.Reputationcolor:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.reputationcolor end,
@@ -176,9 +163,9 @@ function Unitframes:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val then
-                        self.Combatindicator:Enable()
+                        self.Module.Combatindicator:Enable()
                     else
-                        self.Combatindicator:Disable()
+                        self.Module.Combatindicator:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.combatindicator end,
@@ -194,9 +181,9 @@ function Unitframes:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val then
-                        self.Pvpbadge:Enable()
+                        self.Module.Pvpbadge:Enable()
                     else
-                        self.Pvpbadge:Disable()
+                        self.Module.Pvpbadge:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.pvpbadge end,
@@ -212,9 +199,9 @@ function Unitframes:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val then
-                        self.Hitindicator:Enable()
+                        self.Module.Hitindicator:Enable()
                     else
-                        self.Hitindicator:Disable()
+                        self.Module.Hitindicator:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.hitindicator end,
@@ -230,9 +217,9 @@ function Unitframes:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val then
-                        self.Totemicons:Enable()
+                        self.Module.Totemicons:Enable()
                     else
-                        self.Totemicons:Disable()
+                        self.Module.Totemicons:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.totemicons end,
@@ -248,9 +235,9 @@ function Unitframes:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val then
-                        self.Classbar:Enable()
+                        self.Module.Classbar:Enable()
                     else
-                        self.Classbar:Disable()
+                        self.Module.Classbar:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.classbar end,
@@ -266,13 +253,31 @@ function Unitframes:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val then
-                        self.Cornericon:Enable()
+                        self.Module.Cornericon:Enable()
                     else
-                        self.Cornericon:Disable()
+                        self.Module.Cornericon:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.cornericon end,
                 order = 14
+            },
+            restingtextures = {
+                name = "Hide Rest Textures",
+                desc = "Hide Resting Textures on Player Unitframe",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.restingtextures = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Module.Restingtextures:Enable()
+                    else
+                        self.Module.Restingtextures:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.unitframes.restingtextures end,
+                order = 15
             },
             name = {
                 name = "Hide Name",
@@ -284,13 +289,13 @@ function Unitframes:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val then
-                        self.Name:Enable()
+                        self.Module.Name:Enable()
                     else
-                        self.Name:Disable()
+                        self.Module.Name:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.name end,
-                order = 15
+                order = 16
             },
             level = {
                 name = "Hide Level",
@@ -302,18 +307,18 @@ function Unitframes:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val then
-                        self.Level:Enable()
+                        self.Module.Level:Enable()
                     else
-                        self.Level:Disable()
+                        self.Module.Level:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.level end,
-                order = 16
+                order = 17
             },
             header3 = {
                 name = "Buffs & Debuffs",
                 type = "header",
-                order = 17
+                order = 18
             },
             enablebuffdebuff = {
                 name = function()
@@ -331,13 +336,13 @@ function Unitframes:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val then
-                        self.BuffsDebuffs:Enable()
+                        self.Module.BuffsDebuffs:Enable()
                     else
-                        self.BuffsDebuffs:Disable()
+                        self.Module.BuffsDebuffs:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.buffsdebuffs.enabled end,
-                order = 18
+                order = 19
             },
             buffsize = {
                 name = "Buff Size",
@@ -348,7 +353,7 @@ function Unitframes:OnInitialize()
                 step = 1,
                 set = function(_, val) mUI.db.profile.unitframes.buffsdebuffs.buffsize = val end,
                 get = function() return mUI.db.profile.unitframes.buffsdebuffs.buffsize end,
-                order = 19
+                order = 20
             },
             debuffsize = {
                 name = "Debuff Size",
@@ -359,7 +364,7 @@ function Unitframes:OnInitialize()
                 step = 1,
                 set = function(_, val) mUI.db.profile.unitframes.buffsdebuffs.debuffsize = val end,
                 get = function() return mUI.db.profile.unitframes.buffsdebuffs.debuffsize end,
-                order = 20
+                order = 21
             }
         }
     }

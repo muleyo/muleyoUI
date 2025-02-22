@@ -1,0 +1,86 @@
+local Style = mUI:NewModule("mUI.Modules.Castbars.Style")
+
+function Style:OnInitialize()
+    -- Load Database
+    self.db = mUI.db.profile.castbars
+
+    -- Tables
+    self.castbars = {
+        player = "PlayerCastingBarFrame",
+        target = "TargetFrameSpellBar",
+        focus = "FocusFrameSpellBar",
+        boss1 = "Boss1TargetFrameSpellBar",
+        boss2 = "Boss2TargetFrameSpellBar",
+        boss3 = "Boss3TargetFrameSpellBar",
+        boss4 = "Boss4TargetFrameSpellBar",
+        boss5 = "Boss5TargetFrameSpellBar"
+    }
+
+    -- Backup Default Functions
+    self.textfunc = TargetFrameSpellBar.Text.SetText
+
+    function self:EnableStyle()
+        for unitframe, castbar in pairs(self.castbars) do
+            if unitframe == "player" then
+                _G[castbar]:SetSize(209, 18)
+                _G[castbar].StandardGlow:Hide()
+                _G[castbar].TextBorder:Hide()
+                _G[castbar].Border:Hide()
+                _G[castbar].Text:ClearAllPoints()
+                _G[castbar].Text:SetPoint("TOP", _G[castbar], "TOP", 0, -1)
+                _G[castbar].Text:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE")
+            else
+                _G[castbar]:SetSize(150, 12)
+                _G[castbar].TextBorder:Hide()
+                _G[castbar].BorderShield:ClearAllPoints()
+                _G[castbar].BorderShield:SetPoint("CENTER", _G[castbar].Icon, "CENTER", 0, -2.5)
+                _G[castbar].Icon:SetSize(16, 16)
+                _G[castbar].Icon:ClearAllPoints()
+                _G[castbar].Icon:SetPoint("TOPLEFT", _G[castbar], "TOPLEFT", -22, 2)
+                _G[castbar].Text:ClearAllPoints()
+                _G[castbar].Text:SetPoint("TOP", _G[castbar], "TOP", 0, 2.5)
+                _G[castbar].Text:SetFont(STANDARD_TEXT_FONT, 11, "OUTLINE")
+                _G[castbar].Text.SetText = function(frame, text)
+                    if strlen(text) > 19 then
+                        self.textfunc(frame, strsub(text, 0, 19) .. "...")
+                    else
+                        self.textfunc(frame, text)
+                    end
+                end
+            end
+        end
+    end
+
+    function self:DisableStyle()
+        for unitframe, castbar in pairs(self.castbars) do
+            if unitframe == "player" then
+                _G[castbar]:SetSize(208.00001525879, 11.000000953674)
+                _G[castbar].StandardGlow:Show()
+                _G[castbar].TextBorder:Show()
+                _G[castbar].Border:Show()
+                _G[castbar].Text:SetFont([[Fonts\FRIZQT__.TTF]], 10)
+                _G[castbar].Text:SetPoint("TOP", _G[castbar], "TOP", 0, -10)
+                _G[castbar].Icon:SetSize(16, 16)
+            else
+                _G[castbar]:SetSize(150, 10)
+                _G[castbar].TextBorder:Show()
+                _G[castbar].BorderShield:SetPoint("TOPLEFT", _G[castbar], "TOPLEFT", -27, 4)
+                _G[castbar].Icon:SetSize(20, 20)
+                _G[castbar].Icon:SetPoint("RIGHT", _G[castbar], "LEFT", -2, -5)
+                _G[castbar].Text:SetPoint("TOP", _G[castbar], "TOP", 0, -8)
+                _G[castbar].Text:SetFont([[Fonts\FRIZQT__.TTF]], 10)
+                _G[castbar].Text.SetText = self.textfunc
+            end
+        end
+    end
+end
+
+function Style:OnEnable()
+    -- Enable Style
+    self:EnableStyle()
+end
+
+function Style:OnDisable()
+    -- Disable Style
+    self:DisableStyle()
+end

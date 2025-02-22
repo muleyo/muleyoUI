@@ -9,21 +9,6 @@ function General:OnInitialize()
 
     -- Get Modules
     self.Module = mUI:GetModule("mUI.Modules.General")
-    self.Theme = mUI:GetModule("mUI.Modules.General.Theme")
-    self.Font = mUI:GetModule("mUI.Modules.General.Font")
-    self.Repair = mUI:GetModule("mUI.Modules.General.Repair")
-    self.Sell = mUI:GetModule("mUI.Modules.General.Sell")
-    self.Delete = mUI:GetModule("mUI.Modules.General.Delete")
-    self.Duel = mUI:GetModule("mUI.Modules.General.Duel")
-    self.Release = mUI:GetModule("mUI.Modules.General.Release")
-    self.Resurrection = mUI:GetModule("mUI.Modules.General.Resurrection")
-    self.Invite = mUI:GetModule("mUI.Modules.General.Invite")
-    self.Cinematic = mUI:GetModule("mUI.Modules.General.Cinematic")
-    self.TalkingHead = mUI:GetModule("mUI.Modules.General.TalkingHead")
-    self.ItemInfo = mUI:GetModule("mUI.Modules.General.ItemInfo")
-    self.Stats = mUI:GetModule("mUI.Modules.General.Stats")
-    self.ErrorMessages = mUI:GetModule("mUI.Modules.General.ErrorMessages")
-    self.Friendlist = mUI:GetModule("mUI.Modules.General.Friendlist")
 
     -- Initialize Layout
     self.layout = {
@@ -82,12 +67,12 @@ function General:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val == "Disabled" then
-                        self.Theme:Disable()
+                        self.Module.Theme:Disable()
                     else
                         if not self.Theme:IsEnabled() then
-                            self.Theme:Enable()
+                            self.Module.Theme:Enable()
                         else
-                            self.Theme:Update()
+                            self.Module.Theme:Update()
                         end
                     end
                 end,
@@ -107,9 +92,9 @@ function General:OnInitialize()
 
                     if mUI.db.profile.general.theme == "Custom" then
                         if not self.Theme:IsEnabled() then
-                            self.Theme:Enable()
+                            self.Module.Theme:Enable()
                         else
-                            self.Theme:Update()
+                            self.Module.Theme:Update()
                         end
                     end
                 end,
@@ -127,7 +112,7 @@ function General:OnInitialize()
                 dialogControl = 'LSM30_Font',
                 set = function(_, val)
                     mUI.db.profile.general.font = val
-                    self.Font:Update()
+                    self.Module.Font:Update()
                     mUI:Reload("Changed Font")
                 end,
                 get = function() return mUI.db.profile.general.font end,
@@ -160,13 +145,13 @@ function General:OnInitialize()
 
                     if not self.Module:IsEnabled() then return end
 
-                    if val == "Disabled" and self.Repair:IsEnabled() then
-                        self.Repair:Disable()
+                    if val == "Disabled" and self.Module.Repair:IsEnabled() then
+                        self.Module.Repair:Disable()
                     else
-                        if not self.Repair:IsEnabled() then
-                            self.Repair:Enable()
+                        if not self.Module.Repair:IsEnabled() then
+                            self.Module.Repair:Enable()
                         else
-                            self.Repair:Update()
+                            self.Module.Repair:Update()
                         end
                     end
                 end,
@@ -183,9 +168,9 @@ function General:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val then
-                        self.Sell:Enable()
+                        self.Module.Sell:Enable()
                     else
-                        self.Sell:Disable()
+                        self.Module.Sell:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.general.automation.sell end,
@@ -201,9 +186,9 @@ function General:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val then
-                        self.Delete:Enable()
+                        self.Module.Delete:Enable()
                     else
-                        self.Delete:Disable()
+                        self.Module.Delete:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.general.automation.delete end,
@@ -219,9 +204,9 @@ function General:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val then
-                        self.Duel:Enable()
+                        self.Module.Duel:Enable()
                     else
-                        self.Duel:Disable()
+                        self.Module.Duel:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.general.automation.duel end,
@@ -237,9 +222,9 @@ function General:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val then
-                        self.Release:Enable()
+                        self.Module.Release:Enable()
                     else
-                        self.Release:Disable()
+                        self.Module.Release:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.general.automation.release end,
@@ -255,9 +240,9 @@ function General:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val then
-                        self.Resurrection:Enable()
+                        self.Module.Resurrection:Enable()
                     else
-                        self.Resurrection:Disable()
+                        self.Module.Resurrection:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.general.automation.resurrect end,
@@ -273,9 +258,9 @@ function General:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val then
-                        self.Invite:Enable()
+                        self.Module.Invite:Enable()
                     else
-                        self.Invite:Disable()
+                        self.Module.Invite:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.general.automation.invite end,
@@ -291,9 +276,9 @@ function General:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val then
-                        self.Cinematic:Enable()
+                        self.Module.Cinematic:Enable()
                     else
-                        self.Cinematic:Disable()
+                        self.Module.Cinematic:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.general.automation.cinematic end,
@@ -309,9 +294,9 @@ function General:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val then
-                        self.TalkingHead:Enable()
+                        self.Module.TalkingHead:Enable()
                     else
-                        self.TalkingHead:Disable()
+                        self.Module.TalkingHead:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.general.automation.talkinghead end,
@@ -332,9 +317,9 @@ function General:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val then
-                        self.ItemInfo:Enable()
+                        self.Module.ItemInfo:Enable()
                     else
-                        self.ItemInfo:Disable()
+                        self.Module.ItemInfo:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.general.display.iteminfo end,
@@ -350,9 +335,9 @@ function General:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val then
-                        self.Stats:Enable()
+                        self.Module.Stats:Enable()
                     else
-                        self.Stats:Disable()
+                        self.Module.Stats:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.general.display.stats end,
@@ -379,9 +364,9 @@ function General:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val then
-                        self.ErrorMessages:Enable()
+                        self.Module.ErrorMessages:Enable()
                     else
-                        self.ErrorMessages:Disable()
+                        self.Module.ErrorMessages:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.general.display.errormessages end,
@@ -397,9 +382,9 @@ function General:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val then
-                        self.Friendlist:Enable()
+                        self.Module.Friendlist:Enable()
                     else
-                        self.Friendlist:Disable()
+                        self.Module.Friendlist:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.general.display.friendlist end,

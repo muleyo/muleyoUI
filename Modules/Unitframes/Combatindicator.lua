@@ -1,11 +1,13 @@
 local Combatindicator = mUI:NewModule("mUI.Modules.Unitframes.Combatindicator")
 
 function Combatindicator:OnInitialize()
+    -- Frames
     local target = CreateFrame("Frame")
     local focus = CreateFrame("Frame")
 
     self.target = target
     self.focus = focus
+    self.combatindicator = CreateFrame("Frame")
 
     target:SetPoint("CENTER", TargetFrame, "RIGHT", 10, 0)
     focus:SetPoint("CENTER", FocusFrame, "RIGHT", 10, 0)
@@ -13,8 +15,8 @@ function Combatindicator:OnInitialize()
     target:SetSize(25, 25)
     focus:SetSize(25, 25)
 
-    target.texture = self.target:CreateTexture(nil, "BORDER")
-    focus.texture = self.focus:CreateTexture(nil, "BORDER")
+    target.texture = target:CreateTexture(nil, "BORDER")
+    focus.texture = focus:CreateTexture(nil, "BORDER")
 
     target.texture:SetAllPoints()
     focus.texture:SetAllPoints()
@@ -25,16 +27,14 @@ function Combatindicator:OnInitialize()
     target:Hide()
     focus:Hide()
 
-    function self:UpdateTarget()
-        if UnitAffectingCombat("target") then
+    function self:Update()
+        if UnitExists("target") and UnitAffectingCombat("target") then
             target:Show()
         else
             target:Hide()
         end
-    end
 
-    function self:UpdateFocus()
-        if UnitAffectingCombat("focus") then
+        if UnitExists("focus") and UnitAffectingCombat("focus") then
             focus:Show()
         else
             focus:Hide()
@@ -43,26 +43,15 @@ function Combatindicator:OnInitialize()
 end
 
 function Combatindicator:OnEnable()
-    self.target:RegisterEvent("UNIT_COMBAT")
-    self.target:RegisterEvent("PLAYER_REGEN_DISABLED")
-    self.target:RegisterEvent("PLAYER_REGEN_ENABLED")
-    self.target:RegisterEvent("PLAYER_TARGET_CHANGED")
-
-    self.focus:RegisterEvent("UNIT_COMBAT")
-    self.focus:RegisterEvent("PLAYER_REGEN_DISABLED")
-    self.focus:RegisterEvent("PLAYER_REGEN_ENABLED")
-    self.focus:RegisterEvent("PLAYER_FOCUS_CHANGED")
-    mUI:HookScript(self.target, "OnEvent", Combatindicator.UpdateTarget)
-    mUI:HookScript(self.focus, "OnEvent", Combatindicator.UpdateFocus)
+    -- Hook
+    mUI:HookScript(self.combatindicator, "OnUpdate", Combatindicator.Update)
 end
 
 function Combatindicator:OnDisable()
-    mUI:Unhook(self.target, "OnEvent")
-    mUI:Unhook(self.focus, "OnEvent")
+    -- Unhook
+    mUI:Unhook(self.combatindicator, "OnUpdate")
 
-    self.target:UnregisterAllEvents()
-    self.focus:UnregisterAllEvents()
-
+    -- Hide
     self.target:Hide()
     self.focus:Hide()
 end

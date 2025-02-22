@@ -15,6 +15,7 @@ function Modules:OnInitialize()
     self.Totemicons = mUI:GetModule("mUI.Modules.Unitframes.Totemicons")
     self.Name = mUI:GetModule("mUI.Modules.Unitframes.Name")
     self.Level = mUI:GetModule("mUI.Modules.Unitframes.Level")
+    self.Restingtextures = mUI:GetModule("mUI.Modules.Unitframes.Restingtextures")
 end
 
 function Modules:OnEnable()
@@ -52,6 +53,9 @@ function Modules:OnEnable()
     end
     if self.db.cornericon then
         self.Cornericon:Enable()
+    end
+    if self.db.restingtextures then
+        self.Restingtextures:Enable()
     end
     if self.db.name then
         self.Name:Enable()

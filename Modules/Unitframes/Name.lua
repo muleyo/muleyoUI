@@ -1,29 +1,13 @@
 local Name = mUI:NewModule("mUI.Modules.Unitframes.Name")
 
-function Name:OnInitialize()
-    self.player = PlayerName.Show
-    self.target = TargetFrame.TargetFrameContent.TargetFrameContentMain.Name.Show
-    self.focus = FocusFrame.TargetFrameContent.TargetFrameContentMain.Name.Show
-end
-
 function Name:OnEnable()
-    PlayerName:Hide()
-    PlayerName.Show = function() end
-
-    TargetFrame.TargetFrameContent.TargetFrameContentMain.Name:Hide()
-    TargetFrame.TargetFrameContent.TargetFrameContentMain.Name.Show = function() end
-
-    FocusFrame.TargetFrameContent.TargetFrameContentMain.Name:Hide()
-    FocusFrame.TargetFrameContent.TargetFrameContentMain.Name.Show = function() end
+    PlayerName:SetAlpha(0)
+    TargetFrame.TargetFrameContent.TargetFrameContentMain.Name:SetAlpha(0)
+    FocusFrame.TargetFrameContent.TargetFrameContentMain.Name:SetAlpha(0)
 end
 
 function Name:OnDisable()
-    PlayerName.Show = self.player
-    PlayerName:Show()
-
-    TargetFrame.TargetFrameContent.TargetFrameContentMain.Name.Show = self.target
-    TargetFrame.TargetFrameContent.TargetFrameContentMain.Name:Show()
-
-    FocusFrame.TargetFrameContent.TargetFrameContentMain.Name.Show = self.focus
-    FocusFrame.TargetFrameContent.TargetFrameContentMain.Name:Show()
+    PlayerName:SetAlpha(1)
+    TargetFrame.TargetFrameContent.TargetFrameContentMain.Name:SetAlpha(1)
+    FocusFrame.TargetFrameContent.TargetFrameContentMain.Name:SetAlpha(1)
 end

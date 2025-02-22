@@ -1,15 +1,9 @@
 local Cornericon = mUI:NewModule("mUI.Modules.Unitframes.Cornericon")
 
-function Cornericon:OnInitialize()
-    self.cornericon = PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PlayerPortraitCornerIcon.Show
-end
-
 function Cornericon:OnEnable()
-    PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PlayerPortraitCornerIcon:Hide()
-    PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PlayerPortraitCornerIcon.Show = function() end
+    PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PlayerPortraitCornerIcon:SetAlpha(0)
 end
 
 function Cornericon:OnDisable()
-    PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PlayerPortraitCornerIcon.Show = self.cornericon
-    PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PlayerPortraitCornerIcon:Show()
+    PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PlayerPortraitCornerIcon:SetAlpha(1)
 end

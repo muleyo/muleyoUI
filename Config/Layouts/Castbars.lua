@@ -4,6 +4,9 @@ local Castbars = mUI:NewModule("mUI.Config.Layouts.Castbars")
 Castbars:Enable()
 
 function Castbars:OnInitialize()
+    -- Get Modules
+    self.Module = mUI:GetModule("mUI.Modules.Castbars")
+
     -- Initialize Layout
     self.layout = {
         type = "group",
@@ -41,23 +44,53 @@ function Castbars:OnInitialize()
                     "mUI"
                 },
                 width = 0.5,
-                set = function(_, val) mUI.db.profile.castbars.style = val end,
+                set = function(_, val)
+                    mUI.db.profile.castbars.style = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val == "mUI" then
+                        self.Module.Style:Enable()
+                    else
+                        self.Module.Style:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.castbars.style end,
                 order = 3
             },
             icons = {
-                name = "Icons",
-                desc = "Show / Hide Spell Icons next to Castbars",
+                name = "Spell Icon",
+                desc = "Show / Hide Spell Icon next to the Player Castbar",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.castbars.icons = val end,
-                get = function() return mUI.db.profile.castbars.icons end,
+                set = function(_, val)
+                    mUI.db.profile.castbars.icon = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Module.Icon:Enable()
+                    else
+                        self.Module.Icon:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.castbars.icon end,
                 order = 4
             },
             casttime = {
                 name = "Cast Time",
                 desc = "Show / Hide Cast Time next to Castbars",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.castbars.casttime = val end,
+                set = function(_, val)
+                    mUI.db.profile.castbars.casttime = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Module.Casttime:Enable()
+                    else
+                        self.Module.Casttime:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.castbars.casttime end,
                 order = 5
             },
@@ -73,7 +106,21 @@ function Castbars:OnInitialize()
                 min = 50,
                 max = 200,
                 step = 10,
-                set = function(_, val) mUI.db.profile.castbars.targetscale = val end,
+                set = function(_, val)
+                    mUI.db.profile.castbars.targetscale = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val ~= 100 then
+                        if not self.Module.Targetscale:IsEnabled() then
+                            self.Module.Targetscale:Enable()
+                        else
+                            self.Module.Targetscale:Update()
+                        end
+                    else
+                        self.Module.Targetscale:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.castbars.targetscale end,
                 order = 7
             },
@@ -84,7 +131,21 @@ function Castbars:OnInitialize()
                 min = 50,
                 max = 200,
                 step = 10,
-                set = function(_, val) mUI.db.profile.castbars.focusscale = val end,
+                set = function(_, val)
+                    mUI.db.profile.castbars.focusscale = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val ~= 100 then
+                        if not self.Module.Focusscale:IsEnabled() then
+                            self.Module.Focusscale:Enable()
+                        else
+                            self.Module.Focusscale:Update()
+                        end
+                    else
+                        self.Module.Focusscale:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.castbars.focusscale end,
                 order = 8
             },
@@ -97,7 +158,17 @@ function Castbars:OnInitialize()
                 name = "Target Castbar on top",
                 desc = "Display the Target Castbar above the Targetframe",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.castbars.targetpos = val end,
+                set = function(_, val)
+                    mUI.db.profile.castbars.targetpos = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Module.Targetpos:Enable()
+                    else
+                        self.Module.Targetpos:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.castbars.targetpos end,
                 order = 10
             },
@@ -105,7 +176,17 @@ function Castbars:OnInitialize()
                 name = "Focus Castbar on top",
                 desc = "Display the Focus Castbar above the Focusframe",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.castbars.focuspos = val end,
+                set = function(_, val)
+                    mUI.db.profile.castbars.focuspos = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Module.Focuspos:Enable()
+                    else
+                        self.Module.Focuspos:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.castbars.focuspos end,
                 order = 11
             }

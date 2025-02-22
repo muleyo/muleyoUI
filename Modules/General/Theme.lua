@@ -1068,6 +1068,25 @@ function Theme:OnInitialize()
             PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PlayerPortraitCornerIcon
         }, true)
 
+        -- Castbars
+        mUI:Skin({
+            PlayerCastingBarFrame.Background,
+            TargetFrameSpellBar.Background,
+            TargetFrameSpellBar.Border,
+            FocusFrameSpellBar.Background,
+            FocusFrameSpellBar.Border,
+            Boss1TargetFrameSpellBar.Background,
+            Boss1TargetFrameSpellBar.Border,
+            Boss2TargetFrameSpellBar.Background,
+            Boss2TargetFrameSpellBar.Border,
+            Boss3TargetFrameSpellBar.Background,
+            Boss3TargetFrameSpellBar.Border,
+            Boss4TargetFrameSpellBar.Background,
+            Boss4TargetFrameSpellBar.Border,
+            Boss5TargetFrameSpellBar.Background,
+            Boss5TargetFrameSpellBar.Border
+        }, true)
+
         -- Actionbars
         for j = 1, #Bars do
             local Bar = Bars[j]
