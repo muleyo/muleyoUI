@@ -1,13 +1,14 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Include file="BuffsDebuffs.lua" />
     <Include file="Classbar.lua" />
-    <Include file="Classcolor.lua" />
+    <Include file="Color.lua" />
     <Include file="Combatindicator.lua" />
     <Include file="Cornericon.lua" />
     <Include file="Hitindicator.lua" />
     <Include file="Pvpbadge.lua" />
     <Include file="Reputationcolor.lua" />
-    <Include file="Textures.lua" />
+    <Include file="Unitframes_Textures.lua" />
+    <Include file="Raidframes_Textures.lua" />
     <Include file="Totemicons.lua" />
     <Include file="Modules.lua" />
 </Ui>

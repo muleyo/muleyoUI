@@ -59,8 +59,8 @@ local defaults = {
                 unitframes = [[Interface\Addons\mUI\Media\Textures\Status\Flat.blp]],
                 raidframes = [[Interface\Addons\mUI\Media\Textures\Status\Flat.blp]]
             },
-            classcolor = true,
-            playerrepbar = true,
+            color = true,
+            playerrepcolor = true,
             reputationcolor = false,
             pvpbadge = true,
             hitindicator = false,

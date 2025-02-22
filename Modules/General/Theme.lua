@@ -1023,6 +1023,7 @@ function Theme:OnInitialize()
 
         -- Raidframe
         mUI:Skin(CompactRaidFrameManager)
+        mUI:Skin(CompactPartyFrameBorderFrame)
 
         -- Settings Panel
         mUI:Skin(SettingsPanel)
@@ -1061,7 +1062,9 @@ function Theme:OnInitialize()
         mUI:Skin(Boss3TargetFrame.TargetFrameContainer)
         mUI:Skin(Boss4TargetFrame.TargetFrameContainer)
         mUI:Skin({
-            PetFrameTexture
+            PetFrameTexture,
+            TargetFrameToT.FrameTexture,
+            FocusFrameToT.FrameTexture
         }, true)
 
         -- Actionbars

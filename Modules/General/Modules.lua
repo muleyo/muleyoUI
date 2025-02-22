@@ -20,13 +20,14 @@ function Modules:OnInitialize()
 end
 
 function Modules:OnEnable()
+    -- Load Database
     self.db = mUI.db.profile.general
 
     -- Enable Modules
     if self.db.theme ~= "Disabled" then
         self.Theme:Enable()
     end
-    if self.db.font ~= "Default" then
+    if self.db.font ~= "None" then
         self.Font:Enable()
     end
     if self.db.automation.repair ~= "Disabled" then

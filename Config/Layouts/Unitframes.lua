@@ -4,10 +4,16 @@ local Unitframes = mUI:NewModule("mUI.Config.Layouts.Unitframes")
 Unitframes:Enable()
 
 function Unitframes:OnInitialize()
+    -- Get LSM
+    local LSM = LibStub("LibSharedMedia-3.0")
+
     -- Get Modules
     self.Module = mUI:GetModule("mUI.Modules.Unitframes")
-    self.Classcolor = mUI:GetModule("mUI.Modules.Unitframes.Classcolor")
+    self.Unitframes_Textures = mUI:GetModule("mUI.Modules.Unitframes.Unitframes_Textures")
+    self.Raidframes_Textures = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Textures")
+    self.Color = mUI:GetModule("mUI.Modules.Unitframes.Color")
     self.Reputationcolor = mUI:GetModule("mUI.Modules.Unitframes.Reputationcolor")
+    self.Combatindicator = mUI:GetModule("mUI.Modules.Unitframes.Combatindicator")
 
     -- Initialize Layout
     self.layout = {
@@ -44,19 +50,20 @@ function Unitframes:OnInitialize()
                 name = "Unitframes",
                 desc = "Select a Texture for the Unitframes (Player, Target, Focus, etc.)",
                 type = "select",
-                values = {
-                    ["Default"] = "Default",
-                    ["Dark"] = "Dark",
-                    ["Class"] = "Class",
-                    ["Custom"] = "Custom"
-                },
-                sorting = {
-                    "Default",
-                    "Dark",
-                    "Class",
-                    "Custom"
-                },
-                set = function(_, val) mUI.db.profile.unitframes.textures.unitframes = val end,
+                values = LSM:HashTable("statusbar"),
+                dialogControl = 'LSM30_Statusbar',
+                set = function(_, val)
+                    mUI.db.profile.unitframes.textures.unitframes = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val == "None" then
+                        self.Unitframes_Textures:Disable()
+                        self.Unitframes_Textures:Update()
+                    else
+                        self.Unitframes_Textures:Enable()
+                    end
+                end,
                 get = function() return mUI.db.profile.unitframes.textures.unitframes end,
                 order = 3
             },
@@ -64,19 +71,21 @@ function Unitframes:OnInitialize()
                 name = "Party / Raidframes",
                 desc = "Select a Texture for the Party / Raidframes",
                 type = "select",
-                values = {
-                    ["Default"] = "Default",
-                    ["Dark"] = "Dark",
-                    ["Class"] = "Class",
-                    ["Custom"] = "Custom"
-                },
-                sorting = {
-                    "Default",
-                    "Dark",
-                    "Class",
-                    "Custom"
-                },
-                set = function(_, val) mUI.db.profile.unitframes.textures.raidframes = val end,
+                values = LSM:HashTable("statusbar"),
+                dialogControl = 'LSM30_Statusbar',
+                set = function(_, val)
+                    mUI.db.profile.unitframes.textures.raidframes = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val == "None" then
+                        self.Raidframes_Textures:Disable()
+                        self.Raidframes_Textures:Update()
+                    else
+                        self.Raidframes_Textures:Enable()
+                        self.Raidframes_Textures:Update()
+                    end
+                end,
                 get = function() return mUI.db.profile.unitframes.textures.raidframes end,
                 order = 4
             },
@@ -85,22 +94,22 @@ function Unitframes:OnInitialize()
                 type = "header",
                 order = 5
             },
-            classcolor = {
+            color = {
                 name = "Class/Reaction Colors",
-                desc = "Show Healthbars in Class/Reaction Colors (Neutral etc.)\n\n|cffffff00Info:|r Requires Reload",
+                desc = "Show Healthbars in Class/Reaction Colors (Neutral etc.)",
                 type = "toggle",
                 set = function(_, val)
-                    mUI.db.profile.unitframes.classcolor = val
+                    mUI.db.profile.unitframes.color = val
 
                     if not self.Module:IsEnabled() then return end
 
                     if val then
-                        mUI:Reload("Enable Class Colors")
+                        self.Color:Enable()
                     else
-                        mUI:Reload("Disable Class Colors")
+                        self.Color:Disable()
                     end
                 end,
-                get = function() return mUI.db.profile.unitframes.classcolor end,
+                get = function() return mUI.db.profile.unitframes.color end,
                 order = 6
             },
             playerrepcolor = {
@@ -108,18 +117,22 @@ function Unitframes:OnInitialize()
                 desc = "Show Reputation Bar on Player Unitframe",
                 type = "toggle",
                 set = function(_, val)
-                    mUI.db.profile.unitframes.playerrepbar = val
+                    mUI.db.profile.unitframes.playerrepcolor = val
 
                     if not self.Module:IsEnabled() then return end
 
                     if val then
                         mUI.db.profile.unitframes.reputationcolor = false
-                        self.Reputationcolor:Enable()
+                        if self.Reputationcolor:IsEnabled() then
+                            self.Reputationcolor:Update("player", true)
+                        else
+                            self.Reputationcolor:Enable()
+                        end
                     else
                         self.Reputationcolor:Disable()
                     end
                 end,
-                get = function() return mUI.db.profile.unitframes.playerrepbar end,
+                get = function() return mUI.db.profile.unitframes.playerrepcolor end,
                 order = 7
             },
             reputationcolor = {
@@ -132,8 +145,12 @@ function Unitframes:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if val then
-                        mUI.db.profile.unitframes.playerrepbar = false
-                        self.Reputationcolor:Enable()
+                        mUI.db.profile.unitframes.playerrepcolor = false
+                        if self.Reputationcolor:IsEnabled() then
+                            self.Reputationcolor:Update("hide", true)
+                        else
+                            self.Reputationcolor:Enable()
+                        end
                     else
                         self.Reputationcolor:Disable()
                     end
@@ -145,7 +162,17 @@ function Unitframes:OnInitialize()
                 name = "Combat Indicator",
                 desc = "Show a Combat Icon on Unitframes when Unit in combat",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.unitframes.combatindicator = val end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.combatindicator = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Combatindicator:Enable()
+                    else
+                        self.Combatindicator:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.unitframes.combatindicator end,
                 order = 9
             },
@@ -243,7 +270,7 @@ function Unitframes:OnInitialize()
                 max = 50,
                 step = 1,
                 set = function(_, val) mUI.db.profile.unitframes.debuffsize = val end,
-                get = function() return mUI.db.profile.unitframes.buffsize end,
+                get = function() return mUI.db.profile.unitframes.debuffsize end,
                 order = 20
             }
         }

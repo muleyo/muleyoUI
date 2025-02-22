@@ -28,7 +28,7 @@ Core.lua
 EditMode.lua
 
 ## Media
-#Media\Load.xml
+Media\Load.xml
 
 ## Modules
 Modules\Load.xml

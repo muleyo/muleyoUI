@@ -4,9 +4,13 @@ local General = mUI:NewModule("mUI.Config.Layouts.General")
 General:Enable()
 
 function General:OnInitialize()
+    -- Load LSM
+    local LSM = LibStub("LibSharedMedia-3.0")
+
     -- Get Modules
     self.Module = mUI:GetModule("mUI.Modules.General")
     self.Theme = mUI:GetModule("mUI.Modules.General.Theme")
+    self.Font = mUI:GetModule("mUI.Modules.General.Font")
     self.Repair = mUI:GetModule("mUI.Modules.General.Repair")
     self.Sell = mUI:GetModule("mUI.Modules.General.Sell")
     self.Delete = mUI:GetModule("mUI.Modules.General.Delete")
@@ -119,12 +123,11 @@ function General:OnInitialize()
                 name = "Font",
                 desc = "Choose a Font you like\n\n|cffffff00Info:|r Requires Reload.",
                 type = "select",
-                values = {
-                    ["Default"] = "Default",
-                    ["Interface\\AddOns\\mUI\\Media\\Fonts\\Prototype.ttf"] = "Prototype",
-                },
+                values = LSM:HashTable("font"),
+                dialogControl = 'LSM30_Font',
                 set = function(_, val)
                     mUI.db.profile.general.font = val
+                    self.Font:Update()
                     mUI:Reload("Changed Font")
                 end,
                 get = function() return mUI.db.profile.general.font end,
