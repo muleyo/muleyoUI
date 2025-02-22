@@ -1,7 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <!-- LibStub & CallbackHandler -->
+    <!-- LibStub, CallbackHandler & LibSharedMedia -->
     <Include file="LibStub\LibStub.lua" />
     <Include file="CallbackHandler-1.0\CallbackHandler-1.0.xml" />
+    <Include file="LibSharedMedia-3.0\lib.xml" />
 
     <!-- Ace3 -->
     <Include file="AceAddon-3.0\AceAddon-3.0.xml" />
@@ -22,5 +23,4 @@
     <!-- Libs -->
     <Include file="LibDDI-1.0\lib.xml" />
     <Include file="LibDeflate\lib.xml" />
-    <Include file="LibSharedMedia-3.0\LibSharedMedia-3.0\lib.xml" />
 </Ui>

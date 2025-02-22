@@ -25,6 +25,7 @@ function Classcolor:OnInitialize()
 
     self.unitframes = {
         player = PlayerFrame,
+        pet = PetFrame,
         target = TargetFrame,
         focus = FocusFrame,
         targettarget = TargetFrameToT,

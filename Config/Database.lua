@@ -72,8 +72,8 @@ local defaults = {
             level = false,
             buffsdebuffs = {
                 enabled = true,
-                buffsize = 20,
-                debuffsize = 20
+                buffsize = 24,
+                debuffsize = 24
             }
         },
         castbars = {

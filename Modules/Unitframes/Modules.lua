@@ -13,17 +13,19 @@ function Modules:OnInitialize()
     self.Unitframes_Textures = mUI:GetModule("mUI.Modules.Unitframes.Unitframes_Textures")
     self.Raidframes_Textures = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Textures")
     self.Totemicons = mUI:GetModule("mUI.Modules.Unitframes.Totemicons")
+    self.Name = mUI:GetModule("mUI.Modules.Unitframes.Name")
+    self.Level = mUI:GetModule("mUI.Modules.Unitframes.Level")
 end
 
 function Modules:OnEnable()
     self.db = mUI.db.profile.unitframes
 
     -- Enable Modules
-    if self.db.buffsdebuffs.enabled then
-        self.BuffsDebuffs:Enable()
+    if self.db.textures.unitframes ~= "None" then
+        self.Unitframes_Textures:Enable()
     end
-    if self.db.classbar then
-        self.Classbar:Enable()
+    if self.db.textures.raidframes ~= "None" then
+        self.Raidframes_Textures:Enable()
     end
     if self.db.color then
         self.Color:Enable()
@@ -36,23 +38,29 @@ function Modules:OnEnable()
     if self.db.combatindicator then
         self.Combatindicator:Enable()
     end
-    if self.db.cornericon then
-        self.Cornericon:Enable()
+    if self.db.pvpbadge then
+        self.Pvpbadge:Enable()
     end
     if self.db.hitindicator then
         self.Hitindicator:Enable()
     end
-    if self.db.pvpbadge then
-        self.Pvpbadge:Enable()
-    end
-    if self.db.textures.unitframes ~= "None" then
-        self.Unitframes_Textures:Enable()
-    end
-    if self.db.textures.raidframes ~= "None" then
-        self.Raidframes_Textures:Enable()
-    end
     if self.db.totemicons then
         self.Totemicons:Enable()
+    end
+    if self.db.classbar then
+        self.Classbar:Enable()
+    end
+    if self.db.cornericon then
+        self.Cornericon:Enable()
+    end
+    if self.db.name then
+        self.Name:Enable()
+    end
+    if self.db.level then
+        self.Level:Enable()
+    end
+    if self.db.buffsdebuffs.enabled then
+        self.BuffsDebuffs:Enable()
     end
 end
 
@@ -68,4 +76,7 @@ function Modules:OnDisable()
     self.Unitframes_Textures:Disable()
     self.Raidframes_Textures:Disable()
     self.Totemicons:Disable()
+    self.Name:Disable()
+    self.Level:Disable()
+    self.Reputationcolor:Disable()
 end

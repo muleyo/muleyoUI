@@ -28,6 +28,27 @@ function Raidframes_Textures:OnInitialize()
         party4 = PartyFrame.MemberFrame4.HealthBarContainer.HealthBar
     }
 
+    self.frames = {
+        "PartyFrameMember1", "PartyFrameMember2", "PartyFrameMember3", "PartyFrameMember4", "PartyFrameMember5",
+        "PartyFramePet1", "PartyFramePet2", "PartyFramePet3", "PartyFramePet4", "PartyFramePet5",
+        "RaidFrame1", "RaidFrame2", "RaidFrame3", "RaidFrame4", "RaidFrame5",
+        "RaidFrame6", "RaidFrame7", "RaidFrame8", "RaidFrame9", "RaidFrame10",
+        "RaidFrame11", "RaidFrame12", "RaidFrame13", "RaidFrame14", "RaidFrame15",
+        "RaidFrame16", "RaidFrame17", "RaidFrame18", "RaidFrame19", "RaidFrame20",
+        "RaidFrame21", "RaidFrame22", "RaidFrame23", "RaidFrame24", "RaidFrame25",
+        "RaidFrame26", "RaidFrame27", "RaidFrame28", "RaidFrame29", "RaidFrame30",
+        "RaidFrame31", "RaidFrame32", "RaidFrame33", "RaidFrame34", "RaidFrame35",
+        "RaidFrame36", "RaidFrame37", "RaidFrame38", "RaidFrame39", "RaidFrame40",
+        "RaidGroup1Member1", "RaidGroup1Member2", "RaidGroup1Member3", "RaidGroup1Member4", "RaidGroup1Member5",
+        "RaidGroup2Member1", "RaidGroup2Member2", "RaidGroup2Member3", "RaidGroup2Member4", "RaidGroup2Member5",
+        "RaidGroup3Member1", "RaidGroup3Member2", "RaidGroup3Member3", "RaidGroup3Member4", "RaidGroup3Member5",
+        "RaidGroup4Member1", "RaidGroup4Member2", "RaidGroup4Member3", "RaidGroup4Member4", "RaidGroup4Member5",
+        "RaidGroup5Member1", "RaidGroup5Member2", "RaidGroup5Member3", "RaidGroup5Member4", "RaidGroup5Member5",
+        "RaidGroup6Member1", "RaidGroup6Member2", "RaidGroup6Member3", "RaidGroup6Member4", "RaidGroup6Member5",
+        "RaidGroup7Member1", "RaidGroup7Member2", "RaidGroup7Member3", "RaidGroup7Member4", "RaidGroup7Member5",
+        "RaidGroup8Member1", "RaidGroup8Member2", "RaidGroup8Member3", "RaidGroup8Member4", "RaidGroup8Member5",
+    }
+
     self.defaultTextures = {
         health = [[Interface\RaidFrame\Raid-Bar-Hp-Fill]],
         power = [[Interface\RaidFrame\Raid-Bar-Resource-Fill]]
@@ -35,7 +56,7 @@ function Raidframes_Textures:OnInitialize()
 
     function self:SetTextures(frame)
         if frame and frame:IsForbidden() then return end
-        if frame:GetName() then
+        if frame and frame:GetName() then
             local name = frame:GetName()
             if name and name:match("^Compact") then
                 local texture = LSM:Fetch('statusbar', self.db.raidframes)
@@ -65,7 +86,7 @@ function Raidframes_Textures:OnInitialize()
 
     function self:Update()
         for _, frame in pairs(self.frames) do
-            self:SetTextures(frame)
+            self:SetTextures(_G["Compact" .. frame])
         end
     end
 end
@@ -74,100 +95,6 @@ function Raidframes_Textures:OnEnable()
     mUI:SecureHook("CompactUnitFrame_UpdateAll", function(frame)
         self:SetTextures(frame)
     end)
-
-    -- Create table here as frames won't be available OnInitialize
-    self.frames = {
-        CompactPartyFrameMember1,
-        CompactPartyFrameMember2,
-        CompactPartyFrameMember3,
-        CompactPartyFrameMember4,
-        CompactPartyFrameMember5,
-        CompactPartyFramePet1,
-        CompactPartyFramePet2,
-        CompactPartyFramePet3,
-        CompactPartyFramePet4,
-        CompactPartyFramePet5,
-        CompactRaidFrame1,
-        CompactRaidFrame2,
-        CompactRaidFrame3,
-        CompactRaidFrame4,
-        CompactRaidFrame5,
-        CompactRaidFrame6,
-        CompactRaidFrame7,
-        CompactRaidFrame8,
-        CompactRaidFrame9,
-        CompactRaidFrame10,
-        CompactRaidFrame11,
-        CompactRaidFrame12,
-        CompactRaidFrame13,
-        CompactRaidFrame14,
-        CompactRaidFrame15,
-        CompactRaidFrame16,
-        CompactRaidFrame17,
-        CompactRaidFrame18,
-        CompactRaidFrame19,
-        CompactRaidFrame20,
-        CompactRaidFrame21,
-        CompactRaidFrame22,
-        CompactRaidFrame23,
-        CompactRaidFrame24,
-        CompactRaidFrame25,
-        CompactRaidFrame26,
-        CompactRaidFrame27,
-        CompactRaidFrame28,
-        CompactRaidFrame29,
-        CompactRaidFrame30,
-        CompactRaidFrame31,
-        CompactRaidFrame32,
-        CompactRaidFrame33,
-        CompactRaidFrame34,
-        CompactRaidFrame35,
-        CompactRaidFrame36,
-        CompactRaidFrame37,
-        CompactRaidFrame38,
-        CompactRaidFrame39,
-        CompactRaidFrame40,
-        CompactRaidGroup1Member1,
-        CompactRaidGroup1Member2,
-        CompactRaidGroup1Member3,
-        CompactRaidGroup1Member4,
-        CompactRaidGroup1Member5,
-        CompactRaidGroup2Member1,
-        CompactRaidGroup2Member2,
-        CompactRaidGroup2Member3,
-        CompactRaidGroup2Member4,
-        CompactRaidGroup2Member5,
-        CompactRaidGroup3Member1,
-        CompactRaidGroup3Member2,
-        CompactRaidGroup3Member3,
-        CompactRaidGroup3Member4,
-        CompactRaidGroup3Member5,
-        CompactRaidGroup4Member1,
-        CompactRaidGroup4Member2,
-        CompactRaidGroup4Member3,
-        CompactRaidGroup4Member4,
-        CompactRaidGroup4Member5,
-        CompactRaidGroup5Member1,
-        CompactRaidGroup5Member2,
-        CompactRaidGroup5Member3,
-        CompactRaidGroup5Member4,
-        CompactRaidGroup5Member5,
-        CompactRaidGroup6Member1,
-        CompactRaidGroup6Member2,
-        CompactRaidGroup6Member3,
-        CompactRaidGroup6Member4,
-        CompactRaidGroup6Member5,
-        CompactRaidGroup7Member1,
-        CompactRaidGroup7Member2,
-        CompactRaidGroup7Member3,
-        CompactRaidGroup7Member4,
-        CompactRaidGroup7Member5,
-        CompactRaidGroup8Member1,
-        CompactRaidGroup8Member2,
-        CompactRaidGroup8Member3,
-        CompactRaidGroup8Member4,
-        CompactRaidGroup8Member5,
-    }
 end
 
 function Raidframes_Textures:OnDisable()

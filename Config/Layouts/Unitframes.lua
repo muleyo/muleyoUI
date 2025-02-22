@@ -14,6 +14,14 @@ function Unitframes:OnInitialize()
     self.Color = mUI:GetModule("mUI.Modules.Unitframes.Color")
     self.Reputationcolor = mUI:GetModule("mUI.Modules.Unitframes.Reputationcolor")
     self.Combatindicator = mUI:GetModule("mUI.Modules.Unitframes.Combatindicator")
+    self.Hitindicator = mUI:GetModule("mUI.Modules.Unitframes.Hitindicator")
+    self.Totemicons = mUI:GetModule("mUI.Modules.Unitframes.Totemicons")
+    self.Pvpbadge = mUI:GetModule("mUI.Modules.Unitframes.Pvpbadge")
+    self.Cornericon = mUI:GetModule("mUI.Modules.Unitframes.Cornericon")
+    self.Name = mUI:GetModule("mUI.Modules.Unitframes.Name")
+    self.Level = mUI:GetModule("mUI.Modules.Unitframes.Level")
+    self.Classbar = mUI:GetModule("mUI.Modules.Unitframes.Classbar")
+    self.BuffsDebuffs = mUI:GetModule("mUI.Modules.Unitframes.BuffsDebuffs")
 
     -- Initialize Layout
     self.layout = {
@@ -160,7 +168,7 @@ function Unitframes:OnInitialize()
             },
             combatindicator = {
                 name = "Combat Indicator",
-                desc = "Show a Combat Icon on Unitframes when Unit in combat",
+                desc = "Show a Combat Icon on Unitframes when Target/Focus in combat",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.unitframes.combatindicator = val
@@ -177,58 +185,128 @@ function Unitframes:OnInitialize()
                 order = 9
             },
             pvpbadge = {
-                name = "PvP Badge",
-                desc = "Hide PvP Badge on Unitframes",
+                name = "Hide PVP Badge",
+                desc = "Hide PVP Badge on Unitframes",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.unitframes.pvpbadge = val end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.pvpbadge = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Pvpbadge:Enable()
+                    else
+                        self.Pvpbadge:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.unitframes.pvpbadge end,
                 order = 10
             },
             hitindicator = {
-                name = "Hit Indicator",
+                name = "Hide Hit Indicator",
                 desc = "Hide Hit Indicator (damage/healing numbers on the Player Portrait)",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.unitframes.hitindicator = val end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.hitindicator = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Hitindicator:Enable()
+                    else
+                        self.Hitindicator:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.unitframes.hitindicator end,
                 order = 11
             },
             totemicons = {
-                name = "Totem Icons",
+                name = "Hide TotemFrame",
                 desc = "Hide Totem Icons (Consecration etc.) below the Player Unitframe",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.unitframes.totemicons = val end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.totemicons = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Totemicons:Enable()
+                    else
+                        self.Totemicons:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.unitframes.totemicons end,
                 order = 12
             },
             classbar = {
-                name = "Classbar",
-                desc = "Hide Class Bar (Combo Points, Holy Power, etc.)",
+                name = "Hide ClassBar",
+                desc = "Hide ClassBar (Combo Points, Holy Power, etc.)",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.unitframes.classbar = val end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.classbar = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Classbar:Enable()
+                    else
+                        self.Classbar:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.unitframes.classbar end,
                 order = 13
             },
             cornericon = {
-                name = "Corner Icon",
+                name = "Hide Corner Icon",
                 desc = "Hide the Corner Icon on the Player Unitframe",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.unitframes.cornericon = val end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.cornericon = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Cornericon:Enable()
+                    else
+                        self.Cornericon:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.unitframes.cornericon end,
                 order = 14
             },
             name = {
-                name = "Name",
+                name = "Hide Name",
                 desc = "Hide Names on Unitframes",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.unitframes.name = val end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.name = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Name:Enable()
+                    else
+                        self.Name:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.unitframes.name end,
                 order = 15
             },
             level = {
-                name = "Level",
-                desc = "Hide Level-Text of max level Units",
+                name = "Hide Level",
+                desc = "Hide Level Text on Unitframes",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.unitframes.level = val end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.level = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Level:Enable()
+                    else
+                        self.Level:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.unitframes.level end,
                 order = 16
             },
@@ -247,7 +325,17 @@ function Unitframes:OnInitialize()
                 end,
                 desc = "Enable / Disable Buffs & Debuffs re-sizing on Unitframes",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.unitframes.buffsdebuffs.enabled = val end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.buffsdebuffs.enabled = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.BuffsDebuffs:Enable()
+                    else
+                        self.BuffsDebuffs:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.unitframes.buffsdebuffs.enabled end,
                 order = 18
             },
@@ -258,8 +346,8 @@ function Unitframes:OnInitialize()
                 min = 10,
                 max = 50,
                 step = 1,
-                set = function(_, val) mUI.db.profile.unitframes.buffsize = val end,
-                get = function() return mUI.db.profile.unitframes.buffsize end,
+                set = function(_, val) mUI.db.profile.unitframes.buffsdebuffs.buffsize = val end,
+                get = function() return mUI.db.profile.unitframes.buffsdebuffs.buffsize end,
                 order = 19
             },
             debuffsize = {
@@ -269,8 +357,8 @@ function Unitframes:OnInitialize()
                 min = 10,
                 max = 50,
                 step = 1,
-                set = function(_, val) mUI.db.profile.unitframes.debuffsize = val end,
-                get = function() return mUI.db.profile.unitframes.debuffsize end,
+                set = function(_, val) mUI.db.profile.unitframes.buffsdebuffs.debuffsize = val end,
+                get = function() return mUI.db.profile.unitframes.buffsdebuffs.debuffsize end,
                 order = 20
             }
         }

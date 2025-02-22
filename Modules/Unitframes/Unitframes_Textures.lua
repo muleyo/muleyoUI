@@ -14,6 +14,7 @@ function Unitframes_Textures:OnInitialize()
     -- Tables
     self.healthbars = {
         player = PlayerFrame.healthbar,
+        pet = PetFrame.healthbar,
         target = TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBarsContainer.HealthBar,
         focus = FocusFrame.TargetFrameContent.TargetFrameContentMain.HealthBarsContainer.HealthBar,
         targettarget = TargetFrameToT.HealthBar,
@@ -31,6 +32,7 @@ function Unitframes_Textures:OnInitialize()
 
     self.powerbars = {
         player = PlayerFrame.manabar,
+        pet = PetFrame.manabar,
         target = TargetFrame.manabar,
         focus = FocusFrame.manabar,
         targettarget = TargetFrameToT.manabar,
@@ -48,6 +50,7 @@ function Unitframes_Textures:OnInitialize()
 
     self.defaultHealthTextures = {
         player = "UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health",
+        pet = "UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health",
         target = "UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health",
         focus = "UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health",
         targettarget = "UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health",
@@ -70,6 +73,12 @@ function Unitframes_Textures:OnInitialize()
             [2] = "UI-HUD-UnitFrame-Player-PortraitOn-Bar-Focus",
             [3] = "UI-HUD-UnitFrame-Player-PortraitOn-Bar-Energy",
             [6] = "UI-HUD-UnitFrame-Player-PortraitOn-Bar-RunicPower"
+        },
+        pet = {
+            [0] = "UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana",
+            [1] = "UI-HUD-UnitFrame-Player-PortraitOn-Bar-Rage",
+            [2] = "UI-HUD-UnitFrame-Player-PortraitOn-Bar-Focus",
+            [3] = "UI-HUD-UnitFrame-Player-PortraitOn-Bar-Energy",
         },
         target = {
             [0] = "UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana",
@@ -184,6 +193,11 @@ function Unitframes_Textures:OnInitialize()
                     healthbar.HealthBarTexture:SetTexture(texture)
                     if not self.db.color then
                         healthbar.HealthBarTexture:SetVertexColor(0, 1, 0)
+                    end
+                elseif healthbar.unit == "pet" then
+                    select(7, healthbar:GetRegions()):SetTexture(texture)
+                    if not self.db.color then
+                        select(7, healthbar:GetRegions()):SetVertexColor(0, 1, 0)
                     end
                 else
                     healthbar:SetStatusBarTexture(texture)

@@ -1064,7 +1064,8 @@ function Theme:OnInitialize()
         mUI:Skin({
             PetFrameTexture,
             TargetFrameToT.FrameTexture,
-            FocusFrameToT.FrameTexture
+            FocusFrameToT.FrameTexture,
+            PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PlayerPortraitCornerIcon
         }, true)
 
         -- Actionbars
