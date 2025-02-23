@@ -5,7 +5,7 @@ function Font:OnInitialize()
     self.db = mUI.db.profile.general
 
     -- Load LSM
-    local LSM = LibStub("LibSharedMedia-3.0")
+    self.LSM = LibStub("LibSharedMedia-3.0")
 
     -- Variables
     self.backup = {
@@ -17,7 +17,7 @@ function Font:OnInitialize()
     }
 
     function self:Update()
-        local font = LSM:Fetch('font', self.db.font)
+        local font = self.LSM:Fetch('font', self.db.font)
         local fontSizes = { 9, 9, 14, 14, 12, 64, 64 }
 
         if (not C_AddOns.IsAddOnLoaded("NiceDamage")) or (not C_AddOns.IsAddOnLoaded("ClassicNumbers")) then
@@ -146,16 +146,11 @@ function Font:OnInitialize()
             gameFont:SetFont(font, fontSizes[i] or fontSize, fontStyle)
         end
 
-        local function SetFont(font, fontSize)
-            local fontName = font:GetFont()
-            font:SetFont(fontName, fontSize, "OUTLINE")
-        end
-
         -- Set Font Size for Nameplate Names
-        SetFont(SystemFont_LargeNamePlate, 8)
-        SetFont(SystemFont_NamePlate, 8)
-        SetFont(SystemFont_LargeNamePlateFixed, 8)
-        SetFont(SystemFont_NamePlateFixed, 8)
+        mUI:ApplyFont(SystemFont_LargeNamePlate, 9, "OUTLINE")
+        mUI:ApplyFont(SystemFont_NamePlate, 9, "OUTLINE")
+        mUI:ApplyFont(SystemFont_LargeNamePlateFixed, 9, "OUTLINE")
+        mUI:ApplyFont(SystemFont_NamePlateFixed, 9, "OUTLINE")
     end
 end
 

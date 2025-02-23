@@ -1,5 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Include file="Layouts\Load.xml" />
     <Include file="Gui.lua" />
     <Include file="Install.lua" />
+    <Include file="Layouts\Load.xml" />
 </Ui>

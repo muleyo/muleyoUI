@@ -1,15 +1,17 @@
 local Theme = mUI:NewModule("mUI.Modules.General.Theme")
 
 function Theme:OnInitialize()
-    -- Initialize Database
+    -- Load Database
     self.db = mUI.db.profile.general
 
-    -- Hook Checks
-    local dragonriding = false
-    local classHook = false
+    -- Create Frames
+    self.dragonriding = CreateFrame("Frame")
+
+    -- Register Events
+    self.dragonriding:RegisterEvent("UPDATE_UI_WIDGET")
 
     -- Style ActionButton
-    local Bars = {
+    self.Bars = {
         _G["MultiBarBottomLeft"],
         _G["MultiBarBottomRight"],
         _G["MultiBarRight"],
@@ -20,15 +22,13 @@ function Theme:OnInitialize()
         _G["MultiBar7"],
     }
 
-    local function StyleButton(Button, Type)
+    function self:StyleButton(Button, Type)
         local Name = Button:GetName()
         local NormalTexture = _G[Name .. "NormalTexture"]
         local Icon = _G[Name .. "Icon"]
         local Cooldown = _G[Name .. "Cooldown"]
 
-        mUI:Skin({
-            NormalTexture
-        }, true)
+        mUI:Skin({ NormalTexture }, true)
 
         if Type ~= "StanceOrPet" then
             Cooldown:ClearAllPoints()
@@ -49,12 +49,12 @@ function Theme:OnInitialize()
         end
     end
 
-    local function StyleAction(Bar, Num)
+    function self:StyleAction(Bar, Num)
         for i = 1, Num do
             local Name = Bar:GetName()
             local Button = _G[Name .. "Button" .. i]
 
-            StyleButton(Button, "Actionbar")
+            self:StyleButton(Button, "Actionbar")
         end
     end
 
@@ -754,10 +754,8 @@ function Theme:OnInitialize()
         }, true)
 
         -- Dragonriding
-        if not dragonriding then
-            local updateFrame = CreateFrame("Frame")
-            updateFrame:RegisterEvent("UPDATE_UI_WIDGET")
-            updateFrame:HookScript("OnEvent", function()
+        if not mUI:IsHooked(self.dragonriding, "OnEvent") then
+            mUI:HookScript(self.dragonriding, "OnEvent", function()
                 for _, child in ipairs({ UIWidgetPowerBarContainerFrame:GetChildren() }) do
                     mUI:Skin(child)
                     for _, vigor in ipairs({ child:GetChildren() }) do
@@ -768,7 +766,6 @@ function Theme:OnInitialize()
                     end
                 end
             end)
-            dragonriding = true
         end
 
         -- Dressup Frame
@@ -1088,11 +1085,11 @@ function Theme:OnInitialize()
         }, true)
 
         -- Actionbars
-        for j = 1, #Bars do
-            local Bar = Bars[j]
+        for j = 1, #self.Bars do
+            local Bar = self.Bars[j]
             if Bar then
                 local Num = Bar.numButtonsShowable
-                StyleAction(Bar, Num)
+                self:StyleAction(Bar, Num)
             end
         end
 
@@ -1102,15 +1099,15 @@ function Theme:OnInitialize()
             local Button = _G["ActionButton" .. i]
 
             if C_AddOns.IsAddOnLoaded("Masque") and C_AddOns.IsAddOnLoaded("MasqueBlizzBars") then return end
-            StyleButton(Button, "Actionbar")
+            self:StyleButton(Button, "Actionbar")
         end
 
         for i = 1, 10 do
             local StanceButton = _G["StanceButton" .. i]
             local PetButton = _G["PetActionButton" .. i]
 
-            StyleButton(StanceButton, "StanceOrPet")
-            StyleButton(PetButton, "StanceOrPet")
+            self:StyleButton(StanceButton, "StanceOrPet")
+            self:StyleButton(PetButton, "StanceOrPet")
         end
 
         if C_AddOns.IsAddOnLoaded("Dominos") then
@@ -1118,7 +1115,7 @@ function Theme:OnInitialize()
             for i = 1, 140 do
                 local ActionButton = _G["DominosActionButton" .. i]
                 if ActionButton then
-                    StyleButton(ActionButton)
+                    self:StyleButton(ActionButton)
                 end
             end
 
@@ -1127,11 +1124,11 @@ function Theme:OnInitialize()
                 local StanceButton = _G["DominosStanceButton" .. i]
 
                 if PetButton then
-                    StyleButton(PetButton)
+                    self:StyleButton(PetButton)
                 end
 
                 if StanceButton then
-                    StyleButton(StanceButton)
+                    self:StyleButton(StanceButton)
                 end
             end
         end
@@ -1141,7 +1138,7 @@ function Theme:OnInitialize()
             for i = 1, 180 do
                 local ActionButton = _G["BT4Button" .. i]
                 if ActionButton then
-                    StyleButton(ActionButton)
+                    self:StyleButton(ActionButton)
                 end
             end
 
@@ -1150,60 +1147,53 @@ function Theme:OnInitialize()
                 local StanceButton = _G["BT4StanceButton" .. i]
 
                 if PetButton then
-                    StyleButton(PetButton, "StanceOrPet")
+                    self:StyleButton(PetButton, "StanceOrPet")
                 end
 
                 if StanceButton then
-                    StyleButton(StanceButton, "StanceOrPet")
+                    self:StyleButton(StanceButton, "StanceOrPet")
                 end
             end
         end
 
         -- Class Bars
         if (playerClass == 'ROGUE') then
-            if not classHook then
-                RogueComboPointBarFrame:HookScript("OnUpdate", classBar)
-                classHook = true
+            if not mUI:IsHooked(RogueComboPointBarFrame, "OnUpdate") then
+                mUI:HookScript(RogueComboPointBarFrame, "OnUpdate", classBar)
             end
 
             classBar()
         elseif (playerClass == 'MAGE') then
-            if not classHook then
-                MageArcaneChargesFrame:HookScript("OnUpdate", classBar)
-                classHook = true
+            if not mUI:IsHooked(MageArcaneChargesFrame, "OnUpdate") then
+                mUI:HookScript(MageArcaneChargesFrame, "OnUpdate", classBar)
             end
 
             classBar()
         elseif (playerClass == 'WARLOCK') then
-            if not classHook then
-                WarlockPowerFrame:HookScript("OnUpdate", classBar)
-                classHook = true
+            if not mUI:IsHooked(WarlockPowerFrame, "OnUpdate") then
+                mUI:HookScript(WarlockPowerFrame, "OnUpdate", classBar)
             end
 
             classBar()
         elseif (playerClass == 'DRUID') then
-            if not classHook then
-                DruidComboPointBarFrame:HookScript("OnUpdate", classBar)
-                classHook = true
+            if not mUI:IsHooked(DruidComboPointBarFrame, "OnUpdate") then
+                mUI:HookScript(DruidComboPointBarFrame, "OnUpdate", classBar)
             end
 
             classBar()
         elseif (playerClass == 'MONK') then
-            if not classHook then
-                MonkHarmonyBarFrame:HookScript("OnUpdate", classBar)
-                classHook = true
+            if not mUI:IsHooked(MonkHarmonyBarFrame, "OnUpdate") then
+                mUI:HookScript(MonkHarmonyBarFrame, "OnUpdate", classBar)
             end
 
             classBar()
         elseif (playerClass == 'DEATHKNIGHT') then
-            if not classHook then
-                RuneFrame:HookScript("OnUpdate", classBar)
-                classHook = true
+            if not mUI:IsHooked(RuneFrame, "OnEvent") then
+                mUI:HookScript(RuneFrame, "OnEvent", OnUpdate)
             end
         elseif (playerClass == 'EVOKER') then
-            if not classHook then
-                EssencePlayerFrame:HookScript("OnUpdate", classBar)
-                classHook = true
+            if not mUI:IsHooked(EssencePlayerFrame, "OnUpdate") then
+                mUI:HookScript(EssencePlayerFrame, "OnUpdate", classBar)
             end
 
             classBar()
@@ -1211,15 +1201,12 @@ function Theme:OnInitialize()
             classBar()
         elseif (playerClass == 'SHAMAN') then
             -- Totem Bar
-            if not classHook then
-                TotemFrame:HookScript("OnEvent", function(self)
+            if not mUI:IsHooked(TotemFrame, "OnEvent") then
+                mUI:HookScript(TotemFrame, "OnEvent", function(self)
                     for totem, _ in self.totemPool:EnumerateActive() do
-                        mUI:Skin({
-                            totem.Border
-                        }, true)
+                        mUI:Skin({ totem.Border }, true)
                     end
                 end)
-                classHook = true
             end
         end
     end

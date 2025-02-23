@@ -2,7 +2,6 @@ local Modules = mUI:NewModule("mUI.Modules.Castbars")
 
 function Modules:OnInitialize()
     -- Modules
-    self.Module = mUI:GetModule("mUI.Modules.Castbars")
     self.Style = mUI:GetModule("mUI.Modules.Castbars.Style")
     self.Icon = mUI:GetModule("mUI.Modules.Castbars.Icon")
     self.Casttime = mUI:GetModule("mUI.Modules.Castbars.Casttime")

@@ -1,7 +1,7 @@
 local Stats = mUI:NewModule("mUI.Modules.General.Stats")
 
 function Stats:OnInitialize()
-    -- Initialize Database
+    -- Load Database
     self.db = {
         display = mUI.db.profile.general.display,
         pos = mUI.db.profile.edit.statsframe

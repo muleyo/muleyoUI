@@ -4,7 +4,7 @@ local Core = mUI:NewModule("mUI.Core")
 Core:Enable()
 
 function Core:OnEnable()
-    -- Initialize Database
+    -- Load Database
     self.db = mUI.db.profile
 
     -- Libraries
@@ -16,6 +16,7 @@ function Core:OnEnable()
     self.modules.actionbars = mUI:GetModule("mUI.Modules.Actionbars")
     self.modules.unitframes = mUI:GetModule("mUI.Modules.Unitframes")
     self.modules.castbars = mUI:GetModule("mUI.Modules.Castbars")
+    self.modules.nameplates = mUI:GetModule("mUI.Modules.Nameplates")
 
     -- Get Layouts
     self.layouts = {}
@@ -24,6 +25,7 @@ function Core:OnEnable()
     self.layouts.unitframes = mUI:GetModule("mUI.Config.Layouts.Unitframes")
     self.layouts.castbars = mUI:GetModule("mUI.Config.Layouts.Castbars")
     self.layouts.nameplates = mUI:GetModule("mUI.Config.Layouts.Nameplates")
+    self.layouts.npccolors = mUI:GetModule("mUI.Config.Layouts.NPCColors")
     self.layouts.tooltips = mUI:GetModule("mUI.Config.Layouts.Tooltips")
     self.layouts.mapminimap = mUI:GetModule("mUI.Config.Layouts.MapMinimap")
     self.layouts.chat = mUI:GetModule("mUI.Config.Layouts.Chat")
@@ -48,12 +50,17 @@ function Core:OnEnable()
         self.modules.castbars:Enable()
     end
 
+    if self.db.nameplates.enabled then
+        self.modules.nameplates:Enable()
+    end
+
     -- Register Options
     Config:RegisterOptionsTable("mUIOptions_General_Tab", self.layouts.general:GetOptions())
     Config:RegisterOptionsTable("mUIOptions_Actionbars_Tab", self.layouts.actionbars:GetOptions())
     Config:RegisterOptionsTable("mUIOptions_Unitframes_Tab", self.layouts.unitframes:GetOptions())
     Config:RegisterOptionsTable("mUIOptions_Castbars_Tab", self.layouts.castbars:GetOptions())
     Config:RegisterOptionsTable("mUIOptions_Nameplates_Tab", self.layouts.nameplates:GetOptions())
+    Config:RegisterOptionsTable("mUIOptions_NPCColors_Tab", self.layouts.npccolors:GetOptions())
     Config:RegisterOptionsTable("mUIOptions_Tooltips_Tab", self.layouts.tooltips:GetOptions())
     Config:RegisterOptionsTable("mUIOptions_MapMinimap_Tab", self.layouts.mapminimap:GetOptions())
     Config:RegisterOptionsTable("mUIOptions_Chat_Tab", self.layouts.chat:GetOptions())

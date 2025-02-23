@@ -3,4 +3,5 @@
     <Include file="Actionbars\Load.xml" />
     <Include file="Unitframes\Load.xml" />
     <Include file="Castbars\Load.xml" />
+    <Include file="Nameplates\Load.xml" />
 </Ui>

@@ -2,7 +2,7 @@ local Raidframes_Textures = mUI:NewModule("mUI.Modules.Unitframes.Raidframes_Tex
 
 function Raidframes_Textures:OnInitialize()
     -- Load LSM
-    local LSM = LibStub("LibSharedMedia-3.0")
+    self.LSM = LibStub("LibSharedMedia-3.0")
 
     -- Load Database
     self.db = mUI.db.profile.unitframes.textures
@@ -59,7 +59,7 @@ function Raidframes_Textures:OnInitialize()
         if frame and frame:GetName() then
             local name = frame:GetName()
             if name and name:match("^Compact") then
-                local texture = LSM:Fetch('statusbar', self.db.raidframes)
+                local texture = self.LSM:Fetch('statusbar', self.db.raidframes)
                 if self.db.raidframes ~= "None" then
                     frame.healthBar:SetStatusBarTexture(texture)
                     frame.healthBar:GetStatusBarTexture():SetDrawLayer("BORDER")

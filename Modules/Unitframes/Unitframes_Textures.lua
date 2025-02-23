@@ -2,7 +2,7 @@ local Unitframes_Textures = mUI:NewModule("mUI.Modules.Unitframes.Unitframes_Tex
 
 function Unitframes_Textures:OnInitialize()
     -- Load LSM
-    local LSM = LibStub("LibSharedMedia-3.0")
+    self.LSM = LibStub("LibSharedMedia-3.0")
 
     -- Load Database
     self.db = mUI.db.profile.unitframes
@@ -178,7 +178,7 @@ function Unitframes_Textures:OnInitialize()
     }
 
     function self:Update()
-        local texture = LSM:Fetch('statusbar', self.db.textures.unitframes)
+        local texture = self.LSM:Fetch('statusbar', self.db.textures.unitframes)
         local powerColor
 
         for name, healthbar in pairs(self.healthbars) do

@@ -44,8 +44,10 @@ function Casttime:OnInitialize()
 end
 
 function Casttime:OnEnable()
+    PlayerCastingBarFrame.CastTimeText:Hide()
     mUI:HookScript(PlayerCastingBarFrame, "OnUpdate", function(frame, elapsed)
         self:Update(frame, elapsed)
+        frame.CastTimeText:Hide()
     end)
 
     mUI:HookScript(TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
@@ -87,7 +89,7 @@ function Casttime:OnDisable()
     mUI:Unhook(Boss4TargetFrameSpellBar, "OnUpdate")
     mUI:Unhook(Boss5TargetFrameSpellBar, "OnUpdate")
 
-    for unitframe, castbar in pairs(self.castbars) do
+    for _, castbar in pairs(self.castbars) do
         _G[castbar].timer:SetText("")
     end
 end

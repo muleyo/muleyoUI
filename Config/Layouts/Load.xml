@@ -3,6 +3,7 @@
     <Include file="Actionbars.lua" />
     <Include file="Unitframes.lua" />
     <Include file="Castbars.lua" />
+    <Include file="NPCColors.lua" />
     <Include file="Nameplates.lua" />
     <Include file="Tooltips.lua" />
     <Include file="MapMinimap.lua" />

@@ -35,11 +35,12 @@ function Profiles:OnInitialize()
             },
             reset = {
                 name = "Reset Profile",
-                desc = "Reset the current Profile back to default values",
+                desc = "Reset the current Profile back to default values\n\n|cffffff00Info:|r Requires Reload",
                 type = "execute",
                 confirm = true,
                 func = function()
                     mUI.db:ResetProfile()
+                    mUI:Reload("Reset Profile")
                 end,
                 order = 2
             },
@@ -51,12 +52,14 @@ function Profiles:OnInitialize()
             },
             newprofile = {
                 name = "New Profile",
-                desc = "Create a new Profile",
+                desc = "Create a new Profile\n\n|cffffff00Info:|r Requires Reload",
                 type = "input",
+                confirm = true,
                 get = function() return "" end,
                 set = function(_, value)
                     mUI.db:SetProfile(value)
                     mUI.db.profile.install = true
+                    mUI:Reload("New Profile")
                 end,
                 order = 4
             },
@@ -72,11 +75,13 @@ function Profiles:OnInitialize()
                     return not next(profile_list)
                 end,
                 name = "Change Profile",
-                desc = "Change your active Profile",
+                desc = "Change your active Profile\n\n|cffffff00Info:|r Requires Reload",
                 type = "select",
+                confirm = true,
                 values = GetProfiles,
                 set = function(_, value)
                     mUI.db:SetProfile(self.profiles[value])
+                    mUI:Reload("Change Profile")
                 end,
                 arg = "no_current",
                 order = 6
@@ -93,11 +98,13 @@ function Profiles:OnInitialize()
                     return not next(profile_list)
                 end,
                 name = "Copy From",
-                desc = "Copy a Profile into your current Profile",
+                desc = "Copy a Profile into your current Profile\n\n|cffffff00Info:|r Requires Reload",
                 type = "select",
+                confirm = true,
                 values = GetProfiles,
                 set = function(_, value)
                     mUI.db:CopyProfile(self.profiles[value])
+                    mUI:Reload("Copy Profile")
                 end,
                 arg = "no_current",
                 order = 8

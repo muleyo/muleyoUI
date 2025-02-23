@@ -19,14 +19,16 @@ function Actionbars:OnInitialize()
                         return "|cFFFF0000Disabled|r"
                     end
                 end,
-                desc = "|cffffff00Info:|r Requires Reload",
+                desc = "Enable / Disable Module\n\n|cffffff00Info:|r Requires Reload",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.actionbars.enabled = val
 
                     if val then
+                        self.Module:Enable()
                         mUI:Reload('Enable Actionbars Module')
                     else
+                        self.Module:Disable()
                         mUI:Reload('Disable Actionbars Module')
                     end
                 end,

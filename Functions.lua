@@ -111,6 +111,11 @@ function Functions:OnInitialize()
         StaticPopup_Show("mUIReloadPopup", "", "")
     end
 
+    function mUI:ApplyFont(font, fontSize, flag)
+        local fontName = font:GetFont()
+        font:SetFont(fontName, fontSize, flag)
+    end
+
     -- Theme Functions
     function mUI:Color(sub, alpha)
         -- Update Custom Color & Theme

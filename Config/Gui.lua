@@ -110,7 +110,7 @@ function Gui:OnInitialize()
     )
 
     -- General Tab
-    gui.tabs["General"]:HookScript("OnClick", function(self)
+    gui.tabs["General"]:HookScript("OnClick", function()
         gui.container:ReleaseChildren()
         ACD:Open("mUIOptions_General_Tab", gui.container)
     end)

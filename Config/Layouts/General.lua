@@ -5,7 +5,7 @@ General:Enable()
 
 function General:OnInitialize()
     -- Load LSM
-    local LSM = LibStub("LibSharedMedia-3.0")
+    self.LSM = LibStub("LibSharedMedia-3.0")
 
     -- Get Modules
     self.Module = mUI:GetModule("mUI.Modules.General")
@@ -22,14 +22,16 @@ function General:OnInitialize()
                         return "|cFFFF0000Disabled|r"
                     end
                 end,
-                desc = "|cffffff00Info:|r Requires Reload",
+                desc = "Enable / Disable Module\n\n|cffffff00Info:|r Requires Reload",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.general.enabled = val
 
                     if val then
+                        self.Module:Enable()
                         mUI:Reload('Enable General Module')
                     else
+                        self.Module:Disable()
                         mUI:Reload('Disable General Module')
                     end
                 end,
@@ -108,7 +110,7 @@ function General:OnInitialize()
                 name = "Font",
                 desc = "Choose a Font you like\n\n|cffffff00Info:|r Requires Reload.",
                 type = "select",
-                values = LSM:HashTable("font"),
+                values = self.LSM:HashTable("font"),
                 dialogControl = 'LSM30_Font',
                 set = function(_, val)
                     mUI.db.profile.general.font = val

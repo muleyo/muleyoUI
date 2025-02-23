@@ -23,4 +23,5 @@
     <!-- Libs -->
     <Include file="LibDDI-1.0\lib.xml" />
     <Include file="LibDeflate\lib.xml" />
+    <Include file="LibNPCInfo\lib.xml" />
 </Ui>

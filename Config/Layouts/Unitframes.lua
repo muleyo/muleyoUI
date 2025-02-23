@@ -5,7 +5,7 @@ Unitframes:Enable()
 
 function Unitframes:OnInitialize()
     -- Get LSM
-    local LSM = LibStub("LibSharedMedia-3.0")
+    self.LSM = LibStub("LibSharedMedia-3.0")
 
     -- Get Modules
     self.Module = mUI:GetModule("mUI.Modules.Unitframes")
@@ -22,14 +22,16 @@ function Unitframes:OnInitialize()
                         return "|cffff0000Disabled|r"
                     end
                 end,
-                desc = "|cffffff00Info:|r Requires Reload",
+                desc = "Enable / Disable Module\n\n|cffffff00Info:|r Requires Reload",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.unitframes.enabled = val
 
                     if val then
+                        self.Module:Enable()
                         mUI:Reload('Enable Unitframes Module')
                     else
+                        self.Module:Disable()
                         mUI:Reload('Disable Unitframes Module')
                     end
                 end,
@@ -45,7 +47,7 @@ function Unitframes:OnInitialize()
                 name = "Unitframes",
                 desc = "Select a Texture for the Unitframes (Player, Target, Focus, etc.)",
                 type = "select",
-                values = LSM:HashTable("statusbar"),
+                values = self.LSM:HashTable("statusbar"),
                 dialogControl = 'LSM30_Statusbar',
                 set = function(_, val)
                     mUI.db.profile.unitframes.textures.unitframes = val
@@ -66,7 +68,7 @@ function Unitframes:OnInitialize()
                 name = "Party / Raidframes",
                 desc = "Select a Texture for the Party / Raidframes",
                 type = "select",
-                values = LSM:HashTable("statusbar"),
+                values = self.LSM:HashTable("statusbar"),
                 dialogControl = 'LSM30_Statusbar',
                 set = function(_, val)
                     mUI.db.profile.unitframes.textures.raidframes = val
