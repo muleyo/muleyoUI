@@ -2,7 +2,7 @@ local Gui = mUI:NewModule("mUI.Config.Gui")
 
 function Gui:OnInitialize()
     -- Initialize Database
-    self.db = mUI.db.profile.gui
+    Gui.db = mUI.db.profile.gui
 
     -- Libraries
     local AceGUI = LibStub("AceGUI-3.0")
@@ -15,7 +15,7 @@ function Gui:OnInitialize()
     gui:SetFrameStrata("DIALOG")
     gui:SetSize(900, 500)
     gui:SetPoint("CENTER", UIParent, "CENTER", 0, 20)
-    gui:SetScale(self.db.scale)
+    gui:SetScale(Gui.db.scale)
 
     -- Set Background, Title and Portrait
     gui.TitleContainer.TitleText:SetText("|cff009cffmuleyo|rUI (" .. C_AddOns.GetAddOnMetadata("mUI", "version") .. ")")
@@ -44,7 +44,7 @@ function Gui:OnInitialize()
     gui.scaleText = gui.TitleContainer:CreateFontString(nil, "OVERLAY")
     gui.scaleText:SetPoint("RIGHT", gui.TitleContainer, "RIGHT", -80, -1)
     gui.scaleText:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE")
-    gui.scaleText:SetText(math.floor(self.db.scale * 100) .. "%")
+    gui.scaleText:SetText(math.floor(Gui.db.scale * 100) .. "%")
     gui.scaleText:SetTextColor(1, 0.81960791349411, 0, 1)
 
     -- Create Scale Slider
@@ -53,15 +53,15 @@ function Gui:OnInitialize()
     gui.scaleSlider:SetFrameLevel(gui.TitleContainer:GetFrameLevel() + 1)
     gui.scaleSlider:SetSize(80, 10)
     gui.scaleSlider:SetMinMaxValues(0.8, 1.5)
-    gui.scaleSlider:SetValue(self.db.scale)
+    gui.scaleSlider:SetValue(Gui.db.scale)
     gui.scaleSlider:SetValueStep(0.01)
     gui.scaleSlider:SetObeyStepOnDrag(true)
     gui.scaleSlider:HookScript("OnValueChanged", function(_, value)
-        self.db.scale = value
+        Gui.db.scale = value
         gui.scaleText:SetText(math.floor(value * 100) .. "%")
     end)
     gui.scaleSlider:HookScript("OnMouseUp", function()
-        gui:SetScale(self.db.scale)
+        gui:SetScale(Gui.db.scale)
     end)
 
     -- Create Options Container

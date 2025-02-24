@@ -156,7 +156,7 @@ local function chatFrame_RemoveMessagesByPredicateHook(self)
 end
 
 local function chatFrame_OnHyperlinkEnterHook(self, link, text, fontString)
-	if mUI.db.profile.chat.lsglass.chat.tooltips then
+	if Style.db.tooltips then
 		local linkType = LinkUtil.SplitLinkData(link)
 		if linkType == "battlepet" then
 			GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT", 4, 2)
@@ -291,13 +291,13 @@ function object_proto:CaptureChatFrame(chatFrame)
 	chatFrame.FontStringContainer:Hide()
 
 	if not hookedChatFrames[chatFrame] then
-		chatFrame:HookScript("OnSizeChanged", chatFrame_OnSizeChanged)
+		Style:HookScript(chatFrame, "OnSizeChanged", chatFrame_OnSizeChanged)
 
-		hooksecurefunc(chatFrame, "SetShown", chatFrame_SetShownHook)
-		hooksecurefunc(chatFrame, "Hide", chatFrame_HideHook)
+		Style:SecureHook(chatFrame, "SetShown", chatFrame_SetShownHook)
+		Style:SecureHook(chatFrame, "Hide", chatFrame_HideHook)
 
 		-- some addon devs tend to hook AddMessage to add filtering, so do it the hard way
-		hooksecurefunc(chatFrame.historyBuffer, "PushFront", function()
+		Style:SecureHook(chatFrame.historyBuffer, "PushFront", function()
 			local slidingFrame = Style:GetSlidingFrameForChatFrame(chatFrame)
 			if slidingFrame then
 				slidingFrame:NewIncomingMessage()
@@ -305,10 +305,10 @@ function object_proto:CaptureChatFrame(chatFrame)
 		end)
 
 		-- redraw the frame if visible
-		hooksecurefunc(chatFrame, "RemoveMessagesByPredicate", chatFrame_RemoveMessagesByPredicateHook)
+		Style:SecureHook(chatFrame, "RemoveMessagesByPredicate", chatFrame_RemoveMessagesByPredicateHook)
 
-		chatFrame:HookScript("OnHyperlinkEnter", chatFrame_OnHyperlinkEnterHook)
-		chatFrame:HookScript("OnHyperlinkLeave", chatFrame_OnHyperlinkLeaveHook)
+		Style:HookScript(chatFrame, "OnHyperlinkEnter", chatFrame_OnHyperlinkEnterHook)
+		Style:HookScript(chatFrame, "OnHyperlinkLeave", chatFrame_OnHyperlinkLeaveHook)
 
 		hookedChatFrames[chatFrame] = true
 	end
@@ -442,8 +442,8 @@ function object_proto:GetMaxNumVisibleLines()
 end
 
 function object_proto:GetMessageLineHeight()
-	return mUI.db.profile.chat.lsglass.chat[self:GetID()].font.size +
-		mUI.db.profile.chat.lsglass.chat[self:GetID()].y_padding * 2
+	return Style.db.chat.font.size +
+		Style.db.chat.y_padding * 2
 end
 
 function object_proto:IsDocked()
@@ -459,7 +459,7 @@ function object_proto:SetScrolling(state)
 end
 
 function object_proto:SetSmoothScroll(func, change, callback)
-	if mUI.db.profile.chat.lsglass.chat.smooth then
+	if Style.db.smooth then
 		setSmoothScroll(self, func, change, callback)
 
 		self.numIncomingMessagesWhileScrolling = 0
@@ -683,11 +683,11 @@ function object_proto:ResetFadingTimer()
 end
 
 function object_proto:CanFade()
-	return mUI.db.profile.chat.lsglass.chat.fade.enabled and self:IsAtBottom()
+	return Style.db.fade.enabled and self:IsAtBottom()
 end
 
 function object_proto:CalculateAlphaFromTimestampDelta(delta)
-	local config = mUI.db.profile.chat.lsglass.chat.fade
+	local config = Style.db.fade
 
 	if delta <= config.out_delay then
 		return 1
@@ -719,13 +719,13 @@ function object_proto:UpdateFading()
 		if alpha < 1 then
 			messageLine:FadeOut(0, CHAT_FADE_OUT_DURATION * alpha)
 		else
-			messageLine:FadeOut(mUI.db.profile.chat.lsglass.chat.fade.out_delay - timeDelta, CHAT_FADE_OUT_DURATION)
+			messageLine:FadeOut(Style.db.fade.out_delay - timeDelta, CHAT_FADE_OUT_DURATION)
 		end
 	end
 end
 
 function object_proto:ShouldShowMessage(delta)
-	delta = delta - mUI.db.profile.chat.lsglass.chat.fade.out_delay
+	delta = delta - Style.db.fade.out_delay
 	if delta >= CHAT_FADE_OUT_DURATION then
 		return false
 	end
@@ -841,8 +841,8 @@ function object_proto:FastForward()
 end
 
 function object_proto:ToggleScrollButtons()
-	self.ScrollDownButton:SetShown(mUI.db.profile.chat.lsglass.chat.buttons.up_and_down)
-	self.ScrollUpButton:SetShown(mUI.db.profile.chat.lsglass.chat.buttons.up_and_down)
+	self.ScrollDownButton:SetShown(Style.db.buttons.up_and_down)
+	self.ScrollUpButton:SetShown(Style.db.buttons.up_and_down)
 end
 
 local DOWN = 1
@@ -952,7 +952,7 @@ end
 
 function object_proto:UpdateChatWidgetFading()
 	if not self:IsShown() or self.ScrollChild:GetHeight() == 0 then return end
-	if not mUI.db.profile.chat.lsglass.dock.fade.enabled then return end
+	if not Style.db.dock.fade.enabled then return end
 
 	local isMouseOver = self:IsMouseOver(26, -36, -36, 0)
 	if isMouseOver ~= self.isMouseOver then
@@ -988,7 +988,7 @@ function object_proto:UpdateChatWidgetFading()
 				end
 			end)
 
-			if mUI.db.profile.chat.lsglass.chat.buttons.up_and_down then
+			if Style.db.buttons.up_and_down then
 				Style:FadeIn(self.ScrollDownButton, DOCK_FADE_IN_DURATION, function()
 					if self.isMouseOver then
 						Style:StopFading(self.ScrollDownButton, 1)
@@ -1022,7 +1022,7 @@ function object_proto:UpdateChatWidgetFading()
 
 			Style:FadeOut(self.ButtonFrame, DOCK_FADE_OUT_DELAY, DOCK_FADE_OUT_DURATION)
 
-			if mUI.db.profile.chat.lsglass.chat.buttons.up_and_down then
+			if Style.db.buttons.up_and_down then
 				Style:FadeOut(self.ScrollDownButton, DOCK_FADE_OUT_DELAY, DOCK_FADE_OUT_DURATION)
 				Style:FadeOut(self.ScrollUpButton, DOCK_FADE_OUT_DELAY, DOCK_FADE_OUT_DURATION)
 			end
@@ -1079,13 +1079,13 @@ do
 
 			local scrollDownButton = Style:CreateScrollButton(frame, 3)
 			scrollDownButton:SetPoint("BOTTOMRIGHT", scrollToBottomButton, "TOPRIGHT", 0, 2)
-			scrollDownButton:SetShown(mUI.db.profile.chat.lsglass.chat.buttons.up_and_down)
+			scrollDownButton:SetShown(Style.db.buttons.up_and_down)
 			scrollDownButton:SetFrameLevel(frame:GetFrameLevel() + 2)
 			frame.ScrollDownButton = scrollDownButton
 
 			local scrollUpButton = Style:CreateScrollButton(frame, 4)
 			scrollUpButton:SetPoint("BOTTOMRIGHT", scrollDownButton, "TOPRIGHT", 0, 2)
-			scrollUpButton:SetShown(mUI.db.profile.chat.lsglass.chat.buttons.up_and_down)
+			scrollUpButton:SetShown(Style.db.buttons.up_and_down)
 			scrollUpButton:SetFrameLevel(frame:GetFrameLevel() + 2)
 			frame.ScrollUpButton = scrollUpButton
 

@@ -44,7 +44,7 @@ local function setUpBaseButton(button, state)
 	button:SetSize(24, 24)
 	button:Hide()
 
-	button.Backdrop = Style:CreateBackdrop(button, mUI.db.profile.chat.lsglass.dock.alpha)
+	button.Backdrop = Style:CreateBackdrop(button, Style.db.dock.alpha)
 
 	button:SetNormalTexture(0)
 	button:SetPushedTexture(0)
@@ -117,7 +117,7 @@ do
 
 	function Style:CreateScrollToBottomButton(parent)
 		local button = Mixin(CreateFrame("Button", nil, parent), button_proto, scroll_to_bottom_button_proto)
-		button:SetScript("OnClick", button.OnClick)
+		Style:RawHookScript(button, "OnClick", button.OnClick)
 		button:SetAlpha(0)
 
 		return setUpBaseButton(button, 1)
@@ -128,7 +128,7 @@ do
 	local scroll_button_proto = {}
 
 	function scroll_button_proto:OnHide()
-		self:SetScript("OnUpdate", nil)
+		Style:RawHookScript(self, "OnUpdate", nil)
 	end
 
 	function scroll_button_proto:OnMouseDown()
@@ -137,12 +137,12 @@ do
 			frame:OnMouseWheel(-1 * (self.state == 3 and 1 or -1))
 
 			self.elapsed = 0
-			self:SetScript("OnUpdate", self.OnUpdate)
+			Style:RawHookScript(self, "OnUpdate", self.OnUpdate)
 		end
 	end
 
 	function scroll_button_proto:OnMouseUp()
-		self:SetScript("OnUpdate", nil)
+		Style:RawHookScript(self, "OnUpdate", nil)
 	end
 
 	function scroll_button_proto:OnUpdate(elapsed)
@@ -157,9 +157,9 @@ do
 	function Style:CreateScrollButton(parent, state)
 		local button = Mixin(CreateFrame("Button", nil, parent), button_proto, scroll_button_proto)
 		button:RegisterForClicks("LeftButtonDown", "RightButtonDown")
-		button:SetScript("OnMouseDown", button.OnMouseDown)
-		button:SetScript("OnMouseUp", button.OnMouseUp)
-		button:SetScript("OnHide", button.OnHide)
+		Style:RawHookScript(button, "OnMouseDown", button.OnMouseDown)
+		Style:RawHookScript(button, "OnMouseUp", button.OnMouseUp)
+		Style:RawHookScript(button, "OnHide", button.OnHide)
 		button:SetAlpha(1)
 
 		return setUpBaseButton(button, state)
@@ -167,7 +167,7 @@ do
 end
 
 function Style:UpdateScrollButtonAlpha()
-	local alpha = mUI.db.profile.chat.lsglass.dock.alpha
+	local alpha = Style.db.dock.alpha
 
 	for button in next, buttons do
 		button.Backdrop:UpdateAlpha(alpha)

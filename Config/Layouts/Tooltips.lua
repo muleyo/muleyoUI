@@ -5,10 +5,10 @@ Tooltips:Enable()
 
 function Tooltips:OnInitialize()
     -- Get Modules
-    self.Module = mUI:GetModule("mUI.Modules.Tooltips")
+    Tooltips.Module = mUI:GetModule("mUI.Modules.Tooltips")
 
     -- Initialize Layout
-    self.layout = {
+    Tooltips.layout = {
         type = "group",
         args = {
             enable = {
@@ -25,10 +25,10 @@ function Tooltips:OnInitialize()
                     mUI.db.profile.tooltips.enabled = val
 
                     if val then
-                        self.Module:Enable()
+                        Tooltips.Module:Enable()
                         mUI:Reload('Enable Tooltips Module')
                     else
-                        self.Module:Disable()
+                        Tooltips.Module:Disable()
                         mUI:Reload('Disable Tooltips Module')
                     end
                 end,
@@ -57,12 +57,12 @@ function Tooltips:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.tooltips.style = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Tooltips.Module:IsEnabled() then return end
 
                     if val == "mUI" then
-                        self.Module.Style:Enable()
+                        Tooltips.Module.Style:Enable()
                     else
-                        self.Module.Style:Disable()
+                        Tooltips.Module.Style:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.tooltips.style end,
@@ -80,12 +80,12 @@ function Tooltips:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.tooltips.combat = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Tooltips.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Combat:Enable()
+                        Tooltips.Module.Combat:Enable()
                     else
-                        self.Module.Combat:Disable()
+                        Tooltips.Module.Combat:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.tooltips.combat end,
@@ -98,12 +98,12 @@ function Tooltips:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.tooltips.mouseanchor = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Tooltips.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Anchor:Enable()
+                        Tooltips.Module.Anchor:Enable()
                     else
-                        self.Module.Anchor:Disable()
+                        Tooltips.Module.Anchor:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.tooltips.mouseanchor end,
@@ -114,7 +114,7 @@ function Tooltips:OnInitialize()
 end
 
 function Tooltips:OnEnable()
-    function self:GetOptions()
-        return self.layout
+    function Tooltips:GetOptions()
+        return Tooltips.layout
     end
 end

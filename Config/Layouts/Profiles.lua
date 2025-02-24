@@ -4,14 +4,14 @@ local Profiles = mUI:NewModule("mUI.Config.Layouts.Profiles")
 Profiles:Enable()
 
 function Profiles:OnInitialize()
-    self.profiles = {}
+    Profiles.profiles = {}
 
     -- Get Profiles Function
     local function GetProfiles(info)
         local no_current = info.arg == "no_current"
         local current_profile = mUI.db:GetCurrentProfile()
         local profile_list = {}
-        for k, v in pairs(mUI.db:GetProfiles(self.profiles)) do
+        for k, v in pairs(mUI.db:GetProfiles(Profiles.profiles)) do
             if no_current and v == current_profile then
                 -- skip
             else
@@ -22,7 +22,7 @@ function Profiles:OnInitialize()
     end
 
     -- Initialize Layout
-    self.layout = {
+    Profiles.layout = {
         type = "group",
         args = {
             header1 = {
@@ -80,7 +80,7 @@ function Profiles:OnInitialize()
                 confirm = true,
                 values = GetProfiles,
                 set = function(_, value)
-                    mUI.db:SetProfile(self.profiles[value])
+                    mUI.db:SetProfile(Profiles.profiles[value])
                     mUI:Reload("Change Profile")
                 end,
                 arg = "no_current",
@@ -103,7 +103,7 @@ function Profiles:OnInitialize()
                 confirm = true,
                 values = GetProfiles,
                 set = function(_, value)
-                    mUI.db:CopyProfile(self.profiles[value])
+                    mUI.db:CopyProfile(Profiles.profiles[value])
                     mUI:Reload("Copy Profile")
                 end,
                 arg = "no_current",
@@ -125,7 +125,7 @@ function Profiles:OnInitialize()
                 type = "select",
                 values = GetProfiles,
                 set = function(_, value)
-                    mUI.db:DeleteProfile(self.profiles[value])
+                    mUI.db:DeleteProfile(Profiles.profiles[value])
                 end,
                 arg = "no_current",
                 confirm = true,
@@ -156,7 +156,7 @@ function Profiles:OnInitialize()
 end
 
 function Profiles:OnEnable()
-    function self:GetOptions()
-        return self.layout
+    function Profiles:GetOptions()
+        return Profiles.layout
     end
 end

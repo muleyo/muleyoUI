@@ -71,7 +71,7 @@ do
 			height = self.Text:GetLineHeight()
 		end
 
-		self:SetHeight(height + mUI.db.profile.chat.lsglass.chat[self:GetPoolID()].y_padding * 2)
+		self:SetHeight(height + Style.db.chat.y_padding * 2)
 	end
 
 	-- ditto
@@ -88,7 +88,7 @@ local poolIDGetters = {}
 
 local function createMessageLine(pool, parent, id)
 	local width = Style:Round(parent:GetWidth())
-	local config = mUI.db.profile.chat.lsglass.chat[id]
+	local config = Style.db.chat
 
 	counters[pool] = counters[pool] + 1
 
@@ -135,7 +135,7 @@ local message_pool_proto = {}
 do
 	function message_pool_proto:UpdateWidth()
 		local width = Style:Round(self:GetParent():GetWidth())
-		local xPadding = mUI.db.profile.chat.lsglass.chat[self:GetID()].x_padding
+		local xPadding = Style.db.chat.x_padding
 
 		for messageLine in self:EnumerateActive() do
 			messageLine:AdjustWidth(width, xPadding)
@@ -157,7 +157,7 @@ do
 	end
 
 	function message_pool_proto:UpdateGradientBackgroundAlpha()
-		local alpha = mUI.db.profile.chat.lsglass.chat[self:GetID()].alpha
+		local alpha = Style.db.chat.alpha
 
 		for messageLine in self:EnumerateActive() do
 			messageLine:SetGradientBackgroundAlpha(alpha)
@@ -170,8 +170,8 @@ do
 
 	function message_pool_proto:UpdatePadding()
 		local width = Style:Round(self:GetParent():GetWidth())
-		local xPadding = mUI.db.profile.chat.lsglass.chat[self:GetID()].x_padding
-		local yPadding = mUI.db.profile.chat.lsglass.chat[self:GetID()].y_padding
+		local xPadding = Style.db.chat.x_padding
+		local yPadding = Style.db.chat.y_padding
 
 		for messageLine in self:EnumerateActive() do
 			messageLine:SetPadding(width, xPadding, yPadding)

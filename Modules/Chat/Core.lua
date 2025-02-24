@@ -1,5 +1,10 @@
 local Style = mUI:NewModule("mUI.Modules.Chat.Style", "AceHook-3.0")
 
+function Style:OnInitialize()
+	-- Load Database
+	Style.db = mUI.db.profile.chat.settings
+end
+
 -- Lua
 local _G = getfenv(0)
 local error = _G.error

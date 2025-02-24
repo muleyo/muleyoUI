@@ -17,7 +17,7 @@ function Font:OnInitialize()
     }
 
     function Font:Update()
-        local font = Font.LSM:Fetch('font', self.db.font)
+        local font = Font.LSM:Fetch('font', Font.db.font)
         local fontSizes = { 9, 9, 14, 14, 12, 64, 64 }
 
         if (not C_AddOns.IsAddOnLoaded("NiceDamage")) or (not C_AddOns.IsAddOnLoaded("ClassicNumbers")) then

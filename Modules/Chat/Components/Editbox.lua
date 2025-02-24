@@ -18,7 +18,7 @@ local EDIT_BOX_TEXTURES = {
 
 function Style:HandleEditBox(frame)
 	if not handledEditBoxes[frame] then
-		frame.Backdrop = Style:CreateBackdrop(frame, mUI.db.profile.chat.lsglass.edit.alpha, 0, 2)
+		frame.Backdrop = Style:CreateBackdrop(frame, Style.db.edit.alpha, 0, 2)
 
 		handledEditBoxes[frame] = true
 	end
@@ -29,12 +29,12 @@ function Style:HandleEditBox(frame)
 
 	frame:ClearAllPoints()
 
-	if mUI.db.profile.chat.lsglass.edit.position == "top" then
-		frame:SetPoint("TOPLEFT", frame.chatFrame, "TOPLEFT", 0, mUI.db.profile.chat.lsglass.edit.offset)
-		frame:SetPoint("TOPRIGHT", frame.chatFrame, "TOPRIGHT", 0, mUI.db.profile.chat.lsglass.edit.offset)
+	if Style.db.edit.position == "top" then
+		frame:SetPoint("TOPLEFT", frame.chatFrame, "TOPLEFT", 0, Style.db.edit.offset)
+		frame:SetPoint("TOPRIGHT", frame.chatFrame, "TOPRIGHT", 0, Style.db.edit.offset)
 	else
-		frame:SetPoint("BOTTOMLEFT", frame.chatFrame, "BOTTOMLEFT", 0, -mUI.db.profile.chat.lsglass.edit.offset)
-		frame:SetPoint("BOTTOMRIGHT", frame.chatFrame, "BOTTOMRIGHT", 0, -mUI.db.profile.chat.lsglass.edit.offset)
+		frame:SetPoint("BOTTOMLEFT", frame.chatFrame, "BOTTOMLEFT", 0, -Style.db.edit.offset)
+		frame:SetPoint("BOTTOMRIGHT", frame.chatFrame, "BOTTOMRIGHT", 0, -Style.db.edit.offset)
 	end
 
 	frame:SetFontObject("mUIEditBoxFont")
@@ -45,8 +45,8 @@ function Style:HandleEditBox(frame)
 end
 
 function Style:UpdateEditBoxPosition()
-	local isOnTop = mUI.db.profile.chat.lsglass.edit.position == "top"
-	local offset = mUI.db.profile.chat.lsglass.edit.offset
+	local isOnTop = Style.db.edit.position == "top"
+	local offset = Style.db.edit.offset
 
 	for editBox in next, handledEditBoxes do
 		editBox:ClearAllPoints()
@@ -62,7 +62,7 @@ function Style:UpdateEditBoxPosition()
 end
 
 function Style:UpdateEditBoxAlpha()
-	local alpha = mUI.db.profile.chat.lsglass.edit.alpha
+	local alpha = Style.db.edit.alpha
 
 	for editBox in next, handledEditBoxes do
 		editBox.Backdrop:UpdateAlpha(alpha)

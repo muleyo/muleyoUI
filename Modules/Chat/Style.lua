@@ -1,9 +1,6 @@
 local Style = mUI:GetModule("mUI.Modules.Chat.Style")
 
 function Style:OnEnable()
-	-- Load Database
-	Style.db = mUI.db.profile.chat
-
 	-- Create Fonts
 	Style:CreateFonts()
 
@@ -99,8 +96,8 @@ function Style:OnEnable()
 
 	-- ? consider moving it elsewhere as well
 	Style:RegisterEvent("GLOBAL_MOUSE_DOWN", function(button)
-		if mUI.db.profile.chat.lsglass.chat.fade.enabled then
-			if button == "LeftButton" and mUI.db.profile.chat.lsglass.chat.fade.click then
+		if Style.db.fade.enabled then
+			if button == "LeftButton" and Style.db.fade.click then
 				for frame in next, chatFrames do
 					if frame:IsShown() and frame:IsMouseOver() and not frame:IsMouseOverHyperlink() then
 						if frame:IsScrolling() then

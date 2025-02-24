@@ -5,10 +5,10 @@ Actionbars:Enable()
 
 function Actionbars:OnInitialize()
     -- Get Modules
-    self.Module = mUI:GetModule("mUI.Modules.Actionbars")
+    Actionbars.Module = mUI:GetModule("mUI.Modules.Actionbars")
 
     -- Initialize Layout
-    self.layout = {
+    Actionbars.layout = {
         type = "group",
         args = {
             enable = {
@@ -25,10 +25,10 @@ function Actionbars:OnInitialize()
                     mUI.db.profile.actionbars.enabled = val
 
                     if val then
-                        self.Module:Enable()
+                        Actionbars.Module:Enable()
                         mUI:Reload('Enable Actionbars Module')
                     else
-                        self.Module:Disable()
+                        Actionbars.Module:Disable()
                         mUI:Reload('Disable Actionbars Module')
                     end
                 end,
@@ -47,12 +47,12 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.hotkey = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Actionbars.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Hotkey:Enable()
+                        Actionbars.Module.Hotkey:Enable()
                     else
-                        self.Module.Hotkey:Disable()
+                        Actionbars.Module.Hotkey:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.hotkey end,
@@ -65,12 +65,12 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.macro = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Actionbars.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Macro:Enable()
+                        Actionbars.Module.Macro:Enable()
                     else
-                        self.Module.Macro:Disable()
+                        Actionbars.Module.Macro:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.macro end,
@@ -83,12 +83,12 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.flash = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Actionbars.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Flash:Enable()
+                        Actionbars.Module.Flash:Enable()
                     else
-                        self.Module.Flash:Disable()
+                        Actionbars.Module.Flash:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.flash end,
@@ -101,12 +101,12 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.range = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Actionbars.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Range:Enable()
+                        Actionbars.Module.Range:Enable()
                     else
-                        self.Module.Range:Disable()
+                        Actionbars.Module.Range:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.range end,
@@ -130,12 +130,12 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.enabled = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Actionbars.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Mouseover:Enable()
+                        Actionbars.Module.Mouseover:Enable()
                     else
-                        self.Module.Mouseover:Disable()
+                        Actionbars.Module.Mouseover:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.enabled end,
@@ -153,13 +153,13 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar1 = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Actionbars.Module:IsEnabled() then return end
                     if not mUI.db.profile.actionbars.mouseover.enabled then return end
 
                     if val then
-                        self.Module.Mouseover:Update("bar1", true)
+                        Actionbars.Module.Mouseover:Update("bar1", true)
                     else
-                        self.Module.Mouseover:Update("bar1", false)
+                        Actionbars.Module.Mouseover:Update("bar1", false)
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar1 end,
@@ -172,13 +172,13 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar2 = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Actionbars.Module:IsEnabled() then return end
                     if not mUI.db.profile.actionbars.mouseover.enabled then return end
 
                     if val then
-                        self.Module.Mouseover:Update("bar2", true)
+                        Actionbars.Module.Mouseover:Update("bar2", true)
                     else
-                        self.Module.Mouseover:Update("bar2", false)
+                        Actionbars.Module.Mouseover:Update("bar2", false)
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar2 end,
@@ -191,13 +191,13 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar3 = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Actionbars.Module:IsEnabled() then return end
                     if not mUI.db.profile.actionbars.mouseover.enabled then return end
 
                     if val then
-                        self.Module.Mouseover:Update("bar3", true)
+                        Actionbars.Module.Mouseover:Update("bar3", true)
                     else
-                        self.Module.Mouseover:Update("bar3", false)
+                        Actionbars.Module.Mouseover:Update("bar3", false)
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar3 end,
@@ -210,13 +210,13 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar4 = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Actionbars.Module:IsEnabled() then return end
                     if not mUI.db.profile.actionbars.mouseover.enabled then return end
 
                     if val then
-                        self.Module.Mouseover:Update("bar4", true)
+                        Actionbars.Module.Mouseover:Update("bar4", true)
                     else
-                        self.Module.Mouseover:Update("bar4", false)
+                        Actionbars.Module.Mouseover:Update("bar4", false)
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar4 end,
@@ -229,13 +229,13 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar5 = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Actionbars.Module:IsEnabled() then return end
                     if not mUI.db.profile.actionbars.mouseover.enabled then return end
 
                     if val then
-                        self.Module.Mouseover:Update("bar5", true)
+                        Actionbars.Module.Mouseover:Update("bar5", true)
                     else
-                        self.Module.Mouseover:Update("bar5", false)
+                        Actionbars.Module.Mouseover:Update("bar5", false)
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar5 end,
@@ -248,13 +248,13 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar6 = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Actionbars.Module:IsEnabled() then return end
                     if not mUI.db.profile.actionbars.mouseover.enabled then return end
 
                     if val then
-                        self.Module.Mouseover:Update("bar6", true)
+                        Actionbars.Module.Mouseover:Update("bar6", true)
                     else
-                        self.Module.Mouseover:Update("bar6", false)
+                        Actionbars.Module.Mouseover:Update("bar6", false)
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar6 end,
@@ -267,13 +267,13 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar7 = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Actionbars.Module:IsEnabled() then return end
                     if not mUI.db.profile.actionbars.mouseover.enabled then return end
 
                     if val then
-                        self.Module.Mouseover:Update("bar7", true)
+                        Actionbars.Module.Mouseover:Update("bar7", true)
                     else
-                        self.Module.Mouseover:Update("bar7", false)
+                        Actionbars.Module.Mouseover:Update("bar7", false)
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar7 end,
@@ -286,13 +286,13 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar8 = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Actionbars.Module:IsEnabled() then return end
                     if not mUI.db.profile.actionbars.mouseover.enabled then return end
 
                     if val then
-                        self.Module.Mouseover:Update("bar8", true)
+                        Actionbars.Module.Mouseover:Update("bar8", true)
                     else
-                        self.Module.Mouseover:Update("bar8", false)
+                        Actionbars.Module.Mouseover:Update("bar8", false)
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar8 end,
@@ -305,13 +305,13 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.petbar = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Actionbars.Module:IsEnabled() then return end
                     if not mUI.db.profile.actionbars.mouseover.enabled then return end
 
                     if val then
-                        self.Module.Mouseover:Update("petbar", true)
+                        Actionbars.Module.Mouseover:Update("petbar", true)
                     else
-                        self.Module.Mouseover:Update("petbar", false)
+                        Actionbars.Module.Mouseover:Update("petbar", false)
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.petbar end,
@@ -324,13 +324,13 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.stancebar = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Actionbars.Module:IsEnabled() then return end
                     if not mUI.db.profile.actionbars.mouseover.enabled then return end
 
                     if val then
-                        self.Module.Mouseover:Update("stancebar", true)
+                        Actionbars.Module.Mouseover:Update("stancebar", true)
                     else
-                        self.Module.Mouseover:Update("stancebar", false)
+                        Actionbars.Module.Mouseover:Update("stancebar", false)
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.stancebar end,
@@ -354,15 +354,15 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.micromenu = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Actionbars.Module:IsEnabled() then return end
                     if not mUI.db.profile.actionbars.mouseover.enabled then return end
 
                     if val == "Default" then
-                        self.Module.Mouseover:Update("micromenu", "Default")
+                        Actionbars.Module.Mouseover:Update("micromenu", "Default")
                     elseif val == "Hidden" then
-                        self.Module.Mouseover:Update("micromenu", "Hidden")
+                        Actionbars.Module.Mouseover:Update("micromenu", "Hidden")
                     else
-                        self.Module.Mouseover:Update("micromenu", "Mouseover")
+                        Actionbars.Module.Mouseover:Update("micromenu", "Mouseover")
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.micromenu end,
@@ -386,15 +386,15 @@ function Actionbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bagbuttons = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Actionbars.Module:IsEnabled() then return end
                     if not mUI.db.profile.actionbars.mouseover.enabled then return end
 
                     if val == "Default" then
-                        self.Module.Mouseover:Update("bagbuttons", "Default")
+                        Actionbars.Module.Mouseover:Update("bagbuttons", "Default")
                     elseif val == "Hidden" then
-                        self.Module.Mouseover:Update("bagbuttons", "Hidden")
+                        Actionbars.Module.Mouseover:Update("bagbuttons", "Hidden")
                     else
-                        self.Module.Mouseover:Update("bagbuttons", "Mouseover")
+                        Actionbars.Module.Mouseover:Update("bagbuttons", "Mouseover")
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bagbuttons end,
@@ -405,7 +405,7 @@ function Actionbars:OnInitialize()
 end
 
 function Actionbars:OnEnable()
-    function self:GetOptions()
-        return self.layout
+    function Actionbars:GetOptions()
+        return Actionbars.layout
     end
 end

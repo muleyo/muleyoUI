@@ -2,20 +2,28 @@ local Modules = mUI:NewModule("mUI.Modules.Chat")
 
 function Modules:OnInitialize()
     -- Get Modules
-    self.Style = mUI:GetModule("mUI.Modules.Chat.Style")
+    Modules.Style = mUI:GetModule("mUI.Modules.Chat.Style")
+    Modules.Link = mUI:GetModule("mUI.Modules.Chat.Link")
+    Modules.Copy = mUI:GetModule("mUI.Modules.Chat.Copy")
 end
 
 function Modules:OnEnable()
-    self.db = mUI.db.profile.chat
+    Modules.db = mUI.db.profile.chat
 
-    self.Style:Enable()
-
-    if self.db.style == "mUI" then
-        --self.Style:Enable()
+    if Modules.db.style == "mUI" then
+        Modules.Style:Enable()
+    end
+    if Modules.db.link then
+        Modules.Link:Enable()
+    end
+    if Modules.db.copy then
+        Modules.Copy:Enable()
     end
 end
 
 function Modules:OnDisable()
     -- Disable Modules
-    --self.Style:Disable()
+    Modules.Style:Disable()
+    Modules.Link:Disable()
+    Modules.Copy:Disable()
 end

@@ -5,17 +5,17 @@ NPCColors:Enable()
 
 function NPCColors:OnInitialize()
     -- Load Database
-    self.db = mUI.db.profile.nameplates
+    NPCColors.db = mUI.db.profile.nameplates
 
     -- Get Modules
-    self.Health = mUI:GetModule("mUI.Modules.Nameplates.Health")
+    NPCColors.Health = mUI:GetModule("mUI.Modules.Nameplates.Health")
 
     -- Load Libraries
     local ACD = LibStub("AceConfigDialog-3.0")
     local npcInfo = LibStub('LibNPCInfo')
 
     -- Initialize Layout
-    self.layout = {
+    NPCColors.layout = {
         type = "group",
         name = "NPC Colors",
         args = {
@@ -40,12 +40,12 @@ function NPCColors:OnInitialize()
                 name = "Load Preset",
                 desc = "Load a preset of NPCs",
                 func = function()
-                    for npcID, npcData in pairs(self.db.preset_npccolors) do
-                        if not self.db.npccolors[npcID] then
-                            self.db.npccolors[npcID] = { name = npcData.name, color = { r = npcData.color.r, g = npcData.color.g, b = npcData.color.b } }
+                    for npcID, npcData in pairs(NPCColors.db.preset_npccolors) do
+                        if not NPCColors.db.npccolors[npcID] then
+                            NPCColors.db.npccolors[npcID] = { name = npcData.name, color = { r = npcData.color.r, g = npcData.color.g, b = npcData.color.b } }
                         end
                     end
-                    self:UpdateNPCList()
+                    NPCColors:UpdateNPCList()
                 end,
                 width = 1,
                 order = 2
@@ -61,7 +61,7 @@ function NPCColors:OnInitialize()
                 name = "Add NPC by ID",
                 desc = "Add a new NPC to the list",
                 set = function(_, value)
-                    self:AddNPC(value)
+                    NPCColors:AddNPC(value)
                 end,
                 width = 0.75,
                 order = 4
@@ -76,10 +76,10 @@ function NPCColors:OnInitialize()
                 type = "input",
                 name = "Search",
                 desc = "Search for an NPC by name or ID",
-                get = function() return self.searchQuery or "" end,
+                get = function() return NPCColors.searchQuery or "" end,
                 set = function(_, value)
-                    self.searchQuery = value
-                    self:UpdateNPCList()
+                    NPCColors.searchQuery = value
+                    NPCColors:UpdateNPCList()
                 end,
                 width = 0.75,
                 order = 6
@@ -120,16 +120,16 @@ function NPCColors:OnInitialize()
         },
     }
 
-    function self:UpdateNPCList()
-        for npcID, npcData in pairs(self.db.npccolors) do
+    function NPCColors:UpdateNPCList()
+        for npcID, npcData in pairs(NPCColors.db.npccolors) do
             local show = true
-            if self.searchQuery and self.searchQuery ~= "" then
-                show = string.find(npcData.name:lower(), self.searchQuery:lower()) or
-                    string.find(tostring(npcID), self.searchQuery)
+            if NPCColors.searchQuery and NPCColors.searchQuery ~= "" then
+                show = string.find(npcData.name:lower(), NPCColors.searchQuery:lower()) or
+                    string.find(tostring(npcID), NPCColors.searchQuery)
             end
 
             if show then
-                self.layout.args["npc" .. npcID] = {
+                NPCColors.layout.args["npc" .. npcID] = {
                     type = "group",
                     inline = true,
                     name = "",
@@ -174,8 +174,8 @@ function NPCColors:OnInitialize()
                             type = "execute",
                             name = "Delete",
                             func = function()
-                                self.db.npccolors[npcID] = nil
-                                self.layout.args["npc" .. npcID] = nil
+                                NPCColors.db.npccolors[npcID] = nil
+                                NPCColors.layout.args["npc" .. npcID] = nil
                                 mUI:Debug("'" .. npcData.name .. "' (ID: " .. npcID .. ") has been removed.")
                             end,
                             width = 0.5,
@@ -184,27 +184,27 @@ function NPCColors:OnInitialize()
                     }
                 }
             else
-                self.layout.args["npc" .. npcID] = nil
+                NPCColors.layout.args["npc" .. npcID] = nil
             end
         end
     end
 
-    function self:AddNPC(value)
+    function NPCColors:AddNPC(value)
         local npcID = tonumber(value) -- convert to number as it's necessary
 
         npcInfo.GetNPCInfoByID(npcID, function(npc)
                 if npc.name then
                     -- Check if an entry already exists
-                    if self.db.npccolors[npc.id] then
+                    if NPCColors.db.npccolors[npc.id] then
                         mUI:Debug("NPC with ID '" .. npc.id .. "' (" .. npc.name .. ") already exists.")
                         return
                     end
 
                     -- Insert into table and print feedback to the user
-                    self.db.npccolors[npc.id] = { name = npc.name, color = { r = 0, g = 0.55, b = 1 } }
+                    NPCColors.db.npccolors[npc.id] = { name = npc.name, color = { r = 0, g = 0.55, b = 1 } }
                     mUI:Debug("'" .. npc.name .. "' (ID: " .. npc.id .. ") has been added.")
 
-                    self:UpdateNPCList()
+                    NPCColors:UpdateNPCList()
                 end
             end,
             function()
@@ -212,11 +212,11 @@ function NPCColors:OnInitialize()
             end)
     end
 
-    self:UpdateNPCList()
+    NPCColors:UpdateNPCList()
 end
 
 function NPCColors:OnEnable()
-    function self:GetOptions()
-        return self.layout
+    function NPCColors:GetOptions()
+        return NPCColors.layout
     end
 end

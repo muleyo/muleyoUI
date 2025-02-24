@@ -1,4 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Include file="Link.lua" />
+    <Include file="Copy.lua" />
     <Include file="Core.lua" />
     <Include file="Components\Backdrop.lua" />
     <Include file="Components\Button.lua" />
@@ -12,6 +14,5 @@
     <Include file="Components\Tab.lua" />
     <Include file="Style.lua" />
     <Include file="Modules.lua" />
-
     <Frame name="mUIHyperlinkPropagator" propagateHyperlinksToParent="true" virtual="true" />
 </Ui>

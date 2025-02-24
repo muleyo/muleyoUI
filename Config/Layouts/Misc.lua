@@ -5,7 +5,7 @@ Misc:Enable()
 
 function Misc:OnInitialize()
     -- Initialize Layout
-    self.layout = {
+    Misc.layout = {
         type = "group",
         args = {
             enable = {
@@ -114,7 +114,7 @@ function Misc:OnInitialize()
 end
 
 function Misc:OnEnable()
-    function self:GetOptions()
-        return self.layout
+    function Misc:GetOptions()
+        return Misc.layout
     end
 end

@@ -5,13 +5,13 @@ Unitframes:Enable()
 
 function Unitframes:OnInitialize()
     -- Get LSM
-    self.LSM = LibStub("LibSharedMedia-3.0")
+    Unitframes.LSM = LibStub("LibSharedMedia-3.0")
 
     -- Get Modules
-    self.Module = mUI:GetModule("mUI.Modules.Unitframes")
+    Unitframes.Module = mUI:GetModule("mUI.Modules.Unitframes")
 
     -- Initialize Layout
-    self.layout = {
+    Unitframes.layout = {
         type = "group",
         args = {
             enable = {
@@ -28,10 +28,10 @@ function Unitframes:OnInitialize()
                     mUI.db.profile.unitframes.enabled = val
 
                     if val then
-                        self.Module:Enable()
+                        Unitframes.Module:Enable()
                         mUI:Reload('Enable Unitframes Module')
                     else
-                        self.Module:Disable()
+                        Unitframes.Module:Disable()
                         mUI:Reload('Disable Unitframes Module')
                     end
                 end,
@@ -47,18 +47,18 @@ function Unitframes:OnInitialize()
                 name = "Unitframes",
                 desc = "Select a Texture for the Unitframes (Player, Target, Focus, etc.)",
                 type = "select",
-                values = self.LSM:HashTable("statusbar"),
+                values = Unitframes.LSM:HashTable("statusbar"),
                 dialogControl = 'LSM30_Statusbar',
                 set = function(_, val)
                     mUI.db.profile.unitframes.textures.unitframes = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Unitframes.Module:IsEnabled() then return end
 
                     if val == "None" then
-                        self.Module.Unitframes_Textures:Disable()
-                        self.Module.Unitframes_Textures:Update()
+                        Unitframes.Module.Unitframes_Textures:Disable()
+                        Unitframes.Module.Unitframes_Textures:Update()
                     else
-                        self.Module.Unitframes_Textures:Enable()
+                        Unitframes.Module.Unitframes_Textures:Enable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.textures.unitframes end,
@@ -68,19 +68,19 @@ function Unitframes:OnInitialize()
                 name = "Party / Raidframes",
                 desc = "Select a Texture for the Party / Raidframes",
                 type = "select",
-                values = self.LSM:HashTable("statusbar"),
+                values = Unitframes.LSM:HashTable("statusbar"),
                 dialogControl = 'LSM30_Statusbar',
                 set = function(_, val)
                     mUI.db.profile.unitframes.textures.raidframes = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Unitframes.Module:IsEnabled() then return end
 
                     if val == "None" then
-                        self.Module.Raidframes_Textures:Disable()
-                        self.Module.Raidframes_Textures:Update()
+                        Unitframes.Module.Raidframes_Textures:Disable()
+                        Unitframes.Module.Raidframes_Textures:Update()
                     else
-                        self.Module.Raidframes_Textures:Enable()
-                        self.Module.Raidframes_Textures:Update()
+                        Unitframes.Module.Raidframes_Textures:Enable()
+                        Unitframes.Module.Raidframes_Textures:Update()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.textures.raidframes end,
@@ -98,12 +98,12 @@ function Unitframes:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.unitframes.color = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Unitframes.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Color:Enable()
+                        Unitframes.Module.Color:Enable()
                     else
-                        self.Module.Color:Disable()
+                        Unitframes.Module.Color:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.color end,
@@ -116,17 +116,17 @@ function Unitframes:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.unitframes.playerrepcolor = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Unitframes.Module:IsEnabled() then return end
 
                     if val then
                         mUI.db.profile.unitframes.reputationcolor = false
-                        if self.Module.Reputationcolor:IsEnabled() then
-                            self.Module.Reputationcolor:Update("player", true)
+                        if Unitframes.Module.Reputationcolor:IsEnabled() then
+                            Unitframes.Module.Reputationcolor:Update("player", true)
                         else
-                            self.Module.Reputationcolor:Enable()
+                            Unitframes.Module.Reputationcolor:Enable()
                         end
                     else
-                        self.Module.Reputationcolor:Disable()
+                        Unitframes.Module.Reputationcolor:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.playerrepcolor end,
@@ -139,17 +139,17 @@ function Unitframes:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.unitframes.reputationcolor = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Unitframes.Module:IsEnabled() then return end
 
                     if val then
                         mUI.db.profile.unitframes.playerrepcolor = false
-                        if self.Module.Reputationcolor:IsEnabled() then
-                            self.Module.Reputationcolor:Update("hide", true)
+                        if Unitframes.Module.Reputationcolor:IsEnabled() then
+                            Unitframes.Module.Reputationcolor:Update("hide", true)
                         else
-                            self.Module.Reputationcolor:Enable()
+                            Unitframes.Module.Reputationcolor:Enable()
                         end
                     else
-                        self.Module.Reputationcolor:Disable()
+                        Unitframes.Module.Reputationcolor:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.reputationcolor end,
@@ -162,12 +162,12 @@ function Unitframes:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.unitframes.combatindicator = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Unitframes.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Combatindicator:Enable()
+                        Unitframes.Module.Combatindicator:Enable()
                     else
-                        self.Module.Combatindicator:Disable()
+                        Unitframes.Module.Combatindicator:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.combatindicator end,
@@ -180,12 +180,12 @@ function Unitframes:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.unitframes.pvpbadge = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Unitframes.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Pvpbadge:Enable()
+                        Unitframes.Module.Pvpbadge:Enable()
                     else
-                        self.Module.Pvpbadge:Disable()
+                        Unitframes.Module.Pvpbadge:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.pvpbadge end,
@@ -198,12 +198,12 @@ function Unitframes:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.unitframes.hitindicator = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Unitframes.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Hitindicator:Enable()
+                        Unitframes.Module.Hitindicator:Enable()
                     else
-                        self.Module.Hitindicator:Disable()
+                        Unitframes.Module.Hitindicator:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.hitindicator end,
@@ -216,12 +216,12 @@ function Unitframes:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.unitframes.totemicons = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Unitframes.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Totemicons:Enable()
+                        Unitframes.Module.Totemicons:Enable()
                     else
-                        self.Module.Totemicons:Disable()
+                        Unitframes.Module.Totemicons:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.totemicons end,
@@ -234,12 +234,12 @@ function Unitframes:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.unitframes.classbar = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Unitframes.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Classbar:Enable()
+                        Unitframes.Module.Classbar:Enable()
                     else
-                        self.Module.Classbar:Disable()
+                        Unitframes.Module.Classbar:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.classbar end,
@@ -252,12 +252,12 @@ function Unitframes:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.unitframes.cornericon = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Unitframes.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Cornericon:Enable()
+                        Unitframes.Module.Cornericon:Enable()
                     else
-                        self.Module.Cornericon:Disable()
+                        Unitframes.Module.Cornericon:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.cornericon end,
@@ -270,12 +270,12 @@ function Unitframes:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.unitframes.restingtextures = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Unitframes.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Restingtextures:Enable()
+                        Unitframes.Module.Restingtextures:Enable()
                     else
-                        self.Module.Restingtextures:Disable()
+                        Unitframes.Module.Restingtextures:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.restingtextures end,
@@ -288,12 +288,12 @@ function Unitframes:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.unitframes.name = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Unitframes.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Name:Enable()
+                        Unitframes.Module.Name:Enable()
                     else
-                        self.Module.Name:Disable()
+                        Unitframes.Module.Name:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.name end,
@@ -306,12 +306,12 @@ function Unitframes:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.unitframes.level = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Unitframes.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Level:Enable()
+                        Unitframes.Module.Level:Enable()
                     else
-                        self.Module.Level:Disable()
+                        Unitframes.Module.Level:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.level end,
@@ -335,12 +335,12 @@ function Unitframes:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.unitframes.buffsdebuffs.enabled = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Unitframes.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.BuffsDebuffs:Enable()
+                        Unitframes.Module.BuffsDebuffs:Enable()
                     else
-                        self.Module.BuffsDebuffs:Disable()
+                        Unitframes.Module.BuffsDebuffs:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.buffsdebuffs.enabled end,
@@ -373,7 +373,7 @@ function Unitframes:OnInitialize()
 end
 
 function Unitframes:OnEnable()
-    function self:GetOptions()
-        return self.layout
+    function Unitframes:GetOptions()
+        return Unitframes.layout
     end
 end

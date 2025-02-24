@@ -5,14 +5,14 @@ Nameplates:Enable()
 
 function Nameplates:OnInitialize()
     -- Load Libraries
-    self.LSM = LibStub("LibSharedMedia-3.0")
+    Nameplates.LSM = LibStub("LibSharedMedia-3.0")
     local ACD = LibStub("AceConfigDialog-3.0")
 
     -- Get Modules
-    self.Module = mUI:GetModule("mUI.Modules.Nameplates")
+    Nameplates.Module = mUI:GetModule("mUI.Modules.Nameplates")
 
     -- Initialize Layout
-    self.layout = {
+    Nameplates.layout = {
         type = "group",
         args = {
             enable = {
@@ -29,10 +29,10 @@ function Nameplates:OnInitialize()
                     mUI.db.profile.nameplates.enabled = val
 
                     if val then
-                        self.Module:Enable()
+                        Nameplates.Module:Enable()
                         mUI:Reload('Enable Nameplates Module')
                     else
-                        self.Module:Disable()
+                        Nameplates.Module:Disable()
                         mUI:Reload('Disable Nameplates Module')
                     end
                 end,
@@ -48,14 +48,14 @@ function Nameplates:OnInitialize()
                 name = "Texture",
                 desc = "Select a Texture for the Nameplates",
                 type = "select",
-                values = self.LSM:HashTable("statusbar"),
+                values = Nameplates.LSM:HashTable("statusbar"),
                 dialogControl = 'LSM30_Statusbar',
                 set = function(_, val)
                     mUI.db.profile.nameplates.texture = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Nameplates.Module:IsEnabled() then return end
 
-                    self.Module.Textures:RefreshNameplates()
+                    Nameplates.Module.Textures:RefreshNameplates()
                 end,
                 get = function() return mUI.db.profile.nameplates.texture end,
                 order = 3
@@ -70,10 +70,10 @@ function Nameplates:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.nameplates.decimals = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Nameplates.Module:IsEnabled() then return end
                     if not mUI.db.profile.nameplates.healthtext then return end
 
-                    self.Module.Health:RefreshNameplates()
+                    Nameplates.Module.Health:RefreshNameplates()
                 end,
                 get = function() return mUI.db.profile.nameplates.decimals end,
                 order = 4
@@ -88,9 +88,9 @@ function Nameplates:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.nameplates.height = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Nameplates.Module:IsEnabled() then return end
 
-                    self.Module.Options:Update()
+                    Nameplates.Module.Options:Update()
                 end,
                 get = function() return mUI.db.profile.nameplates.height end,
                 order = 5
@@ -105,9 +105,9 @@ function Nameplates:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.nameplates.width = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Nameplates.Module:IsEnabled() then return end
 
-                    self.Module.Options:Update()
+                    Nameplates.Module.Options:Update()
                 end,
                 get = function() return mUI.db.profile.nameplates.width end,
                 order = 6
@@ -124,12 +124,12 @@ function Nameplates:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.nameplates.healthtext = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Nameplates.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Health:RefreshNameplates()
+                        Nameplates.Module.Health:RefreshNameplates()
                     else
-                        self.Module.Health:RefreshNameplates()
+                        Nameplates.Module.Health:RefreshNameplates()
                     end
                 end,
                 get = function() return mUI.db.profile.nameplates.healthtext end,
@@ -142,12 +142,12 @@ function Nameplates:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.nameplates.classcolor = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Nameplates.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Names:RefreshNameplates()
+                        Nameplates.Module.Names:RefreshNameplates()
                     else
-                        self.Module.Names:RefreshNameplates()
+                        Nameplates.Module.Names:RefreshNameplates()
                     end
                 end,
                 get = function() return mUI.db.profile.nameplates.classcolor end,
@@ -160,12 +160,12 @@ function Nameplates:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.nameplates.servername = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Nameplates.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Names:RefreshNameplates()
+                        Nameplates.Module.Names:RefreshNameplates()
                     else
-                        self.Module.Names:RefreshNameplates()
+                        Nameplates.Module.Names:RefreshNameplates()
                     end
                 end,
                 get = function() return mUI.db.profile.nameplates.servername end,
@@ -178,12 +178,12 @@ function Nameplates:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.nameplates.arena = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Nameplates.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Names:RefreshNameplates()
+                        Nameplates.Module.Names:RefreshNameplates()
                     else
-                        self.Module.Names:RefreshNameplates()
+                        Nameplates.Module.Names:RefreshNameplates()
                     end
                 end,
                 get = function() return mUI.db.profile.nameplates.arena end,
@@ -212,12 +212,12 @@ function Nameplates:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.nameplates.focus = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Nameplates.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Textures:RefreshNameplates()
+                        Nameplates.Module.Textures:RefreshNameplates()
                     else
-                        self.Module.Textures:RefreshNameplates()
+                        Nameplates.Module.Textures:RefreshNameplates()
                     end
                 end,
                 get = function() return mUI.db.profile.nameplates.focus end,
@@ -230,9 +230,9 @@ function Nameplates:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.nameplates.debuffs = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Nameplates.Module:IsEnabled() then return end
 
-                    self.Module.Debuffs:RefreshNameplates()
+                    Nameplates.Module.Debuffs:RefreshNameplates()
                 end,
                 get = function() return mUI.db.profile.nameplates.debuffs end,
                 order = 15
@@ -244,9 +244,9 @@ function Nameplates:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.nameplates.smallerfriends = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Nameplates.Module:IsEnabled() then return end
 
-                    self.Module.Options:Update()
+                    Nameplates.Module.Options:Update()
                 end,
                 get = function() return mUI.db.profile.nameplates.smallerfriends end,
                 order = 16
@@ -263,9 +263,9 @@ function Nameplates:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.nameplates.smartstacking = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Nameplates.Module:IsEnabled() then return end
 
-                    self.Module.Options:Update()
+                    Nameplates.Module.Options:Update()
                 end,
                 get = function() return mUI.db.profile.nameplates.smartstacking end,
                 order = 18
@@ -294,7 +294,7 @@ function Nameplates:OnInitialize()
 end
 
 function Nameplates:OnEnable()
-    function self:GetOptions()
-        return self.layout
+    function Nameplates:GetOptions()
+        return Nameplates.layout
     end
 end

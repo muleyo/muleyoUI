@@ -15,7 +15,7 @@ local color = RAID_CLASS_COLORS[class]
 
 local function handleButton(frame, ...)
 	if not handledbuttons[frame] then
-		frame.Backdrop = Style:CreateBackdrop(frame, mUI.db.profile.chat.lsglass.dock.alpha)
+		frame.Backdrop = Style:CreateBackdrop(frame, Style.db.dock.alpha)
 		frame.HighlightLeft = frame:CreateTexture(nil, "HIGHLIGHT")
 		frame.HighlightMiddle = frame:CreateTexture(nil, "HIGHLIGHT")
 		frame.HighlightRight = frame:CreateTexture(nil, "HIGHLIGHT")
@@ -108,7 +108,7 @@ function Style:HandleQuickJoinToastButton(frame)
 	frame.FriendCount:SetPoint("BOTTOMRIGHT", 2.5, 4)
 	frame.FriendCount:SetTextColor(color.r, color.g, color.b)
 
-	hooksecurefunc(frame, "UpdateDisplayedFriendCount", function(self)
+	Style:SecureHook(frame, "UpdateDisplayedFriendCount", function(self)
 		local value = tonumber(self.FriendCount:GetText())
 		if not value or value > 99 then
 			self.FriendCount:SetText("++")
@@ -126,11 +126,11 @@ function Style:HandleQuickJoinToastButton(frame)
 	frame.FlashingLayer:SetTexture(0)
 	frame.FlashingLayer:Hide()
 
-	frame.FriendToToastAnim:HookScript("OnPlay", function()
+	Style:HookScript(frame.FriendToToastAnim, "OnPlay", function()
 		frame.FriendCount:SetAlpha(0)
 	end)
 
-	frame.ToastToFriendAnim:HookScript("OnFinished", function()
+	Style:HookScript(frame.ToastToFriendAnim, "OnFinished", function()
 		frame.FriendCount:SetAlpha(1)
 	end)
 
@@ -145,11 +145,11 @@ function Style:HandleQuickJoinToastButton(frame)
 
 	frame.Toast:ClearAllPoints()
 	frame.Toast:SetPoint("TOPLEFT", ChatAlertFrame, "BOTTOMLEFT", 0, -2)
-	hooksecurefunc(frame.Toast, "SetPoint", resetToastPoint)
+	Style:SecureHook(frame.Toast, "SetPoint", resetToastPoint)
 
 	frame.Toast2:ClearAllPoints()
 	frame.Toast2:SetPoint("TOPLEFT", ChatAlertFrame, "BOTTOMLEFT", 0, -2)
-	hooksecurefunc(frame.Toast2, "SetPoint", resetToastPoint)
+	Style:SecureHook(frame.Toast2, "SetPoint", resetToastPoint)
 
 	-- ? mb move it elsewhere
 	ChatAlertFrame:ClearAllPoints()
@@ -207,7 +207,7 @@ function Style:HandleTTSButton(frame)
 end
 
 function Style:UpdateButtonAlpha()
-	local alpha = mUI.db.profile.chat.lsglass.dock.alpha
+	local alpha = Style.db.dock.alpha
 
 	for button in next, handledbuttons do
 		button.Backdrop:UpdateAlpha(alpha)

@@ -2,7 +2,7 @@ local Functions = mUI:NewModule("mUI.Functions")
 
 function Functions:OnInitialize()
     -- Load Database
-    self.db = mUI.db.profile
+    Functions.db = mUI.db.profile
 
     -- Get Modules
     local General = mUI:GetModule("mUI.Modules.General")
@@ -10,14 +10,14 @@ function Functions:OnInitialize()
     -- Get Player Class, Colors and Theme
     local _, class = UnitClass("player")
     local classColor = RAID_CLASS_COLORS[class]
-    local customColor = self.db.general.color
+    local customColor = Functions.db.general.color
     local themes = {
         Disabled = { 1, 1, 1 },
         Dark = { 0.3, 0.3, 0.3 },
         Class = { classColor.r, classColor.g, classColor.b },
         Custom = { customColor[1], customColor[2], customColor[3], customColor[4] },
     }
-    local theme = themes[self.db.general.theme]
+    local theme = themes[Functions.db.general.theme]
 
     -- Debug Print Function
     function mUI:Debug(msg)
@@ -40,14 +40,14 @@ function Functions:OnInitialize()
     end
 
     function mUI:ReceiveVersion(_, version, _, sender)
-        if not self.db.new_version then
+        if not Functions.db.new_version then
             if (version > currentVersion) then
                 mUI:Debug(
                     "A newer version is available. If you experience any errors or bugs, updating is highly recommended.")
-                self.db.new_version = version
+                Functions.db.new_version = version
             end
-        elseif (self.db.new_version == currentVersion) or (self.db.new_version <= currentVersion) then
-            self.db.new_version = false
+        elseif (Functions.db.new_version == currentVersion) or (Functions.db.new_version <= currentVersion) then
+            Functions.db.new_version = false
         end
     end
 

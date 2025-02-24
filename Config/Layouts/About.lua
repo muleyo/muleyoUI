@@ -5,7 +5,7 @@ About:Enable()
 
 function About:OnInitialize()
     -- Initialize Layout
-    self.layout = {
+    About.layout = {
         type = "group",
         args = {
             header = {
@@ -150,7 +150,7 @@ function About:OnInitialize()
 end
 
 function About:OnEnable()
-    function self:GetOptions()
-        return self.layout
+    function About:GetOptions()
+        return About.layout
     end
 end

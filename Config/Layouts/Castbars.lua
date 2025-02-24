@@ -5,10 +5,10 @@ Castbars:Enable()
 
 function Castbars:OnInitialize()
     -- Get Modules
-    self.Module = mUI:GetModule("mUI.Modules.Castbars")
+    Castbars.Module = mUI:GetModule("mUI.Modules.Castbars")
 
     -- Initialize Layout
-    self.layout = {
+    Castbars.layout = {
         type = "group",
         args = {
             enabled = {
@@ -25,10 +25,10 @@ function Castbars:OnInitialize()
                     mUI.db.profile.castbars.enabled = val
 
                     if val then
-                        self.Module:Enable()
+                        Castbars.Module:Enable()
                         mUI:Reload('Enable Castbars Module')
                     else
-                        self.Module:Disable()
+                        Castbars.Module:Disable()
                         mUI:Reload('Disable Castbars Module')
                     end
                 end,
@@ -57,12 +57,12 @@ function Castbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.castbars.style = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Castbars.Module:IsEnabled() then return end
 
                     if val == "mUI" then
-                        self.Module.Style:Enable()
+                        Castbars.Module.Style:Enable()
                     else
-                        self.Module.Style:Disable()
+                        Castbars.Module.Style:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.castbars.style end,
@@ -75,12 +75,12 @@ function Castbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.castbars.icon = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Castbars.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Icon:Enable()
+                        Castbars.Module.Icon:Enable()
                     else
-                        self.Module.Icon:Disable()
+                        Castbars.Module.Icon:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.castbars.icon end,
@@ -93,12 +93,12 @@ function Castbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.castbars.casttime = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Castbars.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Casttime:Enable()
+                        Castbars.Module.Casttime:Enable()
                     else
-                        self.Module.Casttime:Disable()
+                        Castbars.Module.Casttime:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.castbars.casttime end,
@@ -119,16 +119,16 @@ function Castbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.castbars.targetscale = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Castbars.Module:IsEnabled() then return end
 
                     if val ~= 100 then
-                        if not self.Module.Targetscale:IsEnabled() then
-                            self.Module.Targetscale:Enable()
+                        if not Castbars.Module.Targetscale:IsEnabled() then
+                            Castbars.Module.Targetscale:Enable()
                         else
-                            self.Module.Targetscale:Update()
+                            Castbars.Module.Targetscale:Update()
                         end
                     else
-                        self.Module.Targetscale:Disable()
+                        Castbars.Module.Targetscale:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.castbars.targetscale end,
@@ -144,16 +144,16 @@ function Castbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.castbars.focusscale = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Castbars.Module:IsEnabled() then return end
 
                     if val ~= 100 then
-                        if not self.Module.Focusscale:IsEnabled() then
-                            self.Module.Focusscale:Enable()
+                        if not Castbars.Module.Focusscale:IsEnabled() then
+                            Castbars.Module.Focusscale:Enable()
                         else
-                            self.Module.Focusscale:Update()
+                            Castbars.Module.Focusscale:Update()
                         end
                     else
-                        self.Module.Focusscale:Disable()
+                        Castbars.Module.Focusscale:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.castbars.focusscale end,
@@ -171,12 +171,12 @@ function Castbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.castbars.targetpos = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Castbars.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Targetpos:Enable()
+                        Castbars.Module.Targetpos:Enable()
                     else
-                        self.Module.Targetpos:Disable()
+                        Castbars.Module.Targetpos:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.castbars.targetpos end,
@@ -189,12 +189,12 @@ function Castbars:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.castbars.focuspos = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not Castbars.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Focuspos:Enable()
+                        Castbars.Module.Focuspos:Enable()
                     else
-                        self.Module.Focuspos:Disable()
+                        Castbars.Module.Focuspos:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.castbars.focuspos end,
@@ -205,7 +205,7 @@ function Castbars:OnInitialize()
 end
 
 function Castbars:OnEnable()
-    function self:GetOptions()
-        return self.layout
+    function Castbars:GetOptions()
+        return Castbars.layout
     end
 end

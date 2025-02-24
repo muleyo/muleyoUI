@@ -52,7 +52,7 @@ local TAB_TEXTURES = {
 
 function Style:HandleChatTab(frame)
 	if not handledTabs[frame] then
-		frame.Backdrop = Style:CreateBackdrop(frame, mUI.db.profile.chat.lsglass.dock.alpha)
+		frame.Backdrop = Style:CreateBackdrop(frame, Style.db.dock.alpha)
 
 		Style:SecureHook(frame, "SetPoint", chatTab_SetPoint)
 		Style:HookScript(frame, "OnDragStart", chatTab_OnDragStart)
@@ -145,7 +145,7 @@ local MINI_TAB_TEXTURES = {
 
 function Style:HandleMinimizedTab(frame)
 	if not handledMiniTabs[frame] then
-		frame.Backdrop = Style:CreateBackdrop(frame, mUI.db.profile.chat.lsglass.dock.alpha)
+		frame.Backdrop = Style:CreateBackdrop(frame, Style.db.dock.alpha)
 
 		Style:HandleMaximizeButton(_G[frame:GetName() .. "MaximizeButton"])
 
@@ -192,7 +192,7 @@ function Style:HandleMinimizedTab(frame)
 end
 
 function Style:UpdateTabAlpha()
-	local alpha = mUI.db.profile.chat.lsglass.dock.alpha
+	local alpha = Style.db.dock.alpha
 
 	for tab in next, handledTabs do
 		tab.Backdrop:UpdateAlpha(alpha)

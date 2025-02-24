@@ -9,9 +9,9 @@ local defaults = {
         },
         general = {
             enabled = true,
-            theme = 'Dark',
+            theme = "Dark",
             color = { 0, 0, 0, 1 },
-            font = 'Prototype',
+            font = "Prototype",
             automation = {
                 repair = 'Disabled',
                 sell = true,
@@ -49,15 +49,15 @@ local defaults = {
                 bar8 = false,
                 petbar = false,
                 stancebar = false,
-                micromenu = 'Default',
-                bagbuttons = 'Default'
+                micromenu = "Default",
+                bagbuttons = "Default"
             }
         },
         unitframes = {
             enabled = true,
             textures = {
-                unitframes = 'Dragonflight',
-                raidframes = 'Dragonflight'
+                unitframes = "Dragonflight",
+                raidframes = "Dragonflight"
             },
             color = true,
             playerrepcolor = true,
@@ -79,7 +79,7 @@ local defaults = {
         },
         castbars = {
             enabled = true,
-            style = 'mUI',
+            style = "mUI",
             icon = true,
             casttime = true,
             targetscale = 100,
@@ -172,7 +172,7 @@ local defaults = {
         },
         tooltips = {
             enabled = true,
-            style = 'mUI',
+            style = "mUI",
             combat = true,
             lifeontop = true,
             mouseanchor = false
@@ -193,155 +193,45 @@ local defaults = {
             link = true,
             copy = true,
             friendlist = true,
-            lsglass = {
-                font = "Friz Quadrata TT", -- "Friz Quadrata TT"
-                colors = {
-                    lanzones = { 0.88, 0.74, 0.36 }
+            settings = {
+                color = { 0.88, 0.74, 0.36 },
+                tooltips = true,
+                smooth = true,
+                fade = {
+                    enabled = true,
+                    click = false,
+                    out_delay = 60
+                },
+                buttons = {
+                    up_and_down = false
                 },
                 chat = {
-                    tooltips = true,
-                    smooth = true,
-                    fade = {
-                        enabled = true, -- if disabled, messages don't fade out
-                        click = false,
-                        out_delay = 60,
-                    },
-                    buttons = {
-                        up_and_down = false,
-                    },
-                    [1] = {
-                        alpha = 0.4,
-                        -- solid = false,
-                        x_padding = 8,
-                        y_padding = 0,
-                        font = {
-                            size = 12,
-                            shadow = true,
-                            outline = false,
-                        },
-                    },
-                    [2] = {
-                        alpha = 0.4,
-                        -- solid = false,
-                        x_padding = 8,
-                        y_padding = 0,
-                        font = {
-                            size = 12,
-                            shadow = true,
-                            outline = false,
-                        },
-                    },
-                    [3] = {
-                        alpha = 0.4,
-                        -- solid = false,
-                        x_padding = 8,
-                        y_padding = 0,
-                        font = {
-                            size = 12,
-                            shadow = true,
-                            outline = false,
-                        },
-                    },
-                    [4] = {
-                        alpha = 0.4,
-                        -- solid = false,
-                        x_padding = 8,
-                        y_padding = 0,
-                        font = {
-                            size = 12,
-                            shadow = true,
-                            outline = false,
-                        },
-                    },
-                    [5] = {
-                        alpha = 0.4,
-                        -- solid = false,
-                        x_padding = 8,
-                        y_padding = 0,
-                        font = {
-                            size = 12,
-                            shadow = true,
-                            outline = false,
-                        },
-                    },
-                    [6] = {
-                        alpha = 0.4,
-                        -- solid = false,
-                        x_padding = 8,
-                        y_padding = 0,
-                        font = {
-                            size = 12,
-                            shadow = true,
-                            outline = false,
-                        },
-                    },
-                    [7] = {
-                        alpha = 0.4,
-                        -- solid = false,
-                        x_padding = 8,
-                        y_padding = 0,
-                        font = {
-                            size = 12,
-                            shadow = true,
-                            outline = false,
-                        },
-                    },
-                    [8] = {
-                        alpha = 0.4,
-                        -- solid = false,
-                        x_padding = 8,
-                        y_padding = 0,
-                        font = {
-                            size = 12,
-                            shadow = true,
-                            outline = false,
-                        },
-                    },
-                    [9] = {
-                        alpha = 0.4,
-                        -- solid = false,
-                        x_padding = 8,
-                        y_padding = 0,
-                        font = {
-                            size = 12,
-                            shadow = true,
-                            outline = false,
-                        },
-                    },
-                    [10] = {
-                        alpha = 0.4,
-                        -- solid = false,
-                        x_padding = 8,
-                        y_padding = 0,
-                        font = {
-                            size = 12,
-                            shadow = true,
-                            outline = false,
-                        },
-                    },
+                    alpha = 0.4,
+                    x_padding = 8,
+                    y_padding = 0,
+                    font = {
+                        size = 12,
+                        shadow = true,
+                        outline = false
+                    }
                 },
                 dock = {
                     alpha = 0.8,
-                    -- font = {
-                    -- 	size = 12,
-                    -- 	shadow = true,
-                    -- 	outline = false,
-                    -- },
                     fade = {
-                        enabled = true,
-                    },
+                        enabled = true
+                    }
                 },
                 edit = {
                     alpha = 0.8,
-                    position = "bottom", -- "top"
+                    position = "top",
                     offset = 32,
                     font = {
                         size = 12,
                         shadow = true,
-                        outline = false,
-                    },
-                },
-            }
+                        outline = true
+                    }
+                }
+            },
         },
         misc = {
             enabled = true,

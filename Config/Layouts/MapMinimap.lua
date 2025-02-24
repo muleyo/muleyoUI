@@ -5,10 +5,10 @@ MapMinimap:Enable()
 
 function MapMinimap:OnInitialize()
     -- Get Modules
-    self.Module = mUI:GetModule("mUI.MapMinimap.Modules")
+    MapMinimap.Module = mUI:GetModule("mUI.MapMinimap.Modules")
 
     -- Initialize Layout
-    self.layout = {
+    MapMinimap.layout = {
         type = "group",
         args = {
             enable = {
@@ -25,10 +25,10 @@ function MapMinimap:OnInitialize()
                     mUI.db.profile.map.enabled = val
 
                     if val then
-                        self.Module:Enable()
+                        MapMinimap.Module:Enable()
                         mUI:Reload('Enable Map & Minimap Module')
                     else
-                        self.Module:Disable()
+                        MapMinimap.Module:Disable()
                         mUI:Reload('Disable Map & Minimap Module')
                     end
                 end,
@@ -47,12 +47,12 @@ function MapMinimap:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.map.coordinates = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not MapMinimap.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Coords:Enable()
+                        MapMinimap.Module.Coords:Enable()
                     else
-                        self.Module.Coords:Disable()
+                        MapMinimap.Module.Coords:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.map.coordinates end,
@@ -70,12 +70,12 @@ function MapMinimap:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.map.minimap = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not MapMinimap.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Minimap:Enable()
+                        MapMinimap.Module.Minimap:Enable()
                     else
-                        self.Module.Minimap:Disable()
+                        MapMinimap.Module.Minimap:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.map.minimap end,
@@ -88,12 +88,12 @@ function MapMinimap:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.map.clock = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not MapMinimap.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Clock:Enable()
+                        MapMinimap.Module.Clock:Enable()
                     else
-                        self.Module.Clock:Disable()
+                        MapMinimap.Module.Clock:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.map.clock end,
@@ -106,12 +106,12 @@ function MapMinimap:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.map.date = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not MapMinimap.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Calendar:Enable()
+                        MapMinimap.Module.Calendar:Enable()
                     else
-                        self.Module.Calendar:Disable()
+                        MapMinimap.Module.Calendar:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.map.date end,
@@ -124,12 +124,12 @@ function MapMinimap:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.map.tracking = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not MapMinimap.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Tracking:Enable()
+                        MapMinimap.Module.Tracking:Enable()
                     else
-                        self.Module.Tracking:Disable()
+                        MapMinimap.Module.Tracking:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.map.tracking end,
@@ -142,12 +142,12 @@ function MapMinimap:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.map.buttons = val
 
-                    if not self.Module:IsEnabled() then return end
+                    if not MapMinimap.Module:IsEnabled() then return end
 
                     if val then
-                        self.Module.Mouseover:Enable()
+                        MapMinimap.Module.Mouseover:Enable()
                     else
-                        self.Module.Mouseover:Disable()
+                        MapMinimap.Module.Mouseover:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.map.buttons end,
@@ -158,7 +158,7 @@ function MapMinimap:OnInitialize()
 end
 
 function MapMinimap:OnEnable()
-    function self:GetOptions()
-        return self.layout
+    function MapMinimap:GetOptions()
+        return MapMinimap.layout
     end
 end

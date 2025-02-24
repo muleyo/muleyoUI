@@ -11,9 +11,9 @@ function Style:CreateFonts()
 		local messageFont = CreateFont("mUIMessageFont" .. i)
 		messageFont:CopyFontObject(ChatFontNormal)
 		messageFont:SetFont(
-			LSM:Fetch("font", mUI.db.profile.chat.lsglass.font),
-			mUI.db.profile.chat.lsglass.chat[i].font.size,
-			mUI.db.profile.chat.lsglass.chat[i].font.outline and "OUTLINE" or ""
+			LSM:Fetch("font", mUI.db.profile.general.font),
+			Style.db.chat.font.size,
+			Style.db.chat.font.outline and "OUTLINE" or ""
 		)
 
 		local mFont = messageFont:GetFont()
@@ -21,14 +21,14 @@ function Style:CreateFonts()
 			-- a corrupt, missing, or misplaced font was supplied, reset it
 			messageFont:SetFont(
 				LSM:Fetch("font"),
-				mUI.db.profile.chat.lsglass.chat.font[i].size,
-				mUI.db.profile.chat.lsglass.chat.font[i].outline and "OUTLINE" or ""
+				Style.db.chat.font.size,
+				Style.db.chat.font.outline and "OUTLINE" or ""
 			)
 		end
 
 		messageFont:SetShadowColor(0, 0, 0, 1)
 
-		if mUI.db.profile.chat.lsglass.chat[i].font.shadow then
+		if Style.db.chat.font.shadow then
 			messageFont:SetShadowOffset(1, -1)
 		else
 			messageFont:SetShadowOffset(0, 0)
@@ -41,23 +41,23 @@ function Style:CreateFonts()
 	local editBoxFont = CreateFont("mUIEditBoxFont")
 	editBoxFont:CopyFontObject(GameFontNormalSmall)
 	editBoxFont:SetFont(
-		LSM:Fetch("font", mUI.db.profile.chat.lsglass.font),
-		mUI.db.profile.chat.lsglass.edit.font.size,
-		mUI.db.profile.chat.lsglass.edit.font.outline and "OUTLINE" or ""
+		LSM:Fetch("font", mUI.db.profile.general.font),
+		Style.db.edit.font.size,
+		Style.db.edit.font.outline and "OUTLINE" or ""
 	)
 
 	local ebFont = editBoxFont:GetFont()
 	if not ebFont then
 		editBoxFont:SetFont(
 			LSM:Fetch("font"),
-			mUI.db.profile.chat.lsglass.edit.font.size,
-			mUI.db.profile.chat.lsglass.edit.font.outline and "OUTLINE" or ""
+			Style.db.edit.font.size,
+			Style.db.edit.font.outline and "OUTLINE" or ""
 		)
 	end
 
 	editBoxFont:SetShadowColor(0, 0, 0, 1)
 
-	if mUI.db.profile.chat.lsglass.edit.font.shadow then
+	if Style.db.edit.font.shadow then
 		editBoxFont:SetShadowOffset(1, -1)
 	else
 		editBoxFont:SetShadowOffset(0, 0)
@@ -70,9 +70,9 @@ end
 function Style:UpdateMessageFont(id)
 	local messageFont = _G["mUIMessageFont" .. id]
 	messageFont:SetFont(
-		LSM:Fetch("font", mUI.db.profile.chat.lsglass.font),
-		mUI.db.profile.chat.lsglass.chat[id].font.size,
-		mUI.db.profile.chat.lsglass.chat[id].font.outline and "OUTLINE" or ""
+		LSM:Fetch("font", mUI.db.profile.general.font),
+		Style.db.chat.font.size,
+		Style.db.chat.font.outline and "OUTLINE" or ""
 	)
 
 	local font = messageFont:GetFont()
@@ -80,12 +80,12 @@ function Style:UpdateMessageFont(id)
 		-- a corrupt, missing, or misplaced font was supplied, reset it
 		messageFont:SetFont(
 			LSM:Fetch("font"),
-			mUI.db.profile.chat.lsglass.chat.font[id].size,
-			mUI.db.profile.chat.lsglass.chat.font[id].outline and "OUTLINE" or ""
+			Style.db.chat.font.size,
+			Style.db.chat.font.outline and "OUTLINE" or ""
 		)
 	end
 
-	if mUI.db.profile.chat.lsglass.chat[id].font.shadow then
+	if Style.db.chat.font.shadow then
 		messageFont:SetShadowOffset(1, -1)
 	else
 		messageFont:SetShadowOffset(0, 0)
@@ -103,21 +103,21 @@ end
 
 function Style:UpdateEditBoxFont()
 	mUIEditBoxFont:SetFont(
-		LSM:Fetch("font", mUI.db.profile.chat.lsglass.font),
-		mUI.db.profile.chat.lsglass.edit.font.size,
-		mUI.db.profile.chat.lsglass.edit.font.outline and "OUTLINE" or ""
+		LSM:Fetch("font", mUI.db.profile.general.font),
+		Style.db.edit.font.size,
+		Style.db.edit.font.outline and "OUTLINE" or ""
 	)
 
 	local font = mUIEditBoxFont:GetFont()
 	if not font then
 		mUIEditBoxFont:SetFont(
 			LSM:Fetch("font"),
-			mUI.db.profile.chat.lsglass.edit.font.size,
-			mUI.db.profile.chat.lsglass.edit.font.outline and "OUTLINE" or ""
+			Style.db.edit.font.size,
+			Style.db.edit.font.outline and "OUTLINE" or ""
 		)
 	end
 
-	if mUI.db.profile.chat.lsglass.edit.font.shadow then
+	if Style.db.edit.font.shadow then
 		mUIEditBoxFont:SetShadowOffset(1, -1)
 	else
 		mUIEditBoxFont:SetShadowOffset(0, 0)
