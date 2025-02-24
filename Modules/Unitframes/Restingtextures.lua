@@ -1,14 +1,14 @@
-local Restingtextures = mUI:NewModule("mUI.Modules.Unitframes.Restingtextures")
+local Restingtextures = mUI:NewModule("mUI.Modules.Unitframes.Restingtextures", "AceHook-3.0")
 
 function Restingtextures:OnEnable()
     PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PlayerRestLoop:SetAlpha(0)
 
-    mUI:SecureHook("PlayerFrame_UpdatePlayerRestLoop", function()
+    Restingtextures:SecureHook("PlayerFrame_UpdatePlayerRestLoop", function()
         PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.StatusTexture:Hide()
     end)
 end
 
 function Restingtextures:OnDisable()
-    mUI:Unhook("PlayerFrame_UpdatePlayerRestLoop")
+    Restingtextures:Unhook("PlayerFrame_UpdatePlayerRestLoop")
     PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PlayerRestLoop:SetAlpha(1)
 end

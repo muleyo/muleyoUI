@@ -1,14 +1,13 @@
 local Style = mUI:GetModule("mUI.Modules.Chat.Style")
 
--- Lua
-local _G = getfenv(0)
-local hooksecurefunc = _G.hooksecurefunc
-local next = _G.next
-local tonumber = _G.tonumber
-
 function Style:OnEnable()
+	-- Load Database
+	Style.db = mUI.db.profile.chat
+
+	-- Create Fonts
 	Style:CreateFonts()
-	print(GeneralDockManager)
+
+	-- Handle Dock
 	Style:HandleDock(GeneralDockManager)
 
 	local chatFrames = {}
@@ -36,7 +35,7 @@ function Style:OnEnable()
 	end
 
 	-- temporary chat frames
-	hooksecurefunc("FCF_SetTemporaryWindowType", function(chatFrame, chatType, chatTarget)
+	Style:SecureHook("FCF_SetTemporaryWindowType", function(chatFrame, chatType, chatTarget)
 		if not expectedChatFrames[chatType] then
 			expectedChatFrames[chatType] = {}
 		end
@@ -49,7 +48,7 @@ function Style:OnEnable()
 		end
 	end)
 
-	hooksecurefunc("FCF_OpenTemporaryWindow", function(chatType, chatTarget)
+	Style:SecureHook("FCF_OpenTemporaryWindow", function(chatType, chatTarget)
 		local chatFrame = chatTarget and
 			(expectedChatFrames[chatType] and expectedChatFrames[chatType][chatTarget]) or
 			expectedChatFrames[chatType]
@@ -66,7 +65,7 @@ function Style:OnEnable()
 		end
 	end)
 
-	hooksecurefunc("FCF_Close", function(chatFrame)
+	Style:SecureHook("FCF_Close", function(chatFrame)
 		local frame = Style:GetSlidingFrameForChatFrame(chatFrame)
 		if tempChatFrames[frame] then
 			frame:Release()
@@ -75,15 +74,15 @@ function Style:OnEnable()
 		end
 	end)
 
-	hooksecurefunc("FCF_MinimizeFrame", function(chatFrame)
+	Style:SecureHook("FCF_MinimizeFrame", function(chatFrame)
 		if chatFrame.minFrame then
 			Style:HandleMinimizedTab(chatFrame.minFrame)
 		end
 	end)
 
 	-- ? consider moving it elsewhere
-	local updater = CreateFrame("Frame", "mUIUpdater", UIParent)
-	updater:SetScript("OnUpdate", function(self, elapsed)
+	Style.updater = CreateFrame("Frame", "mUIUpdater", UIParent)
+	Style:HookScript(Style.updater, "OnUpdate", function(self, elapsed)
 		self.elapsed = (self.elapsed or 0) + elapsed
 		if self.elapsed >= 0.01 then
 			for frame in next, chatFrames do
@@ -100,8 +99,8 @@ function Style:OnEnable()
 
 	-- ? consider moving it elsewhere as well
 	Style:RegisterEvent("GLOBAL_MOUSE_DOWN", function(button)
-		if mUI.db.profile.chat.lsglass.fade.enabled then
-			if button == "LeftButton" and mUI.db.profile.chat.lsglass.fade.click then
+		if mUI.db.profile.chat.lsglass.chat.fade.enabled then
+			if button == "LeftButton" and mUI.db.profile.chat.lsglass.chat.fade.click then
 				for frame in next, chatFrames do
 					if frame:IsShown() and frame:IsMouseOver() and not frame:IsMouseOverHyperlink() then
 						if frame:IsScrolling() then
@@ -124,4 +123,12 @@ function Style:OnEnable()
 			end
 		end
 	end)
+
+	Style:EnableDispatcher()
+	Style:EnableDragHook()
+	Style:EnableAlerts()
+end
+
+function Style:OnDisable()
+	Style:UnhookAll()
 end

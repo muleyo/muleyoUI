@@ -1,10 +1,10 @@
-local Casttime = mUI:NewModule("mUI.Modules.Nameplates.Casttime")
+local Casttime = mUI:NewModule("mUI.Modules.Nameplates.Casttime", "AceHook-3.0")
 
 function Casttime:OnInitialize()
     -- Load Database
-    self.db = mUI.db.profile.nameplates
+    Casttime.db = mUI.db.profile.nameplates
 
-    function self:IconSkin(icon, parent)
+    function Casttime:IconSkin(icon, parent)
         if not icon or (icon and icon.styled) then return end
 
         local backdrop = {
@@ -46,7 +46,7 @@ function Casttime:OnInitialize()
         icon.styled = true
     end
 
-    function self:NameplateCastbar(frame)
+    function Casttime:NameplateCastbar(frame)
         if not frame or frame:IsForbidden() then return end
         if frame.unit and frame.unit:find('nameplate%d') then
             local _, _, _, _, _, _, _, castInterrupt = UnitCastingInfo(frame.unit);
@@ -61,7 +61,7 @@ function Casttime:OnInitialize()
                 frame.Icon:ClearAllPoints();
                 PixelUtil.SetPoint(frame.Icon, "CENTER", frame, "LEFT", -10, 0);
                 frame.Text:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
-                self:IconSkin(frame.Icon, frame)
+                Casttime:IconSkin(frame.Icon, frame)
 
                 if castInterrupt or channelInterrupt then
                     frame.Icon:Hide()
@@ -73,7 +73,7 @@ function Casttime:OnInitialize()
                     frame.Icon.bg:Show()
                 end
 
-                if self.db.casttime then
+                if Casttime.db.casttime then
                     if not frame.timer then
                         frame.timer = frame:CreateFontString(nil)
                         frame.timer:SetFont(STANDARD_TEXT_FONT, 8, "THINOUTLINE")
@@ -97,7 +97,7 @@ function Casttime:OnInitialize()
         end
     end
 
-    function self:NameplateCastbarIcon(frame)
+    function Casttime:NameplateCastbarIcon(frame)
         if not frame or frame:IsForbidden() then return end
 
         if frame.castBar and frame.castBar.Icon then
@@ -114,15 +114,14 @@ function Casttime:OnInitialize()
 end
 
 function Casttime:OnEnable()
-    mUI:SecureHook(CastingBarMixin, "OnUpdate", function(frame)
-        self:NameplateCastbar(frame)
+    Casttime:SecureHook(CastingBarMixin, "OnUpdate", function(frame)
+        Casttime:NameplateCastbar(frame)
     end)
-    mUI:SecureHook("DefaultCompactNamePlateFrameAnchorInternal", function(frame)
-        self:NameplateCastbarIcon(frame)
+    Casttime:SecureHook("DefaultCompactNamePlateFrameAnchorInternal", function(frame)
+        Casttime:NameplateCastbarIcon(frame)
     end)
 end
 
 function Casttime:OnDisable()
-    mUI:Unhook(CastingBarMixin, "OnUpdate")
-    mUI:Unhook("DefaultCompactNamePlateFrameAnchorInternal")
+    Casttime:UnhookAll()
 end

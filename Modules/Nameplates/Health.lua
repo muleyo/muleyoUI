@@ -1,18 +1,18 @@
-local Health = mUI:NewModule("mUI.Modules.Nameplates.Health")
+local Health = mUI:NewModule("mUI.Modules.Nameplates.Health", "AceHook-3.0")
 
 function Health:OnInitialize()
     -- Load Database
-    self.db = mUI.db.profile.nameplates
+    Health.db = mUI.db.profile.nameplates
 
     -- Create Frame
-    self.health = CreateFrame("Frame")
+    Health.health = CreateFrame("Frame")
 
     -- Tables
-    self.healthtexts = {}
+    Health.healthtexts = {}
 
-    function self:HealthText(nameplate)
-        if not self.db.healthtext then
-            for healthtext in pairs(self.healthtexts) do
+    function Health:HealthText(nameplate)
+        if not Health.db.healthtext then
+            for healthtext in pairs(Health.healthtexts) do
                 healthtext:SetText(nil)
             end
 
@@ -32,27 +32,27 @@ function Health:OnInitialize()
                     healthBar.text = healthBar:CreateFontString(nil, "ARTWORK", nil)
                     healthBar.text:SetPoint("CENTER")
                     healthBar.text:SetFont(STANDARD_TEXT_FONT, 8, 'OUTLINE')
-                    healthBar.text:SetText(string.format("%." .. self.db.decimals .. "f",
+                    healthBar.text:SetText(string.format("%." .. Health.db.decimals .. "f",
                         (currentHealth / maxHealth) * 100) .. "%")
-                    self.healthtexts[healthBar.text] = true
+                    Health.healthtexts[healthBar.text] = true
                 else
-                    healthBar.text:SetText(string.format("%." .. self.db.decimals .. "f",
+                    healthBar.text:SetText(string.format("%." .. Health.db.decimals .. "f",
                         (currentHealth / maxHealth) * 100) .. "%")
                 end
             end
         end
     end
 
-    function self:Colors(nameplate)
-        if not self.db.colors then return end
+    function Health:Colors(nameplate)
+        if not Health.db.colors then return end
         if nameplate and nameplate:IsForbidden() then return end
         if nameplate.unit and nameplate.unit:find('nameplate%d') then
             local playerRole = UnitGroupRolesAssigned("player")
             if UnitIsPlayer(nameplate.unit) or (not UnitCanAttack("player", nameplate.unit)) then return end
             local _, _, _, _, _, id = strsplit("-", UnitGUID(nameplate.unit) or "")
             local _, status = UnitDetailedThreatSituation("player", nameplate.unit)
-            local color = self.db.npccolors[tonumber(id)] or { r = 0, g = 1, b = 0.6, a = 1 }
-            local nColor = self.db.npccolors[tonumber(id)] or { r = 1, g = 0, b = 0.3, a = 1 }
+            local color = Health.db.npccolors[tonumber(id)] or { r = 0, g = 1, b = 0.6, a = 1 }
+            local nColor = Health.db.npccolors[tonumber(id)] or { r = 1, g = 0, b = 0.3, a = 1 }
 
             if playerRole == "TANK" then
                 if status and status == 3 then
@@ -119,23 +119,23 @@ function Health:OnInitialize()
         end
     end
 
-    function self:RefreshNameplates()
+    function Health:RefreshNameplates()
         -- Get Nameplates
         for _, nameplate in pairs(C_NamePlate.GetNamePlates(false)) do
             -- Set Name for Nameplate
-            self:HealthText(nameplate.UnitFrame)
+            Health:HealthText(nameplate.UnitFrame)
             --self:Colors(nameplate.UnitFrame)
         end
     end
 end
 
 function Health:OnEnable()
-    mUI:SecureHook("CompactUnitFrame_UpdateStatusText", function(nameplate)
-        self:HealthText(nameplate)
+    Health:SecureHook("CompactUnitFrame_UpdateStatusText", function(nameplate)
+        Health:HealthText(nameplate)
         --self:Colors(nameplate)
     end)
 end
 
 function Health:OnDisable()
-    mUI:Unhook("CompactUnitFrame_UpdateStatusText")
+    Health:UnhookAll()
 end

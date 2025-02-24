@@ -2,39 +2,39 @@ local Modules = mUI:NewModule("mUI.Modules.Actionbars")
 
 function Modules:OnInitialize()
     -- Modules
-    self.Flash = mUI:GetModule("mUI.Modules.Actionbars.Flash")
-    self.Hotkey = mUI:GetModule("mUI.Modules.Actionbars.Hotkey")
-    self.Macro = mUI:GetModule("mUI.Modules.Actionbars.Macro")
-    self.Mouseover = mUI:GetModule("mUI.Modules.Actionbars.Mouseover")
-    self.Range = mUI:GetModule("mUI.Modules.Actionbars.Range")
+    Modules.Flash = mUI:GetModule("mUI.Modules.Actionbars.Flash")
+    Modules.Hotkey = mUI:GetModule("mUI.Modules.Actionbars.Hotkey")
+    Modules.Macro = mUI:GetModule("mUI.Modules.Actionbars.Macro")
+    Modules.Mouseover = mUI:GetModule("mUI.Modules.Actionbars.Mouseover")
+    Modules.Range = mUI:GetModule("mUI.Modules.Actionbars.Range")
 end
 
 function Modules:OnEnable()
-    self.db = mUI.db.profile.actionbars
+    Modules.db = mUI.db.profile.actionbars
 
     -- Enable Modules
-    if self.db.flash then
-        self.Flash:Enable()
+    if Modules.db.flash then
+        Modules.Flash:Enable()
     end
-    if self.db.hotkey then
-        self.Hotkey:Enable()
+    if Modules.db.hotkey then
+        Modules.Hotkey:Enable()
     end
-    if self.db.macro then
-        self.Macro:Enable()
+    if Modules.db.macro then
+        Modules.Macro:Enable()
     end
-    if self.db.mouseover.enabled then
-        self.Mouseover:Enable()
+    if Modules.db.mouseover.enabled then
+        Modules.Mouseover:Enable()
     end
-    if self.db.range then
-        self.Range:Enable()
+    if Modules.db.range then
+        Modules.Range:Enable()
     end
 end
 
 function Modules:OnDisable()
     -- Disable Modules
-    self.Flash:Disable()
-    self.Hotkey:Disable()
-    self.Macro:Disable()
-    self.Mouseover:Disable()
-    self.Range:Disable()
+    Modules.Flash:Disable()
+    Modules.Hotkey:Disable()
+    Modules.Macro:Disable()
+    Modules.Mouseover:Disable()
+    Modules.Range:Disable()
 end

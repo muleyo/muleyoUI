@@ -1,9 +1,9 @@
 local Focuspos = mUI:NewModule("mUI.Modules.Castbars.Focuspos")
 
 function Focuspos:OnInitialize()
-    self.func = FocusFrameSpellBar.SetPoint
+    Focuspos.func = FocusFrameSpellBar.SetPoint
 
-    function self:Update()
+    function Focuspos:Update()
         FocusFrameSpellBar:ClearAllPoints()
         FocusFrameSpellBar:SetPoint("TOPLEFT", FocusFrame, "TOPLEFT", 47.5, 10)
         FocusFrameSpellBar.SetPoint = function() end
@@ -11,9 +11,9 @@ function Focuspos:OnInitialize()
 end
 
 function Focuspos:OnEnable()
-    self:Update()
+    Focuspos:Update()
 end
 
 function Focuspos:OnDisable()
-    FocusFrameSpellBar.SetPoint = self.func
+    FocusFrameSpellBar.SetPoint = Focuspos.func
 end

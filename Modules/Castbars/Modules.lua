@@ -2,44 +2,44 @@ local Modules = mUI:NewModule("mUI.Modules.Castbars")
 
 function Modules:OnInitialize()
     -- Modules
-    self.Style = mUI:GetModule("mUI.Modules.Castbars.Style")
-    self.Icon = mUI:GetModule("mUI.Modules.Castbars.Icon")
-    self.Casttime = mUI:GetModule("mUI.Modules.Castbars.Casttime")
-    self.Targetscale = mUI:GetModule("mUI.Modules.Castbars.Targetscale")
-    self.Focusscale = mUI:GetModule("mUI.Modules.Castbars.Focusscale")
-    self.Targetpos = mUI:GetModule("mUI.Modules.Castbars.Targetpos")
-    self.Focuspos = mUI:GetModule("mUI.Modules.Castbars.Focuspos")
+    Modules.Style = mUI:GetModule("mUI.Modules.Castbars.Style")
+    Modules.Icon = mUI:GetModule("mUI.Modules.Castbars.Icon")
+    Modules.Casttime = mUI:GetModule("mUI.Modules.Castbars.Casttime")
+    Modules.Targetscale = mUI:GetModule("mUI.Modules.Castbars.Targetscale")
+    Modules.Focusscale = mUI:GetModule("mUI.Modules.Castbars.Focusscale")
+    Modules.Targetpos = mUI:GetModule("mUI.Modules.Castbars.Targetpos")
+    Modules.Focuspos = mUI:GetModule("mUI.Modules.Castbars.Focuspos")
 end
 
 function Modules:OnEnable()
-    self.db = mUI.db.profile.castbars
+    Modules.db = mUI.db.profile.castbars
 
     -- Enable Modules
-    if self.db.style == "mUI" then
-        self.Style:Enable()
+    if Modules.db.style == "mUI" then
+        Modules.Style:Enable()
     end
-    if self.db.icon then
-        self.Icon:Enable()
+    if Modules.db.icon then
+        Modules.Icon:Enable()
     end
-    if self.db.casttime then
-        self.Casttime:Enable()
+    if Modules.db.casttime then
+        Modules.Casttime:Enable()
     end
-    if self.db.targetscale ~= 100 then
-        self.Targetscale:Enable()
+    if Modules.db.targetscale ~= 100 then
+        Modules.Targetscale:Enable()
     end
-    if self.db.focusscale ~= 100 then
-        self.Focusscale:Enable()
+    if Modules.db.focusscale ~= 100 then
+        Modules.Focusscale:Enable()
     end
-    if self.db.targetpos then
-        self.Targetpos:Enable()
+    if Modules.db.targetpos then
+        Modules.Targetpos:Enable()
     end
-    if self.db.focuspos then
-        self.Focuspos:Enable()
+    if Modules.db.focuspos then
+        Modules.Focuspos:Enable()
     end
 end
 
 function Modules:OnDisable()
     -- Disable Modules
-    self.Style:Disable()
-    self.Icon:Disable()
+    Modules.Style:Disable()
+    Modules.Icon:Disable()
 end

@@ -1,17 +1,17 @@
-local Theme = mUI:NewModule("mUI.Modules.General.Theme")
+local Theme = mUI:NewModule("mUI.Modules.General.Theme", "AceHook-3.0")
 
 function Theme:OnInitialize()
     -- Load Database
-    self.db = mUI.db.profile.general
+    Theme.db = mUI.db.profile.general
 
     -- Create Frames
-    self.dragonriding = CreateFrame("Frame")
+    Theme.dragonriding = CreateFrame("Frame")
 
     -- Register Events
-    self.dragonriding:RegisterEvent("UPDATE_UI_WIDGET")
+    Theme.dragonriding:RegisterEvent("UPDATE_UI_WIDGET")
 
     -- Style ActionButton
-    self.Bars = {
+    Theme.Bars = {
         _G["MultiBarBottomLeft"],
         _G["MultiBarBottomRight"],
         _G["MultiBarRight"],
@@ -22,7 +22,7 @@ function Theme:OnInitialize()
         _G["MultiBar7"],
     }
 
-    function self:StyleButton(Button, Type)
+    function Theme:StyleButton(Button, Type)
         local Name = Button:GetName()
         local NormalTexture = _G[Name .. "NormalTexture"]
         local Icon = _G[Name .. "Icon"]
@@ -49,12 +49,12 @@ function Theme:OnInitialize()
         end
     end
 
-    function self:StyleAction(Bar, Num)
+    function Theme:StyleAction(Bar, Num)
         for i = 1, Num do
             local Name = Bar:GetName()
             local Button = _G[Name .. "Button" .. i]
 
-            self:StyleButton(Button, "Actionbar")
+            Theme:StyleButton(Button, "Actionbar")
         end
     end
 
@@ -186,7 +186,7 @@ function Theme:OnInitialize()
     end
 
     -- Theme Function
-    function self:Update()
+    function Theme:Update()
         -- Achievements Frame
         mUI:Skin(AchievementFrame)
         mUI:Skin(AchievementFrame.Header)
@@ -754,13 +754,13 @@ function Theme:OnInitialize()
         }, true)
 
         -- Dragonriding
-        if not mUI:IsHooked(self.dragonriding, "OnEvent") then
-            mUI:HookScript(self.dragonriding, "OnEvent", function()
+        if not Theme:IsHooked(Theme.dragonriding, "OnEvent") then
+            Theme:HookScript(Theme.dragonriding, "OnEvent", function()
                 for _, child in ipairs({ UIWidgetPowerBarContainerFrame:GetChildren() }) do
                     mUI:Skin(child)
                     for _, vigor in ipairs({ child:GetChildren() }) do
-                        if not self.forbiddenFrames[select(5, vigor:GetRegions())] then
-                            self.forbiddenFrames[select(5, vigor:GetRegions())] = true
+                        if not Theme.forbiddenFrames[select(5, vigor:GetRegions())] then
+                            Theme.forbiddenFrames[select(5, vigor:GetRegions())] = true
                         end
                         mUI:Skin(vigor)
                     end
@@ -1085,11 +1085,11 @@ function Theme:OnInitialize()
         }, true)
 
         -- Actionbars
-        for j = 1, #self.Bars do
-            local Bar = self.Bars[j]
+        for j = 1, #Theme.Bars do
+            local Bar = Theme.Bars[j]
             if Bar then
                 local Num = Bar.numButtonsShowable
-                self:StyleAction(Bar, Num)
+                Theme:StyleAction(Bar, Num)
             end
         end
 
@@ -1099,15 +1099,15 @@ function Theme:OnInitialize()
             local Button = _G["ActionButton" .. i]
 
             if C_AddOns.IsAddOnLoaded("Masque") and C_AddOns.IsAddOnLoaded("MasqueBlizzBars") then return end
-            self:StyleButton(Button, "Actionbar")
+            Theme:StyleButton(Button, "Actionbar")
         end
 
         for i = 1, 10 do
             local StanceButton = _G["StanceButton" .. i]
             local PetButton = _G["PetActionButton" .. i]
 
-            self:StyleButton(StanceButton, "StanceOrPet")
-            self:StyleButton(PetButton, "StanceOrPet")
+            Theme:StyleButton(StanceButton, "StanceOrPet")
+            Theme:StyleButton(PetButton, "StanceOrPet")
         end
 
         if C_AddOns.IsAddOnLoaded("Dominos") then
@@ -1115,7 +1115,7 @@ function Theme:OnInitialize()
             for i = 1, 140 do
                 local ActionButton = _G["DominosActionButton" .. i]
                 if ActionButton then
-                    self:StyleButton(ActionButton)
+                    Theme:StyleButton(ActionButton)
                 end
             end
 
@@ -1124,11 +1124,11 @@ function Theme:OnInitialize()
                 local StanceButton = _G["DominosStanceButton" .. i]
 
                 if PetButton then
-                    self:StyleButton(PetButton)
+                    Theme:StyleButton(PetButton)
                 end
 
                 if StanceButton then
-                    self:StyleButton(StanceButton)
+                    Theme:StyleButton(StanceButton)
                 end
             end
         end
@@ -1138,7 +1138,7 @@ function Theme:OnInitialize()
             for i = 1, 180 do
                 local ActionButton = _G["BT4Button" .. i]
                 if ActionButton then
-                    self:StyleButton(ActionButton)
+                    Theme:StyleButton(ActionButton)
                 end
             end
 
@@ -1147,53 +1147,53 @@ function Theme:OnInitialize()
                 local StanceButton = _G["BT4StanceButton" .. i]
 
                 if PetButton then
-                    self:StyleButton(PetButton, "StanceOrPet")
+                    Theme:StyleButton(PetButton, "StanceOrPet")
                 end
 
                 if StanceButton then
-                    self:StyleButton(StanceButton, "StanceOrPet")
+                    Theme:StyleButton(StanceButton, "StanceOrPet")
                 end
             end
         end
 
         -- Class Bars
         if (playerClass == 'ROGUE') then
-            if not mUI:IsHooked(RogueComboPointBarFrame, "OnUpdate") then
-                mUI:HookScript(RogueComboPointBarFrame, "OnUpdate", classBar)
+            if not Theme:IsHooked(RogueComboPointBarFrame, "OnUpdate") then
+                Theme:HookScript(RogueComboPointBarFrame, "OnUpdate", classBar)
             end
 
             classBar()
         elseif (playerClass == 'MAGE') then
-            if not mUI:IsHooked(MageArcaneChargesFrame, "OnUpdate") then
-                mUI:HookScript(MageArcaneChargesFrame, "OnUpdate", classBar)
+            if not Theme:IsHooked(MageArcaneChargesFrame, "OnUpdate") then
+                Theme:HookScript(MageArcaneChargesFrame, "OnUpdate", classBar)
             end
 
             classBar()
         elseif (playerClass == 'WARLOCK') then
-            if not mUI:IsHooked(WarlockPowerFrame, "OnUpdate") then
-                mUI:HookScript(WarlockPowerFrame, "OnUpdate", classBar)
+            if not Theme:IsHooked(WarlockPowerFrame, "OnUpdate") then
+                Theme:HookScript(WarlockPowerFrame, "OnUpdate", classBar)
             end
 
             classBar()
         elseif (playerClass == 'DRUID') then
-            if not mUI:IsHooked(DruidComboPointBarFrame, "OnUpdate") then
-                mUI:HookScript(DruidComboPointBarFrame, "OnUpdate", classBar)
+            if not Theme:IsHooked(DruidComboPointBarFrame, "OnUpdate") then
+                Theme:HookScript(DruidComboPointBarFrame, "OnUpdate", classBar)
             end
 
             classBar()
         elseif (playerClass == 'MONK') then
-            if not mUI:IsHooked(MonkHarmonyBarFrame, "OnUpdate") then
-                mUI:HookScript(MonkHarmonyBarFrame, "OnUpdate", classBar)
+            if not Theme:IsHooked(MonkHarmonyBarFrame, "OnUpdate") then
+                Theme:HookScript(MonkHarmonyBarFrame, "OnUpdate", classBar)
             end
 
             classBar()
         elseif (playerClass == 'DEATHKNIGHT') then
-            if not mUI:IsHooked(RuneFrame, "OnEvent") then
-                mUI:HookScript(RuneFrame, "OnEvent", OnUpdate)
+            if not Theme:IsHooked(RuneFrame, "OnEvent") then
+                Theme:HookScript(RuneFrame, "OnEvent", OnUpdate)
             end
         elseif (playerClass == 'EVOKER') then
-            if not mUI:IsHooked(EssencePlayerFrame, "OnUpdate") then
-                mUI:HookScript(EssencePlayerFrame, "OnUpdate", classBar)
+            if not Theme:IsHooked(EssencePlayerFrame, "OnUpdate") then
+                Theme:HookScript(EssencePlayerFrame, "OnUpdate", classBar)
             end
 
             classBar()
@@ -1201,9 +1201,9 @@ function Theme:OnInitialize()
             classBar()
         elseif (playerClass == 'SHAMAN') then
             -- Totem Bar
-            if not mUI:IsHooked(TotemFrame, "OnEvent") then
-                mUI:HookScript(TotemFrame, "OnEvent", function(self)
-                    for totem, _ in self.totemPool:EnumerateActive() do
+            if not Theme:IsHooked(TotemFrame, "OnEvent") then
+                Theme:HookScript(TotemFrame, "OnEvent", function(frame)
+                    for totem, _ in frame.totemPool:EnumerateActive() do
                         mUI:Skin({ totem.Border }, true)
                     end
                 end)
@@ -1243,7 +1243,7 @@ function Theme:OnEnable()
     C_AddOns.LoadAddOn("Blizzard_ItemUpgradeUI")
 
     -- Forbidden Frames which are not affected by Themes
-    self.forbiddenFrames = {
+    Theme.forbiddenFrames = {
         ["CalendarCreateEventIcon"] = true,
         ["FriendsFrameIcon"] = true,
         ["MacroFramePortrait"] = true,
@@ -1331,39 +1331,30 @@ function Theme:OnEnable()
     }
 
     -- Update Theme
-    self:Update()
+    Theme:Update()
 
     -- Update Spellbok Text Colors
-    mUI:SecureHook(SpellBookItemMixin, "UpdateVisuals", function(self)
+    Theme:SecureHook(SpellBookItemMixin, "UpdateVisuals", function(frame)
         local theme = mUI.db.profile.general.theme
 
         if theme == "Disabled" then
-            self.Name:SetTextColor(0.1803921610117, 0.10588236153126, 0.05882353335619)
-            self.SubName:SetTextColor(0.1803921610117, 0.10588236153126, 0.05882353335619)
-            self.Button.Border:SetVertexColor(1, 1, 1)
-            self.Button.Border:SetDesaturated(false)
+            frame.Name:SetTextColor(0.1803921610117, 0.10588236153126, 0.05882353335619)
+            frame.SubName:SetTextColor(0.1803921610117, 0.10588236153126, 0.05882353335619)
+            frame.Button.Border:SetVertexColor(1, 1, 1)
+            frame.Button.Border:SetDesaturated(false)
         else
-            self.Name:SetTextColor(0.8, 0.8, 0.8)
-            self.SubName:SetTextColor(0.8, 0.8, 0.8)
-            self.Button.Border:SetVertexColor(0.5, 0.5, 0.5)
-            self.Button.Border:SetDesaturated(true)
+            frame.Name:SetTextColor(0.8, 0.8, 0.8)
+            frame.SubName:SetTextColor(0.8, 0.8, 0.8)
+            frame.Button.Border:SetVertexColor(0.5, 0.5, 0.5)
+            frame.Button.Border:SetDesaturated(true)
         end
     end)
 end
 
 function Theme:OnDisable()
     -- Update Theme
-    self:Update()
+    Theme:Update()
 
     -- Unhook Frames
-    mUI:Unhook(SpellBookItemMixin, "UpdateVisuals")
-    mUI:Unhook(self.dragonriding, "OnEvent")
-    mUI:Unhook(RogueComboPointBarFrame, "OnUpdate")
-    mUI:Unhook(MageArcaneChargesFrame, "OnUpdate")
-    mUI:Unhook(WarlockPowerFrame, "OnUpdate")
-    mUI:Unhook(DruidComboPointBarFrame, "OnUpdate")
-    mUI:Unhook(MonkHarmonyBarFrame, "OnUpdate")
-    mUI:Unhook(EssencePlayerFrame, "OnUpdate")
-    mUI:Unhook(RuneFrame, "OnUpdate")
-    mUI:Unhook(TotemFrame, "OnEvent")
+    Theme:UnhookAll()
 end

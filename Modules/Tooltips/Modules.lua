@@ -1,30 +1,30 @@
-local Module = mUI:NewModule("mUI.Modules.Tooltips")
+local Modules = mUI:NewModule("mUI.Modules.Tooltips")
 
-function Module:OnInitialize()
+function Modules:OnInitialize()
     -- Get Modules
-    self.Style = mUI:GetModule("mUI.Tooltips.Style")
-    self.Combat = mUI:GetModule("mUI.Tooltips.Combat")
-    self.Anchor = mUI:GetModule("mUI.Tooltips.Anchor")
+    Modules.Style = mUI:GetModule("mUI.Tooltips.Style")
+    Modules.Combat = mUI:GetModule("mUI.Tooltips.Combat")
+    Modules.Anchor = mUI:GetModule("mUI.Tooltips.Anchor")
 end
 
-function Module:OnEnable()
+function Modules:OnEnable()
     -- Load Database
-    self.db = mUI.db.profile.tooltips
+    Modules.db = mUI.db.profile.tooltips
 
-    if self.db.style == "mUI" then
-        self.Style:Enable()
+    if Modules.db.style == "mUI" then
+        Modules.Style:Enable()
     end
-    if self.db.combat then
-        self.Combat:Enable()
+    if Modules.db.combat then
+        Modules.Combat:Enable()
     end
-    if self.db.mouseanchor then
-        self.Anchor:Enable()
+    if Modules.db.mouseanchor then
+        Modules.Anchor:Enable()
     end
 end
 
-function Module:OnDisable()
+function Modules:OnDisable()
     -- Disable Modules
-    self.Style:Disable()
-    self.Combat:Disable()
-    self.Anchor:Disable()
+    Modules.Style:Disable()
+    Modules.Combat:Disable()
+    Modules.Anchor:Disable()
 end

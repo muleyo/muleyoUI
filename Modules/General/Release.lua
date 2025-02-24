@@ -1,17 +1,21 @@
-local Release = mUI:NewModule("mUI.Modules.General.Release")
+local Release = mUI:NewModule("mUI.Modules.General.Release", "AceHook-3.0")
 
 function Release:OnInitialize()
-    self.release = CreateFrame("Frame")
-    self.release:SetScript("OnEvent", function(_, event)
+    Release.release = CreateFrame("Frame")
+    function Release:Update(event)
         if not event == "PLAYER_DEAD" then return end
         RepopMe()
-    end)
+    end
 end
 
 function Release:OnEnable()
-    self.release:RegisterEvent("PLAYER_DEAD")
+    Release.release:RegisterEvent("PLAYER_DEAD")
+    Release:HookScript(Release.release, "OnEvent", function(_, event)
+        Release:Update(event)
+    end)
 end
 
 function Release:OnDisable()
-    self.release:UnregisterEvent("PLAYER_DEAD")
+    Release.release:UnregisterEvent("PLAYER_DEAD")
+    Release:UnhookAll()
 end

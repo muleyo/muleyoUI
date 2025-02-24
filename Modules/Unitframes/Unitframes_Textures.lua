@@ -1,18 +1,18 @@
-local Unitframes_Textures = mUI:NewModule("mUI.Modules.Unitframes.Unitframes_Textures")
+local Unitframes_Textures = mUI:NewModule("mUI.Modules.Unitframes.Unitframes_Textures", "AceHook-3.0")
 
 function Unitframes_Textures:OnInitialize()
     -- Load LSM
-    self.LSM = LibStub("LibSharedMedia-3.0")
+    Unitframes_Textures.LSM = LibStub("LibSharedMedia-3.0")
 
     -- Load Database
-    self.db = mUI.db.profile.unitframes
+    Unitframes_Textures.db = mUI.db.profile.unitframes
 
     -- Create Frame
-    self.textures = CreateFrame("Frame")
-    self.lastUpdate = 0
+    Unitframes_Textures.textures = CreateFrame("Frame")
+    Unitframes_Textures.lastUpdate = 0
 
     -- Tables
-    self.healthbars = {
+    Unitframes_Textures.healthbars = {
         player = PlayerFrame.healthbar,
         pet = PetFrame.healthbar,
         target = TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBarsContainer.HealthBar,
@@ -30,7 +30,7 @@ function Unitframes_Textures:OnInitialize()
         party4 = PartyFrame.MemberFrame4.healthbar
     }
 
-    self.powerbars = {
+    Unitframes_Textures.powerbars = {
         player = PlayerFrame.manabar,
         pet = PetFrame.manabar,
         target = TargetFrame.manabar,
@@ -48,7 +48,7 @@ function Unitframes_Textures:OnInitialize()
         party4 = PartyFrame.MemberFrame4.manabar
     }
 
-    self.defaultHealthTextures = {
+    Unitframes_Textures.defaultHealthTextures = {
         player = "UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health",
         pet = "UI-HUD-UnitFrame-TargetofTarget-PortraitOn-Bar-Health",
         target = "UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health",
@@ -66,7 +66,7 @@ function Unitframes_Textures:OnInitialize()
         party4 = "UI-HUD-UnitFrame-Party-PortraitOn-Bar-Health"
     }
 
-    self.defaultPowerTextures = {
+    Unitframes_Textures.defaultPowerTextures = {
         player = {
             [0] = "UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana",
             [1] = "UI-HUD-UnitFrame-Player-PortraitOn-Bar-Rage",
@@ -177,43 +177,44 @@ function Unitframes_Textures:OnInitialize()
         }
     }
 
-    function self:Update()
-        local texture = self.LSM:Fetch('statusbar', self.db.textures.unitframes)
+    function Unitframes_Textures:Update()
+        local texture = Unitframes_Textures.LSM:Fetch('statusbar', Unitframes_Textures.db.textures.unitframes)
         local powerColor
 
-        for name, healthbar in pairs(self.healthbars) do
-            if self.db.textures.unitframes == "None" then
-                if not self.db.color then
+        for name, healthbar in pairs(Unitframes_Textures.healthbars) do
+            if Unitframes_Textures.db.textures.unitframes == "None" then
+                if not Unitframes_Textures.db.color then
                     healthbar:SetStatusBarDesaturated(false)
                     healthbar:SetStatusBarColor(1, 1, 1)
                 end
-                healthbar:GetStatusBarTexture():SetAtlas(self.defaultHealthTextures[name])
+                healthbar:GetStatusBarTexture():SetAtlas(Unitframes_Textures.defaultHealthTextures[name])
             else
                 if healthbar.HealthBarTexture then
                     healthbar.HealthBarTexture:SetTexture(texture)
-                    if not self.db.color then
+                    if not Unitframes_Textures.db.color then
                         healthbar.HealthBarTexture:SetVertexColor(0, 1, 0)
                     end
                 elseif healthbar.unit == "pet" then
                     select(7, healthbar:GetRegions()):SetTexture(texture)
-                    if not self.db.color then
+                    if not Unitframes_Textures.db.color then
                         select(7, healthbar:GetRegions()):SetVertexColor(0, 1, 0)
                     end
                 else
                     healthbar:SetStatusBarTexture(texture)
                     healthbar:GetStatusBarTexture():SetDrawLayer("BORDER")
-                    if not self.db.color then
+                    if not Unitframes_Textures.db.color then
                         healthbar:SetStatusBarColor(0, 1, 0)
                     end
                 end
             end
         end
 
-        for name, powerbar in pairs(self.powerbars) do
+        for name, powerbar in pairs(Unitframes_Textures.powerbars) do
             if powerbar and powerbar.powerType then
                 powerColor = PowerBarColor[powerbar.powerType]
-                if self.db.textures.unitframes == "None" then
-                    powerbar:GetStatusBarTexture():SetAtlas(self.defaultPowerTextures[name][powerbar.powerType])
+                if Unitframes_Textures.db.textures.unitframes == "None" then
+                    powerbar:GetStatusBarTexture():SetAtlas(Unitframes_Textures.defaultPowerTextures[name]
+                        [powerbar.powerType])
                     powerbar:SetStatusBarColor(1, 1, 1)
                 else
                     if not (powerbar.powerType == 8 or powerbar.powerType == 11 or powerbar.powerType == 13 or powerbar.powerType == 17 or powerbar.powerType == 18) then
@@ -231,8 +232,9 @@ function Unitframes_Textures:OnInitialize()
 
         if AlternatePowerBar and AlternatePowerBar.powerType then
             powerColor = PowerBarColor[AlternatePowerBar.powerType]
-            if self.db.textures.unitframes == "None" then
-                AlternatePowerBar:GetStatusBarTexture():SetAtlas(self.defaultPowerTextures["classresource"]
+            if Unitframes_Textures.db.textures.unitframes == "None" then
+                AlternatePowerBar:GetStatusBarTexture():SetAtlas(Unitframes_Textures.defaultPowerTextures
+                    ["classresource"]
                     [AlternatePowerBar.powerType])
                 AlternatePowerBar:SetStatusBarColor(1, 1, 1)
             else
@@ -249,11 +251,11 @@ function Unitframes_Textures:OnInitialize()
 end
 
 function Unitframes_Textures:OnEnable()
-    mUI:HookScript(self.textures, "OnUpdate", function(_, _)
-        self:Update()
+    Unitframes_Textures:HookScript(Unitframes_Textures.textures, "OnUpdate", function(_, _)
+        Unitframes_Textures:Update()
     end)
 end
 
 function Unitframes_Textures:OnDisable()
-    mUI:Unhook(self.textures, "OnUpdate")
+    Unitframes_Textures:UnhookAll()
 end

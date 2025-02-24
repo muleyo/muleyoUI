@@ -1,8 +1,9 @@
-local Delete = mUI:NewModule("mUI.Modules.General.Delete")
+local Delete = mUI:NewModule("mUI.Modules.General.Delete", "AceHook-3.0")
 
 function Delete:OnInitialize()
-    self.delete = CreateFrame("Frame")
-    self.delete:SetScript("OnEvent", function(_, event)
+    Delete.delete = CreateFrame("Frame")
+
+    function Delete:Update(event)
         if not event == "DELETE_ITEM_CONFIRM" then return end
 
         if StaticPopup1EditBox:IsVisible() then
@@ -10,13 +11,17 @@ function Delete:OnInitialize()
         elseif StaticPopup2EditBox:IsVisible() then
             StaticPopup2EditBox:SetText(DELETE_ITEM_CONFIRM_STRING)
         end
-    end)
+    end
 end
 
 function Delete:OnEnable()
-    self.delete:RegisterEvent("DELETE_ITEM_CONFIRM")
+    Delete.delete:RegisterEvent("DELETE_ITEM_CONFIRM")
+    Delete:HookScript(Delete.delete, "OnEvent", function(_, event)
+        Delete:Update(event)
+    end)
 end
 
 function Delete:OnDisable()
-    self.delete:UnregisterEvent("DELETE_ITEM_CONFIRM")
+    Delete.delete:UnregisterEvent("DELETE_ITEM_CONFIRM")
+    Delete:UnhookAll()
 end

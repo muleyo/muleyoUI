@@ -1,7 +1,7 @@
 local Pvpbadge = mUI:NewModule("mUI.Modules.Unitframes.Pvpbadge")
 
 function Pvpbadge:OnInitialize()
-    self.pvpbadge = {
+    Pvpbadge.pvpbadge = {
         player = {
             badge = PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PrestigeBadge,
             portrait = PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PrestigePortrait
@@ -16,7 +16,7 @@ function Pvpbadge:OnInitialize()
         }
     }
 
-    self.functions = {
+    Pvpbadge.functions = {
         player = {
             badge = PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PrestigeBadge.Show,
             portrait = PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PrestigePortrait.Show
@@ -33,7 +33,7 @@ function Pvpbadge:OnInitialize()
 end
 
 function Pvpbadge:OnEnable()
-    for _, frame in pairs(self.pvpbadge) do
+    for _, frame in pairs(Pvpbadge.pvpbadge) do
         frame["badge"]:Hide()
         frame["portrait"]:Hide()
         frame["badge"].Show = function() end
@@ -42,9 +42,9 @@ function Pvpbadge:OnEnable()
 end
 
 function Pvpbadge:OnDisable()
-    for unitframe, frame in pairs(self.pvpbadge) do
-        frame["badge"].Show = self.functions[unitframe]["badge"]
-        frame["portrait"].Show = self.functions[unitframe]["portrait"]
+    for unitframe, frame in pairs(Pvpbadge.pvpbadge) do
+        frame["badge"].Show = Pvpbadge.functions[unitframe]["badge"]
+        frame["portrait"].Show = Pvpbadge.functions[unitframe]["portrait"]
         frame["badge"]:Show()
         frame["portrait"]:Show()
     end

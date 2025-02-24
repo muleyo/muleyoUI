@@ -2,17 +2,17 @@ local Targetscale = mUI:NewModule("mUI.Modules.Castbars.Targetscale")
 
 function Targetscale:OnInitialize()
     -- Load Database
-    self.db = mUI.db.profile.castbars
+    Targetscale.db = mUI.db.profile.castbars
 
-    function self:Update()
-        TargetFrameSpellBar:SetScale(self.db.targetscale / 100)
+    function Targetscale:Update()
+        TargetFrameSpellBar:SetScale(Targetscale.db.targetscale / 100)
     end
 end
 
 function Targetscale:OnEnable()
-    self:Update()
+    Targetscale:Update()
 end
 
 function Targetscale:OnDisable()
-    self:Update()
+    Targetscale:Update()
 end

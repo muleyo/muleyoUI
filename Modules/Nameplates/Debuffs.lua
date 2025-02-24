@@ -1,24 +1,24 @@
-local Debuffs = mUI:NewModule("mUI.Modules.Nameplates.Debuffs")
+local Debuffs = mUI:NewModule("mUI.Modules.Nameplates.Debuffs", "AceHook-3.0")
 
 function Debuffs:OnInitialize()
     -- Load Database
-    self.db = mUI.db.profile.nameplates
+    Debuffs.db = mUI.db.profile.nameplates
 
     -- Create Frame
-    self.debuffs = CreateFrame("Frame")
+    Debuffs.debuffs = CreateFrame("Frame")
 
-    function self:HideDebuffs(nameplate)
+    function Debuffs:HideDebuffs(nameplate)
         if not nameplate then return end
 
-        if not self.db.debuffs then
-            nameplate.BuffFrame.UpdateBuffs = self.updatebuffs
-            nameplate.BuffFrame.Show = self.show
+        if not Debuffs.db.debuffs then
+            nameplate.BuffFrame.UpdateBuffs = Debuffs.updatebuffs
+            nameplate.BuffFrame.Show = Debuffs.show
             nameplate.BuffFrame:Show()
             nameplate.BuffFrame:SetAlpha(1)
         else
-            if not (self.updatebuffs and self.show) then
-                self.updatebuffs = nameplate.BuffFrame.UpdateBuffs
-                self.show = nameplate.BuffFrame.Show
+            if not (Debuffs.updatebuffs and Debuffs.show) then
+                Debuffs.updatebuffs = nameplate.BuffFrame.UpdateBuffs
+                Debuffs.show = nameplate.BuffFrame.Show
             end
             nameplate.BuffFrame.UpdateBuffs = function() end
             nameplate.BuffFrame.Show = function() end
@@ -27,22 +27,24 @@ function Debuffs:OnInitialize()
         end
     end
 
-    function self:RefreshNameplates()
+    function Debuffs:RefreshNameplates()
         -- Get Nameplates
         for _, nameplate in pairs(C_NamePlate.GetNamePlates(false)) do
-            self:HideDebuffs(nameplate.UnitFrame)
+            Debuffs:HideDebuffs(nameplate.UnitFrame)
         end
     end
 end
 
 function Debuffs:OnEnable()
-    self.debuffs:RegisterEvent("NAME_PLATE_CREATED")
-    self.debuffs:RegisterEvent("NAME_PLATE_UNIT_ADDED")
+    Debuffs.debuffs:RegisterEvent("NAME_PLATE_CREATED")
+    Debuffs.debuffs:RegisterEvent("NAME_PLATE_UNIT_ADDED")
 
-    mUI:HookScript(self.debuffs, "OnEvent", function()
-        self:RefreshNameplates()
+    Debuffs:HookScript(Debuffs.debuffs, "OnEvent", function()
+        Debuffs:RefreshNameplates()
     end)
 end
 
 function Debuffs:OnDisable()
+    Debuffs:RefreshNameplates()
+    Debuffs:UnhookAll()
 end

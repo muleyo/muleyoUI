@@ -1,8 +1,8 @@
-local Casttime = mUI:NewModule("mUI.Modules.Castbars.Casttime")
+local Casttime = mUI:NewModule("mUI.Modules.Castbars.Casttime", "AceHook-3.0")
 
 function Casttime:OnInitialize()
     -- Tables
-    self.castbars = {
+    Casttime.castbars = {
         player = "PlayerCastingBarFrame",
         target = "TargetFrameSpellBar",
         focus = "FocusFrameSpellBar",
@@ -13,7 +13,7 @@ function Casttime:OnInitialize()
         boss5 = "Boss5TargetFrameSpellBar"
     }
 
-    for unitframe, castbar in pairs(self.castbars) do
+    for unitframe, castbar in pairs(Casttime.castbars) do
         if unitframe == "player" then
             _G[castbar].timer = _G[castbar]:CreateFontString(nil)
             _G[castbar].timer:SetFont(STANDARD_TEXT_FONT, 14, "OUTLINE")
@@ -27,7 +27,7 @@ function Casttime:OnInitialize()
         end
     end
 
-    function self:Update(frame, elapsed)
+    function Casttime:Update(frame, elapsed)
         if frame.update and frame.update < elapsed then
             if frame.casting then
                 frame.timer:SetText(format("%.1f", max(frame.maxValue - frame.value, 0)))
@@ -45,51 +45,44 @@ end
 
 function Casttime:OnEnable()
     PlayerCastingBarFrame.CastTimeText:Hide()
-    mUI:HookScript(PlayerCastingBarFrame, "OnUpdate", function(frame, elapsed)
-        self:Update(frame, elapsed)
+    Casttime:HookScript(PlayerCastingBarFrame, "OnUpdate", function(frame, elapsed)
+        Casttime:Update(frame, elapsed)
         frame.CastTimeText:Hide()
     end)
 
-    mUI:HookScript(TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
-        self:Update(frame, elapsed)
+    Casttime:HookScript(TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
+        Casttime:Update(frame, elapsed)
     end)
 
-    mUI:HookScript(FocusFrameSpellBar, "OnUpdate", function(frame, elapsed)
-        self:Update(frame, elapsed)
+    Casttime:HookScript(FocusFrameSpellBar, "OnUpdate", function(frame, elapsed)
+        Casttime:Update(frame, elapsed)
     end)
 
-    mUI:HookScript(Boss1TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
-        self:Update(frame, elapsed)
+    Casttime:HookScript(Boss1TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
+        Casttime:Update(frame, elapsed)
     end)
 
-    mUI:HookScript(Boss2TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
-        self:Update(frame, elapsed)
+    Casttime:HookScript(Boss2TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
+        Casttime:Update(frame, elapsed)
     end)
 
-    mUI:HookScript(Boss3TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
-        self:Update(frame, elapsed)
+    Casttime:HookScript(Boss3TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
+        Casttime:Update(frame, elapsed)
     end)
 
-    mUI:HookScript(Boss4TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
-        self:Update(frame, elapsed)
+    Casttime:HookScript(Boss4TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
+        Casttime:Update(frame, elapsed)
     end)
 
-    mUI:HookScript(Boss5TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
-        self:Update(frame, elapsed)
+    Casttime:HookScript(Boss5TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
+        Casttime:Update(frame, elapsed)
     end)
 end
 
 function Casttime:OnDisable()
-    mUI:Unhook(PlayerCastingBarFrame, "OnUpdate")
-    mUI:Unhook(TargetFrameSpellBar, "OnUpdate")
-    mUI:Unhook(FocusFrameSpellBar, "OnUpdate")
-    mUI:Unhook(Boss1TargetFrameSpellBar, "OnUpdate")
-    mUI:Unhook(Boss2TargetFrameSpellBar, "OnUpdate")
-    mUI:Unhook(Boss3TargetFrameSpellBar, "OnUpdate")
-    mUI:Unhook(Boss4TargetFrameSpellBar, "OnUpdate")
-    mUI:Unhook(Boss5TargetFrameSpellBar, "OnUpdate")
+    Casttime:UnhookAll()
 
-    for _, castbar in pairs(self.castbars) do
+    for _, castbar in pairs(Casttime.castbars) do
         _G[castbar].timer:SetText("")
     end
 end

@@ -1,11 +1,11 @@
-local Invite = mUI:NewModule("mUI.Modules.General.Invite")
+local Invite = mUI:NewModule("mUI.Modules.General.Invite", "AceHook-3.0")
 
 function Invite:OnInitialize()
     -- Local variables
     local hideStatic
 
-    self.invite = CreateFrame("Frame")
-    function self:Invite(_, event, _, _, _, _, _, _, guid)
+    Invite.invite = CreateFrame("Frame")
+    function Invite:Invite(_, event, _, _, _, _, _, _, guid)
         if event == 'PARTY_INVITE_REQUEST' then
             if not guid or guid == '' or IsInGroup() then return end
 
@@ -28,14 +28,14 @@ function Invite:OnInitialize()
 end
 
 function Invite:OnEnable()
-    self.invite:RegisterEvent("PARTY_INVITE_REQUEST")
-    self.invite:RegisterEvent("GROUP_ROSTER_UPDATE")
-    mUI:HookScript(self.invite, "OnEvent", function(_, event, _, _, _, _, _, _, guid)
-        self:Invite(_, event, _, _, _, _, _, _, guid)
+    Invite.invite:RegisterEvent("PARTY_INVITE_REQUEST")
+    Invite.invite:RegisterEvent("GROUP_ROSTER_UPDATE")
+    Invite:HookScript(Invite.invite, "OnEvent", function(_, event, _, _, _, _, _, _, guid)
+        Invite:Invite(_, event, _, _, _, _, _, _, guid)
     end)
 end
 
 function Invite:OnDisable()
-    self.invite:UnregisterAllEvents()
-    mUI:Unhook(self.invite, "OnEvent")
+    Invite.invite:UnregisterAllEvents()
+    Invite:UnhookAll()
 end

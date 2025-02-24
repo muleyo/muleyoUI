@@ -1,33 +1,33 @@
-local Coords = mUI:NewModule("mUI.MapMinimap.Coords")
+local Coords = mUI:NewModule("mUI.MapMinimap.Coords", "AceHook-3.0")
 
 function Coords:OnInitialize()
     -- Create Frame
-    self.coords = CreateFrame("Frame", "CoordsFrame", WorldMapFrame)
+    Coords.coords = CreateFrame("Frame", "CoordsFrame", WorldMapFrame)
 
     -- Variables
-    self.int = 0
+    Coords.int = 0
 
     -- Set Framelevel
-    self.coords:SetFrameLevel(WorldMapFrame.BorderFrame:GetFrameLevel() + 2)
-    self.coords:SetFrameStrata(WorldMapFrame.BorderFrame:GetFrameStrata())
+    Coords.coords:SetFrameLevel(WorldMapFrame.BorderFrame:GetFrameLevel() + 2)
+    Coords.coords:SetFrameStrata(WorldMapFrame.BorderFrame:GetFrameStrata())
 
     -- Create Fontstrings
-    self.coords.PlayerText = self.coords:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-    self.coords.MouseText = self.coords:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+    Coords.coords.PlayerText = Coords.coords:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+    Coords.coords.MouseText = Coords.coords:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 
     -- Set Points
-    self.coords.PlayerText:SetPoint("BOTTOM", WorldMapFrame.ScrollContainer, "BOTTOM", 5, 20)
-    self.coords.PlayerText:SetJustifyH("LEFT")
-    self.coords.PlayerText:SetText(UnitName("player") .. ": 0,0")
-    self.coords.MouseText:SetJustifyH("LEFT")
-    self.coords.MouseText:SetPoint("BOTTOMLEFT", self.coords.PlayerText, "TOPLEFT", 0, 5)
-    self.coords.MouseText:SetText(": 0,0")
+    Coords.coords.PlayerText:SetPoint("BOTTOM", WorldMapFrame.ScrollContainer, "BOTTOM", 5, 20)
+    Coords.coords.PlayerText:SetJustifyH("LEFT")
+    Coords.coords.PlayerText:SetText(UnitName("player") .. ": 0,0")
+    Coords.coords.MouseText:SetJustifyH("LEFT")
+    Coords.coords.MouseText:SetPoint("BOTTOMLEFT", Coords.coords.PlayerText, "TOPLEFT", 0, 5)
+    Coords.coords.MouseText:SetText(": 0,0")
 
-    self.coords:Hide()
+    Coords.coords:Hide()
 
-    function self:Update()
-        self.int = self.int + 1
-        if self.int >= 3 then
+    function Coords:Update()
+        Coords.int = Coords.int + 1
+        if Coords.int >= 3 then
             local UnitMap = C_Map.GetBestMapForUnit("player")
             local x, y = 0, 0
 
@@ -41,9 +41,9 @@ function Coords:OnInitialize()
             x = math.floor(100 * x)
             y = math.floor(100 * y)
             if x ~= 0 and y ~= 0 then
-                self.coords.PlayerText:SetText(UnitName("player") .. ": " .. x .. "," .. y)
+                Coords.coords.PlayerText:SetText(UnitName("player") .. ": " .. x .. "," .. y)
             else
-                self.coords.PlayerText:SetText(UnitName("player") .. ": " .. "|cffff0000" .. "|r")
+                Coords.coords.PlayerText:SetText(UnitName("player") .. ": " .. "|cffff0000" .. "|r")
             end
 
             local scale = WorldMapFrame.ScrollContainer:GetEffectiveScale()
@@ -57,23 +57,23 @@ function Coords:OnInitialize()
             if adjustedX >= 0 and adjustedY >= 0 and adjustedX <= 1 and adjustedY <= 1 then
                 adjustedX = math.floor(100 * adjustedX)
                 adjustedY = math.floor(100 * adjustedY)
-                self.coords.MouseText:SetText("Mouse: " .. adjustedX .. "," .. adjustedY)
+                Coords.coords.MouseText:SetText("Mouse: " .. adjustedX .. "," .. adjustedY)
             else
-                self.coords.MouseText:SetText("|cffff0000" .. "|r")
+                Coords.coords.MouseText:SetText("|cffff0000" .. "|r")
             end
-            self.int = 0
+            Coords.int = 0
         end
     end
 end
 
 function Coords:OnEnable()
-    self.coords:Show()
-    mUI:HookScript(WorldMapFrame, "OnUpdate", function()
-        self:Update()
+    Coords.coords:Show()
+    Coords:HookScript(WorldMapFrame, "OnUpdate", function()
+        Coords:Update()
     end)
 end
 
 function Coords:OnDisable()
-    self.coords:Hide()
-    mUI:Unhook(WorldMapFrame, "OnUpdate")
+    Coords.coords:Hide()
+    Coords:UnhookAll()
 end

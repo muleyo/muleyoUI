@@ -1,8 +1,8 @@
-local Level = mUI:NewModule("mUI.Modules.Unitframes.Level")
+local Level = mUI:NewModule("mUI.Modules.Unitframes.Level", "AceHook-3.0")
 
 function Level:OnEnable()
     PlayerLevelText:SetText(nil)
-    mUI:SecureHook("PlayerFrame_UpdateLevel", function()
+    Level:SecureHook("PlayerFrame_UpdateLevel", function()
         PlayerLevelText:SetText(nil)
     end)
 
@@ -11,7 +11,7 @@ function Level:OnEnable()
 end
 
 function Level:OnDisable()
-    mUI:Unhook("PlayerFrame_UpdateLevel")
+    Level:Unhook("PlayerFrame_UpdateLevel")
     PlayerLevelText:SetText(UnitLevel("player"))
 
     TargetFrame.TargetFrameContent.TargetFrameContentMain.LevelText:SetAlpha(1)

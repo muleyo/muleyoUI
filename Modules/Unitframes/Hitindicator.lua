@@ -2,7 +2,7 @@ local Hitindicator = mUI:NewModule("mUI.Modules.Unitframes.Hitindicator")
 
 function Hitindicator:OnInitialize()
     -- Backup original function
-    self.pet = PetHitIndicator.SetText
+    Hitindicator.pet = PetHitIndicator.SetText
 end
 
 function Hitindicator:OnEnable()
@@ -17,5 +17,5 @@ end
 function Hitindicator:OnDisable()
     -- Restore functionality
     PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HitIndicator:Show()
-    PetHitIndicator.SetText = self.pet
+    PetHitIndicator.SetText = Hitindicator.pet
 end

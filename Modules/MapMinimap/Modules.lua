@@ -2,44 +2,44 @@ local Modules = mUI:NewModule("mUI.MapMinimap.Modules")
 
 function Modules:OnInitialize()
     -- Get Modules
-    self.Clock = mUI:GetModule("mUI.MapMinimap.Clock")
-    self.Tracking = mUI:GetModule("mUI.MapMinimap.Tracking")
-    self.Mouseover = mUI:GetModule("mUI.MapMinimap.Mouseover")
-    self.Calendar = mUI:GetModule("mUI.MapMinimap.Calendar")
-    self.Coords = mUI:GetModule("mUI.MapMinimap.Coords")
-    self.Minimap = mUI:GetModule("mUI.MapMinimap.Minimap")
+    Modules.Clock = mUI:GetModule("mUI.MapMinimap.Clock")
+    Modules.Tracking = mUI:GetModule("mUI.MapMinimap.Tracking")
+    Modules.Mouseover = mUI:GetModule("mUI.MapMinimap.Mouseover")
+    Modules.Calendar = mUI:GetModule("mUI.MapMinimap.Calendar")
+    Modules.Coords = mUI:GetModule("mUI.MapMinimap.Coords")
+    Modules.Minimap = mUI:GetModule("mUI.MapMinimap.Minimap")
 end
 
 function Modules:OnEnable()
     -- Load Database
-    self.db = mUI.db.profile.map
+    Modules.db = mUI.db.profile.map
 
-    if self.db.clock then
-        self.Clock:Enable()
+    if Modules.db.clock then
+        Modules.Clock:Enable()
     end
-    if self.db.tracking then
-        self.Tracking:Enable()
+    if Modules.db.tracking then
+        Modules.Tracking:Enable()
     end
-    if self.db.buttons then
-        self.Mouseover:Enable()
+    if Modules.db.buttons then
+        Modules.Mouseover:Enable()
     end
-    if self.db.date then
-        self.Calendar:Enable()
+    if Modules.db.date then
+        Modules.Calendar:Enable()
     end
-    if self.db.coordinates then
-        self.Coords:Enable()
+    if Modules.db.coordinates then
+        Modules.Coords:Enable()
     end
-    if self.db.minimap then
-        self.Minimap:Enable()
+    if Modules.db.minimap then
+        Modules.Minimap:Enable()
     end
 end
 
 function Modules:OnDisable()
     -- Disable Modules
-    self.Clock:Disable()
-    self.Tracking:Disable()
-    self.Mouseover:Disable()
-    self.Calendar:Disable()
-    self.Coords:Disable()
-    self.Minimap:Disable()
+    Modules.Clock:Disable()
+    Modules.Tracking:Disable()
+    Modules.Mouseover:Disable()
+    Modules.Calendar:Disable()
+    Modules.Coords:Disable()
+    Modules.Minimap:Disable()
 end

@@ -1,7 +1,7 @@
 local Totemicons = mUI:NewModule("mUI.Modules.Unitframes.Totemicons")
 
 function Totemicons:OnInitialize()
-    self.totemicons = TotemFrame.Show
+    Totemicons.totemicons = TotemFrame.Show
 end
 
 function Totemicons:OnEnable()
@@ -10,6 +10,6 @@ function Totemicons:OnEnable()
 end
 
 function Totemicons:OnDisable()
-    TotemFrame.Show = self.totemicons
+    TotemFrame.Show = Totemicons.totemicons
     TotemFrame:Show()
 end

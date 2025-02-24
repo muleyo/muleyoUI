@@ -1,9 +1,9 @@
 local Targetpos = mUI:NewModule("mUI.Modules.Castbars.Targetpos")
 
 function Targetpos:OnInitialize()
-    self.func = TargetFrameSpellBar.SetPoint
+    Targetpos.func = TargetFrameSpellBar.SetPoint
 
-    function self:Update()
+    function Targetpos:Update()
         TargetFrameSpellBar:ClearAllPoints()
         TargetFrameSpellBar:SetPoint("TOPLEFT", TargetFrame, "TOPLEFT", 47.5, 10)
         TargetFrameSpellBar.SetPoint = function() end
@@ -11,9 +11,9 @@ function Targetpos:OnInitialize()
 end
 
 function Targetpos:OnEnable()
-    self:Update()
+    Targetpos:Update()
 end
 
 function Targetpos:OnDisable()
-    TargetFrameSpellBar.SetPoint = self.func
+    TargetFrameSpellBar.SetPoint = Targetpos.func
 end

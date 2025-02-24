@@ -1,4 +1,4 @@
-local Style = mUI:NewModule("mUI.Modules.Chat.Style", "AceEvent-3.0")
+local Style = mUI:NewModule("mUI.Modules.Chat.Style", "AceHook-3.0")
 
 -- Lua
 local _G = getfenv(0)
@@ -59,13 +59,13 @@ do
 end
 
 do
-	local oneTimeEvents = { ADDON_LOADED = false, PLAYER_LOGIN = false }
-	local registeredEvents = {}
+	Style.oneTimeEvents = { ADDON_LOADED = false, PLAYER_LOGIN = false }
+	Style.registeredEvents = {}
 
 	Style.dispatcher = CreateFrame("Frame", "mUIEventFrame")
 
 	function Style:RegisterEvent(event, func)
-		if oneTimeEvents[event] then
+		if Style.oneTimeEvents[event] then
 			error(s_format("Failed to register for '%s' event, already fired!", event), 3)
 		end
 
@@ -73,27 +73,39 @@ do
 			error(s_format("Failed to register for '%s' event, no handler!", event), 3)
 		end
 
-		if not registeredEvents[event] then
-			registeredEvents[event] = {}
+		if not Style.registeredEvents[event] then
+			Style.registeredEvents[event] = {}
 
 			Style.dispatcher:RegisterEvent(event)
 		end
 
-		registeredEvents[event][func] = true
+		Style.registeredEvents[event][func] = true
 	end
 
 	function Style:UnregisterEvent(event, func)
-		local funcs = registeredEvents[event]
+		local funcs = Style.registeredEvents[event]
 
 		if funcs and funcs[func] then
 			funcs[func] = nil
 
 			if not next(funcs) then
-				registeredEvents[event] = nil
+				Style.registeredEvents[event] = nil
 
 				Style.dispatcher:UnregisterEvent(event)
 			end
 		end
+	end
+
+	function Style:EnableDispatcher()
+		Style:HookScript(Style.dispatcher, "OnEvent", function(_, event, ...)
+			for func in next, Style.registeredEvents[event] do
+				func(...)
+			end
+
+			if Style.oneTimeEvents[event] == false then
+				Style.oneTimeEvents[event] = true
+			end
+		end)
 	end
 end
 
@@ -292,16 +304,4 @@ end
 
 function Style:Round(v)
 	return m_floor(v + 0.5)
-end
-
-function Style:OnEnable()
-	Style.dispatcher:SetScript("OnEvent", function(_, event, ...)
-		for func in next, registeredEvents[event] do
-			func(...)
-		end
-
-		if oneTimeEvents[event] == false then
-			oneTimeEvents[event] = true
-		end
-	end)
 end

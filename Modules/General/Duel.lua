@@ -1,8 +1,8 @@
-local Duel = mUI:NewModule("mUI.Modules.General.Duel")
+local Duel = mUI:NewModule("mUI.Modules.General.Duel", "AceHook-3.0")
 
 function Duel:OnInitialize()
-    self.duel = CreateFrame("Frame")
-    self.duel:SetScript("OnEvent", function(_, event)
+    Duel.duel = CreateFrame("Frame")
+    function Duel:Update()
         if event == "DUEL_REQUESTED" then
             CancelDuel()
             StaticPopup_Hide("DUEL_REQUESTED")
@@ -10,14 +10,18 @@ function Duel:OnInitialize()
             C_PetBattles.CancelPVPDuel()
             StaticPopup_Hide("PET_BATTLE_PVP_DUEL_REQUESTED")
         end
-    end)
+    end
 end
 
 function Duel:OnEnable()
-    self.duel:RegisterEvent("DUEL_REQUESTED")
-    self.duel:RegisterEvent("PET_BATTLE_PVP_DUEL_REQUESTED")
+    Duel.duel:RegisterEvent("DUEL_REQUESTED")
+    Duel.duel:RegisterEvent("PET_BATTLE_PVP_DUEL_REQUESTED")
+    Duel:HookScript(Duel.duel, "OnEvent", function(_, event)
+        Duel:Update(event)
+    end)
 end
 
 function Duel:OnDisable()
-    self.duel:UnregisterAllEvents()
+    Duel.duel:UnregisterAllEvents()
+    Duel:UnhookAll()
 end

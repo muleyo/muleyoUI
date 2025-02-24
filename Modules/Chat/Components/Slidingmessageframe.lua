@@ -1164,14 +1164,14 @@ do
 	end
 end
 
-function Style:OnEnable()
-	hooksecurefunc("FCF_StartAlertFlash", function(chatFrame)
+function Style:EnableAlerts()
+	Style:SecureHook("FCF_StartAlertFlash", function(chatFrame)
 		alertingFrames[chatFrame] = true
 
 		Style:FadeIn(GeneralDockManager, DOCK_FADE_IN_DURATION)
 	end)
 
-	hooksecurefunc("FCF_StopAlertFlash", function(chatFrame)
+	Style:SecureHook("FCF_StopAlertFlash", function(chatFrame)
 		alertingFrames[chatFrame] = nil
 	end)
 end

@@ -1,7 +1,7 @@
 local Macro = mUI:NewModule("mUI.Modules.Actionbars.Macro")
 
 function Macro:OnInitialize()
-    self.bars = {
+    Macro.bars = {
         MainMenuBar = MainMenuBar,
         MultiBarBottomLeft = MultiBarBottomLeft,
         MultiBarBottomRight = MultiBarBottomRight,
@@ -14,10 +14,10 @@ function Macro:OnInitialize()
         StanceBar = StanceBar
     }
 
-    function self:Update(isEnabled)
+    function Macro:Update(isEnabled)
         local numButtons
         local macro
-        for name, bar in pairs(self.bars) do
+        for name, bar in pairs(Macro.bars) do
             if bar then
                 numButtons = bar.numButtonsShowable
                 for i = 1, numButtons do
@@ -41,9 +41,9 @@ function Macro:OnInitialize()
 end
 
 function Macro:OnEnable()
-    self:Update(true)
+    Macro:Update(true)
 end
 
 function Macro:OnDisable()
-    self:Update(false)
+    Macro:Update(false)
 end

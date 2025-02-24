@@ -2,90 +2,90 @@ local Modules = mUI:NewModule("mUI.Modules.General")
 
 function Modules:OnInitialize()
     -- Modules
-    self.Theme = mUI:GetModule("mUI.Modules.General.Theme")
-    self.Font = mUI:GetModule("mUI.Modules.General.Font")
-    self.Repair = mUI:GetModule("mUI.Modules.General.Repair")
-    self.Sell = mUI:GetModule("mUI.Modules.General.Sell")
-    self.Delete = mUI:GetModule("mUI.Modules.General.Delete")
-    self.Duel = mUI:GetModule("mUI.Modules.General.Duel")
-    self.Release = mUI:GetModule("mUI.Modules.General.Release")
-    self.Resurrection = mUI:GetModule("mUI.Modules.General.Resurrection")
-    self.Invite = mUI:GetModule("mUI.Modules.General.Invite")
-    self.Cinematic = mUI:GetModule("mUI.Modules.General.Cinematic")
-    self.TalkingHead = mUI:GetModule("mUI.Modules.General.TalkingHead")
-    self.ItemInfo = mUI:GetModule("mUI.Modules.General.ItemInfo")
-    self.Stats = mUI:GetModule("mUI.Modules.General.Stats")
-    self.ErrorMessages = mUI:GetModule("mUI.Modules.General.ErrorMessages")
-    self.Friendlist = mUI:GetModule("mUI.Modules.General.Friendlist")
+    Modules.Theme = mUI:GetModule("mUI.Modules.General.Theme")
+    Modules.Font = mUI:GetModule("mUI.Modules.General.Font")
+    Modules.Repair = mUI:GetModule("mUI.Modules.General.Repair")
+    Modules.Sell = mUI:GetModule("mUI.Modules.General.Sell")
+    Modules.Delete = mUI:GetModule("mUI.Modules.General.Delete")
+    Modules.Duel = mUI:GetModule("mUI.Modules.General.Duel")
+    Modules.Release = mUI:GetModule("mUI.Modules.General.Release")
+    Modules.Resurrection = mUI:GetModule("mUI.Modules.General.Resurrection")
+    Modules.Invite = mUI:GetModule("mUI.Modules.General.Invite")
+    Modules.Cinematic = mUI:GetModule("mUI.Modules.General.Cinematic")
+    Modules.TalkingHead = mUI:GetModule("mUI.Modules.General.TalkingHead")
+    Modules.ItemInfo = mUI:GetModule("mUI.Modules.General.ItemInfo")
+    Modules.Stats = mUI:GetModule("mUI.Modules.General.Stats")
+    Modules.ErrorMessages = mUI:GetModule("mUI.Modules.General.ErrorMessages")
+    Modules.Friendlist = mUI:GetModule("mUI.Modules.General.Friendlist")
 end
 
 function Modules:OnEnable()
     -- Load Database
-    self.db = mUI.db.profile.general
+    Modules.db = mUI.db.profile.general
 
     -- Enable Modules
-    if self.db.theme ~= "Disabled" then
-        self.Theme:Enable()
+    if Modules.db.theme ~= "Disabled" then
+        Modules.Theme:Enable()
     end
-    if self.db.font ~= "None" then
-        self.Font:Enable()
+    if Modules.db.font ~= "None" then
+        Modules.Font:Enable()
     end
-    if self.db.automation.repair ~= "Disabled" then
-        self.Repair:Enable()
+    if Modules.db.automation.repair ~= "Disabled" then
+        Modules.Repair:Enable()
     end
-    if self.db.automation.sell then
-        self.Sell:Enable()
+    if Modules.db.automation.sell then
+        Modules.Sell:Enable()
     end
-    if self.db.automation.delete then
-        self.Delete:Enable()
+    if Modules.db.automation.delete then
+        Modules.Delete:Enable()
     end
-    if self.db.automation.duel then
-        self.Duel:Enable()
+    if Modules.db.automation.duel then
+        Modules.Duel:Enable()
     end
-    if self.db.automation.release then
-        self.Release:Enable()
+    if Modules.db.automation.release then
+        Modules.Release:Enable()
     end
-    if self.db.automation.resurrection then
-        self.Resurrection:Enable()
+    if Modules.db.automation.resurrection then
+        Modules.Resurrection:Enable()
     end
-    if self.db.automation.invite then
-        self.Invite:Enable()
+    if Modules.db.automation.invite then
+        Modules.Invite:Enable()
     end
-    if self.db.automation.cinematic then
-        self.Cinematic:Enable()
+    if Modules.db.automation.cinematic then
+        Modules.Cinematic:Enable()
     end
-    if self.db.automation.talkingHead then
-        self.TalkingHead:Enable()
+    if Modules.db.automation.talkingHead then
+        Modules.TalkingHead:Enable()
     end
-    if self.db.display.iteminfo then
-        self.ItemInfo:Enable()
+    if Modules.db.display.iteminfo then
+        Modules.ItemInfo:Enable()
     end
-    if self.db.display.stats then
-        self.Stats:Enable()
+    if Modules.db.display.stats then
+        Modules.Stats:Enable()
     end
-    if self.db.display.errormessages then
-        self.ErrorMessages:Enable()
+    if Modules.db.display.errormessages then
+        Modules.ErrorMessages:Enable()
     end
-    if self.db.display.friendlist then
-        self.Friendlist:Enable()
+    if Modules.db.display.friendlist then
+        Modules.Friendlist:Enable()
     end
 end
 
 function Modules:OnDisable()
     -- Disable Modules
-    self.Theme:Disable()
-    self.Font:Disable()
-    self.Repair:Disable()
-    self.Sell:Disable()
-    self.Delete:Disable()
-    self.Duel:Disable()
-    self.Release:Disable()
-    self.Resurrection:Disable()
-    self.Invite:Disable()
-    self.Cinematic:Disable()
-    self.TalkingHead:Disable()
-    self.ItemInfo:Disable()
-    self.Stats:Disable()
-    self.ErrorMessages:Disable()
-    self.Friendlist:Disable()
+    Modules.Theme:Disable()
+    Modules.Font:Disable()
+    Modules.Repair:Disable()
+    Modules.Sell:Disable()
+    Modules.Delete:Disable()
+    Modules.Duel:Disable()
+    Modules.Release:Disable()
+    Modules.Resurrection:Disable()
+    Modules.Invite:Disable()
+    Modules.Cinematic:Disable()
+    Modules.TalkingHead:Disable()
+    Modules.ItemInfo:Disable()
+    Modules.Stats:Disable()
+    Modules.ErrorMessages:Disable()
+    Modules.Friendlist:Disable()
 end

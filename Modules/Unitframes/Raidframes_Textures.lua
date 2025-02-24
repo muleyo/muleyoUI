@@ -1,34 +1,14 @@
-local Raidframes_Textures = mUI:NewModule("mUI.Modules.Unitframes.Raidframes_Textures")
+local Raidframes_Textures = mUI:NewModule("mUI.Modules.Unitframes.Raidframes_Textures", "AceHook-3.0")
 
 function Raidframes_Textures:OnInitialize()
     -- Load LSM
-    self.LSM = LibStub("LibSharedMedia-3.0")
+    Raidframes_Textures.LSM = LibStub("LibSharedMedia-3.0")
 
     -- Load Database
-    self.db = mUI.db.profile.unitframes.textures
-
-    -- Create Frame
-    self.textures = CreateFrame("Frame", mUITextures)
+    Raidframes_Textures.db = mUI.db.profile.unitframes.textures
 
     -- Tables
-    self.healthbars = {
-        player = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarsContainer.HealthBar,
-        target = TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBarsContainer.HealthBar,
-        focus = FocusFrame.TargetFrameContent.TargetFrameContentMain.HealthBarsContainer.HealthBar,
-        targettarget = TargetFrameToT.HealthBar,
-        focustarget = FocusFrameToT.HealthBar,
-        boss1 = Boss1TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBarsContainer.HealthBar,
-        boss2 = Boss2TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBarsContainer.HealthBar,
-        boss3 = Boss3TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBarsContainer.HealthBar,
-        boss4 = Boss4TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBarsContainer.HealthBar,
-        boss5 = Boss5TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBarsContainer.HealthBar,
-        party1 = PartyFrame.MemberFrame1.HealthBarContainer.HealthBar,
-        party2 = PartyFrame.MemberFrame2.HealthBarContainer.HealthBar,
-        party3 = PartyFrame.MemberFrame3.HealthBarContainer.HealthBar,
-        party4 = PartyFrame.MemberFrame4.HealthBarContainer.HealthBar
-    }
-
-    self.frames = {
+    Raidframes_Textures.frames = {
         "PartyFrameMember1", "PartyFrameMember2", "PartyFrameMember3", "PartyFrameMember4", "PartyFrameMember5",
         "PartyFramePet1", "PartyFramePet2", "PartyFramePet3", "PartyFramePet4", "PartyFramePet5",
         "RaidFrame1", "RaidFrame2", "RaidFrame3", "RaidFrame4", "RaidFrame5",
@@ -49,18 +29,18 @@ function Raidframes_Textures:OnInitialize()
         "RaidGroup8Member1", "RaidGroup8Member2", "RaidGroup8Member3", "RaidGroup8Member4", "RaidGroup8Member5",
     }
 
-    self.defaultTextures = {
+    Raidframes_Textures.defaultTextures = {
         health = [[Interface\RaidFrame\Raid-Bar-Hp-Fill]],
         power = [[Interface\RaidFrame\Raid-Bar-Resource-Fill]]
     }
 
-    function self:SetTextures(frame)
+    function Raidframes_Textures:SetTextures(frame)
         if frame and frame:IsForbidden() then return end
         if frame and frame:GetName() then
             local name = frame:GetName()
             if name and name:match("^Compact") then
-                local texture = self.LSM:Fetch('statusbar', self.db.raidframes)
-                if self.db.raidframes ~= "None" then
+                local texture = Raidframes_Textures.LSM:Fetch('statusbar', Raidframes_Textures.db.raidframes)
+                if Raidframes_Textures.db.raidframes ~= "None" then
                     frame.healthBar:SetStatusBarTexture(texture)
                     frame.healthBar:GetStatusBarTexture():SetDrawLayer("BORDER")
                     frame.powerBar:SetStatusBarTexture(texture)
@@ -68,12 +48,12 @@ function Raidframes_Textures:OnInitialize()
                     frame.myHealPrediction:SetTexture(texture)
                     frame.otherHealPrediction:SetTexture(texture)
                 else
-                    frame.healthBar:SetStatusBarTexture(self.defaultTextures.health)
+                    frame.healthBar:SetStatusBarTexture(Raidframes_Textures.defaultTextures.health)
                     frame.healthBar:GetStatusBarTexture():SetDrawLayer("BORDER")
-                    frame.powerBar:SetStatusBarTexture(self.defaultTextures.power)
+                    frame.powerBar:SetStatusBarTexture(Raidframes_Textures.defaultTextures.power)
                     frame.powerBar:GetStatusBarTexture():SetDrawLayer("BORDER")
-                    frame.myHealPrediction:SetTexture(self.defaultTextures.health)
-                    frame.otherHealPrediction:SetTexture(self.defaultTextures.health)
+                    frame.myHealPrediction:SetTexture(Raidframes_Textures.defaultTextures.health)
+                    frame.otherHealPrediction:SetTexture(Raidframes_Textures.defaultTextures.health)
                 end
 
                 frame.vertLeftBorder:Hide()
@@ -84,19 +64,19 @@ function Raidframes_Textures:OnInitialize()
         end
     end
 
-    function self:Update()
-        for _, frame in pairs(self.frames) do
-            self:SetTextures(_G["Compact" .. frame])
+    function Raidframes_Textures:Update()
+        for _, frame in pairs(Raidframes_Textures.frames) do
+            Raidframes_Textures:SetTextures(_G["Compact" .. frame])
         end
     end
 end
 
 function Raidframes_Textures:OnEnable()
-    mUI:SecureHook("CompactUnitFrame_UpdateAll", function(frame)
-        self:SetTextures(frame)
+    Raidframes_Textures:SecureHook("CompactUnitFrame_UpdateAll", function(frame)
+        Raidframes_Textures:SetTextures(frame)
     end)
 end
 
 function Raidframes_Textures:OnDisable()
-    mUI:Unhook("CompactUnitFrame_UpdateAll", "OnUpdate")
+    Raidframes_Textures:Unhook("CompactUnitFrame_UpdateAll", "OnUpdate")
 end

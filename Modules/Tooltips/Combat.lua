@@ -1,13 +1,13 @@
-local Combat = mUI:NewModule("mUI.Tooltips.Combat")
+local Combat = mUI:NewModule("mUI.Tooltips.Combat", "AceHook-3.0")
 
 function Combat:OnInitialize()
     -- Load Database
-    self.db = mUI.db.profile.tooltips
+    Combat.db = mUI.db.profile.tooltips
 
     -- Create Frame
-    self.combat = CreateFrame("Frame")
+    Combat.combat = CreateFrame("Frame")
 
-    function self:Update(event)
+    function Combat:Update(event)
         if event == "PLAYER_REGEN_DISABLED" then
             if not mUI:IsHooked(GameTooltip, "OnShow") then
                 GameTooltip:Hide()
@@ -23,16 +23,15 @@ end
 
 function Combat:OnEnable()
     -- Register Events and hook the OnEvent function
-    self.combat:RegisterEvent("PLAYER_REGEN_DISABLED")
-    self.combat:RegisterEvent("PLAYER_REGEN_ENABLED")
-    mUI:HookScript(self.combat, "OnEvent", function(_, event)
-        self:Update(event)
+    Combat.combat:RegisterEvent("PLAYER_REGEN_DISABLED")
+    Combat.combat:RegisterEvent("PLAYER_REGEN_ENABLED")
+    Combat:HookScript(Combat.combat, "OnEvent", function(_, event)
+        Combat:Update(event)
     end)
 end
 
 function Combat:OnDisable()
     -- Unhook the OnEvent function and unregister all events
-    mUI:Unhook(self.combat, "OnEvent")
-    mUI:Unhook(GameTooltip, "OnShow")
-    self.combat:UnregisterAllEvents()
+    Combat:UnhookAll()
+    Combat.combat:UnregisterAllEvents()
 end

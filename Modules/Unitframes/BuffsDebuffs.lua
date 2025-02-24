@@ -1,15 +1,15 @@
-local BuffsDebuffs = mUI:NewModule("mUI.Modules.Unitframes.BuffsDebuffs")
+local BuffsDebuffs = mUI:NewModule("mUI.Modules.Unitframes.BuffsDebuffs", "AceHook-3.0")
 
 function BuffsDebuffs:OnInitialize()
     -- Load Database
-    self.db = mUI.db.profile.unitframes.buffsdebuffs
+    BuffsDebuffs.db = mUI.db.profile.unitframes.buffsdebuffs
 
     -- Update Buff/Debuff Size
-    function self:UpdateSize(aura, type)
+    function BuffsDebuffs:UpdateSize(aura, type)
         if type == "buff" then
-            aura:SetSize(self.db.buffsize, self.db.buffsize)
+            aura:SetSize(BuffsDebuffs.db.buffsize, BuffsDebuffs.db.buffsize)
         elseif type == "debuff" then
-            aura:SetSize(self.db.debuffsize, self.db.debuffsize)
+            aura:SetSize(BuffsDebuffs.db.debuffsize, BuffsDebuffs.db.debuffsize)
         end
 
         if aura.Count then
@@ -21,16 +21,15 @@ function BuffsDebuffs:OnInitialize()
 end
 
 function BuffsDebuffs:OnEnable()
-    mUI:SecureHook("TargetFrame_UpdateBuffAnchor", function(_, aura)
+    BuffsDebuffs:SecureHook("TargetFrame_UpdateBuffAnchor", function(_, aura)
         self:UpdateSize(aura, "buff")
     end)
 
-    mUI:SecureHook("TargetFrame_UpdateDebuffAnchor", function(_, aura)
-        self:UpdateSize(aura, "debuff")
+    BuffsDebuffs:SecureHook("TargetFrame_UpdateDebuffAnchor", function(_, aura)
+        BuffsDebuffs:UpdateSize(aura, "debuff")
     end)
 end
 
 function BuffsDebuffs:OnDisable()
-    mUI:Unhook("TargetFrame_UpdateBuffAnchor")
-    mUI:Unhook("TargetFrame_UpdateDebuffAnchor")
+    BuffsDebuffs:UnhookAll()
 end

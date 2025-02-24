@@ -1,16 +1,18 @@
 local Reputationcolor = mUI:NewModule("mUI.Modules.Unitframes.Reputationcolor")
 
 function Reputationcolor:OnInitialize()
-    self.frame = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain
-    self.frame.ReputationColor = self.frame:CreateTexture(nil, "OVERLAY")
-    self.frame.ReputationColor:SetAtlas("UI-HUD-UnitFrame-Target-PortraitOn-Type")
-    self.frame.ReputationColor:SetSize(136, 20)
-    self.frame.ReputationColor:SetTexCoord(1, 0, 0, 1)
-    self.frame.ReputationColor:SetPoint("TOPRIGHT", self.frame, "TOPRIGHT", -21, -25)
-    self.frame.ReputationColor:SetVertexColor(0, 0, 1)
-    self.frame.ReputationColor:Hide()
+    -- Load Database
+    Reputationcolor.db = mUI.db.profile.unitframes
+    Reputationcolor.frame = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain
+    Reputationcolor.frame.ReputationColor = Reputationcolor.frame:CreateTexture(nil, "OVERLAY")
+    Reputationcolor.frame.ReputationColor:SetAtlas("UI-HUD-UnitFrame-Target-PortraitOn-Type")
+    Reputationcolor.frame.ReputationColor:SetSize(136, 20)
+    Reputationcolor.frame.ReputationColor:SetTexCoord(1, 0, 0, 1)
+    Reputationcolor.frame.ReputationColor:SetPoint("TOPRIGHT", Reputationcolor.frame, "TOPRIGHT", -21, -25)
+    Reputationcolor.frame.ReputationColor:SetVertexColor(0, 0, 1)
+    Reputationcolor.frame.ReputationColor:Hide()
 
-    self.frames = {
+    Reputationcolor.frames = {
         PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.ReputationColor,
         TargetFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor,
         FocusFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor,
@@ -21,35 +23,35 @@ function Reputationcolor:OnInitialize()
         Boss5TargetFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor
     }
 
-    function self:Update(option, status)
+    function Reputationcolor:Update(option, status)
         if option == "all" and status == "disabled" then
-            for _, frame in pairs(self.frames) do
+            for _, frame in pairs(Reputationcolor.frames) do
                 if frame then
                     frame:Show()
                 end
             end
-            self.frame.ReputationColor:Hide()
+            Reputationcolor.frame.ReputationColor:Hide()
         else
             if option == "player" and status then
-                self.frame.ReputationColor:Show()
-                for _, frame in pairs(self.frames) do
+                Reputationcolor.frame.ReputationColor:Show()
+                for _, frame in pairs(Reputationcolor.frames) do
                     if frame then
                         frame:Show()
                     end
                 end
             elseif option == "player" and not status then
-                self.frame.ReputationColor:Hide()
+                Reputationcolor.frame.ReputationColor:Hide()
             end
 
             if option == "hide" and status then
-                for _, frame in pairs(self.frames) do
+                for _, frame in pairs(Reputationcolor.frames) do
                     if frame then
                         frame:Hide()
                     end
                 end
-                self.frame.ReputationColor:Hide()
+                Reputationcolor.frame.ReputationColor:Hide()
             elseif option == "hide" and not status then
-                for _, frame in pairs(self.frames) do
+                for _, frame in pairs(Reputationcolor.frames) do
                     if frame then
                         frame:Show()
                     end
@@ -60,19 +62,19 @@ function Reputationcolor:OnInitialize()
 end
 
 function Reputationcolor:OnEnable()
-    if mUI.db.profile.unitframes.reputationcolor then
-        self:Update("hide", true)
-    elseif mUI.db.profile.unitframes.playerrepcolor then
-        self:Update("player", true)
+    if Reputationcolor.db.reputationcolor then
+        Reputationcolor:Update("hide", true)
+    elseif Reputationcolor.db.playerrepcolor then
+        Reputationcolor:Update("player", true)
     end
 end
 
 function Reputationcolor:OnDisable()
-    if not (mUI.db.profile.unitframes.reputationcolor and mUI.db.profile.unitframes.playerrepcolor) then
-        self:Update("all", "disabled")
-    elseif not mUI.db.profile.unitframes.reputationcolor then
-        self:Update("hide", true)
-    elseif not mUI.db.profile.unitframes.playerrepcolor then
-        self:Update("player", true)
+    if not (Reputationcolor.db.reputationcolor and Reputationcolor.db.playerrepcolor) then
+        Reputationcolor:Update("all", "disabled")
+    elseif not Reputationcolor.db.reputationcolor then
+        Reputationcolor:Update("hide", true)
+    elseif not Reputationcolor.db.playerrepcolor then
+        Reputationcolor:Update("player", true)
     end
 end

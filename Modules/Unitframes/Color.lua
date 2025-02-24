@@ -1,18 +1,18 @@
-local Classcolor = mUI:NewModule("mUI.Modules.Unitframes.Color")
+local Classcolor = mUI:NewModule("mUI.Modules.Unitframes.Color", "AceHook-3.0")
 
 function Classcolor:OnInitialize()
     -- Load Database
-    self.db = mUI.db.profile.unitframes
+    Classcolor.db = mUI.db.profile.unitframes
 
     -- Create Frame
-    self.classcolor = CreateFrame("Frame")
+    Classcolor.classcolor = CreateFrame("Frame")
 
     -- Variables
-    self.playerFrame = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain
-    self.originalTexture = "UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health"
+    Classcolor.playerFrame = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain
+    Classcolor.originalTexture = "UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health"
 
     -- Create Tables
-    self.frames = {
+    Classcolor.frames = {
         player = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain,
         target = TargetFrame.TargetFrameContent.TargetFrameContentMain,
         focus = FocusFrame.TargetFrameContent.TargetFrameContentMain,
@@ -23,7 +23,7 @@ function Classcolor:OnInitialize()
         boss5 = Boss5TargetFrame.TargetFrameContent.TargetFrameContentMain
     }
 
-    self.unitframes = {
+    Classcolor.unitframes = {
         player = PlayerFrame,
         pet = PetFrame,
         target = TargetFrame,
@@ -41,8 +41,8 @@ function Classcolor:OnInitialize()
         party4 = PartyFrame.MemberFrame4
     }
 
-    function self:SetColor(frame, unit)
-        local unitframe = self.frames[unit]
+    function Classcolor:SetColor(frame, unit)
+        local unitframe = Classcolor.frames[unit]
         if UnitIsPlayer(unit) and UnitIsConnected(unit) and UnitClass(unit) then
             local _, class = UnitClass(unit)
             local color = RAID_CLASS_COLORS[class]
@@ -80,40 +80,40 @@ function Classcolor:OnInitialize()
         end
     end
 
-    function self:Update()
-        for _, frame in pairs(self.unitframes) do
-            self:SetColor(frame.healthbar, frame.unit)
+    function Classcolor:Update()
+        for _, frame in pairs(Classcolor.unitframes) do
+            Classcolor:SetColor(frame.healthbar, frame.unit)
         end
     end
 end
 
 function Classcolor:OnEnable()
     -- Hook Frame
-    mUI:HookScript(self.classcolor, "OnUpdate", function(_, _, _)
-        self:Update()
+    Classcolor:HookScript(Classcolor.classcolor, "OnUpdate", function(_, _, _)
+        Classcolor:Update()
     end)
 
     -- Update PlayerFrame HealthColor
     local _, playerClass = UnitClass("player")
     local color = RAID_CLASS_COLORS[playerClass]
-    self.playerFrame.ReputationColor:SetVertexColor(color.r, color.g, color.b)
-    self.playerFrame.HealthBarsContainer.HealthBar:SetStatusBarDesaturated(true)
-    self.playerFrame.HealthBarsContainer.HealthBar:SetStatusBarColor(color.r, color.g, color.b)
+    Classcolor.playerFrame.ReputationColor:SetVertexColor(color.r, color.g, color.b)
+    Classcolor.playerFrame.HealthBarsContainer.HealthBar:SetStatusBarDesaturated(true)
+    Classcolor.playerFrame.HealthBarsContainer.HealthBar:SetStatusBarColor(color.r, color.g, color.b)
 end
 
 function Classcolor:OnDisable()
     -- Unhook
-    mUI:Unhook(self.classcolor, "OnUpdate")
+    Classcolor:UnhookAll()
 
     -- Reset Colors
-    self.playerFrame.ReputationColor:SetVertexColor(0, 0, 1)
-    if self.db.textures.unitframes == "None" then
-        for _, frame in pairs(self.frames) do
+    Classcolor.playerFrame.ReputationColor:SetVertexColor(0, 0, 1)
+    if Classcolor.db.textures.unitframes == "None" then
+        for _, frame in pairs(Classcolor.frames) do
             frame.HealthBarsContainer.HealthBar:SetStatusBarDesaturated(false)
             frame.HealthBarsContainer.HealthBar:SetStatusBarColor(1, 1, 1)
         end
     else
-        for _, frame in pairs(self.frames) do
+        for _, frame in pairs(Classcolor.frames) do
             frame.HealthBarsContainer.HealthBar.unitFrame.healthbar:SetStatusBarColor(0, 1, 0)
         end
     end

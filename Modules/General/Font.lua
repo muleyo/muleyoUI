@@ -2,13 +2,13 @@ local Font = mUI:NewModule("mUI.Modules.General.Font")
 
 function Font:OnInitialize()
     -- Load Database
-    self.db = mUI.db.profile.general
+    Font.db = mUI.db.profile.general
 
     -- Load LSM
-    self.LSM = LibStub("LibSharedMedia-3.0")
+    Font.LSM = LibStub("LibSharedMedia-3.0")
 
     -- Variables
-    self.backup = {
+    Font.backup = {
         STANDARD_TEXT_FONT = DAMAGE_TEXT_FONT,
         UNIT_NAME_FONT = STANDARD_TEXT_FONT,
         NAMEPLATE_FONT = UNIT_NAME_FONT,
@@ -16,8 +16,8 @@ function Font:OnInitialize()
         UNIT_NAME_FONT_ROMAN = NAMEPLATE_SPELLCAST_FONT
     }
 
-    function self:Update()
-        local font = self.LSM:Fetch('font', self.db.font)
+    function Font:Update()
+        local font = Font.LSM:Fetch('font', self.db.font)
         local fontSizes = { 9, 9, 14, 14, 12, 64, 64 }
 
         if (not C_AddOns.IsAddOnLoaded("NiceDamage")) or (not C_AddOns.IsAddOnLoaded("ClassicNumbers")) then
@@ -155,5 +155,5 @@ function Font:OnInitialize()
 end
 
 function Font:OnEnable()
-    self:Update()
+    Font:Update()
 end

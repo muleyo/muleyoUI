@@ -1,4 +1,4 @@
-local ErrorMessages = mUI:NewModule("mUI.Modules.General.ErrorMessages")
+local ErrorMessages = mUI:NewModule("mUI.Modules.General.ErrorMessages", "AceHook-3.0")
 
 function ErrorMessages:OnInitialize()
     local colors = {
@@ -7,7 +7,7 @@ function ErrorMessages:OnInitialize()
     }
 
     local originalOnEvent = UIErrorsFrame:GetScript("OnEvent")
-    function self:Update(data, event, ...)
+    function ErrorMessages:Update(data, event, ...)
         local messageType, message, r, g, b
 
         if event == "SYSMSG" then
@@ -35,11 +35,11 @@ function ErrorMessages:OnInitialize()
 end
 
 function ErrorMessages:OnEnable()
-    mUI:RawHookScript(UIErrorsFrame, "OnEvent", function(data, event, ...)
-        self:Update(data, event, ...)
+    ErrorMessages:RawHookScript(UIErrorsFrame, "OnEvent", function(data, event, ...)
+        ErrorMessages:Update(data, event, ...)
     end)
 end
 
 function ErrorMessages:OnDisable()
-    mUI:Unhook(UIErrorsFrame, "OnEvent")
+    ErrorMessages:UnhookAll()
 end

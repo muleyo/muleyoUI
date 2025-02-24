@@ -54,11 +54,11 @@ function Style:HandleChatTab(frame)
 	if not handledTabs[frame] then
 		frame.Backdrop = Style:CreateBackdrop(frame, mUI.db.profile.chat.lsglass.dock.alpha)
 
-		hooksecurefunc(frame, "SetPoint", chatTab_SetPoint)
-		frame:HookScript("OnDragStart", chatTab_OnDragStart)
+		Style:SecureHook(frame, "SetPoint", chatTab_SetPoint)
+		Style:HookScript(frame, "OnDragStart", chatTab_OnDragStart)
 
-		hooksecurefunc(frame.Text, "SetPoint", chatTabText_SetPoint)
-		hooksecurefunc(frame.Text, "SetTextColor", chatTabText_SetTextColor)
+		Style:SecureHook(frame.Text, "SetPoint", chatTabText_SetPoint)
+		Style:SecureHook(frame.Text, "SetTextColor", chatTabText_SetTextColor)
 
 		handledTabs[frame] = true
 	end
@@ -149,7 +149,7 @@ function Style:HandleMinimizedTab(frame)
 
 		Style:HandleMaximizeButton(_G[frame:GetName() .. "MaximizeButton"])
 
-		hooksecurefunc(frame.Text, "SetTextColor", chatTabText_SetTextColor)
+		Style:SecureHook(frame.Text, "SetTextColor", chatTabText_SetTextColor)
 
 		handledMiniTabs[frame] = true
 	end
@@ -199,8 +199,8 @@ function Style:UpdateTabAlpha()
 	end
 end
 
-function Style:OnEnable()
-	hooksecurefunc("FCFTab_OnDragStop", function(self)
+function Style:EnableDragHook()
+	Style:SecureHook("FCFTab_OnDragStop", function(self)
 		local frame = Style:GetSlidingFrameForChatFrame(_G["ChatFrame" .. self:GetID()])
 		if frame then
 			if frame.isMouseOver then

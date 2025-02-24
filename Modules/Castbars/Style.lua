@@ -2,10 +2,10 @@ local Style = mUI:NewModule("mUI.Modules.Castbars.Style")
 
 function Style:OnInitialize()
     -- Load Database
-    self.db = mUI.db.profile.castbars
+    Style.db = mUI.db.profile.castbars
 
     -- Tables
-    self.castbars = {
+    Style.castbars = {
         player = "PlayerCastingBarFrame",
         target = "TargetFrameSpellBar",
         focus = "FocusFrameSpellBar",
@@ -17,10 +17,10 @@ function Style:OnInitialize()
     }
 
     -- Backup Default Functions
-    self.textfunc = TargetFrameSpellBar.Text.SetText
+    Style.textfunc = TargetFrameSpellBar.Text.SetText
 
-    function self:EnableStyle()
-        for unitframe, castbar in pairs(self.castbars) do
+    function Style:EnableStyle()
+        for unitframe, castbar in pairs(Style.castbars) do
             if unitframe == "player" then
                 _G[castbar]:SetSize(209, 18)
                 _G[castbar].StandardGlow:Hide()
@@ -42,17 +42,17 @@ function Style:OnInitialize()
                 _G[castbar].Text:SetFont(STANDARD_TEXT_FONT, 11, "OUTLINE")
                 _G[castbar].Text.SetText = function(frame, text)
                     if strlen(text) > 19 then
-                        self.textfunc(frame, strsub(text, 0, 19) .. "...")
+                        Style.textfunc(frame, strsub(text, 0, 19) .. "...")
                     else
-                        self.textfunc(frame, text)
+                        Style.textfunc(frame, text)
                     end
                 end
             end
         end
     end
 
-    function self:DisableStyle()
-        for unitframe, castbar in pairs(self.castbars) do
+    function Style:DisableStyle()
+        for unitframe, castbar in pairs(Style.castbars) do
             if unitframe == "player" then
                 _G[castbar]:SetSize(208.00001525879, 11.000000953674)
                 _G[castbar].StandardGlow:Show()
@@ -69,7 +69,7 @@ function Style:OnInitialize()
                 _G[castbar].Icon:SetPoint("RIGHT", _G[castbar], "LEFT", -2, -5)
                 _G[castbar].Text:SetPoint("TOP", _G[castbar], "TOP", 0, -8)
                 _G[castbar].Text:SetFont([[Fonts\FRIZQT__.TTF]], 10)
-                _G[castbar].Text.SetText = self.textfunc
+                _G[castbar].Text.SetText = Style.textfunc
             end
         end
     end
@@ -77,10 +77,10 @@ end
 
 function Style:OnEnable()
     -- Enable Style
-    self:EnableStyle()
+    Style:EnableStyle()
 end
 
 function Style:OnDisable()
     -- Disable Style
-    self:DisableStyle()
+    Style:DisableStyle()
 end

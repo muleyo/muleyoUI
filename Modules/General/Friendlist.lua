@@ -1,9 +1,9 @@
-local Friendlist = mUI:NewModule("mUI.Modules.General.Friendlist")
+local Friendlist = mUI:NewModule("mUI.Modules.General.Friendlist", "AceHook-3.0")
 
 function Friendlist:OnInitialize()
     -- Variables
-    self.pause = false
-    self.classes = {
+    Friendlist.pause = false
+    Friendlist.classes = {
         ["Warrior"] = "WARRIOR",
         ["Death Knight"] = "DEATHKNIGHT",
         ["Paladin"] = "PALADIN",
@@ -19,7 +19,7 @@ function Friendlist:OnInitialize()
         ["Evoker"] = "EVOKER",
     }
 
-    function self:AddFieldAlias(data, isBNet)
+    function Friendlist:AddFieldAlias(data, isBNet)
         local function first(...)
             local temp
             for _, v in ipairs({ ... }) do
@@ -44,7 +44,7 @@ function Friendlist:OnInitialize()
         data.dnd, data.isDND, data.isGameBusy = first("isGameBusy", "isDND", "dnd")
     end
 
-    function self:GetFriendInfo(query)
+    function Friendlist:GetFriendInfo(query)
         local info
         if type(query) == "number" then
             info = C_FriendList.GetFriendInfoByIndex(query)
@@ -55,29 +55,29 @@ function Friendlist:OnInitialize()
         if not info then
             return
         end
-        self:AddFieldAlias(info)
+        Friendlist:AddFieldAlias(info)
         return info
     end
 
-    function self:MergeTable(destination, source)
+    function Friendlist:MergeTable(destination, source)
         for k, v in pairs(source) do
             destination[k] = v
         end
         return destination
     end
 
-    function self:BNGetFriendGameAccountInfo(friendIndex, accountIndex, wowAccountGUID)
+    function Friendlist:BNGetFriendGameAccountInfo(friendIndex, accountIndex, wowAccountGUID)
         local gameAccountInfo = C_BattleNet.GetFriendGameAccountInfo(friendIndex, accountIndex)
         local accountInfo = C_BattleNet.GetFriendAccountInfo(friendIndex, wowAccountGUID)
         if not gameAccountInfo and not accountInfo then
             return
         end
-        return self:MergeTable(gameAccountInfo or {}, accountInfo or {})
+        return Friendlist:MergeTable(gameAccountInfo or {}, accountInfo or {})
     end
 
-    function self:PackageFriendBNetCharacter(data, id)
+    function Friendlist:PackageFriendBNetCharacter(data, id)
         for i = 1, C_BattleNet.GetFriendNumGameAccounts(id) do
-            local temp = self:BNGetFriendGameAccountInfo(id, i)
+            local temp = Friendlist:BNGetFriendGameAccountInfo(id, i)
             if temp and temp.clientProgram == BNET_CLIENT_WOW then
                 for k, v in pairs(temp) do
                     data[k] = v
@@ -85,18 +85,18 @@ function Friendlist:OnInitialize()
                 break
             end
         end
-        self:AddFieldAlias(data, true)
+        Friendlist:AddFieldAlias(data, true)
         return data
     end
 
-    function self:PackageFriend(buttonType, id)
+    function Friendlist:PackageFriend(buttonType, id)
         local temp = {}
         if buttonType == FRIENDS_BUTTON_TYPE_BNET then
             temp.type = buttonType
-            temp.data = self:PackageFriendBNetCharacter(C_BattleNet.GetFriendAccountInfo(id), id)
+            temp.data = Friendlist:PackageFriendBNetCharacter(C_BattleNet.GetFriendAccountInfo(id), id)
         elseif buttonType == FRIENDS_BUTTON_TYPE_WOW then
             temp.type = buttonType
-            temp.data = self:GetFriendInfo(id)
+            temp.data = Friendlist:GetFriendInfo(id)
         end
 
         if temp.data then
@@ -104,23 +104,23 @@ function Friendlist:OnInitialize()
         end
     end
 
-    function self:SetText(frame, ...)
-        if self.pause then return end
+    function Friendlist:SetText(frame, ...)
+        if Friendlist.pause then return end
         local button = frame:GetParent()
         local buttonType, id = button.buttonType, button.id
         if buttonType ~= FRIENDS_BUTTON_TYPE_BNET and buttonType ~= FRIENDS_BUTTON_TYPE_WOW then
             return
         end
-        local friendWrapper = self:PackageFriend(buttonType, id)
+        local friendWrapper = Friendlist:PackageFriend(buttonType, id)
         if not friendWrapper then return end
 
         if friendWrapper.data.class then
-            self.pause = true
+            Friendlist.pause = true
             local accountName = friendWrapper.data.accountName
             local level = friendWrapper.data.level
             local characterName = friendWrapper.data.characterName
             local class = friendWrapper.data.class
-            local classcolor = RAID_CLASS_COLORS[self.classes[class]]
+            local classcolor = RAID_CLASS_COLORS[Friendlist.classes[class]]
             local color = format("%02X%02X%02X", floor(classcolor.r * 255), floor(classcolor.g * 255),
                 floor(classcolor.b * 255))
 
@@ -130,42 +130,40 @@ function Friendlist:OnInitialize()
                 frame:SetText("|cff" .. color .. accountName .. " [" .. characterName .. " - " .. level .. "]|r")
             end
         end
-        self.pause = false
+        Friendlist.pause = false
     end
 
-    function self:HookButtons(buttons)
+    function Friendlist:HookButtons(buttons)
         for i = 1, #buttons do
             local button = buttons[i]
-            if button.name and not self.buttons[button.name] then
-                self.buttons[button.name] = true
-                mUI:SecureHook(button.name, "SetText", function(frame, ...)
-                    self:SetText(frame, ...)
+            if button.name and not Friendlist.buttons[button.name] then
+                Friendlist.buttons[button.name] = true
+                Friendlist:SecureHook(button.name, "SetText", function(frame, ...)
+                    Friendlist:SetText(frame, ...)
                 end)
             end
         end
     end
 
-    function self:Update()
+    function Friendlist:Update()
         local view = FriendsListFrame.ScrollBox:GetView()
 
         view:RegisterCallback(ScrollBoxListMixin.Event.OnAcquiredFrame, function(_, button, created)
             if created then
-                if self.disabled then return end
-                self:HookButtons({ button })
+                if Friendlist.disabled then return end
+                Friendlist:HookButtons({ button })
             end
         end)
     end
 end
 
 function Friendlist:OnEnable()
-    self:Update()
-    self.buttons = {}
-    self.disabled = false
+    Friendlist:Update()
+    Friendlist.buttons = {}
+    Friendlist.disabled = false
 end
 
 function Friendlist:OnDisable()
-    self.disabled = true
-    for button in pairs(self.buttons) do
-        mUI:Unhook(button, "SetText")
-    end
+    Friendlist.disabled = true
+    Friendlist:UnhookAll()
 end

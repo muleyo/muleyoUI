@@ -1,11 +1,11 @@
-local Style = mUI:NewModule("mUI.Tooltips.Style")
+local Style = mUI:NewModule("mUI.Tooltips.Style", "AceHook-3.0")
 
 function Style:OnInitialize()
     -- Load Database
-    self.db = mUI.db.profile.tooltips
+    Style.db = mUI.db.profile.tooltips
 
     -- Tables
-    self.cfg = {
+    Style.cfg = {
         textColor = { 0.4, 0.4, 0.4 },
         bossColor = { 1, 0, 0 },
         eliteColor = { 1, 0, 0.5 },
@@ -18,19 +18,19 @@ function Style:OnInitialize()
         afkColor = { 0, 1, 1 }
     }
 
-    self.classColors = {}
-    self.factionColors = {}
+    Style.classColors = {}
+    Style.factionColors = {}
 
     -- Get Hex Colors
-    self.cfg.targetColorHex = CreateColor(unpack(self.cfg.targetColor)):GenerateHexColor()
-    self.cfg.afkColorHex = CreateColor(unpack(self.cfg.afkColor)):GenerateHexColor()
+    Style.cfg.targetColorHex = CreateColor(unpack(Style.cfg.targetColor)):GenerateHexColor()
+    Style.cfg.afkColorHex = CreateColor(unpack(Style.cfg.afkColor)):GenerateHexColor()
 
     for class, color in next, RAID_CLASS_COLORS do
-        self.classColors[class] = CreateColor(color.r, color.g, color.b):GenerateHexColor()
+        Style.classColors[class] = CreateColor(color.r, color.g, color.b):GenerateHexColor()
     end
 
     for i, color in pairs(FACTION_BAR_COLORS) do
-        self.factionColors[i] = CreateColor(color.r, color.g, color.b):GenerateHexColor()
+        Style.factionColors[i] = CreateColor(color.r, color.g, color.b):GenerateHexColor()
     end
 
     -- Create GameTooltip Healthbar Background
@@ -40,28 +40,28 @@ function Style:OnInitialize()
     GameTooltipStatusBar.mUIbg:SetVertexColor(0, 0, 0, 0.5)
     GameTooltipStatusBar.mUIbg:SetAlpha(0)
 
-    function self:SetStatusBarColor(frame, r, g, b)
-        if not self.cfg.barColor then return end
-        if r == self.cfg.barColor.r and g == self.cfg.barColor.g and b == self.cfg.barColor.b then return end
-        frame:SetStatusBarColor(self.cfg.barColor.r, self.cfg.barColor.g, self.cfg.barColor.b)
+    function Style:SetStatusBarColor(frame, r, g, b)
+        if not Style.cfg.barColor then return end
+        if r == Style.cfg.barColor.r and g == Style.cfg.barColor.g and b == Style.cfg.barColor.b then return end
+        frame:SetStatusBarColor(Style.cfg.barColor.r, Style.cfg.barColor.g, Style.cfg.barColor.b)
     end
 
-    function self:GetTarget(unit)
-        if not self.db.style == "mUI" then return end
+    function Style:GetTarget(unit)
+        if not Style.db.style == "mUI" then return end
         if UnitIsUnit(unit, "player") then
             return ("|cffff0000%s|r"):format("<YOU>")
         elseif UnitIsPlayer(unit) then
             local _, class = UnitClass(unit)
-            return ("|c%s%s|r"):format(self.classColors[class], UnitName(unit))
+            return ("|c%s%s|r"):format(Style.classColors[class], UnitName(unit))
         elseif UnitReaction(unit, "player") then
-            return ("|c%s%s|r"):format(self.factionColors[UnitReaction(unit, "player")], UnitName(unit))
+            return ("|c%s%s|r"):format(Style.factionColors[UnitReaction(unit, "player")], UnitName(unit))
         else
             return ("|cffffffff%s|r"):format(UnitName(unit))
         end
     end
 
-    function self:OnTooltipSetUnit(frame)
-        if not self.db.style == "mUI" then return end
+    function Style:OnTooltipSetUnit(frame)
+        if not Style.db.style == "mUI" then return end
         if not frame or frame ~= _G.GameTooltip then return end
 
         -- Get Unit
@@ -71,7 +71,7 @@ function Style:OnInitialize()
             local line = _G["GameTooltipTextLeft" .. i]
             if line then
                 if not line == 4 then
-                    line:SetTextColor(unpack(self.cfg.textColor))
+                    line:SetTextColor(unpack(Style.cfg.textColor))
                 end
             end
         end
@@ -91,14 +91,14 @@ function Style:OnInitialize()
             -- Get Class Color
             local _, unitClass = UnitClass(unit)
             local color = RAID_CLASS_COLORS[unitClass]
-            self.cfg.barColor = color
+            Style.cfg.barColor = color
             GameTooltipStatusBar:SetStatusBarColor(color.r, color.g, color.b)
             GameTooltipTextLeft1:SetTextColor(color.r, color.g, color.b)
 
             local guildName, guildRank = GetGuildInfo(unit)
             if guildName then
                 GameTooltipTextLeft2:SetText("<" .. guildName .. "> [" .. guildRank .. "]")
-                GameTooltipTextLeft2:SetTextColor(unpack(self.cfg.guildColor))
+                GameTooltipTextLeft2:SetTextColor(unpack(Style.cfg.guildColor))
             end
 
             local levelLine = guildName and GameTooltipTextLeft3 or GameTooltipTextLeft2
@@ -107,14 +107,14 @@ function Style:OnInitialize()
             levelLine:SetTextColor(color.r, color.g, color.b)
 
             if UnitIsAFK(unit) then
-                frame:AppendText((" |c%s<AFK>|r"):format(self.cfg.afkColorHex))
+                frame:AppendText((" |c%s<AFK>|r"):format(Style.cfg.afkColorHex))
             end
         else -- Unit is NPC
             local reaction = UnitReaction(unit, "player")
             if reaction then
                 local color = FACTION_BAR_COLORS[reaction]
                 if color then
-                    self.cfg.barColor = color
+                    Style.cfg.barColor = color
                     GameTooltipStatusBar:SetStatusBarColor(color.r, color.g, color.b)
                     GameTooltipTextLeft1:SetTextColor(color.r, color.g, color.b)
                 end
@@ -125,7 +125,7 @@ function Style:OnInitialize()
             if string.find(GameTooltipTextLeft2:GetText() or "empty", "%a%s%d") then
                 levelLine = GameTooltipTextLeft2
             elseif GameTooltipTextLeft3 ~= nil and string.find(GameTooltipTextLeft3:GetText() or "empty", "%a%s%d") then
-                GameTooltipTextLeft2:SetTextColor(unpack(self.cfg.guildColor))
+                GameTooltipTextLeft2:SetTextColor(unpack(Style.cfg.guildColor))
                 levelLine = GameTooltipTextLeft3
             end
             if levelLine then
@@ -135,7 +135,7 @@ function Style:OnInitialize()
             end
             if unitClassification == "worldboss" or UnitLevel(unit) == -1 then
                 frame:AppendText(" |cffff0000[B]|r")
-                GameTooltipTextLeft2:SetTextColor(unpack(self.cfg.bossColor))
+                GameTooltipTextLeft2:SetTextColor(unpack(Style.cfg.bossColor))
             elseif unitClassification == "rare" then
                 frame:AppendText(" |cffff9900[R]|r")
             elseif unitClassification == "rareelite" then
@@ -147,18 +147,18 @@ function Style:OnInitialize()
 
         -- Unit is dead
         if UnitIsDeadOrGhost(unit) then
-            GameTooltipTextLeft1:SetTextColor(unpack(self.cfg.deadColor))
+            GameTooltipTextLeft1:SetTextColor(unpack(Style.cfg.deadColor))
         end
 
         -- Current Target
         if (UnitExists(unit .. "target")) then
-            GameTooltip:AddDoubleLine(("|c%s%s|r"):format(self.cfg.targetColorHex, "Target"),
-                self:GetTarget(unit .. "target") or "Unknown")
+            GameTooltip:AddDoubleLine(("|c%s%s|r"):format(Style.cfg.targetColorHex, "Target"),
+                Style:GetTarget(unit .. "target") or "Unknown")
         end
     end
 
-    function self:OnTooltipSetSpell(tooltip, spellid)
-        if not self.db.style == "mUI" then return end
+    function Style:OnTooltipSetSpell(tooltip, spellid)
+        if not Style.db.style == "mUI" then return end
         if not spellid then return end
         if type(spellid) == "table" and #spellid == 1 then spellid = spellid[1] end
         local frame, text
@@ -171,8 +171,8 @@ function Style:OnInitialize()
         tooltip:Show()
     end
 
-    function self:OnMacroTooltipSetSpell(tooltip)
-        if not self.db.style == "mUI" then return end
+    function Style:OnMacroTooltipSetSpell(tooltip)
+        if not Style.db.style == "mUI" then return end
         if tooltip:GetTooltipData() and tooltip:GetTooltipData().lines and tooltip:GetTooltipData().lines[2] and
             tooltip:GetTooltipData().lines[2].leftText then
             local tooltipData = tooltip:GetTooltipData()
@@ -180,7 +180,7 @@ function Style:OnInitialize()
             local spellInfo   = C_Spell.GetSpellInfo(tooltipName)
 
             if (spellInfo and spellInfo.spellID) then
-                self:OnTooltipSetSpell(tooltip, spellInfo.spellID)
+                Style:OnTooltipSetSpell(tooltip, spellInfo.spellID)
             end
         end
     end
@@ -188,25 +188,25 @@ end
 
 function Style:OnEnable()
     -- Hook Tooltips
-    if not self.hooked then
+    if not Style.hooked then
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Macro, function(tooltip)
-            self:OnMacroTooltipSetSpell(tooltip)
+            Style:OnMacroTooltipSetSpell(tooltip)
         end)
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, function(tooltip, data)
-            self:OnTooltipSetSpell(tooltip, data.id)
+            Style:OnTooltipSetSpell(tooltip, data.id)
         end)
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.UnitAura, function(tooltip, data)
-            self:OnTooltipSetSpell(tooltip, data.id)
+            Style:OnTooltipSetSpell(tooltip, data.id)
         end)
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, function(frame)
-            self:OnTooltipSetUnit(frame)
+            Style:OnTooltipSetUnit(frame)
         end)
 
-        self.hooked = true
+        Style.hooked = true
     end
 
-    mUI:SecureHook(GameTooltipStatusBar, "SetStatusBarColor", function(frame, r, g, b)
-        self:SetStatusBarColor(frame, r, g, b)
+    Style:SecureHook(GameTooltipStatusBar, "SetStatusBarColor", function(frame, r, g, b)
+        Style:SetStatusBarColor(frame, r, g, b)
     end)
 
     -- Set Healthbar Texture
@@ -225,7 +225,7 @@ end
 
 function Style:OnDisable()
     -- Unhook
-    mUI:Unhook(GameTooltipStatusBar, "SetStatusBarColor")
+    Style:Unhook(GameTooltipStatusBar, "SetStatusBarColor")
 
     -- Reset Healthbar Texture
     GameTooltipStatusBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-TargetingFrame-BarFill]])

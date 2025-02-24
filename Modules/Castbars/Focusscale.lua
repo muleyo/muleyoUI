@@ -2,17 +2,17 @@ local Focusscale = mUI:NewModule("mUI.Modules.Castbars.Focusscale")
 
 function Focusscale:OnInitialize()
     -- Load Database
-    self.db = mUI.db.profile.castbars
+    Focusscale.db = mUI.db.profile.castbars
 
-    function self:Update()
-        FocusFrameSpellBar:SetScale(self.db.focusscale / 100)
+    function Focusscale:Update()
+        FocusFrameSpellBar:SetScale(Focusscale.db.focusscale / 100)
     end
 end
 
 function Focusscale:OnEnable()
-    self:Update()
+    Focusscale:Update()
 end
 
 function Focusscale:OnDisable()
-    self:Update()
+    Focusscale:Update()
 end

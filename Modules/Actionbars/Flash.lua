@@ -1,43 +1,43 @@
-local Flash = mUI:NewModule("mUI.Modules.Actionbars.Flash")
+local Flash = mUI:NewModule("mUI.Modules.Actionbars.Flash", "AceHook-3.0")
 
 function Flash:OnInitialize()
     -- Variables
-    self.count = 5
-    self.animations = {}
-    self.animationNum = 1
+    Flash.count = 5
+    Flash.animations = {}
+    Flash.animationNum = 1
 
     -- Create Frames
-    for i = 1, self.count do
-        self.frame = CreateFrame("Frame")
-        self.texture = self.frame:CreateTexture()
-        self.texture:SetTexture('Interface\\Cooldown\\star4')
-        self.texture:SetAlpha(0)
-        self.texture:SetAllPoints()
-        self.texture:SetBlendMode("ADD")
-        self.animationGroup = self.texture:CreateAnimationGroup()
-        self.alpha1 = self.animationGroup:CreateAnimation("Alpha")
-        self.alpha1:SetFromAlpha(0)
-        self.alpha1:SetToAlpha(1)
-        self.alpha1:SetDuration(0)
-        self.alpha1:SetOrder(1)
-        self.scale1 = self.animationGroup:CreateAnimation("Scale")
-        self.scale1:SetScale(1.0, 1.0)
-        self.scale1:SetDuration(0)
-        self.scale1:SetOrder(1)
-        self.scale2 = self.animationGroup:CreateAnimation("Scale")
-        self.scale2:SetScale(1.5, 1.5)
-        self.scale2:SetDuration(0.3)
-        self.scale2:SetOrder(2)
-        self.rotation2 = self.animationGroup:CreateAnimation("Rotation")
-        self.rotation2:SetDegrees(90)
-        self.rotation2:SetDuration(0.3)
-        self.rotation2:SetOrder(2)
-        self.animations[i] = { frame = self.frame, animationGroup = self.animationGroup }
+    for i = 1, Flash.count do
+        Flash.frame = CreateFrame("Frame")
+        Flash.texture = Flash.frame:CreateTexture()
+        Flash.texture:SetTexture('Interface\\Cooldown\\star4')
+        Flash.texture:SetAlpha(0)
+        Flash.texture:SetAllPoints()
+        Flash.texture:SetBlendMode("ADD")
+        Flash.animationGroup = Flash.texture:CreateAnimationGroup()
+        Flash.alpha1 = Flash.animationGroup:CreateAnimation("Alpha")
+        Flash.alpha1:SetFromAlpha(0)
+        Flash.alpha1:SetToAlpha(1)
+        Flash.alpha1:SetDuration(0)
+        Flash.alpha1:SetOrder(1)
+        Flash.scale1 = Flash.animationGroup:CreateAnimation("Scale")
+        Flash.scale1:SetScale(1.0, 1.0)
+        Flash.scale1:SetDuration(0)
+        Flash.scale1:SetOrder(1)
+        Flash.scale2 = Flash.animationGroup:CreateAnimation("Scale")
+        Flash.scale2:SetScale(1.5, 1.5)
+        Flash.scale2:SetDuration(0.3)
+        Flash.scale2:SetOrder(2)
+        Flash.rotation2 = Flash.animationGroup:CreateAnimation("Rotation")
+        Flash.rotation2:SetDegrees(90)
+        Flash.rotation2:SetDuration(0.3)
+        Flash.rotation2:SetOrder(2)
+        Flash.animations[i] = { frame = Flash.frame, animationGroup = Flash.animationGroup }
     end
 
-    function self:AnimateButton(button)
+    function Flash:AnimateButton(button)
         if not button:IsVisible() then return true end
-        local animation = self.animations[self.animationNum]
+        local animation = Flash.animations[Flash.animationNum]
         local frame = animation.frame
         local animationGroup = animation.animationGroup
         frame:SetFrameStrata("HIGH")
@@ -45,29 +45,29 @@ function Flash:OnInitialize()
         frame:SetAllPoints(button)
         animationGroup:Stop()
         animationGroup:Play()
-        self.animationNum = (self.animationNum % self.count) + 1
+        Flash.animationNum = (Flash.animationNum % Flash.count) + 1
         return true
     end
 end
 
 function Flash:OnEnable()
-    mUI:SecureHook("MultiActionButtonDown", function(bname, id)
+    Flash:SecureHook("MultiActionButtonDown", function(bname, id)
         if _G[bname]:GetEffectiveAlpha() == 1 then
-            self:AnimateButton(_G[bname .. 'Button' .. id])
+            Flash:AnimateButton(_G[bname .. 'Button' .. id])
         end
     end)
 
-    mUI:SecureHook(PetActionBar, "PetActionButtonDown", function(_, id)
+    Flash:SecureHook(PetActionBar, "PetActionButtonDown", function(_, id)
         local button
         if PetActionBar then
             if id > NUM_PET_ACTION_SLOTS then return end
             button = _G["PetActionButton" .. id]
             if not button then return end
         end
-        return self:AnimateButton(button)
+        return Flash:AnimateButton(button)
     end)
 
-    mUI:SecureHook("ActionButtonDown", function(id)
+    Flash:SecureHook("ActionButtonDown", function(id)
         local button
         if C_PetBattles.IsInBattle() then
             if PetBattleFrame then
@@ -90,13 +90,11 @@ function Flash:OnEnable()
         end
         if not button then return end
         if button:GetEffectiveAlpha() == 1 then
-            self:AnimateButton(button)
+            Flash:AnimateButton(button)
         end
     end)
 end
 
 function Flash:OnDisable()
-    mUI:Unhook("MultiActionButtonDown")
-    mUI:Unhook(PetActionBar, "PetActionButtonDown")
-    mUI:Unhook("ActionButtonDown")
+    Flash:UnhookAll()
 end

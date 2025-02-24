@@ -1,7 +1,7 @@
 local Hotkey = mUI:NewModule("mUI.Modules.Actionbars.Hotkey")
 
 function Hotkey:OnInitialize()
-    self.bars = {
+    Hotkey.bars = {
         MainMenuBar = MainMenuBar,
         MultiBarBottomLeft = MultiBarBottomLeft,
         MultiBarBottomRight = MultiBarBottomRight,
@@ -14,10 +14,10 @@ function Hotkey:OnInitialize()
         StanceBar = StanceBar
     }
 
-    function self:Update(isEnabled)
+    function Hotkey:Update(isEnabled)
         local numButtons
         local hotkey
-        for name, bar in pairs(self.bars) do
+        for name, bar in pairs(Hotkey.bars) do
             if bar then
                 numButtons = bar.numButtonsShowable
                 for i = 1, numButtons do
@@ -41,9 +41,9 @@ function Hotkey:OnInitialize()
 end
 
 function Hotkey:OnEnable()
-    self:Update(true)
+    Hotkey:Update(true)
 end
 
 function Hotkey:OnDisable()
-    self:Update(false)
+    Hotkey:Update(false)
 end

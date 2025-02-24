@@ -1,15 +1,15 @@
-local ItemInfo = mUI:NewModule("mUI.Modules.General.ItemInfo")
+local ItemInfo = mUI:NewModule("mUI.Modules.General.ItemInfo", "AceHook-3.0")
 
 function ItemInfo:OnInitialize()
     -- CharacterFrame / InspectFrame Equipment Enchants, Gems and ItemLevels
     -- Variables & Tables
-    self.iteminfo = CreateFrame("Frame")
-    self.buttons = {}
-    self.LEGENDARY_ITEM_LEVEL = 483
-    self.STEP_ITEM_LEVEL = 17
-    self.levelThresholds = {}
-    self.NUM_SOCKET_TEXTURES = 4
-    self.expansionRequiredSockets = {
+    ItemInfo.iteminfo = CreateFrame("Frame")
+    ItemInfo.buttons = {}
+    ItemInfo.LEGENDARY_ITEM_LEVEL = 483
+    ItemInfo.STEP_ITEM_LEVEL = 17
+    ItemInfo.levelThresholds = {}
+    ItemInfo.NUM_SOCKET_TEXTURES = 4
+    ItemInfo.expansionRequiredSockets = {
         [10] = {
             [INVSLOT_NECK] = 2,
             [INVSLOT_FINGER1] = 2,
@@ -20,7 +20,7 @@ function ItemInfo:OnInitialize()
         }
     }
 
-    self.expansionEnchantableSlots = {
+    ItemInfo.expansionEnchantableSlots = {
         [10] = {
             [INVSLOT_BACK] = true,
             [INVSLOT_CHEST] = true,
@@ -46,7 +46,7 @@ function ItemInfo:OnInitialize()
         },
     }
 
-    self.buttonLayout = {
+    ItemInfo.buttonLayout = {
         [INVSLOT_HEAD] = "left",
         [INVSLOT_NECK] = "left",
         [INVSLOT_SHOULDER] = "left",
@@ -67,7 +67,7 @@ function ItemInfo:OnInitialize()
         [INVSLOT_OFFHAND] = "center",
     }
 
-    self.characterSlots = {
+    ItemInfo.characterSlots = {
         "CharacterHeadSlot",
         "CharacterNeckSlot",
         "CharacterShoulderSlot",
@@ -86,7 +86,7 @@ function ItemInfo:OnInitialize()
         "CharacterSecondaryHandSlot",
     }
 
-    self.gemsWeCareAbout = {
+    ItemInfo.gemsWeCareAbout = {
         192991, -- Increased Primary Stat and Versatility
         192985, -- Increased Primary Stat and Haste
         192982, -- Increased Primary Stat and Critical Strike
@@ -118,7 +118,7 @@ function ItemInfo:OnInitialize()
         192976, -- Increased Stamina and Mastery
     }
 
-    self.enchantReplacementTable = {
+    ItemInfo.enchantReplacementTable = {
         ["Stamina"] = "Stam",
         ["Intellect"] = "Int",
         ["Agility"] = "Agi",
@@ -170,34 +170,34 @@ function ItemInfo:OnInitialize()
         ["+"] = "",
     }
 
-    self.enchantPattern = ENCHANTED_TOOLTIP_LINE:gsub('%%s', '(.*)')
-    self.enchantAtlasPattern = "(.*)%s*|A:(.*):20:20|a"
-    self.enchatColoredPatten = "|cn(.*):(.*)|r"
+    ItemInfo.enchantPattern = ENCHANTED_TOOLTIP_LINE:gsub('%%s', '(.*)')
+    ItemInfo.enchantAtlasPattern = "(.*)%s*|A:(.*):20:20|a"
+    ItemInfo.enchatColoredPatten = "|cn(.*):(.*)|r"
 
     -- Functions
-    function self:GetItemEnchantAsText(unit, slot)
+    function ItemInfo:GetItemEnchantAsText(unit, slot)
         local data = C_TooltipInfo.GetInventoryItem(unit, slot)
         for _, line in ipairs(data.lines) do
             local text = line.leftText
-            local enchantText = string.match(text, self.enchantPattern)
+            local enchantText = string.match(text, ItemInfo.enchantPattern)
             if (enchantText) then
                 local maybeEnchantText, atlas
-                local maybeEnchantColor, maybeEnchantTextColored = enchantText:match(self.enchatColoredPatten)
+                local maybeEnchantColor, maybeEnchantTextColored = enchantText:match(ItemInfo.enchatColoredPatten)
                 if (maybeEnchantColor) then
                     enchantText = maybeEnchantTextColored
                 else
-                    maybeEnchantText, atlas = enchantText:match(self.enchantAtlasPattern)
+                    maybeEnchantText, atlas = enchantText:match(ItemInfo.enchantAtlasPattern)
                     enchantText = maybeEnchantText or enchantText
                 end
 
-                return atlas, self:ProcessEnchantText(enchantText)
+                return atlas, ItemInfo:ProcessEnchantText(enchantText)
             end
         end
 
         return nil, nil
     end
 
-    function self:GetSocketTextures(unit, slot)
+    function ItemInfo:GetSocketTextures(unit, slot)
         local data = C_TooltipInfo.GetInventoryItem(unit, slot)
         local textures = {}
         for i, line in ipairs(data.lines) do
@@ -214,9 +214,9 @@ function ItemInfo:OnInitialize()
         return textures
     end
 
-    function self:CanEnchantSlot(unit, slot)
+    function ItemInfo:CanEnchantSlot(unit, slot)
         local expansion = GetExpansionForLevel(UnitLevel(unit))
-        local slotsThatHaveEnchants = expansion and self.expansionEnchantableSlots[expansion] or {}
+        local slotsThatHaveEnchants = expansion and ItemInfo.expansionEnchantableSlots[expansion] or {}
 
         -- all classes have something that increases power or survivability on chest/cloak/weapons/rings/wrist/boots/legs
         if (slotsThatHaveEnchants[slot]) then
@@ -236,7 +236,7 @@ function ItemInfo:OnInitialize()
         return false
     end
 
-    function self:pairsByKeys(t, f)
+    function ItemInfo:pairsByKeys(t, f)
         local a = {}
         for n in pairs(t) do table.insert(a, n) end
         table.sort(a, f)
@@ -252,14 +252,14 @@ function ItemInfo:OnInitialize()
         return iter
     end
 
-    function self:ProcessEnchantText(enchantText)
-        for seek, replacement in self:pairsByKeys(self.enchantReplacementTable) do
+    function ItemInfo:ProcessEnchantText(enchantText)
+        for seek, replacement in ItemInfo:pairsByKeys(ItemInfo.enchantReplacementTable) do
             enchantText = enchantText:gsub(seek, replacement)
         end
         return enchantText
     end
 
-    function self:ColorGradient(perc, ...)
+    function ItemInfo:ColorGradient(perc, ...)
         if perc >= 1 then
             local r, g, b = select(select('#', ...) - 2, ...)
             return r, g, b
@@ -276,25 +276,25 @@ function ItemInfo:OnInitialize()
         return r1 + (r2 - r1) * relperc, g1 + (g2 - g1) * relperc, b1 + (b2 - b1) * relperc
     end
 
-    function self:ColorGradientHP(perc)
-        return self:ColorGradient(perc, 1, 0, 0, 1, 1, 0, 0, 1, 0)
+    function ItemInfo:ColorGradientHP(perc)
+        return ItemInfo:ColorGradient(perc, 1, 0, 0, 1, 1, 0, 0, 1, 0)
     end
 
-    function self:AnchorTextureLeftOfParent(parent, textures)
+    function ItemInfo:AnchorTextureLeftOfParent(parent, textures)
         textures[1]:SetPoint("RIGHT", parent, "LEFT", -3, 1)
-        for i = 2, self.NUM_SOCKET_TEXTURES do
+        for i = 2, ItemInfo.NUM_SOCKET_TEXTURES do
             textures[i]:SetPoint("RIGHT", textures[i - 1], "LEFT", -2, 0)
         end
     end
 
-    function self:AnchorTextureRightOfParent(parent, textures)
+    function ItemInfo:AnchorTextureRightOfParent(parent, textures)
         textures[1]:SetPoint("LEFT", parent, "RIGHT", 3, 1)
-        for i = 2, self.NUM_SOCKET_TEXTURES do
+        for i = 2, ItemInfo.NUM_SOCKET_TEXTURES do
             textures[i]:SetPoint("LEFT", textures[i - 1], "RIGHT", 2, 0)
         end
     end
 
-    function self:CreateAdditionalDisplayForButton(button)
+    function ItemInfo:CreateAdditionalDisplayForButton(button)
         local parent = button:GetParent()
         local additionalFrame = CreateFrame("frame", nil, parent)
         additionalFrame:SetWidth(100)
@@ -315,7 +315,7 @@ function ItemInfo:OnInitialize()
 
         additionalFrame.socketDisplay = {}
 
-        for i = 1, self.NUM_SOCKET_TEXTURES do
+        for i = 1, ItemInfo.NUM_SOCKET_TEXTURES do
             additionalFrame.socketDisplay[i] = additionalFrame:CreateTexture()
             additionalFrame.socketDisplay[i]:SetWidth(14)
             additionalFrame.socketDisplay[i]:SetHeight(14)
@@ -324,7 +324,7 @@ function ItemInfo:OnInitialize()
         return additionalFrame
     end
 
-    function self:positonLeft(button)
+    function ItemInfo:positonLeft(button)
         local additionalFrame = button.BCPDisplay
 
         additionalFrame:SetPoint("TOPLEFT", button, "TOPRIGHT")
@@ -336,10 +336,10 @@ function ItemInfo:OnInitialize()
         additionalFrame.durabilityDisplay:SetPoint("TOPLEFT", button, "TOPLEFT", -6, 0)
         additionalFrame.durabilityDisplay:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", -6, 0)
 
-        self:AnchorTextureRightOfParent(additionalFrame.ilvlDisplay, additionalFrame.socketDisplay)
+        ItemInfo:AnchorTextureRightOfParent(additionalFrame.ilvlDisplay, additionalFrame.socketDisplay)
     end
 
-    function self:positonRight(button)
+    function ItemInfo:positonRight(button)
         local additionalFrame = button.BCPDisplay
 
         additionalFrame:SetPoint("TOPRIGHT", button, "TOPLEFT")
@@ -352,10 +352,10 @@ function ItemInfo:OnInitialize()
         additionalFrame.durabilityDisplay:SetPoint("TOPRIGHT", button, "TOPRIGHT", 4, 0)
         additionalFrame.durabilityDisplay:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 4, 0)
 
-        self:AnchorTextureLeftOfParent(additionalFrame.ilvlDisplay, additionalFrame.socketDisplay)
+        ItemInfo:AnchorTextureLeftOfParent(additionalFrame.ilvlDisplay, additionalFrame.socketDisplay)
     end
 
-    function self:positonCenter(button)
+    function ItemInfo:positonCenter(button)
         local additionalFrame = button.BCPDisplay
 
         additionalFrame:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", -100, 0)
@@ -371,25 +371,25 @@ function ItemInfo:OnInitialize()
 
         if (button:GetID() == INVSLOT_MAINHAND) then
             additionalFrame.enchantDisplay:SetPoint("BOTTOMRIGHT", button, "BOTTOMLEFT", -5, 0)
-            self:AnchorTextureLeftOfParent(additionalFrame.ilvlDisplay, additionalFrame.socketDisplay)
+            ItemInfo:AnchorTextureLeftOfParent(additionalFrame.ilvlDisplay, additionalFrame.socketDisplay)
         else
             additionalFrame.enchantDisplay:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT", 5, 0)
-            self:AnchorTextureRightOfParent(additionalFrame.ilvlDisplay, additionalFrame.socketDisplay)
+            ItemInfo:AnchorTextureRightOfParent(additionalFrame.ilvlDisplay, additionalFrame.socketDisplay)
         end
     end
 
-    function self:AnchorAdditionalDisplay(button)
-        local layout = self.buttonLayout[button:GetID()]
+    function ItemInfo:AnchorAdditionalDisplay(button)
+        local layout = ItemInfo.buttonLayout[button:GetID()]
         if (layout == "left") then
-            self:positonLeft(button)
+            ItemInfo:positonLeft(button)
         elseif (layout == "right") then
-            self:positonRight(button)
+            ItemInfo:positonRight(button)
         elseif (layout == "center") then
-            self:positonCenter(button)
+            ItemInfo:positonCenter(button)
         end
     end
 
-    function self:UpdateAdditionalDisplay(button, unit)
+    function ItemInfo:UpdateAdditionalDisplay(button, unit)
         local additionalFrame = button.BCPDisplay
         local slot = button:GetID()
         local itemLink = GetInventoryItemLink(unit, slot)
@@ -412,10 +412,10 @@ function ItemInfo:OnInitialize()
 
             local atlas, enchantText
             if itemLink then
-                atlas, enchantText = self:GetItemEnchantAsText(unit, slot)
+                atlas, enchantText = ItemInfo:GetItemEnchantAsText(unit, slot)
             end
 
-            local canEnchant = self:CanEnchantSlot(unit, slot)
+            local canEnchant = ItemInfo:CanEnchantSlot(unit, slot)
 
             if (not enchantText) then
                 local shouldDisplayEchantMissingText = canEnchant and itemLink and
@@ -444,8 +444,8 @@ function ItemInfo:OnInitialize()
                 end
             end
 
-            local textures = itemLink and self:GetSocketTextures(unit, slot) or {}
-            for i = 1, self.NUM_SOCKET_TEXTURES do
+            local textures = itemLink and ItemInfo:GetSocketTextures(unit, slot) or {}
+            for i = 1, ItemInfo.NUM_SOCKET_TEXTURES do
                 local socketTexture = additionalFrame.socketDisplay[i]
                 if (#textures >= i) then
                     socketTexture:SetTexture(textures[i])
@@ -453,7 +453,7 @@ function ItemInfo:OnInitialize()
                     socketTexture:Show()
                 else
                     local expansion = GetExpansionForLevel(UnitLevel(unit))
-                    local expansionSocketRequirement = expansion and self.expansionRequiredSockets[expansion]
+                    local expansionSocketRequirement = expansion and ItemInfo.expansionRequiredSockets[expansion]
                     if (expansionSocketRequirement and expansionSocketRequirement[slot] and i <= expansionSocketRequirement[slot]) then
                         socketTexture:SetTexture("Interface\\ItemSocketingFrame\\UI-EmptySocket-Red")
                         socketTexture:SetVertexColor(1, 0, 0)
@@ -474,7 +474,7 @@ function ItemInfo:OnInitialize()
             if (UnitIsUnit("player", unit) and percDurability and percDurability < 1) then
                 additionalFrame.durabilityDisplay:Show()
                 additionalFrame.durabilityDisplay:SetValue(percDurability)
-                additionalFrame.durabilityDisplay:SetStatusBarColor(self:ColorGradientHP(percDurability))
+                additionalFrame.durabilityDisplay:SetStatusBarColor(ItemInfo:ColorGradientHP(percDurability))
             else
                 additionalFrame.durabilityDisplay:Hide()
             end
@@ -484,31 +484,31 @@ function ItemInfo:OnInitialize()
         end
     end
 
-    function self:CreateInspectIlvlDisplay()
+    function ItemInfo:CreateInspectIlvlDisplay()
         local parent = InspectPaperDollItemsFrame
         if (not parent.ilvlDisplay) then
             parent.ilvlDisplay = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlightOutline22")
             parent.ilvlDisplay:SetPoint("TOPRIGHT", parent, "TOPRIGHT", 0, -20)
             parent.ilvlDisplay:SetPoint("BOTTOMLEFT", parent, "TOPRIGHT", -80, -67)
 
-            self.buttons[parent.ilvlDisplay] = true
+            ItemInfo.buttons[parent.ilvlDisplay] = true
         end
     end
 
     for i = 4, 1, -1 do
-        self.levelThresholds[i] = self.LEGENDARY_ITEM_LEVEL - (self.STEP_ITEM_LEVEL * (i - 1))
+        ItemInfo.levelThresholds[i] = ItemInfo.LEGENDARY_ITEM_LEVEL - (ItemInfo.STEP_ITEM_LEVEL * (i - 1))
     end
 
-    function self:UpdateInspectIlvlDisplay(unit)
+    function ItemInfo:UpdateInspectIlvlDisplay(unit)
         local ilvl = C_PaperDollInfo.GetInspectItemLevel(unit)
         local color
-        if (ilvl < self.levelThresholds[4]) then
+        if (ilvl < ItemInfo.levelThresholds[4]) then
             color = "fafafa"
-        elseif (ilvl < self.levelThresholds[3]) then
+        elseif (ilvl < ItemInfo.levelThresholds[3]) then
             color = "1eff00"
-        elseif (ilvl < self.levelThresholds[2]) then
+        elseif (ilvl < ItemInfo.levelThresholds[2]) then
             color = "0070dd"
-        elseif (ilvl < self.levelThresholds[1]) then
+        elseif (ilvl < ItemInfo.levelThresholds[1]) then
             color = "a335ee"
         else
             color = "ff8000"
@@ -518,19 +518,19 @@ function ItemInfo:OnInitialize()
         parent.ilvlDisplay:SetText(string.format("|cff%s%d|r", color, ilvl))
     end
 
-    function self:updateButton(button, unit)
-        if (not self.buttonLayout[button:GetID()]) then return end
+    function ItemInfo:updateButton(button, unit)
+        if (not ItemInfo.buttonLayout[button:GetID()]) then return end
 
         if (not button.BCPDisplay) then
-            button.BCPDisplay = self:CreateAdditionalDisplayForButton(button)
-            self:AnchorAdditionalDisplay(button)
-            self.buttons[button.BCPDisplay] = true
+            button.BCPDisplay = ItemInfo:CreateAdditionalDisplayForButton(button)
+            ItemInfo:AnchorAdditionalDisplay(button)
+            ItemInfo.buttons[button.BCPDisplay] = true
         end
 
-        self:UpdateAdditionalDisplay(button, unit)
+        ItemInfo:UpdateAdditionalDisplay(button, unit)
     end
 
-    function self:MoveTalentButton(talentButton)
+    function ItemInfo:MoveTalentButton(talentButton)
         talentButton:SetSize(72, 32)
 
         talentButton.Left:SetTexture(nil)
@@ -584,15 +584,15 @@ function ItemInfo:OnInitialize()
         talentButton.Text:SetPoint("CENTER", 0, 2)
         talentButton.Text:SetHeight(10)
 
-        talentButton:HookScript("OnEnter", function(self)
+        talentButton:HookScript("OnEnter", function(ItemInfo)
             for _, v in ipairs({ "MiddleHighlight", "LeftHighlight", "RightHighlight" }) do
-                self[v]:Show()
+                ItemInfo[v]:Show()
             end
         end)
 
-        talentButton:HookScript("OnLeave", function(self)
+        talentButton:HookScript("OnLeave", function(ItemInfo)
             for _, v in ipairs({ "MiddleHighlight", "LeftHighlight", "RightHighlight" }) do
-                self[v]:Hide()
+                ItemInfo[v]:Hide()
             end
         end)
 
@@ -606,39 +606,39 @@ function ItemInfo:OnInitialize()
         talentButton:SetPoint("LEFT", InspectFrameTab3, "RIGHT", 3, 0)
     end
 
-    function self:updateAllCharacterSlots()
-        for _, slot in ipairs(self.characterSlots) do
+    function ItemInfo:updateAllCharacterSlots()
+        for _, slot in ipairs(ItemInfo.characterSlots) do
             local button = _G[slot]
             if (button) then
-                self:UpdateAdditionalDisplay(button, "player")
+                ItemInfo:UpdateAdditionalDisplay(button, "player")
             end
         end
     end
 
     local lastUpdate = 0
-    function self:SOCKET_INFO_UPDATE()
+    function ItemInfo:SOCKET_INFO_UPDATE()
         if (CharacterFrame:IsShown()) then
             local time = GetTime()
             if (time ~= lastUpdate) then
-                self:updateAllCharacterSlots()
+                ItemInfo:updateAllCharacterSlots()
                 lastUpdate = time
             end
         end
     end
 
-    function self:UNIT_INVENTORY_CHANGED(unit)
+    function ItemInfo:UNIT_INVENTORY_CHANGED(unit)
         if (unit == "player") then
-            self:SOCKET_INFO_UPDATE()
+            ItemInfo:SOCKET_INFO_UPDATE()
         end
     end
 
-    function self:PLAYER_ENTERING_WORLD(isInitialLogin, isReloadingUi)
-        for _, gemID in ipairs(self.gemsWeCareAbout) do
+    function ItemInfo:PLAYER_ENTERING_WORLD(isInitialLogin, isReloadingUi)
+        for _, gemID in ipairs(ItemInfo.gemsWeCareAbout) do
             C_Item.RequestLoadItemDataByID(gemID)
         end
     end
 
-    CharacterFrame:HookScript("OnUpdate", function()
+    ItemInfo:HookScript(CharacterFrame, "OnUpdate", function()
         local _, equippedItemLevel = GetAverageItemLevel()
         local itemLevelText
         if equippedItemLevel == math.floor(equippedItemLevel) then
@@ -651,8 +651,8 @@ function ItemInfo:OnInitialize()
 
     -- Bag/Bank/Merchant Equipment ItemLevel
     -- Variables
-    self.levelstrings = {}
-    function self:MerchantItemlevel()
+    ItemInfo.levelstrings = {}
+    function ItemInfo:MerchantItemlevel()
         local numItems = GetMerchantNumItems()
 
         for i = 1, MERCHANT_ITEMS_PER_PAGE do
@@ -681,28 +681,28 @@ function ItemInfo:OnInitialize()
         end
     end
 
-    function self:CreateItemLevelString(button)
+    function ItemInfo:CreateItemLevelString(button)
         button.levelString = button:CreateFontString(nil, "OVERLAY")
         button.levelString:SetFont(STANDARD_TEXT_FONT, 13, "OUTLINE")
         button.levelString:SetPoint("CENTER", button, "BOTTOM", 0, 8)
 
-        self.levelstrings[button.levelString] = true
+        ItemInfo.levelstrings[button.levelString] = true
     end
 
-    function self:CheckContainerItems(item)
+    function ItemInfo:CheckContainerItems(item)
         local _, _, _, equipLoc, _, itemClass, itemSubClass = C_Item.GetItemInfoInstant(item:GetItemID())
         return (itemClass == Enum.ItemClass.Weapon or itemClass == Enum.ItemClass.Armor or (itemClass == Enum.ItemClass.Gem and itemSubClass == Enum.ItemGemSubclass.Artifactrelic))
     end
 
-    function self:UpdateBagButton(button, item)
+    function ItemInfo:UpdateBagButton(button, item)
         if item:IsItemEmpty() then return end
         item:ContinueOnItemLoad(function()
-            if not self:CheckContainerItems(item) then return end
+            if not ItemInfo:CheckContainerItems(item) then return end
             local quality = item:GetItemQuality()
             if not item:GetCurrentItemLevel() then
                 button.levelString:Hide()
             else
-                self:CreateItemLevelString(button)
+                ItemInfo:CreateItemLevelString(button)
                 local _, _, _, hex = C_Item.GetItemQualityColor(quality)
                 button.levelString:SetFormattedText('|c%s%s|r', hex, item:GetCurrentItemLevel() or '?')
                 button.levelString:Show()
@@ -710,16 +710,16 @@ function ItemInfo:OnInitialize()
         end)
     end
 
-    function self:UpdateContainerButton(button, bag, slot)
+    function ItemInfo:UpdateContainerButton(button, bag, slot)
         if button.levelString then button.levelString:Hide() end
 
         local item = Item:CreateFromBagAndSlot(bag, slot or button:GetID())
-        self:UpdateBagButton(button, item)
+        ItemInfo:UpdateBagButton(button, item)
     end
 
-    function self:Update(frame)
+    function ItemInfo:Update(frame)
         for _, itemButton in frame:EnumerateValidItems() do
-            self:UpdateContainerButton(itemButton, itemButton:GetBagID(), itemButton:GetID())
+            ItemInfo:UpdateContainerButton(itemButton, itemButton:GetBagID(), itemButton:GetID())
         end
     end
 end
@@ -728,82 +728,63 @@ function ItemInfo:OnEnable()
     -- CharacterFrame / InspectFrame Equipment Enchants, Gems and ItemLevels
     C_AddOns.LoadAddOn("Blizzard_InspectUI")
 
-    mUI:SecureHook("PaperDollItemSlotButton_Update", function(button)
-        self:updateButton(button, "player")
+    ItemInfo:SecureHook("PaperDollItemSlotButton_Update", function(button)
+        ItemInfo:updateButton(button, "player")
     end)
 
-    mUI:SecureHook("InspectPaperDollItemSlotButton_Update", function(button)
-        self:updateButton(button, InspectFrame.unit)
+    ItemInfo:SecureHook("InspectPaperDollItemSlotButton_Update", function(button)
+        ItemInfo:updateButton(button, InspectFrame.unit)
     end)
 
-    mUI:SecureHook("InspectPaperDollFrame_SetLevel", function()
+    ItemInfo:SecureHook("InspectPaperDollFrame_SetLevel", function()
         if not InspectFrame.unit then return end
-        self:CreateInspectIlvlDisplay()
-        self:UpdateInspectIlvlDisplay(InspectFrame.unit)
+        ItemInfo:CreateInspectIlvlDisplay()
+        ItemInfo:UpdateInspectIlvlDisplay(InspectFrame.unit)
     end)
 
     local talentButton = InspectPaperDollItemsFrame.InspectTalents
-    self:MoveTalentButton(talentButton)
+    ItemInfo:MoveTalentButton(talentButton)
 
     if not mUI.db.profile.general.theme == "Disabled" then
         mUI:Skin(talentButton)
     end
 
-    self.iteminfo:RegisterEvent("SOCKET_INFO_UPDATE")
-    self.iteminfo:RegisterEvent("UNIT_INVENTORY_CHANGED")
-    self.iteminfo:RegisterEvent("PLAYER_ENTERING_WORLD")
-    mUI:RawHookScript(self.iteminfo, "OnEvent", function(_, event, ...)
-        self[event](self, ...)
+    ItemInfo.iteminfo:RegisterEvent("SOCKET_INFO_UPDATE")
+    ItemInfo.iteminfo:RegisterEvent("UNIT_INVENTORY_CHANGED")
+    ItemInfo.iteminfo:RegisterEvent("PLAYER_ENTERING_WORLD")
+    ItemInfo:RawHookScript(ItemInfo.iteminfo, "OnEvent", function(_, event, ...)
+        ItemInfo[event](ItemInfo, ...)
     end)
 
-    for button in pairs(self.buttons) do
+    for button in pairs(ItemInfo.buttons) do
         if not button:IsVisible() then
             button:Show()
         end
     end
 
     -- Bag/Bank/Merchant Equipment ItemLevel
-    mUI:SecureHook(ContainerFrameCombinedBags, "UpdateItems", function(frame)
-        self:Update(frame)
+    ItemInfo:SecureHook(ContainerFrameCombinedBags, "UpdateItems", function(frame)
+        ItemInfo:Update(frame)
     end)
 
     for _, container in ipairs(ContainerFrameContainer.ContainerFrames) do
-        mUI:SecureHook(container, "UpdateItems", function(frame)
-            self:Update(frame)
+        ItemInfo:SecureHook(container, "UpdateItems", function(frame)
+            ItemInfo:Update(frame)
         end)
     end
 end
 
 function ItemInfo:OnDisable()
+    ItemInfo:UnhookAll()
+
     -- CharacterFrame / InspectFrame Equipment Enchants, Gems and ItemLevels
-    mUI:Unhook("PaperDollItemSlotButton_Update", function(button)
-        self:updateButton(button, "player", true)
-    end)
+    ItemInfo.iteminfo:UnregisterAllEvents()
 
-    mUI:Unhook("InspectPaperDollItemSlotButton_Update", function(button)
-        self:updateButton(button, InspectFrame.unit, true)
-    end)
-
-    mUI:Unhook("InspectPaperDollFrame_SetLevel", function()
-        if not InspectFrame.unit then return end
-        self:CreateInspectIlvlDisplay()
-        self:UpdateInspectIlvlDisplay(InspectFrame.unit)
-    end)
-
-    mUI:Unhook(self.iteminfo, "OnEvent")
-    self.iteminfo:UnregisterAllEvents()
-
-    for button in pairs(self.buttons) do
+    for button in pairs(ItemInfo.buttons) do
         button:Hide()
     end
 
-    -- Bag/Bank/Merchant Equipment ItemLevel
-    mUI:Unhook(ContainerFrameCombinedBags, "UpdateItems")
-    for _, container in ipairs(ContainerFrameContainer.ContainerFrames) do
-        mUI:Unhook(container, "UpdateItems")
-    end
-
-    for levelString in pairs(self.levelstrings) do
+    for levelString in pairs(ItemInfo.levelstrings) do
         levelString:Hide()
     end
 end

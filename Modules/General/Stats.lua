@@ -1,40 +1,40 @@
-local Stats = mUI:NewModule("mUI.Modules.General.Stats")
+local Stats = mUI:NewModule("mUI.Modules.General.Stats", "AceHook-3.0")
 
 function Stats:OnInitialize()
     -- Load Database
-    self.db = {
+    Stats.db = {
         display = mUI.db.profile.general.display,
         pos = mUI.db.profile.edit.statsframe
     }
 
     -- Variables
-    self.stats = {}
-    self.lastUpdate = 0
+    Stats.stats = {}
+    Stats.lastUpdate = 0
 
     -- Get Class Color
     local _, class = UnitClass("player")
-    self.color = RAID_CLASS_COLORS[class]
+    Stats.color = RAID_CLASS_COLORS[class]
 
     mUI.statsFrame = CreateFrame("Frame", "StatsFrame", UIParent)
     mUI.statsFrame:ClearAllPoints()
-    mUI.statsFrame:SetPoint(self.db.pos.point, UIParent, self.db.pos.point, self.db.pos.x, self.db.pos.y)
+    mUI.statsFrame:SetPoint(Stats.db.pos.point, UIParent, Stats.db.pos.point, Stats.db.pos.x, Stats.db.pos.y)
     mUI.statsFrame:SetSize(75, 20)
     mUI.statsFrame.text = mUI.statsFrame:CreateFontString(nil, "BACKGROUND")
     mUI.statsFrame.text:SetPoint("CENTER", mUI.statsFrame)
     mUI.statsFrame.text:SetFont(STANDARD_TEXT_FONT, 13, "OUTLINE")
     mUI.statsFrame.text:SetShadowOffset(1, -1)
     mUI.statsFrame.text:SetShadowColor(0, 0, 0)
-    mUI.statsFrame.text:SetTextColor(self.color.r, self.color.g, self.color.b)
+    mUI.statsFrame.text:SetTextColor(Stats.color.r, Stats.color.g, Stats.color.b)
 
-    function self:GetFPS()
+    function Stats:GetFPS()
         return "|c00ffffff" .. floor(GetFramerate()) .. "|r fps"
     end
 
-    function self:GetLatency()
+    function Stats:GetLatency()
         return "|c00ffffff" .. select(4, GetNetStats()) .. "|r ms"
     end
 
-    function self:GetSpeed()
+    function Stats:GetSpeed()
         local isGliding, canGlide, forwardSpeed = C_PlayerInfo.GetGlidingInfo()
         if isGliding then
             return "|c00ffffff" ..
@@ -45,23 +45,23 @@ function Stats:OnInitialize()
         end
     end
 
-    function self:Stats()
-        if self.db.display.stats and self.db.display.movementspeed then
-            return self:GetFPS() .. " " .. self:GetLatency() .. " " .. self:GetSpeed()
-        elseif self.db.display.stats then
-            return self:GetFPS() .. " " .. self:GetLatency()
-        elseif self.db.display.movementspeed then
-            return self:GetSpeed()
+    function Stats:Stats()
+        if Stats.db.display.stats and Stats.db.display.movementspeed then
+            return Stats:GetFPS() .. " " .. Stats:GetLatency() .. " " .. Stats:GetSpeed()
+        elseif Stats.db.display.stats then
+            return Stats:GetFPS() .. " " .. Stats:GetLatency()
+        elseif Stats.db.display.movementspeed then
+            return Stats:GetSpeed()
         else
-            return self:GetFPS() .. " " .. self:GetLatency()
+            return Stats:GetFPS() .. " " .. Stats:GetLatency()
         end
     end
 
-    function self:Update(frame, elapsed)
-        self.lastUpdate = self.lastUpdate + elapsed
-        if self.lastUpdate > 1 then
-            self.lastUpdate = 0
-            mUI.statsFrame.text:SetText(self:Stats())
+    function Stats:Update(frame, elapsed)
+        Stats.lastUpdate = Stats.lastUpdate + elapsed
+        if Stats.lastUpdate > 1 then
+            Stats.lastUpdate = 0
+            mUI.statsFrame.text:SetText(Stats:Stats())
             frame:SetWidth(mUI.statsFrame.text:GetStringWidth())
             frame:SetHeight(mUI.statsFrame.text:GetStringHeight())
         end
@@ -70,12 +70,12 @@ end
 
 function Stats:OnEnable()
     mUI.statsFrame:Show()
-    mUI:HookScript(mUI.statsFrame, "OnUpdate", function(frame, elapsed)
-        self:Update(frame, elapsed)
+    Stats:HookScript(mUI.statsFrame, "OnUpdate", function(frame, elapsed)
+        Stats:Update(frame, elapsed)
     end)
 end
 
 function Stats:OnDisable()
     mUI.statsFrame:Hide()
-    mUI:Unhook(mUI.statsFrame, "OnUpdate")
+    Stats:UnhookAll()
 end

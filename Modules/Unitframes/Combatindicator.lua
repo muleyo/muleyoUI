@@ -1,13 +1,13 @@
-local Combatindicator = mUI:NewModule("mUI.Modules.Unitframes.Combatindicator")
+local Combatindicator = mUI:NewModule("mUI.Modules.Unitframes.Combatindicator", "AceHook-3.0")
 
 function Combatindicator:OnInitialize()
     -- Frames
     local target = CreateFrame("Frame")
     local focus = CreateFrame("Frame")
 
-    self.target = target
-    self.focus = focus
-    self.combatindicator = CreateFrame("Frame")
+    Combatindicator.target = target
+    Combatindicator.focus = focus
+    Combatindicator.combatindicator = CreateFrame("Frame")
 
     target:SetPoint("CENTER", TargetFrame, "RIGHT", 10, 0)
     focus:SetPoint("CENTER", FocusFrame, "RIGHT", 10, 0)
@@ -27,7 +27,7 @@ function Combatindicator:OnInitialize()
     target:Hide()
     focus:Hide()
 
-    function self:Update()
+    function Combatindicator:Update()
         if UnitExists("target") and UnitAffectingCombat("target") then
             target:Show()
         else
@@ -44,14 +44,14 @@ end
 
 function Combatindicator:OnEnable()
     -- Hook
-    mUI:HookScript(self.combatindicator, "OnUpdate", Combatindicator.Update)
+    Combatindicator:HookScript(Combatindicator.combatindicator, "OnUpdate", Combatindicator.Update)
 end
 
 function Combatindicator:OnDisable()
     -- Unhook
-    mUI:Unhook(self.combatindicator, "OnUpdate")
+    Combatindicator:UnhookAll()
 
     -- Hide
-    self.target:Hide()
-    self.focus:Hide()
+    Combatindicator.target:Hide()
+    Combatindicator.focus:Hide()
 end

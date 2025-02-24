@@ -2,85 +2,85 @@ local Modules = mUI:NewModule("mUI.Modules.Unitframes")
 
 function Modules:OnInitialize()
     -- Modules
-    self.BuffsDebuffs = mUI:GetModule("mUI.Modules.Unitframes.BuffsDebuffs")
-    self.Classbar = mUI:GetModule("mUI.Modules.Unitframes.Classbar")
-    self.Color = mUI:GetModule("mUI.Modules.Unitframes.Color")
-    self.Reputationcolor = mUI:GetModule("mUI.Modules.Unitframes.Reputationcolor")
-    self.Combatindicator = mUI:GetModule("mUI.Modules.Unitframes.Combatindicator")
-    self.Cornericon = mUI:GetModule("mUI.Modules.Unitframes.Cornericon")
-    self.Hitindicator = mUI:GetModule("mUI.Modules.Unitframes.Hitindicator")
-    self.Pvpbadge = mUI:GetModule("mUI.Modules.Unitframes.Pvpbadge")
-    self.Unitframes_Textures = mUI:GetModule("mUI.Modules.Unitframes.Unitframes_Textures")
-    self.Raidframes_Textures = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Textures")
-    self.Totemicons = mUI:GetModule("mUI.Modules.Unitframes.Totemicons")
-    self.Name = mUI:GetModule("mUI.Modules.Unitframes.Name")
-    self.Level = mUI:GetModule("mUI.Modules.Unitframes.Level")
-    self.Restingtextures = mUI:GetModule("mUI.Modules.Unitframes.Restingtextures")
+    Modules.BuffsDebuffs = mUI:GetModule("mUI.Modules.Unitframes.BuffsDebuffs")
+    Modules.Classbar = mUI:GetModule("mUI.Modules.Unitframes.Classbar")
+    Modules.Color = mUI:GetModule("mUI.Modules.Unitframes.Color")
+    Modules.Reputationcolor = mUI:GetModule("mUI.Modules.Unitframes.Reputationcolor")
+    Modules.Combatindicator = mUI:GetModule("mUI.Modules.Unitframes.Combatindicator")
+    Modules.Cornericon = mUI:GetModule("mUI.Modules.Unitframes.Cornericon")
+    Modules.Hitindicator = mUI:GetModule("mUI.Modules.Unitframes.Hitindicator")
+    Modules.Pvpbadge = mUI:GetModule("mUI.Modules.Unitframes.Pvpbadge")
+    Modules.Unitframes_Textures = mUI:GetModule("mUI.Modules.Unitframes.Unitframes_Textures")
+    Modules.Raidframes_Textures = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Textures")
+    Modules.Totemicons = mUI:GetModule("mUI.Modules.Unitframes.Totemicons")
+    Modules.Name = mUI:GetModule("mUI.Modules.Unitframes.Name")
+    Modules.Level = mUI:GetModule("mUI.Modules.Unitframes.Level")
+    Modules.Restingtextures = mUI:GetModule("mUI.Modules.Unitframes.Restingtextures")
 end
 
 function Modules:OnEnable()
-    self.db = mUI.db.profile.unitframes
+    Modules.db = mUI.db.profile.unitframes
 
     -- Enable Modules
-    if self.db.textures.unitframes ~= "None" then
-        self.Unitframes_Textures:Enable()
+    if Modules.db.textures.unitframes ~= "None" then
+        Modules.Unitframes_Textures:Enable()
     end
-    if self.db.textures.raidframes ~= "None" then
-        self.Raidframes_Textures:Enable()
+    if Modules.db.textures.raidframes ~= "None" then
+        Modules.Raidframes_Textures:Enable()
     end
-    if self.db.color then
-        self.Color:Enable()
+    if Modules.db.color then
+        Modules.Color:Enable()
     end
-    if self.db.playerrepcolor then
-        self.Reputationcolor:Enable()
-    elseif self.db.reputationcolor then
-        self.Reputationcolor:Enable()
+    if Modules.db.playerrepcolor then
+        Modules.Reputationcolor:Enable()
+    elseif Modules.db.reputationcolor then
+        Modules.Reputationcolor:Enable()
     end
-    if self.db.combatindicator then
-        self.Combatindicator:Enable()
+    if Modules.db.combatindicator then
+        Modules.Combatindicator:Enable()
     end
-    if self.db.pvpbadge then
-        self.Pvpbadge:Enable()
+    if Modules.db.pvpbadge then
+        Modules.Pvpbadge:Enable()
     end
-    if self.db.hitindicator then
-        self.Hitindicator:Enable()
+    if Modules.db.hitindicator then
+        Modules.Hitindicator:Enable()
     end
-    if self.db.totemicons then
-        self.Totemicons:Enable()
+    if Modules.db.totemicons then
+        Modules.Totemicons:Enable()
     end
-    if self.db.classbar then
-        self.Classbar:Enable()
+    if Modules.db.classbar then
+        Modules.Classbar:Enable()
     end
-    if self.db.cornericon then
-        self.Cornericon:Enable()
+    if Modules.db.cornericon then
+        Modules.Cornericon:Enable()
     end
-    if self.db.restingtextures then
-        self.Restingtextures:Enable()
+    if Modules.db.restingtextures then
+        Modules.Restingtextures:Enable()
     end
-    if self.db.name then
-        self.Name:Enable()
+    if Modules.db.name then
+        Modules.Name:Enable()
     end
-    if self.db.level then
-        self.Level:Enable()
+    if Modules.db.level then
+        Modules.Level:Enable()
     end
-    if self.db.buffsdebuffs.enabled then
-        self.BuffsDebuffs:Enable()
+    if Modules.db.buffsdebuffs.enabled then
+        Modules.BuffsDebuffs:Enable()
     end
 end
 
 function Modules:OnDisable()
     -- Disable Modules
-    self.BuffsDebuffs:Disable()
-    self.Classbar:Disable()
-    self.Color:Disable()
-    self.Combatindicator:Disable()
-    self.Cornericon:Disable()
-    self.Hitindicator:Disable()
-    self.Pvpbadge:Disable()
-    self.Unitframes_Textures:Disable()
-    self.Raidframes_Textures:Disable()
-    self.Totemicons:Disable()
-    self.Name:Disable()
-    self.Level:Disable()
-    self.Reputationcolor:Disable()
+    Modules.BuffsDebuffs:Disable()
+    Modules.Classbar:Disable()
+    Modules.Color:Disable()
+    Modules.Combatindicator:Disable()
+    Modules.Cornericon:Disable()
+    Modules.Hitindicator:Disable()
+    Modules.Pvpbadge:Disable()
+    Modules.Unitframes_Textures:Disable()
+    Modules.Raidframes_Textures:Disable()
+    Modules.Totemicons:Disable()
+    Modules.Name:Disable()
+    Modules.Level:Disable()
+    Modules.Reputationcolor:Disable()
 end

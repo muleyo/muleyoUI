@@ -1,8 +1,8 @@
-local Cinematic = mUI:NewModule("mUI.Modules.General.Cinematic")
+local Cinematic = mUI:NewModule("mUI.Modules.General.Cinematic", "AceHook-3.0")
 
 function Cinematic:OnInitialize()
-    self.cinematic = CreateFrame("Frame")
-    function self:Update(event, id)
+    Cinematic.cinematic = CreateFrame("Frame")
+    function Cinematic:Update(event, id)
         if event == "CINEMATIC_START" then
             CinematicFrame_CancelCinematic()
         elseif event == "PLAY_MOVIE" then
@@ -12,14 +12,14 @@ function Cinematic:OnInitialize()
 end
 
 function Cinematic:OnEnable()
-    self.cinematic:RegisterEvent("CINEMATIC_START")
-    self.cinematic:RegisterEvent("PLAY_MOVIE")
-    mUI:RawHookScript(self.cinematic, "OnEvent", function(_, event, id)
-        self:Update(event, id)
+    Cinematic.cinematic:RegisterEvent("CINEMATIC_START")
+    Cinematic.cinematic:RegisterEvent("PLAY_MOVIE")
+    Cinematic:RawHookScript(Cinematic.cinematic, "OnEvent", function(_, event, id)
+        Cinematic:Update(event, id)
     end)
 end
 
 function Cinematic:OnDisable()
-    mUI:Unhook(self.cinematic, "OnEvent")
-    self.cinematic:UnregisterAllEvents()
+    Cinematic:UnhookAll()
+    Cinematic.cinematic:UnregisterAllEvents()
 end

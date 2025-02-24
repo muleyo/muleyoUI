@@ -1,8 +1,9 @@
-local Sell = mUI:NewModule("mUI.Modules.General.Sell")
+local Sell = mUI:NewModule("mUI.Modules.General.Sell", "AceHook-3.0")
 
 function Sell:OnInitialize()
-    self.sell = CreateFrame("Frame")
-    self.sell:SetScript("OnEvent", function(_, event)
+    Sell.sell = CreateFrame("Frame")
+
+    function Sell:Update(event)
         if not event == "MERCHANT_SHOW" then return end
 
         local bag, slot
@@ -14,13 +15,17 @@ function Sell:OnInitialize()
                 end
             end
         end
-    end)
+    end
 end
 
 function Sell:OnEnable()
-    self.sell:RegisterEvent("MERCHANT_SHOW")
+    Sell.sell:RegisterEvent("MERCHANT_SHOW")
+    Sell:HookScript(Sell.sell, "OnEvent", function(_, event)
+        Sell:Update(event)
+    end)
 end
 
 function Sell:OnDisable()
-    self.sell:UnregisterEvent("MERCHANT_SHOW")
+    Sell.sell:UnregisterEvent("MERCHANT_SHOW")
+    Sell:UnhookAll()
 end
