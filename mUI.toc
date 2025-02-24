@@ -34,3 +34,4 @@ Media\Load.xml
 
 ## Modules
 Modules\Load.xml
+#Modules\Chat\SmoothScrolling\Load.xml

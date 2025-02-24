@@ -192,7 +192,156 @@ local defaults = {
             input = true,
             link = true,
             copy = true,
-            friendlist = true
+            friendlist = true,
+            lsglass = {
+                font = "Friz Quadrata TT", -- "Friz Quadrata TT"
+                colors = {
+                    lanzones = { 0.88, 0.74, 0.36 }
+                },
+                chat = {
+                    tooltips = true,
+                    smooth = true,
+                    fade = {
+                        enabled = true, -- if disabled, messages don't fade out
+                        click = false,
+                        out_delay = 60,
+                    },
+                    buttons = {
+                        up_and_down = false,
+                    },
+                    [1] = {
+                        alpha = 0.4,
+                        -- solid = false,
+                        x_padding = 8,
+                        y_padding = 0,
+                        font = {
+                            size = 12,
+                            shadow = true,
+                            outline = false,
+                        },
+                    },
+                    [2] = {
+                        alpha = 0.4,
+                        -- solid = false,
+                        x_padding = 8,
+                        y_padding = 0,
+                        font = {
+                            size = 12,
+                            shadow = true,
+                            outline = false,
+                        },
+                    },
+                    [3] = {
+                        alpha = 0.4,
+                        -- solid = false,
+                        x_padding = 8,
+                        y_padding = 0,
+                        font = {
+                            size = 12,
+                            shadow = true,
+                            outline = false,
+                        },
+                    },
+                    [4] = {
+                        alpha = 0.4,
+                        -- solid = false,
+                        x_padding = 8,
+                        y_padding = 0,
+                        font = {
+                            size = 12,
+                            shadow = true,
+                            outline = false,
+                        },
+                    },
+                    [5] = {
+                        alpha = 0.4,
+                        -- solid = false,
+                        x_padding = 8,
+                        y_padding = 0,
+                        font = {
+                            size = 12,
+                            shadow = true,
+                            outline = false,
+                        },
+                    },
+                    [6] = {
+                        alpha = 0.4,
+                        -- solid = false,
+                        x_padding = 8,
+                        y_padding = 0,
+                        font = {
+                            size = 12,
+                            shadow = true,
+                            outline = false,
+                        },
+                    },
+                    [7] = {
+                        alpha = 0.4,
+                        -- solid = false,
+                        x_padding = 8,
+                        y_padding = 0,
+                        font = {
+                            size = 12,
+                            shadow = true,
+                            outline = false,
+                        },
+                    },
+                    [8] = {
+                        alpha = 0.4,
+                        -- solid = false,
+                        x_padding = 8,
+                        y_padding = 0,
+                        font = {
+                            size = 12,
+                            shadow = true,
+                            outline = false,
+                        },
+                    },
+                    [9] = {
+                        alpha = 0.4,
+                        -- solid = false,
+                        x_padding = 8,
+                        y_padding = 0,
+                        font = {
+                            size = 12,
+                            shadow = true,
+                            outline = false,
+                        },
+                    },
+                    [10] = {
+                        alpha = 0.4,
+                        -- solid = false,
+                        x_padding = 8,
+                        y_padding = 0,
+                        font = {
+                            size = 12,
+                            shadow = true,
+                            outline = false,
+                        },
+                    },
+                },
+                dock = {
+                    alpha = 0.8,
+                    -- font = {
+                    -- 	size = 12,
+                    -- 	shadow = true,
+                    -- 	outline = false,
+                    -- },
+                    fade = {
+                        enabled = true,
+                    },
+                },
+                edit = {
+                    alpha = 0.8,
+                    position = "bottom", -- "top"
+                    offset = 32,
+                    font = {
+                        size = 12,
+                        shadow = true,
+                        outline = false,
+                    },
+                },
+            }
         },
         misc = {
             enabled = true,

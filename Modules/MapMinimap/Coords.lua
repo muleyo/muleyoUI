@@ -23,6 +23,8 @@ function Coords:OnInitialize()
     self.coords.MouseText:SetPoint("BOTTOMLEFT", self.coords.PlayerText, "TOPLEFT", 0, 5)
     self.coords.MouseText:SetText(": 0,0")
 
+    self.coords:Hide()
+
     function self:Update()
         self.int = self.int + 1
         if self.int >= 3 then
@@ -65,11 +67,13 @@ function Coords:OnInitialize()
 end
 
 function Coords:OnEnable()
+    self.coords:Show()
     mUI:HookScript(WorldMapFrame, "OnUpdate", function()
         self:Update()
     end)
 end
 
 function Coords:OnDisable()
+    self.coords:Hide()
     mUI:Unhook(WorldMapFrame, "OnUpdate")
 end

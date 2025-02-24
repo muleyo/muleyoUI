@@ -25,6 +25,7 @@ function Mouseover:OnDisable()
         self.LibDBIcon:ShowOnEnter(self.buttons[i], false)
     end
 
+    ExpansionLandingPageMinimapButton:SetAlpha(1)
     mUI:Unhook(ExpansionLandingPageMinimapButton, "OnEnter")
     mUI:Unhook(ExpansionLandingPageMinimapButton, "OnLeave")
 end

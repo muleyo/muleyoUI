@@ -19,6 +19,7 @@ function Core:OnEnable()
     self.modules.nameplates = mUI:GetModule("mUI.Modules.Nameplates")
     self.modules.tooltips = mUI:GetModule("mUI.Modules.Tooltips")
     self.modules.mapminimap = mUI:GetModule("mUI.MapMinimap.Modules")
+    self.modules.chat = mUI:GetModule("mUI.Modules.Chat")
 
     -- Get Layouts
     self.layouts = {}
@@ -62,6 +63,10 @@ function Core:OnEnable()
 
     if self.db.map.enabled then
         self.modules.mapminimap:Enable()
+    end
+
+    if self.db.chat.enabled then
+        self.modules.chat:Enable()
     end
 
     -- Register Options
