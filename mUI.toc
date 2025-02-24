@@ -1,9 +1,11 @@
 ## Interface: 110007
 ## Author: muleyo
 ## Version: 1.0.0
-## Title: |cff009cffmuleyo|rUI
+## Title: |cff009cffmuleyo|r|cffffd100UI|r
 ## Notes: Unleash your real potential
 ## SavedVariables: mUIDB
+## IconTexture: Interface\AddOns\mUI\Media\Logo64x64.png
+## AddonCompartmentFunc: mUI_Options
 ## X-Curse-Project-ID: 737373
 
 ## LIBS

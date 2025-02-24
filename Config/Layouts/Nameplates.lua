@@ -4,12 +4,8 @@ local Nameplates = mUI:NewModule("mUI.Config.Layouts.Nameplates")
 Nameplates:Enable()
 
 function Nameplates:OnInitialize()
-    -- Get LSM
+    -- Load Libraries
     self.LSM = LibStub("LibSharedMedia-3.0")
-
-    self.npc = mUI:GetModule("mUI.Config.Layouts.NPCColors")
-
-    -- Load ACD
     local ACD = LibStub("AceConfigDialog-3.0")
 
     -- Get Modules

@@ -4,6 +4,9 @@ local Tooltips = mUI:NewModule("mUI.Config.Layouts.Tooltips")
 Tooltips:Enable()
 
 function Tooltips:OnInitialize()
+    -- Get Modules
+    self.Module = mUI:GetModule("mUI.Modules.Tooltips")
+
     -- Initialize Layout
     self.layout = {
         type = "group",
@@ -18,7 +21,17 @@ function Tooltips:OnInitialize()
                 end,
                 desc = "|cffffff00Info:|r Requires Reload",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.tooltips.enabled = val end,
+                set = function(_, val)
+                    mUI.db.profile.tooltips.enabled = val
+
+                    if val then
+                        self.Module:Enable()
+                        mUI:Reload('Enable Tooltips Module')
+                    else
+                        self.Module:Disable()
+                        mUI:Reload('Disable Tooltips Module')
+                    end
+                end,
                 get = function() return mUI.db.profile.tooltips.enabled end,
                 order = 1
             },
@@ -41,7 +54,17 @@ function Tooltips:OnInitialize()
                     "mUI"
                 },
                 width = 0.5,
-                set = function(_, val) mUI.db.profile.tooltips.style = val end,
+                set = function(_, val)
+                    mUI.db.profile.tooltips.style = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val == "mUI" then
+                        self.Module.Style:Enable()
+                    else
+                        self.Module.Style:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.tooltips.style end,
                 order = 3
             },
@@ -54,25 +77,37 @@ function Tooltips:OnInitialize()
                 name = "Hide in Combat",
                 desc = "Hide Tooltips while in Combat",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.tooltips.combat = val end,
+                set = function(_, val)
+                    mUI.db.profile.tooltips.combat = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Module.Combat:Enable()
+                    else
+                        self.Module.Combat:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.tooltips.combat end,
                 order = 5
-            },
-            lifeontop = {
-                name = "Life on Top",
-                desc = "Show the Healthbar on Top of the Tooltip",
-                type = "toggle",
-                set = function(_, val) mUI.db.profile.tooltips.lifeontop = val end,
-                get = function() return mUI.db.profile.tooltips.lifeontop end,
-                order = 6
             },
             mouseanchor = {
                 name = "Mouse Anchor",
                 desc = "Attach the Tooltip to the Mouse Cursor",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.tooltips.mouseanchor = val end,
+                set = function(_, val)
+                    mUI.db.profile.tooltips.mouseanchor = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Module.Anchor:Enable()
+                    else
+                        self.Module.Anchor:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.tooltips.mouseanchor end,
-                order = 7
+                order = 6
             }
         }
     }

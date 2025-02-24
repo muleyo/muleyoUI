@@ -4,6 +4,9 @@ local MapMinimap = mUI:NewModule("mUI.Config.Layouts.MapMinimap")
 MapMinimap:Enable()
 
 function MapMinimap:OnInitialize()
+    -- Get Modules
+    self.Module = mUI:GetModule("mUI.MapMinimap.Modules")
+
     -- Initialize Layout
     self.layout = {
         type = "group",
@@ -18,7 +21,17 @@ function MapMinimap:OnInitialize()
                 end,
                 desc = "|cffffff00Info:|r Requires Reload",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.map.enabled = val end,
+                set = function(_, val)
+                    mUI.db.profile.map.enabled = val
+
+                    if val then
+                        self.Module:Enable()
+                        mUI:Reload('Enable Map & Minimap Module')
+                    else
+                        self.Module:Disable()
+                        mUI:Reload('Disable Map & Minimap Module')
+                    end
+                end,
                 get = function() return mUI.db.profile.map.enabled end,
                 order = 1
             },
@@ -31,7 +44,17 @@ function MapMinimap:OnInitialize()
                 name = "Coordinates",
                 desc = "Display Coordinates on the Worldmap",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.map.coordinates = val end,
+                set = function(_, val)
+                    mUI.db.profile.map.coordinates = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Module.Coords:Enable()
+                    else
+                        self.Module.Coords:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.map.coordinates end,
                 order = 3
             },
@@ -41,34 +64,74 @@ function MapMinimap:OnInitialize()
                 order = 4
             },
             minimap = {
-                name = "Show Minimap",
+                name = "Hide Minimap",
                 desc = "Show/Hide Minimap",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.map.minimap = val end,
+                set = function(_, val)
+                    mUI.db.profile.map.minimap = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Module.Minimap:Enable()
+                    else
+                        self.Module.Minimap:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.map.minimap end,
                 order = 5
             },
             clock = {
-                name = "Show Clock",
+                name = "Hide Clock",
                 desc = "Show/Hide Clock on Minimap",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.map.clock = val end,
+                set = function(_, val)
+                    mUI.db.profile.map.clock = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Module.Clock:Enable()
+                    else
+                        self.Module.Clock:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.map.clock end,
                 order = 6
             },
             date = {
-                name = "Show Date",
+                name = "Hide Calendar Icon",
                 desc = "Show/Hide Calendar Icon on Minimap",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.map.date = val end,
+                set = function(_, val)
+                    mUI.db.profile.map.date = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Module.Calendar:Enable()
+                    else
+                        self.Module.Calendar:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.map.date end,
                 order = 7
             },
             tracking = {
-                name = "Show Tracking",
+                name = "Hide Tracking Icon",
                 desc = "Show/Hide Tracking Icon on Minimap",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.map.tracking = val end,
+                set = function(_, val)
+                    mUI.db.profile.map.tracking = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Module.Tracking:Enable()
+                    else
+                        self.Module.Tracking:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.map.tracking end,
                 order = 8
             },
@@ -76,7 +139,17 @@ function MapMinimap:OnInitialize()
                 name = "Buttons Mouseover",
                 desc = "Show Minimap Buttons on Mouseover",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.map.buttons = val end,
+                set = function(_, val)
+                    mUI.db.profile.map.buttons = val
+
+                    if not self.Module:IsEnabled() then return end
+
+                    if val then
+                        self.Module.Mouseover:Enable()
+                    else
+                        self.Module.Mouseover:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.map.buttons end,
                 order = 9
             }

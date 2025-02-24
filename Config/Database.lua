@@ -180,10 +180,10 @@ local defaults = {
         map = {
             enabled = true,
             coordinates = true,
-            minimap = true,
-            clock = true,
-            date = true,
-            tracking = true,
+            minimap = false,
+            clock = false,
+            date = false,
+            tracking = false,
             buttons = true
         },
         chat = {

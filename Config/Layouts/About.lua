@@ -122,7 +122,7 @@ function About:OnInitialize()
                 name = "Twitch",
                 type = "execute",
                 func = function()
-                    mUI:Link("https://www.twitch.tv/muleyo")
+                    mUI:Link("https://twitch.tv/muleyo")
                 end,
                 width = 1,
                 order = 19
@@ -131,7 +131,7 @@ function About:OnInitialize()
                 name = "Discord",
                 type = "execute",
                 func = function()
-                    mUI:Link("https://discord.gg/ddY4kjhPwq")
+                    mUI:Link("https://discord.gg/gE5g43mZqy")
                 end,
                 width = 1,
                 order = 20

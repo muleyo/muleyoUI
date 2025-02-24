@@ -1355,5 +1355,15 @@ function Theme:OnDisable()
     -- Update Theme
     self:Update()
 
+    -- Unhook Frames
     mUI:Unhook(SpellBookItemMixin, "UpdateVisuals")
+    mUI:Unhook(self.dragonriding, "OnEvent")
+    mUI:Unhook(RogueComboPointBarFrame, "OnUpdate")
+    mUI:Unhook(MageArcaneChargesFrame, "OnUpdate")
+    mUI:Unhook(WarlockPowerFrame, "OnUpdate")
+    mUI:Unhook(DruidComboPointBarFrame, "OnUpdate")
+    mUI:Unhook(MonkHarmonyBarFrame, "OnUpdate")
+    mUI:Unhook(EssencePlayerFrame, "OnUpdate")
+    mUI:Unhook(RuneFrame, "OnUpdate")
+    mUI:Unhook(TotemFrame, "OnEvent")
 end

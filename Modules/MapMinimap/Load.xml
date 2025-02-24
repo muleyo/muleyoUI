@@ -1,0 +1,9 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Include file="Clock.lua" />
+    <Include file="Coords.lua" />
+    <Include file="Calendar.lua" />
+    <Include file="Tracking.lua" />
+    <Include file="Mouseover.lua" />
+    <Include file="Minimap.lua" />
+    <Include file="Modules.lua" />
+</Ui>

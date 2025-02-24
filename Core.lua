@@ -17,6 +17,8 @@ function Core:OnEnable()
     self.modules.unitframes = mUI:GetModule("mUI.Modules.Unitframes")
     self.modules.castbars = mUI:GetModule("mUI.Modules.Castbars")
     self.modules.nameplates = mUI:GetModule("mUI.Modules.Nameplates")
+    self.modules.tooltips = mUI:GetModule("mUI.Modules.Tooltips")
+    self.modules.mapminimap = mUI:GetModule("mUI.MapMinimap.Modules")
 
     -- Get Layouts
     self.layouts = {}
@@ -52,6 +54,14 @@ function Core:OnEnable()
 
     if self.db.nameplates.enabled then
         self.modules.nameplates:Enable()
+    end
+
+    if self.db.tooltips.enabled then
+        self.modules.tooltips:Enable()
+    end
+
+    if self.db.map.enabled then
+        self.modules.mapminimap:Enable()
     end
 
     -- Register Options

@@ -20,7 +20,7 @@ function Gui:OnInitialize()
     -- Set Background, Title and Portrait
     gui.TitleContainer.TitleText:SetText("|cff009cffmuleyo|rUI (" .. C_AddOns.GetAddOnMetadata("mUI", "version") .. ")")
     gui.TitleContainer.TitleText:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE")
-    gui.PortraitContainer.portrait:SetTexture("Interface\\AddOns\\mUI\\Media\\logo.png")
+    gui.PortraitContainer.portrait:SetTexture([[Interface\AddOns\mUI\Media\Logo.png]])
     gui.Bg:SetColorTexture(-0.05, -0.05, -0.05, 0.8)
 
     -- Make frame draggable

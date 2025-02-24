@@ -1,10 +1,10 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Script file="Style.lua" />
-    <Script file="Icon.lua" />
-    <Script file="Casttime.lua" />
-    <Script file="Targetscale.lua" />
-    <Script file="Focusscale.lua" />
-    <Script file="Targetpos.lua" />
-    <Script file="Focuspos.lua" />
+    <Include file="Style.lua" />
+    <Include file="Icon.lua" />
+    <Include file="Casttime.lua" />
+    <Include file="Targetscale.lua" />
+    <Include file="Focusscale.lua" />
+    <Include file="Targetpos.lua" />
+    <Include file="Focuspos.lua" />
     <Include file="Modules.lua" />
 </Ui>

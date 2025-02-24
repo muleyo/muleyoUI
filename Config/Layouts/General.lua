@@ -71,7 +71,7 @@ function General:OnInitialize()
                     if val == "Disabled" then
                         self.Module.Theme:Disable()
                     else
-                        if not self.Theme:IsEnabled() then
+                        if not self.Module.Theme:IsEnabled() then
                             self.Module.Theme:Enable()
                         else
                             self.Module.Theme:Update()
@@ -93,7 +93,7 @@ function General:OnInitialize()
                     if not self.Module:IsEnabled() then return end
 
                     if mUI.db.profile.general.theme == "Custom" then
-                        if not self.Theme:IsEnabled() then
+                        if not self.Module.Theme:IsEnabled() then
                             self.Module.Theme:Enable()
                         else
                             self.Module.Theme:Update()

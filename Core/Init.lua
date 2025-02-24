@@ -1,5 +1,5 @@
 mUI = LibStub("AceAddon-3.0"):NewAddon("mUI", "AceConsole-3.0", "AceTimer-3.0", "AceEvent-3.0", "AceComm-3.0",
-    "AceBucket-3.0", "AceSerializer-3.0", "AceHook-3.0")
+    "AceSerializer-3.0", "AceHook-3.0")
 
 -- Set Modules Default State
 mUI:SetDefaultModuleState(false)
@@ -26,12 +26,12 @@ function mUI:OnInitialize()
     end)
 
     -- Slash Command
-    function mUI:SlashCommand()
+    function self:SlashCommand()
         self:GUI()
     end
 
     -- Open/Close GUI with smooth fade-in/out
-    function mUI:GUI()
+    function self:GUI()
         if (toggle) then
             return function()
                 if (mUIOptions:IsVisible()) then
@@ -73,5 +73,10 @@ function mUI:OnInitialize()
                 UIFrameFade(mUIOptions, fadeInfo)
             end
         end
+    end
+
+    -- Minimap AddOns Option
+    _G.mUI_Options = function()
+        mUI:GUI()
     end
 end
