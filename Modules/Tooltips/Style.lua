@@ -184,6 +184,49 @@ function Style:OnInitialize()
             end
         end
     end
+
+    function Style:OnItemTooltipSetColor(tooltip)
+        if tooltip.NineSlice then
+            local itemGUID
+            local itemLink
+            if tooltip:GetTooltipData() then
+                if tooltip:GetTooltipData().guid then
+                    itemGUID = tooltip:GetTooltipData().guid
+                    itemLink = C_Item.GetItemLinkByGUID(itemGUID)
+                end
+
+                if tooltip:GetTooltipData().hyperlink then
+                    itemLink = tooltip:GetTooltipData().hyperlink
+                end
+            end
+
+            if itemLink then
+                local azerite = C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or
+                    C_AzeriteItem.IsAzeriteItemByID(itemLink) or false
+                local _, _, itemRarity = C_Item.GetItemInfo(itemLink)
+
+                if itemRarity and itemRarity >= 2 then
+                    local r, g, b = C_Item.GetItemQualityColor(itemRarity)
+                    tooltip.NineSlice:SetBorderColor(r, g, b, 0.9)
+                else
+                    tooltip.NineSlice:SetBorderColor(unpack(mUI:Color(0.15)))
+                end
+            end
+        end
+    end
+
+    function Style:OnMacroTooltipSetColor(tooltip)
+        if tooltip:GetTooltipData() and tooltip:GetTooltipData().lines and tooltip:GetTooltipData().lines[2] and
+            tooltip:GetTooltipData().lines[2].leftText and tooltip:GetTooltipData().lines[2].leftColor then
+            local tooltipData = tooltip:GetTooltipData()
+            local tooltipName = tooltipData.lines[2].leftText
+            local tooltipColor = tooltipData.lines[2].leftColor
+            local _, itemLink = C_Item.GetItemInfo(tooltipName)
+            if itemLink then
+                tooltip.NineSlice:SetBorderColor(tooltipColor.r, tooltipColor.g, tooltipColor.b)
+            end
+        end
+    end
 end
 
 function Style:OnEnable()
@@ -191,6 +234,7 @@ function Style:OnEnable()
     if not Style.hooked then
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Macro, function(tooltip)
             Style:OnMacroTooltipSetSpell(tooltip)
+            Style:OnMacroTooltipSetColor(tooltip)
         end)
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, function(tooltip, data)
             Style:OnTooltipSetSpell(tooltip, data.id)
@@ -200,6 +244,9 @@ function Style:OnEnable()
         end)
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, function(frame)
             Style:OnTooltipSetUnit(frame)
+        end)
+        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function(tooltip)
+            Style:OnItemTooltipSetColor(tooltip)
         end)
 
         Style.hooked = true

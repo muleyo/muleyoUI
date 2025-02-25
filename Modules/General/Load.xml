@@ -1,5 +1,14 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <!-- Theme-->
     <Include file="Theme.lua" />
+    <Include file="Theme\Blacklist.lua" />
+    <Include file="Theme\Actionbars.lua" />
+    <Include file="Theme\BuffsDebuffs.lua" />
+    <Include file="Theme\ClassBar.lua" />
+    <Include file="Theme\Dragonriding.lua" />
+    <Include file="Theme\Frames.lua" />
+    <Include file="Theme\Tooltips.lua" />
+
     <Include file="Font.lua" />
     <Include file="Repair.lua" />
     <Include file="Sell.lua" />

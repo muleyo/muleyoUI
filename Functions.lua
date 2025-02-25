@@ -116,6 +116,12 @@ function Functions:OnInitialize()
         font:SetFont(fontName, fontSize, flag)
     end
 
+    function mUI:AddMixin(frame)
+        if not frame.Backdrop then
+            Mixin(frame, BackdropTemplateMixin)
+        end
+    end
+
     -- Theme Functions
     function mUI:Color(sub, alpha)
         -- Update Custom Color & Theme
