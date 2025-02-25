@@ -1,9 +1,9 @@
 ![Logo](https://i.imgur.com/UOP4H0K.png)
 
-MUI enhances the default Blizzard UI with a fresh dark theme and several quality of life features.
+mUI enhances the default Blizzard UI with a fresh dark theme and several quality of life features.
 
 ### Settings
-- The settings GUI can be opened with the command /MUI
+- The settings GUI can be opened with the command /mUI
 
 ### Issues
 - If you've discovered bugs, errors or have any issues with this AddOn, don't hesitate to post an issue.
