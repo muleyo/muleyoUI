@@ -13,7 +13,7 @@ function Functions:OnInitialize()
     local customColor = Functions.db.general.color
     local themes = {
         Disabled = { 1, 1, 1 },
-        Dark = { 0.3, 0.3, 0.3 },
+        Dark = { 0.2, 0.2, 0.2 },
         Class = { classColor.r, classColor.g, classColor.b },
         Custom = { customColor[1], customColor[2], customColor[3], customColor[4] },
     }

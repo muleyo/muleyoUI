@@ -8,4 +8,5 @@
     <Include file="MapMinimap\Load.xml" />
     <Include file="Chat\Load.xml" />
     <Include file="Misc\Load.xml" />
+    <Include file="Profiles\Load.xml" />
 </Ui>

@@ -1,4 +1,4 @@
-local Style = mUI:NewModule("mUI.Modules.Castbars.Style")
+local Style = mUI:NewModule("mUI.Modules.Castbars.Style", "AceHook-3.0")
 
 function Style:OnInitialize()
     -- Load Database
@@ -49,6 +49,11 @@ function Style:OnInitialize()
                 end
             end
         end
+
+        if Style.db.icon then
+            PlayerCastingBarFrame.Icon:Show()
+            PlayerCastingBarFrame.Icon:SetSize(20, 20)
+        end
     end
 
     function Style:DisableStyle()
@@ -78,9 +83,11 @@ end
 function Style:OnEnable()
     -- Enable Style
     Style:EnableStyle()
+    Style:SecureHook(C_EditMode, "OnEditModeExit", Style.EnableStyle)
 end
 
 function Style:OnDisable()
     -- Disable Style
+    Style:UnhookAll()
     Style:DisableStyle()
 end

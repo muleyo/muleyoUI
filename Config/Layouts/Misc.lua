@@ -1,8 +1,5 @@
 local Misc = mUI:NewModule("mUI.Config.Layouts.Misc")
 
--- Enable Layout
-Misc:Enable()
-
 function Misc:OnInitialize()
     -- Get Modules
     Misc.Module = mUI:GetModule("mUI.Modules.Misc")
@@ -212,9 +209,7 @@ function Misc:OnInitialize()
             }
         }
     }
-end
 
-function Misc:OnEnable()
     function Misc:GetOptions()
         return Misc.layout
     end

@@ -1,8 +1,5 @@
 local About = mUI:NewModule("mUI.Config.Layouts.About")
 
--- Enable Layout
-About:Enable()
-
 function About:OnInitialize()
     -- Initialize Layout
     About.layout = {
@@ -70,7 +67,7 @@ function About:OnInitialize()
             spacer10 = {
                 name = "",
                 type = "description",
-                width = 1.85,
+                width = 1.75,
                 order = 11
             },
             description = {
@@ -87,17 +84,17 @@ function About:OnInitialize()
                 order = 13
             },
             spacer12 = {
-                name = "",
+                name = " ",
                 type = "description",
-                width = 0.2,
+                width = 0.6,
                 order = 14
             },
             subtext = {
                 name =
                 "If you have any questions, suggestions, or issues, please visit the GitHub page or join the Discord Server.",
                 type = "description",
-                fontSize = "large",
-                width = 4.6,
+                fontSize = "medium",
+                width = 4,
                 order = 15
             },
             spacer13 = {
@@ -147,9 +144,7 @@ function About:OnInitialize()
             }
         }
     }
-end
 
-function About:OnEnable()
     function About:GetOptions()
         return About.layout
     end

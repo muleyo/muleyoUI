@@ -1,8 +1,5 @@
 local Nameplates = mUI:NewModule("mUI.Config.Layouts.Nameplates")
 
--- Enable Layout
-Nameplates:Enable()
-
 function Nameplates:OnInitialize()
     -- Load Libraries
     Nameplates.LSM = LibStub("LibSharedMedia-3.0")
@@ -294,16 +291,13 @@ function Nameplates:OnInitialize()
                 desc = "Change the Colors of NPCs",
                 type = "execute",
                 func = function()
-                    mUIOptions.container:ReleaseChildren()
-                    ACD:Open("mUIOptions_NPCColors_Tab", mUIOptions.container)
+                    mUI:SwitchSettings("mUIOptions_NPCColors_Tab")
                 end,
                 order = 20
             }
         }
     }
-end
 
-function Nameplates:OnEnable()
     function Nameplates:GetOptions()
         return Nameplates.layout
     end

@@ -1,8 +1,5 @@
 local MapMinimap = mUI:NewModule("mUI.Config.Layouts.MapMinimap")
 
--- Enable Layout
-MapMinimap:Enable()
-
 function MapMinimap:OnInitialize()
     -- Get Modules
     MapMinimap.Module = mUI:GetModule("mUI.MapMinimap.Modules")
@@ -155,9 +152,7 @@ function MapMinimap:OnInitialize()
             }
         }
     }
-end
 
-function MapMinimap:OnEnable()
     function MapMinimap:GetOptions()
         return MapMinimap.layout
     end

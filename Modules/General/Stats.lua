@@ -4,7 +4,7 @@ function Stats:OnInitialize()
     -- Load Database
     Stats.db = {
         display = mUI.db.profile.general.display,
-        pos = mUI.db.profile.edit.statsframe
+        pos = mUI.db.profile.edit
     }
 
     -- Variables
@@ -15,9 +15,9 @@ function Stats:OnInitialize()
     local _, class = UnitClass("player")
     Stats.color = RAID_CLASS_COLORS[class]
 
-    mUI.statsFrame = CreateFrame("Frame", "StatsFrame", UIParent)
+    mUI.statsFrame = CreateFrame("Frame", "mUI StatsFrame", UIParent)
     mUI.statsFrame:ClearAllPoints()
-    mUI.statsFrame:SetPoint(Stats.db.pos.point, UIParent, Stats.db.pos.point, Stats.db.pos.x, Stats.db.pos.y)
+    mUI.statsFrame:SetPoint("BOTTOM", 0, 0)
     mUI.statsFrame:SetSize(75, 20)
     mUI.statsFrame.text = mUI.statsFrame:CreateFontString(nil, "BACKGROUND")
     mUI.statsFrame.text:SetPoint("CENTER", mUI.statsFrame)

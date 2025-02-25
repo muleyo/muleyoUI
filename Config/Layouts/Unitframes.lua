@@ -1,8 +1,5 @@
 local Unitframes = mUI:NewModule("mUI.Config.Layouts.Unitframes")
 
--- Enable Layout
-Unitframes:Enable()
-
 function Unitframes:OnInitialize()
     -- Get LSM
     Unitframes.LSM = LibStub("LibSharedMedia-3.0")
@@ -370,9 +367,7 @@ function Unitframes:OnInitialize()
             }
         }
     }
-end
 
-function Unitframes:OnEnable()
     function Unitframes:GetOptions()
         return Unitframes.layout
     end

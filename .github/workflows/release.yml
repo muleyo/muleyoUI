@@ -1,4 +1,4 @@
-name: MUI # description of this workflow, can be anything you want
+name: mUI # description of this workflow, can be anything you want
 
 # triggers when pushing a tag
 on:

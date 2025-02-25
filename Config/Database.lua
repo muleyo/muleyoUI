@@ -13,19 +13,19 @@ local defaults = {
             color = { 0, 0, 0, 1 },
             font = "Prototype",
             automation = {
-                repair = 'Disabled',
+                repair = "Personal",
                 sell = true,
                 delete = true,
                 duel = true,
                 release = true,
-                resurrect = true,
+                resurrect = false,
                 invite = false,
                 cinematic = true,
                 talkinghead = true
             },
             display = {
                 iteminfo = true,
-                stats = false,
+                stats = true,
                 movementspeed = false,
                 errormessages = true,
                 friendlist = true
@@ -62,7 +62,7 @@ local defaults = {
             color = true,
             playerrepcolor = true,
             reputationcolor = false,
-            pvpbadge = true,
+            pvpbadge = false,
             hitindicator = false,
             combatindicator = false,
             totemicons = false,
@@ -89,92 +89,91 @@ local defaults = {
         },
         nameplates = {
             enabled = true,
-            texture = 'Dragonflight',
+            texture = "Dragonflight",
             decimals = 0,
             height = 2.5,
             width = 1,
-            smartstacking = true,
+            smartstacking = false,
             healthtext = true,
             classcolor = true,
             servername = true,
             arena = true,
-            totem = true,
+            totem = false,
             casttime = true,
             focus = false,
             debuffs = false,
             colors = false,
-            smallerfriends = true,
+            smallerfriends = false,
             npccolors = {},
             preset_npccolors = {
                 -- Mists of Tirna Scithe
-                [164921] = { name = 'Drust Harvester', color = { r = 0, g = 0.55, b = 1 } },
-                [166275] = { name = 'Mistveil Shaper', color = { r = 0, g = 0.55, b = 1 } },
-                [166299] = { name = 'Mistveil Tender', color = { r = 0, g = 0.55, b = 1 } },
-                [167111] = { name = 'Spinemaw Staghorn', color = { r = 0, g = 0.55, b = 1 } },
+                [164921] = { name = "Drust Harvester", color = { r = 0, g = 0.55, b = 1 } },
+                [166275] = { name = "Mistveil Shaper", color = { r = 0, g = 0.55, b = 1 } },
+                [166299] = { name = "Mistveil Tender", color = { r = 0, g = 0.55, b = 1 } },
+                [167111] = { name = "Spinemaw Staghorn", color = { r = 0, g = 0.55, b = 1 } },
 
                 -- The Necrotic Wake
-                [166302] = { name = 'Corpse Harvester', color = { r = 0, g = 0.55, b = 1 } },
-                [165137] = { name = 'Zolramus Gatekeeper', color = { r = 0, g = 0.55, b = 1 } },
-                [163128] = { name = 'Zolramus Sorcerer', color = { r = 0, g = 0.55, b = 1 } },
-                [163618] = { name = 'Zolramus Necromancer', color = { r = 0, g = 0.55, b = 1 } },
-                [163126] = { name = 'Brittlebone Mage', color = { r = 0, g = 0.55, b = 1 } },
-                [165919] = { name = 'Skeletal Marauder', color = { r = 0, g = 0.55, b = 1 } },
-                [165824] = { name = 'Nar\'zudah', color = { r = 0, g = 0.55, b = 1 } },
-                [173016] = { name = 'Corpse Collector', color = { r = 0, g = 0.55, b = 1 } },
+                [166302] = { name = "Corpse Harvester", color = { r = 0, g = 0.55, b = 1 } },
+                [165137] = { name = "Zolramus Gatekeeper", color = { r = 0, g = 0.55, b = 1 } },
+                [163128] = { name = "Zolramus Sorcerer", color = { r = 0, g = 0.55, b = 1 } },
+                [163618] = { name = "Zolramus Necromancer", color = { r = 0, g = 0.55, b = 1 } },
+                [163126] = { name = "Brittlebone Mage", color = { r = 0, g = 0.55, b = 1 } },
+                [165919] = { name = "Skeletal Marauder", color = { r = 0, g = 0.55, b = 1 } },
+                [165824] = { name = "Nar'zudah", color = { r = 0, g = 0.55, b = 1 } },
+                [173016] = { name = "Corpse Collector", color = { r = 0, g = 0.55, b = 1 } },
 
                 -- Siege of Boralus
-                [129370] = { name = 'Irontide Waveshaper', color = { r = 0, g = 0.55, b = 1 } },
-                [128969] = { name = 'Ashvane Commander', color = { r = 0, g = 0.55, b = 1 } },
-                [135241] = { name = 'Bilge Rat Pillager', color = { r = 0, g = 0.55, b = 1 } },
-                [129367] = { name = 'Bilge Rat Tempest', color = { r = 0, g = 0.55, b = 1 } },
-                [144071] = { name = 'Irontide Waveshaper', color = { r = 0, g = 0.55, b = 1 } },
+                [129370] = { name = "Irontide Waveshaper", color = { r = 0, g = 0.55, b = 1 } },
+                [128969] = { name = "Ashvane Commander", color = { r = 0, g = 0.55, b = 1 } },
+                [135241] = { name = "Bilge Rat Pillager", color = { r = 0, g = 0.55, b = 1 } },
+                [129367] = { name = "Bilge Rat Tempest", color = { r = 0, g = 0.55, b = 1 } },
+                [144071] = { name = "Irontide Waveshaper", color = { r = 0, g = 0.55, b = 1 } },
 
                 -- The Stonevault
-                [212389] = { name = 'Cursedheart Invader', color = { r = 0, g = 0.55, b = 1 } },
-                [212453] = { name = 'Ghastly Voidsoul', color = { r = 0, g = 0.55, b = 1 } },
-                [213338] = { name = 'Forgebound Mender', color = { r = 0, g = 0.55, b = 1 } },
-                [221979] = { name = 'Void Bound Howler', color = { r = 0, g = 0.55, b = 1 } },
-                [214350] = { name = 'Turned Speaker', color = { r = 0, g = 0.55, b = 1 } },
-                [214066] = { name = 'Cursedforge Stoneshaper', color = { r = 0, g = 0.55, b = 1 } },
-                [224962] = { name = 'Cursedforge Mender', color = { r = 0, g = 0.55, b = 1 } },
+                [212389] = { name = "Cursedheart Invader", color = { r = 0, g = 0.55, b = 1 } },
+                [212453] = { name = "Ghastly Voidsoul", color = { r = 0, g = 0.55, b = 1 } },
+                [213338] = { name = "Forgebound Mender", color = { r = 0, g = 0.55, b = 1 } },
+                [221979] = { name = "Void Bound Howler", color = { r = 0, g = 0.55, b = 1 } },
+                [214350] = { name = "Turned Speaker", color = { r = 0, g = 0.55, b = 1 } },
+                [214066] = { name = "Cursedforge Stoneshaper", color = { r = 0, g = 0.55, b = 1 } },
+                [224962] = { name = "Cursedforge Mender", color = { r = 0, g = 0.55, b = 1 } },
 
                 -- The Dawnbreaker
-                [213892] = { name = 'Nightfall Shadowmage', color = { r = 0, g = 0.55, b = 1 } },
-                [214762] = { name = 'Nightfall Commander', color = { r = 0, g = 0.55, b = 1 } },
-                [210966] = { name = 'Sureki Webmage', color = { r = 0, g = 0.55, b = 1 } },
-                [213893] = { name = 'Nightfall Darkcaster', color = { r = 0, g = 0.55, b = 1 } },
-                [213932] = { name = 'Sureki Militant', color = { r = 0, g = 0.55, b = 1 } },
+                [213892] = { name = "Nightfall Shadowmage", color = { r = 0, g = 0.55, b = 1 } },
+                [214762] = { name = "Nightfall Commander", color = { r = 0, g = 0.55, b = 1 } },
+                [210966] = { name = "Sureki Webmage", color = { r = 0, g = 0.55, b = 1 } },
+                [213893] = { name = "Nightfall Darkcaster", color = { r = 0, g = 0.55, b = 1 } },
+                [213932] = { name = "Sureki Militant", color = { r = 0, g = 0.55, b = 1 } },
 
                 -- Grim Batol
-                [224219] = { name = 'Twilight Earthcaller', color = { r = 0, g = 0.55, b = 1 } },
-                [40167] = { name = 'Twilight Beguiler', color = { r = 0, g = 0.55, b = 1 } },
-                [224271] = { name = 'Twilight Warlock', color = { r = 0, g = 0.55, b = 1 } },
+                [224219] = { name = "Twilight Earthcaller", color = { r = 0, g = 0.55, b = 1 } },
+                [40167] = { name = "Twilight Beguiler", color = { r = 0, g = 0.55, b = 1 } },
+                [224271] = { name = "Twilight Warlock", color = { r = 0, g = 0.55, b = 1 } },
 
                 -- Ara-Kara
-                [216293] = { name = 'Trilling Attendant', color = { r = 0, g = 0.55, b = 1 } },
-                [217531] = { name = 'Ixin', color = { r = 0, g = 0.55, b = 1 } },
-                [218324] = { name = 'Nakt', color = { r = 0, g = 0.55, b = 1 } },
-                [217533] = { name = 'Atik', color = { r = 0, g = 0.55, b = 1 } },
-                [223253] = { name = 'Bloodstained Webmage', color = { r = 0, g = 0.55, b = 1 } },
-                [216340] = { name = 'Sentry Stagshell', color = { r = 0, g = 0.55, b = 1 } },
-                [220599] = { name = 'Bloodstained Webmage', color = { r = 0, g = 0.55, b = 1 } },
-                [216364] = { name = 'Blood Overseer', color = { r = 0, g = 0.55, b = 1 } },
+                [216293] = { name = "Trilling Attendant", color = { r = 0, g = 0.55, b = 1 } },
+                [217531] = { name = "Ixin", color = { r = 0, g = 0.55, b = 1 } },
+                [218324] = { name = "Nakt", color = { r = 0, g = 0.55, b = 1 } },
+                [217533] = { name = "Atik", color = { r = 0, g = 0.55, b = 1 } },
+                [223253] = { name = "Bloodstained Webmage", color = { r = 0, g = 0.55, b = 1 } },
+                [216340] = { name = "Sentry Stagshell", color = { r = 0, g = 0.55, b = 1 } },
+                [220599] = { name = "Bloodstained Webmage", color = { r = 0, g = 0.55, b = 1 } },
+                [216364] = { name = "Blood Overseer", color = { r = 0, g = 0.55, b = 1 } },
 
                 -- City of Threads
-                [220195] = { name = 'Sureki Silkbinder', color = { r = 0, g = 0.55, b = 1 } },
-                [220196] = { name = 'Herald Of Ansurek', color = { r = 0, g = 0.55, b = 1 } },
-                [219984] = { name = 'Xephitik', color = { r = 0, g = 0.55, b = 1 } },
-                [223844] = { name = 'Covert Webmancer', color = { r = 0, g = 0.55, b = 1 } },
-                [224732] = { name = 'Covert Webmancer', color = { r = 0, g = 0.55, b = 1 } },
-                [216339] = { name = 'Sureki Unnaturaler', color = { r = 0, g = 0.55, b = 1 } },
-                [221102] = { name = 'Elder Shadeweaver', color = { r = 0, g = 0.55, b = 1 } }
+                [220195] = { name = "Sureki Silkbinder", color = { r = 0, g = 0.55, b = 1 } },
+                [220196] = { name = "Herald Of Ansurek", color = { r = 0, g = 0.55, b = 1 } },
+                [219984] = { name = "Xephitik", color = { r = 0, g = 0.55, b = 1 } },
+                [223844] = { name = "Covert Webmancer", color = { r = 0, g = 0.55, b = 1 } },
+                [224732] = { name = "Covert Webmancer", color = { r = 0, g = 0.55, b = 1 } },
+                [216339] = { name = "Sureki Unnaturaler", color = { r = 0, g = 0.55, b = 1 } },
+                [221102] = { name = "Elder Shadeweaver", color = { r = 0, g = 0.55, b = 1 } }
             }
         },
         tooltips = {
             enabled = true,
             style = "mUI",
-            combat = true,
-            lifeontop = true,
+            combat = false,
             mouseanchor = false
         },
         map = {
@@ -188,7 +187,7 @@ local defaults = {
         },
         chat = {
             enabled = true,
-            style = 'mUI',
+            style = "mUI",
             input = true,
             link = true,
             copy = true,
@@ -212,7 +211,7 @@ local defaults = {
                     font = {
                         size = 12,
                         shadow = true,
-                        outline = false
+                        outline = true
                     }
                 },
                 dock = {
@@ -237,26 +236,15 @@ local defaults = {
             enabled = true,
             interrupt = true,
             menubutton = true,
-            statusbar = true,
+            statusbar = false,
             dragonflying = true,
-            tabbinder = true,
+            tabbinder = false,
             dampening = true,
             surrender = true,
             safequeue = true,
             losecontrol = true
         },
-        edit = {
-            statsframe = {
-                point = 'BOTTOMLEFT',
-                x = 5,
-                y = 3
-            },
-            queueicon = {
-                point = 'CENTER',
-                x = 0,
-                y = 0
-            }
-        },
+        edit = {},
     }
 }
 

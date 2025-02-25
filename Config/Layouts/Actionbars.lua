@@ -1,8 +1,5 @@
 local Actionbars = mUI:NewModule("mUI.Config.Layouts.Actionbars")
 
--- Enable Layout
-Actionbars:Enable()
-
 function Actionbars:OnInitialize()
     -- Get Modules
     Actionbars.Module = mUI:GetModule("mUI.Modules.Actionbars")
@@ -402,9 +399,7 @@ function Actionbars:OnInitialize()
             }
         }
     }
-end
 
-function Actionbars:OnEnable()
     function Actionbars:GetOptions()
         return Actionbars.layout
     end

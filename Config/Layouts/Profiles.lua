@@ -1,9 +1,12 @@
 local Profiles = mUI:NewModule("mUI.Config.Layouts.Profiles")
 
--- Enable Layout
-Profiles:Enable()
-
 function Profiles:OnInitialize()
+    -- Load Libraries
+    local ACD = LibStub("AceConfigDialog-3.0")
+
+    -- Get Modules
+    Profiles.Module = mUI:GetModule("mUI.Modules.Profiles")
+
     Profiles.profiles = {}
 
     -- Get Profiles Function
@@ -141,21 +144,23 @@ function Profiles:OnInitialize()
                 name = "Export",
                 desc = "Export your current Profile",
                 type = "execute",
-                func = function() end,
+                func = function()
+                    mUI:SwitchSettings("mUIOptions_ProfilesExport_Tab")
+                end,
                 order = 12
             },
             import = {
                 name = "Import",
                 desc = "Import a Profile",
                 type = "execute",
-                func = function() end,
+                func = function()
+                    mUI:SwitchSettings("mUIOptions_ProfilesImport_Tab")
+                end,
                 order = 13
             }
         }
     }
-end
 
-function Profiles:OnEnable()
     function Profiles:GetOptions()
         return Profiles.layout
     end

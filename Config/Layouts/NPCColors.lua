@@ -1,8 +1,5 @@
 local NPCColors = mUI:NewModule("mUI.Config.Layouts.NPCColors")
 
--- Enable Module
-NPCColors:Enable()
-
 function NPCColors:OnInitialize()
     -- Load Database
     NPCColors.db = mUI.db.profile.nameplates
@@ -29,8 +26,7 @@ function NPCColors:OnInitialize()
                 name = "Nameplate Options",
                 desc = "Go back to Nameplates Options",
                 func = function()
-                    mUIOptions.container:ReleaseChildren()
-                    ACD:Open("mUIOptions_Nameplates_Tab", mUIOptions.container)
+                    mUI:SwitchSettings("mUIOptions_Nameplates_Tab")
                 end,
                 width = 1,
                 order = 1
@@ -213,9 +209,7 @@ function NPCColors:OnInitialize()
     end
 
     NPCColors:UpdateNPCList()
-end
 
-function NPCColors:OnEnable()
     function NPCColors:GetOptions()
         return NPCColors.layout
     end

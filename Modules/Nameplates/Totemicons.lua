@@ -107,6 +107,7 @@ function Totemicons:OnInitialize()
             end
 
             if Totemicons.toglow[npcID] then
+                iconFrame:SetSize(35, 35)
                 Totemicons.glow.ButtonGlow_Start(iconFrame, { 1, 0, 0.3, 1 })
             end
 
@@ -123,6 +124,7 @@ function Totemicons:OnInitialize()
             nameplate.mUITotemIcon:Hide()
 
             if Totemicons.toglow[npcID] then
+                nameplate.mUITotemIcon:SetSize(25, 25)
                 Totemicons.glow.ButtonGlow_Stop(nameplate.mUITotemIcon)
             end
 

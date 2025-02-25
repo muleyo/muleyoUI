@@ -1,8 +1,5 @@
 local General = mUI:NewModule("mUI.Config.Layouts.General")
 
--- Enable Layout
-General:Enable()
-
 function General:OnInitialize()
     -- Load LSM
     General.LSM = LibStub("LibSharedMedia-3.0")
@@ -394,9 +391,7 @@ function General:OnInitialize()
             }
         }
     }
-end
 
-function General:OnEnable()
     function General:GetOptions()
         return General.layout
     end

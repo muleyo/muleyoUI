@@ -1,8 +1,5 @@
 local Tooltips = mUI:NewModule("mUI.Config.Layouts.Tooltips")
 
--- Enable Layout
-Tooltips:Enable()
-
 function Tooltips:OnInitialize()
     -- Get Modules
     Tooltips.Module = mUI:GetModule("mUI.Modules.Tooltips")
@@ -111,9 +108,7 @@ function Tooltips:OnInitialize()
             }
         }
     }
-end
 
-function Tooltips:OnEnable()
     function Tooltips:GetOptions()
         return Tooltips.layout
     end

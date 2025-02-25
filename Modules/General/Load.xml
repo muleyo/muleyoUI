@@ -4,6 +4,7 @@
     <Include file="Theme\Blacklist.lua" />
     <Include file="Theme\Actionbars.lua" />
     <Include file="Theme\BuffsDebuffs.lua" />
+    <Include file="Theme\CastbarIcons.lua" />
     <Include file="Theme\ClassBar.lua" />
     <Include file="Theme\Dragonriding.lua" />
     <Include file="Theme\Frames.lua" />

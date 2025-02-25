@@ -15,8 +15,6 @@ function Health:OnInitialize()
             for healthtext in pairs(Health.healthtexts) do
                 healthtext:SetText(nil)
             end
-
-            nameplate.healthBar.text:SetText(nil)
             return
         end
 
@@ -45,7 +43,7 @@ function Health:OnInitialize()
 
     function Health:Colors(nameplate)
         if not Health.db.colors then return end
-        if nameplate and nameplate:IsForbidden() then return end
+        if not nameplate or nameplate:IsForbidden() then return end
         if nameplate.unit and nameplate.unit:find('nameplate%d') then
             local playerRole = UnitGroupRolesAssigned("player")
             if UnitIsPlayer(nameplate.unit) or (not UnitCanAttack("player", nameplate.unit)) then return end
@@ -53,6 +51,8 @@ function Health:OnInitialize()
             local _, status = UnitDetailedThreatSituation("player", nameplate.unit)
             local color = Health.db.npccolors[tonumber(id)] or { r = 0, g = 1, b = 0.6, a = 1 }
             local nColor = Health.db.npccolors[tonumber(id)] or { r = 1, g = 0, b = 0.3, a = 1 }
+            local unit = nameplate.unit
+            local healthBar = nameplate.healthBar
 
             if playerRole == "TANK" then
                 if status and status == 3 then
@@ -124,15 +124,15 @@ function Health:OnInitialize()
         for _, nameplate in pairs(C_NamePlate.GetNamePlates(false)) do
             -- Set Name for Nameplate
             Health:HealthText(nameplate.UnitFrame)
-            --self:Colors(nameplate.UnitFrame)
+            Health:Colors(nameplate.UnitFrame)
         end
     end
 end
 
 function Health:OnEnable()
-    Health:SecureHook("CompactUnitFrame_UpdateStatusText", function(nameplate)
+    Health:SecureHook("CompactUnitFrame_UpdateHealth", function(nameplate)
         Health:HealthText(nameplate)
-        --self:Colors(nameplate)
+        Health:Colors(nameplate)
     end)
 end
 

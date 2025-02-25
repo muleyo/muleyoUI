@@ -1,8 +1,5 @@
 local Castbars = mUI:NewModule("mUI.Config.Layouts.Castbars")
 
--- Enable Layout
-Castbars:Enable()
-
 function Castbars:OnInitialize()
     -- Get Modules
     Castbars.Module = mUI:GetModule("mUI.Modules.Castbars")
@@ -202,9 +199,7 @@ function Castbars:OnInitialize()
             }
         }
     }
-end
 
-function Castbars:OnEnable()
     function Castbars:GetOptions()
         return Castbars.layout
     end

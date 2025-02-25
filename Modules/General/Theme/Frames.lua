@@ -3,22 +3,39 @@ local Theme = mUI:GetModule("mUI.Modules.General.Theme")
 local _, playerClass = UnitClass("player")
 -- Theme Function
 function Theme:Update()
+    -- Aura Skinning
     for button, type in pairs(Theme.aurabuttons) do
         if Theme.db.theme == "Disabled" then
             button.mUIBorder:Hide()
             if button.DebuffBorder then
                 button.DebuffBorder:SetAlpha(1)
             end
+            if button.Border then
+                button.Border:SetAlpha(1)
+            end
         else
             button.mUIBorder:Show()
 
-            if type == "buff" then
+            if type == "playerbuff" or type == "unitframebuff" then
                 button.mUIBorder.shadow:SetBackdropBorderColor(unpack(mUI:Color(0.15)))
             end
 
             if button.DebuffBorder then
                 button.DebuffBorder:SetAlpha(0)
             end
+            if button.Border then
+                button.Border:SetAlpha(0)
+            end
+        end
+    end
+
+    -- Castbar Icon Skinning
+    for castbar in pairs(Theme.castbarIcons) do
+        if Theme.db.theme == "Disabled" then
+            castbar.mUIBorder:Hide()
+        else
+            castbar.mUIBorder:Show()
+            castbar.mUIBorder.shadow:SetBackdropBorderColor(unpack(mUI:Color(0.15)))
         end
     end
 
@@ -979,46 +996,46 @@ function Theme:Update()
     -- Class Bars
     if (playerClass == 'ROGUE') then
         if not Theme:IsHooked(RogueComboPointBarFrame, "OnUpdate") then
-            Theme:HookScript(RogueComboPointBarFrame, "OnUpdate", classBar)
+            Theme:HookScript(RogueComboPointBarFrame, "OnUpdate", Theme.ClassBar)
         end
 
-        classBar()
+        Theme:ClassBar()
     elseif (playerClass == 'MAGE') then
         if not Theme:IsHooked(MageArcaneChargesFrame, "OnUpdate") then
-            Theme:HookScript(MageArcaneChargesFrame, "OnUpdate", classBar)
+            Theme:HookScript(MageArcaneChargesFrame, "OnUpdate", Theme.ClassBar)
         end
 
-        classBar()
+        Theme:ClassBar()
     elseif (playerClass == 'WARLOCK') then
         if not Theme:IsHooked(WarlockPowerFrame, "OnUpdate") then
-            Theme:HookScript(WarlockPowerFrame, "OnUpdate", classBar)
+            Theme:HookScript(WarlockPowerFrame, "OnUpdate", Theme.ClassBar)
         end
 
-        classBar()
+        Theme:ClassBar()
     elseif (playerClass == 'DRUID') then
         if not Theme:IsHooked(DruidComboPointBarFrame, "OnUpdate") then
-            Theme:HookScript(DruidComboPointBarFrame, "OnUpdate", classBar)
+            Theme:HookScript(DruidComboPointBarFrame, "OnUpdate", Theme.ClassBar)
         end
 
-        classBar()
+        Theme:ClassBar()
     elseif (playerClass == 'MONK') then
         if not Theme:IsHooked(MonkHarmonyBarFrame, "OnUpdate") then
-            Theme:HookScript(MonkHarmonyBarFrame, "OnUpdate", classBar)
+            Theme:HookScript(MonkHarmonyBarFrame, "OnUpdate", Theme.ClassBar)
         end
 
-        classBar()
+        Theme:ClassBar()
     elseif (playerClass == 'DEATHKNIGHT') then
-        if not Theme:IsHooked(RuneFrame, "OnEvent") then
-            Theme:HookScript(RuneFrame, "OnEvent", OnUpdate)
+        if not Theme:IsHooked(RuneFrame, "OnUpdate") then
+            Theme:HookScript(RuneFrame, "OnUpdate", OnUpdate)
         end
     elseif (playerClass == 'EVOKER') then
         if not Theme:IsHooked(EssencePlayerFrame, "OnUpdate") then
-            Theme:HookScript(EssencePlayerFrame, "OnUpdate", classBar)
+            Theme:HookScript(EssencePlayerFrame, "OnUpdate", Theme.ClassBar)
         end
 
-        classBar()
+        Theme:ClassBar()
     elseif (playerClass == 'PALADIN') then
-        classBar()
+        Theme:ClassBar()
     elseif (playerClass == 'SHAMAN') then
         -- Totem Bar
         if not Theme:IsHooked(TotemFrame, "OnEvent") then

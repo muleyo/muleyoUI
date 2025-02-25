@@ -1,2 +1,2 @@
-# MUI
+# mUI
 Unleash your real potential

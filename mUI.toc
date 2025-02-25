@@ -26,11 +26,11 @@ Config\Load.xml
 ## Core
 Core.lua
 
-## EditMode
-EditMode.lua
-
 ## Media
 Media\Load.xml
 
 ## Modules
 Modules\Load.xml
+
+## EditMode
+EditMode.lua

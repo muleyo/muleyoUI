@@ -3,7 +3,7 @@ local Core = mUI:NewModule("mUI.Core")
 -- Enable Module
 Core:Enable()
 
-function Core:OnEnable()
+function Core:OnInitialize()
     -- Load Database
     Core.db = mUI.db.profile
 
@@ -21,6 +21,7 @@ function Core:OnEnable()
     Core.modules.mapminimap = mUI:GetModule("mUI.MapMinimap.Modules")
     Core.modules.chat = mUI:GetModule("mUI.Modules.Chat")
     Core.modules.misc = mUI:GetModule("mUI.Modules.Misc")
+    Core.modules.profiles = mUI:GetModule("mUI.Modules.Profiles")
 
     -- Get Layouts
     Core.layouts = {}
@@ -35,6 +36,8 @@ function Core:OnEnable()
     Core.layouts.chat = mUI:GetModule("mUI.Config.Layouts.Chat")
     Core.layouts.misc = mUI:GetModule("mUI.Config.Layouts.Misc")
     Core.layouts.profiles = mUI:GetModule("mUI.Config.Layouts.Profiles")
+    Core.layouts.profilesImport = mUI:GetModule("mUI.Config.Layouts.ProfilesImport")
+    Core.layouts.profilesExport = mUI:GetModule("mUI.Config.Layouts.ProfilesExport")
     Core.layouts.about = mUI:GetModule("mUI.Config.Layouts.About")
 
     -- Enable Modules
@@ -86,5 +89,10 @@ function Core:OnEnable()
     Config:RegisterOptionsTable("mUIOptions_Chat_Tab", Core.layouts.chat:GetOptions())
     Config:RegisterOptionsTable("mUIOptions_Misc_Tab", Core.layouts.misc:GetOptions())
     Config:RegisterOptionsTable("mUIOptions_Profiles_Tab", Core.layouts.profiles:GetOptions())
+    Config:RegisterOptionsTable("mUIOptions_ProfilesExport_Tab", Core.layouts.profilesExport:GetOptions())
+    Config:RegisterOptionsTable("mUIOptions_ProfilesImport_Tab", Core.layouts.profilesImport:GetOptions())
     Config:RegisterOptionsTable("mUIOptions_About_Tab", Core.layouts.about:GetOptions())
+end
+
+function Core:OnEnable()
 end

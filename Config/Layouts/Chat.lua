@@ -1,8 +1,5 @@
 local Chat = mUI:NewModule("mUI.Config.Layouts.Chat")
 
--- Enable Layout
-Chat:Enable()
-
 function Chat:OnInitialize()
     -- Load LSM
     Chat.LSM = LibStub("LibSharedMedia-3.0")
@@ -442,9 +439,7 @@ function Chat:OnInitialize()
             }
         }
     }
-end
 
-function Chat:OnEnable()
     function Chat:GetOptions()
         return Chat.layout
     end
