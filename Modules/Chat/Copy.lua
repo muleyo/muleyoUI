@@ -65,12 +65,14 @@ function Copy:OnInitialize()
             chatHistory = chatHistory .. chatFrame:GetMessageInfo(i) .. "\n"
         end
         Copy.editbox:SetText(chatHistory)
+        print(chatHistory)
         Copy.title:SetText("Chat Log (" .. chatFrame.name .. ")")
         Copy.frame:Show()
     end
 end
 
 function Copy:OnEnable()
+    Copy.button:Show()
     Copy:RawHookScript(Copy.button, "OnClick", Copy.Chatlog)
 end
 

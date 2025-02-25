@@ -20,6 +20,7 @@ function Core:OnEnable()
     Core.modules.tooltips = mUI:GetModule("mUI.Modules.Tooltips")
     Core.modules.mapminimap = mUI:GetModule("mUI.MapMinimap.Modules")
     Core.modules.chat = mUI:GetModule("mUI.Modules.Chat")
+    Core.modules.misc = mUI:GetModule("mUI.Modules.Misc")
 
     -- Get Layouts
     Core.layouts = {}
@@ -67,6 +68,10 @@ function Core:OnEnable()
 
     if Core.db.chat.enabled then
         Core.modules.chat:Enable()
+    end
+
+    if Core.db.misc.enabled then
+        Core.modules.misc:Enable()
     end
 
     -- Register Options

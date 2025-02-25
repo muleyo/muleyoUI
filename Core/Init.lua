@@ -31,7 +31,7 @@ function mUI:OnInitialize()
     end
 
     -- Open/Close GUI with smooth fade-in/out
-    function self:GUI()
+    function self:GUI(toggle)
         if (toggle) then
             return function()
                 if (mUIOptions:IsVisible()) then
