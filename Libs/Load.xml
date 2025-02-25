@@ -24,4 +24,6 @@
     <Include file="LibDDI-1.0\lib.xml" />
     <Include file="LibDeflate\lib.xml" />
     <Include file="LibNPCInfo\lib.xml" />
+    <Include file="LibCustomGlow-1.0\LibCustomGlow-1.0.xml" />
+    <Include file="LibButtonGlow-1.0\LibButtonGlow-1.0.lua" />
 </Ui>

@@ -81,7 +81,7 @@ function Misc:OnInitialize()
             },
             statusbar = {
                 name = "XP/Rep/Honor Bar",
-                desc = "Hide the XP/Rep/Honor Bar",
+                desc = "Hide the XP/Rep/Honor Bar\n\n|cffffff00Info:|r Requires Reload",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.misc.statusbar = val

@@ -15,6 +15,13 @@ function Copy:OnInitialize()
     Copy.frame:SetBackdropColor(0, 0, 0)
     Copy.frame:Hide()
 
+    -- Enable dragging
+    Copy.frame:EnableMouse(true)
+    Copy.frame:SetMovable(true)
+    Copy.frame:RegisterForDrag("LeftButton")
+    Copy.frame:SetScript("OnDragStart", Copy.frame.StartMoving)
+    Copy.frame:SetScript("OnDragStop", Copy.frame.StopMovingOrSizing)
+
     -- Create Title
     Copy.title = Copy.frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     Copy.title:SetPoint("TOP", Copy.frame, "TOP", 0, -8)
@@ -60,12 +67,19 @@ function Copy:OnInitialize()
 
     function Copy:Chatlog()
         local chatFrame = SELECTED_DOCK_FRAME
+        if not chatFrame then
+            return
+        end
+
         local chatHistory = ""
         for i = 1, chatFrame:GetNumMessages() do
-            chatHistory = chatHistory .. chatFrame:GetMessageInfo(i) .. "\n"
+            local message = chatFrame:GetMessageInfo(i)
+            if message then
+                chatHistory = chatHistory .. message .. "\n"
+            end
         end
+
         Copy.editbox:SetText(chatHistory)
-        print(chatHistory)
         Copy.title:SetText("Chat Log (" .. chatFrame.name .. ")")
         Copy.frame:Show()
     end

@@ -8,6 +8,7 @@ function Modules:OnInitialize()
     Modules.Options = mUI:GetModule("mUI.Modules.Nameplates.Options")
     Modules.Casttime = mUI:GetModule("mUI.Modules.Nameplates.Casttime")
     Modules.Debuffs = mUI:GetModule("mUI.Modules.Nameplates.Debuffs")
+    Modules.Totemicons = mUI:GetModule("mUI.Modules.Nameplates.Totemicons")
 end
 
 function Modules:OnEnable()
@@ -29,6 +30,9 @@ function Modules:OnEnable()
     if Modules.db.debuffs then
         Modules.Debuffs:Enable()
     end
+    if Modules.db.totem then
+        Modules.Totemicons:Enable()
+    end
     Modules.Options:Enable()
 end
 
@@ -40,4 +44,5 @@ function Modules:OnDisable()
     Modules.Casttime:Disable()
     Modules.Options:Disable()
     Modules.Debuffs:Disable()
+    Modules.Totemicons:Disable()
 end

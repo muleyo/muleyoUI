@@ -1,4 +1,4 @@
-local Safequeue = mUI:NewModule("mUI.Modules.Misc.Safequeue")
+local Safequeue = mUI:NewModule("mUI.Modules.Misc.Safequeue", "AceHook-3.0")
 
 function Safequeue:OnInitialize()
     -- Create Frame

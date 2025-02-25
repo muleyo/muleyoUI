@@ -193,7 +193,17 @@ function Nameplates:OnInitialize()
                 name = "Totem Icons",
                 desc = "Show Totem Icons on Nameplates",
                 type = "toggle",
-                set = function(_, val) mUI.db.profile.nameplates.totem = val end,
+                set = function(_, val)
+                    mUI.db.profile.nameplates.totem = val
+
+                    if not Nameplates.Module:IsEnabled() then return end
+
+                    if val then
+                        Nameplates.Module.Totemicons:Enable()
+                    else
+                        Nameplates.Module.Totemicons:Disable()
+                    end
+                end,
                 get = function() return mUI.db.profile.nameplates.totem end,
                 order = 12
             },

@@ -36,7 +36,3 @@ function Options:OnEnable()
         Options:Update()
     end)
 end
-
-function Options:OnDisable()
-    Options:UnhookAll()
-end
