@@ -21,7 +21,7 @@ function Theme:CreateCastbarIcons(castbar)
 
         local Backdrop = {
             bgFile = nil,
-            edgeFile = "Interface\\Addons\\SUI\\Media\\Textures\\Core\\outer_shadow",
+            edgeFile = "Interface\\Addons\\mUI\\Media\\Textures\\Core\\outer_shadow",
             tile = false,
             tileSize = 32,
             edgeSize = 4,

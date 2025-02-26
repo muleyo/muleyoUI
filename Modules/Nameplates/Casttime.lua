@@ -9,7 +9,7 @@ function Casttime:OnInitialize()
 
         local backdrop = {
             bgFile = nil,
-            edgeFile = "Interface\\Addons\\SUI\\Media\\Textures\\Core\\outer_shadow",
+            edgeFile = "Interface\\Addons\\mUI\\Media\\Textures\\Core\\outer_shadow",
             tile = false,
             tileSize = 32,
             edgeSize = 4,
@@ -26,10 +26,10 @@ function Casttime:OnInitialize()
         icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
         local border = frame:CreateTexture(nil, "BACKGROUND")
-        border:SetTexture("Interface\\Addons\\SUI\\Media\\Textures\\Core\\gloss")
+        border:SetTexture("Interface\\Addons\\mUI\\Media\\Textures\\Core\\gloss")
         border:SetTexCoord(0, 1, 0, 1)
         border:SetDrawLayer("BACKGROUND", -7)
-        --border:SetVertexColor(unpack(SUI:Color()))
+        --border:SetVertexColor(unpack(mUI:Color()))
         border:ClearAllPoints()
         border:SetPoint("TOPLEFT", icon, "TOPLEFT", -1, 1)
         border:SetPoint("BOTTOMRIGHT", icon, "BOTTOMRIGHT", 1, -1)
