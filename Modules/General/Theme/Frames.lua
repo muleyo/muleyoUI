@@ -443,6 +443,7 @@ function Theme:Update()
     -- AddOn List
     mUI:Skin(AddonList.NineSlice)
     mUI:Skin(AddonList)
+    mUI:Skin(AddonListInset.NineSlice)
     mUI:Skin({ AddonListBg }, true)
 
     -- Bags

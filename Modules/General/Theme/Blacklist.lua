@@ -90,5 +90,7 @@ function Theme:ForbiddenFrames()
         [select(3, CalendarClassButton13:GetRegions())] = true,
         [select(5, CommunitiesFrame.GuildBenefitsFrame.FactionFrame.Bar:GetRegions())] = true,
         [select(9, MacroFrameTextBackground.NineSlice:GetRegions())] = true,
+        [select(3, CampaignQuestObjectiveTracker.Header:GetRegions())] = true,
+        [select(4, CampaignQuestObjectiveTracker.Header:GetRegions())] = true,
     }
 end
