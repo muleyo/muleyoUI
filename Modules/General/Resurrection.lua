@@ -1,4 +1,4 @@
-local Resurrection = mUI:NewModule("mUI.Modules.General.Resurrection")
+local Resurrection = mUI:NewModule("mUI.Modules.General.Resurrection", "AceHook-3.0")
 
 function Resurrection:OnInitialize()
     Resurrection.resurrection = CreateFrame("Frame")

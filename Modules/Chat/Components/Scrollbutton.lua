@@ -128,7 +128,7 @@ do
 	local scroll_button_proto = {}
 
 	function scroll_button_proto:OnHide()
-		Style:RawHookScript(self, "OnUpdate", nil)
+		self:SetScript("OnUpdate", nil)
 	end
 
 	function scroll_button_proto:OnMouseDown()
@@ -137,12 +137,12 @@ do
 			frame:OnMouseWheel(-1 * (self.state == 3 and 1 or -1))
 
 			self.elapsed = 0
-			Style:RawHookScript(self, "OnUpdate", self.OnUpdate)
+			self:SetScript("OnUpdate", self.OnUpdate)
 		end
 	end
 
 	function scroll_button_proto:OnMouseUp()
-		Style:RawHookScript(self, "OnUpdate", nil)
+		self:SetScript("OnUpdate", nil)
 	end
 
 	function scroll_button_proto:OnUpdate(elapsed)

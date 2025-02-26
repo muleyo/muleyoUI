@@ -1,4 +1,4 @@
-local TalkingHead = mUI:NewModule("mUI.Modules.General.TalkingHead")
+local TalkingHead = mUI:NewModule("mUI.Modules.General.TalkingHead", "AceHook-3.0")
 
 function TalkingHead:OnInitialize()
     TalkingHead.talkinghead = CreateFrame("Frame")
