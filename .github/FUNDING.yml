@@ -1,4 +1,4 @@
 # These are supported funding model platforms
 
 github: muleyo
-custom: ["https://paypal.me/leif96", PayPal]
+custom: ["https://bit.ly/mui-paypal", "https://bit.ly/mui-stripe"]
