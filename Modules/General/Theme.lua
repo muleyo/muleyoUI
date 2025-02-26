@@ -54,24 +54,25 @@ function Theme:OnEnable()
     Theme.auras:RegisterEvent("PLAYER_FOCUS_CHANGED")
     Theme.auras:RegisterEvent("WEAPON_ENCHANT_CHANGED")
     Theme.auras:RegisterUnitEvent("UNIT_AURA", "player", "target", "focus")
-    Theme:HookScript(Theme.auras, "OnEvent", function(_, event, unit)
+    Theme:HookScript(Theme.auras, "OnEvent", function()
         -- Player Auras
         Theme:UpdatePlayerBuffs()
         Theme:UpdatePlayerDebuffs()
 
-        -- Target/Focus Auras
+        -- Target Auras
         for aura in TargetFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
             Theme:UpdateUnitframeAuras(aura)
         end
         for aura in TargetFrame.auraPools:GetPool("TargetDebuffFrameTemplate"):EnumerateActive() do
-            Theme:UpdateUnitframeAuras(aura, true)
+            Theme:UpdateUnitframeAuras(aura, true, "target")
         end
 
+        -- Focus Auras
         for aura in FocusFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
             Theme:UpdateUnitframeAuras(aura)
         end
         for aura in FocusFrame.auraPools:GetPool("TargetDebuffFrameTemplate"):EnumerateActive() do
-            Theme:UpdateUnitframeAuras(aura, true)
+            Theme:UpdateUnitframeAuras(aura, true, "focus")
         end
     end)
 

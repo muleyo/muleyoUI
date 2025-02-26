@@ -2,7 +2,13 @@ local Style = mUI:NewModule("mUI.Modules.Castbars.Style", "AceHook-3.0")
 
 function Style:OnInitialize()
     -- Load Database
-    Style.db = mUI.db.profile.castbars
+    Style.db = {
+        castbars = mUI.db.profile.castbars,
+        general = mUI.db.profile.general
+    }
+
+    -- Frames
+    Style.frame = CreateFrame("Frame")
 
     -- Tables
     Style.castbars = {
@@ -50,9 +56,15 @@ function Style:OnInitialize()
             end
         end
 
-        if Style.db.icon then
+        if Style.db.castbars.icon then
             PlayerCastingBarFrame.Icon:Show()
             PlayerCastingBarFrame.Icon:SetSize(20, 20)
+
+            if Style.db.general.theme ~= "Disabled" then
+                C_Timer.After(0.1, function()
+                    PlayerCastingBarFrame.mUIBorder:Show()
+                end)
+            end
         end
     end
 
@@ -83,6 +95,9 @@ end
 function Style:OnEnable()
     -- Enable Style
     Style:EnableStyle()
+
+    Style.frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+    Style:HookScript(Style.frame, "OnEvent", Style.EnableStyle)
     Style:SecureHook(C_EditMode, "OnEditModeExit", Style.EnableStyle)
 end
 

@@ -139,16 +139,16 @@ function Theme:UpdatePlayerDebuffs()
         end
         local color
         if debuffType then
-            color = Theme.debuffColors[debuffType]
+            color = DebuffTypeColor[debuffType]
         else
-            color = Theme.debuffColors["none"]
+            color = DebuffTypeColor["none"]
         end
 
         frame.mUIBorder.shadow:SetBackdropBorderColor(color.r, color.g, color.b, 1)
     end
 end
 
-function Theme:UpdateUnitframeAuras(aura, isDebuff)
+function Theme:UpdateUnitframeAuras(aura, isDebuff, unit)
     if not aura.mUIBorder then
         local Backdrop = {
             bgFile = nil,
@@ -185,23 +185,6 @@ function Theme:UpdateUnitframeAuras(aura, isDebuff)
         border.shadow:SetFrameLevel(aura:GetFrameLevel() - 1)
         border.shadow:SetBackdrop(Backdrop)
 
-        -- Check if Debuff
-        if isDebuff then
-            local color
-
-            if aura.dispelName then
-                color = Theme.debuffColors[aura.dispelName]
-            else
-                color = Theme.debuffColors["none"]
-            end
-
-            border.shadow:SetBackdropBorderColor(color.r, color.g, color.b, 1)
-
-            aura.Border:SetAlpha(0)
-        else
-            border.shadow:SetBackdropBorderColor(unpack(mUI:Color(0.15)))
-        end
-
         aura.mUIBorder = border
 
         if not isDebuff then
@@ -209,6 +192,24 @@ function Theme:UpdateUnitframeAuras(aura, isDebuff)
         else
             Theme.aurabuttons[aura] = "unitframedebuff"
         end
+    end
+
+    -- Check if Debuff
+    if isDebuff then
+        local color
+        local auraData = C_UnitAuras.GetAuraDataByAuraInstanceID(unit, aura.auraInstanceID)
+
+        if auraData and auraData.dispelName then
+            color = Theme.debuffColors[auraData.dispelName]
+        else
+            color = Theme.debuffColors["none"]
+        end
+
+        aura.mUIBorder.shadow:SetBackdropBorderColor(color.r, color.g, color.b, 1)
+
+        aura.Border:SetAlpha(0)
+    else
+        aura.mUIBorder.shadow:SetBackdropBorderColor(unpack(mUI:Color(0.15)))
     end
 end
 

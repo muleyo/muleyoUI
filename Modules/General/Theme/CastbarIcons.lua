@@ -17,7 +17,6 @@ function Theme:CreateCastbarIcons(castbar)
     if not castbar.mUIBorder then
         local icon = castbar.Icon
         icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        icon:SetDrawLayer("BACKGROUND", -8)
 
         local Backdrop = {
             bgFile = nil,
