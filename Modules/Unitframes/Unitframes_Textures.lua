@@ -15,15 +15,15 @@ function Unitframes_Textures:OnInitialize()
     Unitframes_Textures.healthbars = {
         player = PlayerFrame.healthbar,
         pet = PetFrame.healthbar,
-        target = TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBarsContainer.HealthBar,
-        focus = FocusFrame.TargetFrameContent.TargetFrameContentMain.HealthBarsContainer.HealthBar,
+        target = TargetFrame.healthbar,
+        focus = FocusFrame.healthbar,
         targettarget = TargetFrameToT.HealthBar,
         focustarget = FocusFrameToT.HealthBar,
-        boss1 = Boss1TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBarsContainer.HealthBar,
-        boss2 = Boss2TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBarsContainer.HealthBar,
-        boss3 = Boss3TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBarsContainer.HealthBar,
-        boss4 = Boss4TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBarsContainer.HealthBar,
-        boss5 = Boss5TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBarsContainer.HealthBar,
+        boss1 = Boss1TargetFrame.healthbar,
+        boss2 = Boss2TargetFrame.healthbar,
+        boss3 = Boss3TargetFrame.healthbar,
+        boss4 = Boss4TargetFrame.healthbar,
+        boss5 = Boss5TargetFrame.healthbar,
         party1 = PartyFrame.MemberFrame1.healthbar,
         party2 = PartyFrame.MemberFrame2.healthbar,
         party3 = PartyFrame.MemberFrame3.healthbar,
@@ -189,21 +189,27 @@ function Unitframes_Textures:OnInitialize()
                 end
                 healthbar:GetStatusBarTexture():SetAtlas(Unitframes_Textures.defaultHealthTextures[name])
             else
-                if healthbar.HealthBarTexture then
-                    healthbar.HealthBarTexture:SetTexture(texture)
+                if name == "player" then
+                    select(4, healthbar:GetRegions()):SetTexture(texture)
+
                     if not Unitframes_Textures.db.color then
-                        healthbar.HealthBarTexture:SetVertexColor(0, 1, 0)
+                        healthbar:SetStatusBarColor(0, 1, 0)
                     end
-                elseif healthbar.unit == "pet" then
+                elseif name == "pet" then
                     select(7, healthbar:GetRegions()):SetTexture(texture)
+
+                    if not Unitframes_Textures.db.color then
+                        select(7, healthbar:GetRegions()):SetVertexColor(0, 1, 0)
+                    end
+                elseif name == "targettarget" or name == "focustarget" then
+                    select(4, healthbar:GetRegions()):SetTexture(texture)
                     if not Unitframes_Textures.db.color then
                         select(7, healthbar:GetRegions()):SetVertexColor(0, 1, 0)
                     end
                 else
-                    healthbar:SetStatusBarTexture(texture)
-                    healthbar:GetStatusBarTexture():SetDrawLayer("BORDER")
+                    healthbar.HealthBarTexture:SetTexture(texture)
                     if not Unitframes_Textures.db.color then
-                        healthbar:SetStatusBarColor(0, 1, 0)
+                        healthbar.HealthBarTexture:SetVertexColor(0, 1, 0)
                     end
                 end
             end
