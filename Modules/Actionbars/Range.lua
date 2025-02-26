@@ -1,8 +1,7 @@
 local Range = mUI:NewModule("mUI.Modules.Actionbars.Range", "AceHook-3.0")
 
 function Range:OnInitialize()
-    Range.range = CreateFrame("Frame")
-    Range.updater = CreateFrame("Frame")
+    Range.updater = CreateFrame("Frame", "mUIRangeUpdater")
     Range.delay = 0.2
     Range.buttonColors = {}
     Range.buttonsToUpdate = {}
@@ -30,7 +29,7 @@ function Range:OnInitialize()
             Range.elapsed = UPDATE_DELAY
 
             if not Range:UpdateButtons() then
-                Range:Hide()
+                Range.updater:Hide()
             end
         end
     end
@@ -105,10 +104,6 @@ function Range:OnInitialize()
 end
 
 function Range:OnEnable()
-    Range:HookScript(Range.updater, "OnUpdate", function(_, elapsed)
-        Range:OnUpdateRange(elapsed)
-    end)
-
     for i = 1, NUM_ACTIONBAR_BUTTONS do
         Range:HookButtons(_G["ActionButton" .. i])
         Range:HookButtons(_G["MultiBarBottomLeftButton" .. i])
@@ -119,6 +114,10 @@ function Range:OnEnable()
         Range:HookButtons(_G["MultiBar6Button" .. i])
         Range:HookButtons(_G["MultiBar7Button" .. i])
     end
+
+    Range:HookScript(Range.updater, "OnUpdate", function(_, elapsed)
+        Range:OnUpdateRange(elapsed)
+    end)
 end
 
 function Range:OnDisable()
