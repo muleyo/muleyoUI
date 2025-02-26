@@ -22,7 +22,7 @@ function Style:CreateBackdrop(parent, alpha, xOffset, yOffset)
 	backdrop:SetPoint("BOTTOMRIGHT", -(xOffset or 0), yOffset or 0)
 	backdrop:SetBackdrop({
 		bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
-		edgeFile = "Interface\\AddOns\\ls_Glass\\assets\\border",
+		edgeFile = "Interface\\AddOns\\mUI\\Media\\Textures\\Chat\\border",
 		tile = true,
 		tileEdge = true,
 		tileSize = 8,
