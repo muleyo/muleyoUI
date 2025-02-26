@@ -16,6 +16,7 @@ function Modules:OnInitialize()
     Modules.Name = mUI:GetModule("mUI.Modules.Unitframes.Name")
     Modules.Level = mUI:GetModule("mUI.Modules.Unitframes.Level")
     Modules.Restingtextures = mUI:GetModule("mUI.Modules.Unitframes.Restingtextures")
+    Modules.Elitecolor = mUI:GetModule("mUI.Modules.Unitframes.Elitecolor")
 end
 
 function Modules:OnEnable()
@@ -66,6 +67,9 @@ function Modules:OnEnable()
     if Modules.db.buffsdebuffs.enabled then
         Modules.BuffsDebuffs:Enable()
     end
+    if Modules.db.elitecolor then
+        Modules.Elitecolor:Enable()
+    end
 end
 
 function Modules:OnDisable()
@@ -83,4 +87,6 @@ function Modules:OnDisable()
     Modules.Name:Disable()
     Modules.Level:Disable()
     Modules.Reputationcolor:Disable()
+    Modules.Restingtextures:Disable()
+    Modules.Elitecolor:Disable()
 end

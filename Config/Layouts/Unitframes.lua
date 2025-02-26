@@ -6,6 +6,7 @@ function Unitframes:OnInitialize()
 
     -- Get Modules
     Unitframes.Module = mUI:GetModule("mUI.Modules.Unitframes")
+    Unitframes.Theme = mUI:GetModule("mUI.Modules.General.Theme")
 
     -- Initialize Layout
     Unitframes.layout = {
@@ -314,10 +315,29 @@ function Unitframes:OnInitialize()
                 get = function() return mUI.db.profile.unitframes.level end,
                 order = 17
             },
+            elitecolor = {
+                name = "Elitechain Color",
+                desc = "Keep the default Elitechain Color",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.elitecolor = val
+
+                    if not Unitframes.Module:IsEnabled() then return end
+                    if not Unitframes.Theme:IsEnabled() then return end
+
+                    if val then
+                        Unitframes.Module.Elitecolor:Enable()
+                    else
+                        Unitframes.Module.Elitecolor:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.unitframes.elitecolor end,
+                order = 18
+            },
             header3 = {
                 name = "Buffs & Debuffs",
                 type = "header",
-                order = 18
+                order = 19
             },
             enablebuffdebuff = {
                 name = function()
@@ -341,7 +361,7 @@ function Unitframes:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.buffsdebuffs.enabled end,
-                order = 19
+                order = 20
             },
             buffsize = {
                 name = "Buff Size",
@@ -352,7 +372,7 @@ function Unitframes:OnInitialize()
                 step = 1,
                 set = function(_, val) mUI.db.profile.unitframes.buffsdebuffs.buffsize = val end,
                 get = function() return mUI.db.profile.unitframes.buffsdebuffs.buffsize end,
-                order = 20
+                order = 21
             },
             debuffsize = {
                 name = "Debuff Size",
@@ -363,7 +383,7 @@ function Unitframes:OnInitialize()
                 step = 1,
                 set = function(_, val) mUI.db.profile.unitframes.buffsdebuffs.debuffsize = val end,
                 get = function() return mUI.db.profile.unitframes.buffsdebuffs.debuffsize end,
-                order = 21
+                order = 22
             }
         }
     }

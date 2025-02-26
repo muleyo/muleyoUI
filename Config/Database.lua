@@ -71,6 +71,7 @@ local defaults = {
             restingtextures = true,
             name = false,
             level = false,
+            elitecolor = false,
             buffsdebuffs = {
                 enabled = true,
                 buffsize = 24,
