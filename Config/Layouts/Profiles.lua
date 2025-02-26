@@ -44,6 +44,7 @@ function Profiles:OnInitialize()
                 func = function()
                     mUI.db:ResetProfile()
                     mUI:Reload("Reset Profile")
+                    mUI:GUI()
                 end,
                 order = 2
             },
