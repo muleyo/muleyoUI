@@ -20,7 +20,7 @@ function Font:OnInitialize()
         local font = Font.LSM:Fetch('font', Font.db.font)
         local fontSizes = { 9, 9, 14, 14, 12, 64, 64 }
 
-        if (not C_AddOns.IsAddOnLoaded("NiceDamage")) or (not C_AddOns.IsAddOnLoaded("ClassicNumbers")) then
+        if not (C_AddOns.IsAddOnLoaded("NiceDamage") and C_AddOns.IsAddOnLoaded("ClassicNumbers")) then
             DAMAGE_TEXT_FONT = font
         end
         STANDARD_TEXT_FONT       = font
