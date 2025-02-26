@@ -994,57 +994,59 @@ function Theme:Update()
     end
 
     -- Class Bars
-    if (playerClass == 'ROGUE') then
+    if (playerClass == "ROGUE") then
         if not Theme:IsHooked(RogueComboPointBarFrame, "OnUpdate") then
             Theme:HookScript(RogueComboPointBarFrame, "OnUpdate", Theme.ClassBar)
         end
 
         Theme:ClassBar()
-    elseif (playerClass == 'MAGE') then
+    elseif (playerClass == "MAGE") then
         if not Theme:IsHooked(MageArcaneChargesFrame, "OnUpdate") then
             Theme:HookScript(MageArcaneChargesFrame, "OnUpdate", Theme.ClassBar)
         end
 
         Theme:ClassBar()
-    elseif (playerClass == 'WARLOCK') then
+    elseif (playerClass == "WARLOCK") then
         if not Theme:IsHooked(WarlockPowerFrame, "OnUpdate") then
             Theme:HookScript(WarlockPowerFrame, "OnUpdate", Theme.ClassBar)
         end
 
         Theme:ClassBar()
-    elseif (playerClass == 'DRUID') then
+    elseif (playerClass == "DRUID") then
         if not Theme:IsHooked(DruidComboPointBarFrame, "OnUpdate") then
             Theme:HookScript(DruidComboPointBarFrame, "OnUpdate", Theme.ClassBar)
         end
 
         Theme:ClassBar()
-    elseif (playerClass == 'MONK') then
+    elseif (playerClass == "MONK") then
         if not Theme:IsHooked(MonkHarmonyBarFrame, "OnUpdate") then
             Theme:HookScript(MonkHarmonyBarFrame, "OnUpdate", Theme.ClassBar)
         end
 
         Theme:ClassBar()
-    elseif (playerClass == 'DEATHKNIGHT') then
+    elseif (playerClass == "DEATHKNIGHT") then
         if not Theme:IsHooked(RuneFrame, "OnUpdate") then
             Theme:HookScript(RuneFrame, "OnUpdate", OnUpdate)
         end
-    elseif (playerClass == 'EVOKER') then
+    elseif (playerClass == "EVOKER") then
         if not Theme:IsHooked(EssencePlayerFrame, "OnUpdate") then
             Theme:HookScript(EssencePlayerFrame, "OnUpdate", Theme.ClassBar)
         end
 
         Theme:ClassBar()
-    elseif (playerClass == 'PALADIN') then
+    elseif (playerClass == "PALADIN") then
         Theme:ClassBar()
-    elseif (playerClass == 'SHAMAN') then
+    elseif (playerClass == "SHAMAN") then
         -- Totem Bar
-        if not Theme:IsHooked(TotemFrame, "OnEvent") then
-            Theme:HookScript(TotemFrame, "OnEvent", function(frame)
+        if not Theme:IsHooked(TotemFrame, "OnUpdate") then
+            Theme:HookScript(TotemFrame, "OnUpdate", function(frame)
                 for totem, _ in frame.totemPool:EnumerateActive() do
                     mUI:Skin({ totem.Border }, true)
                 end
             end)
         end
+
+        Theme:ClassBar()
     end
 
     -- Tooltips

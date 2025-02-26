@@ -52,7 +52,7 @@ function Nameplates:OnInitialize()
 
                     if not Nameplates.Module:IsEnabled() then return end
 
-                    Nameplates.Module.Textures:RefreshNameplates()
+                    Nameplates.Module.Textures:RefreshNameplates(true)
                 end,
                 get = function() return mUI.db.profile.nameplates.texture end,
                 order = 3

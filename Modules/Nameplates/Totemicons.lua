@@ -85,7 +85,7 @@ function Totemicons:OnInitialize()
 
         if npcID and Totemicons.totems[npcID] then
             local isFriendly = UnitReaction(unit, "player") >= 4
-            if isFriendly then return end
+            --if isFriendly then return end
 
             if not nameplate.mUITotemIcon then
                 nameplate.mUITotemIcon = Totemicons:CreateIcon(nameplate)

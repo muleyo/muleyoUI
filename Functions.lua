@@ -100,7 +100,7 @@ function Functions:OnInitialize()
         StaticPopupDialogs["mUIReloadPopup"] = nil -- Clear Popup before creating a new one
         StaticPopupDialogs["mUIReloadPopup"] = {
             text = "|cff009cffmuleyo|rUI\n\n|cffffcc00Your UI requires a reload.\n\nReason: " ..
-                module .. "'|r",
+                module .. "|r",
             button1 = "Reload UI",
             whileDead = true,
             hideOnEscape = false,

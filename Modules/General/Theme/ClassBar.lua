@@ -3,7 +3,7 @@ local Theme = mUI:GetModule("mUI.Modules.General.Theme")
 local _, playerClass = UnitClass("player")
 function Theme:ClassBar()
     -- Rogue
-    if (playerClass == 'ROGUE') then
+    if (playerClass == "ROGUE") then
         for _, child in ipairs({ RogueComboPointBarFrame:GetChildren() }) do
             mUI:Skin({
                 child.BGActive,
@@ -28,7 +28,7 @@ function Theme:ClassBar()
                 }, true)
             end
         end
-    elseif (playerClass == 'MAGE') then
+    elseif (playerClass == "MAGE") then
         -- Mage
         for _, child in ipairs({ MageArcaneChargesFrame:GetChildren() }) do
             mUI:Skin({
@@ -42,7 +42,7 @@ function Theme:ClassBar()
                 child.ArcaneBGShadow
             }, true)
         end
-    elseif (playerClass == 'WARLOCK') then
+    elseif (playerClass == "WARLOCK") then
         -- Warlock
         for _, child in ipairs({ WarlockPowerFrame:GetChildren() }) do
             mUI:Skin({
@@ -54,7 +54,7 @@ function Theme:ClassBar()
                 child.Background
             }, true)
         end
-    elseif (playerClass == 'DRUID') then
+    elseif (playerClass == "DRUID") then
         -- Druid
         for _, child in ipairs({ DruidComboPointBarFrame:GetChildren() }) do
             mUI:Skin({
@@ -70,7 +70,7 @@ function Theme:ClassBar()
                 child.BG_Shadow
             }, true)
         end
-    elseif (playerClass == 'MONK') then
+    elseif (playerClass == "MONK") then
         -- Monk
         for _, child in ipairs({ MonkHarmonyBarFrame:GetChildren() }) do
             mUI:Skin({
@@ -84,7 +84,7 @@ function Theme:ClassBar()
                 child.Chi_BG_Active
             }, true)
         end
-    elseif (playerClass == 'DEATHKNIGHT') then
+    elseif (playerClass == "DEATHKNIGHT") then
         -- Death Knight
         for _, child in ipairs({ RuneFrame:GetChildren() }) do
             mUI:Skin({
@@ -100,7 +100,7 @@ function Theme:ClassBar()
                 child.BG_Shadow
             }, true)
         end
-    elseif (playerClass == 'EVOKER') then
+    elseif (playerClass == "EVOKER") then
         -- Evoker
         for _, child in ipairs({ EssencePlayerFrame:GetChildren() }) do
             mUI:Skin({
@@ -115,7 +115,7 @@ function Theme:ClassBar()
                 child.EssenceFillDone.CircBGActive
             }, true)
         end
-    elseif (playerClass == 'PALADIN') then
+    elseif (playerClass == "PALADIN") then
         -- Paladin
         mUI:Skin({
             PaladinPowerBarFrame.Background,
@@ -123,5 +123,9 @@ function Theme:ClassBar()
             ClassNameplateBarPaladinFrame.Background,
             ClassNameplateBarPaladinFrame.ActiveTexture
         }, true)
+    elseif (playerClass == "SHAMAN") then
+        for totem, _ in TotemFrame.totemPool:EnumerateActive() do
+            mUI:Skin({ totem.Border }, true)
+        end
     end
 end

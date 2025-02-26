@@ -66,8 +66,11 @@ function Textures:OnInitialize()
         end
     end
 
-    function Textures:RefreshNameplates()
+    function Textures:RefreshNameplates(reset)
         -- Get Nameplates
+        if reset then
+            Textures.nameplates = {}
+        end
         for _, nameplate in pairs(C_NamePlate.GetNamePlates(false)) do
             -- Set Texture for Nameplate
             Textures:SetTextures(nameplate.UnitFrame)
