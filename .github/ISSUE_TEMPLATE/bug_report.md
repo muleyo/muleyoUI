@@ -2,7 +2,7 @@
 name: Bug report
 about: Report bugs you've found so we can fix them.
 title: ""
-labels: 'Bug'
+labels: 'bug'
 assignees: 'muleyo'
 
 ---
