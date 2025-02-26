@@ -14,7 +14,7 @@ end
 function Classbar:OnEnable()
     local _, class = UnitClass("player")
 
-    if Classbar == "PALADIN" then
+    if class == "PALADIN" then
         PaladinPowerBarFrame:Hide()
         Classbar:HookScript(PaladinPowerBarFrame, "OnShow", function()
             PaladinPowerBarFrame:Hide()
