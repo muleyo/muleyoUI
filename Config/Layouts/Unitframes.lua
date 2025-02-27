@@ -334,10 +334,20 @@ function Unitframes:OnInitialize()
                 get = function() return mUI.db.profile.unitframes.elitecolor end,
                 order = 18
             },
+            debuffcolors = {
+                name = "Debuff Colors",
+                desc = "Color borders of Debuffs by their type on Target/Focus Frames",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.buffsdebuffs.debuffcolors = val
+                end,
+                get = function() return mUI.db.profile.unitframes.buffsdebuffs.debuffcolors end,
+                order = 19
+            },
             header3 = {
                 name = "Buffs & Debuffs",
                 type = "header",
-                order = 19
+                order = 20
             },
             enablebuffdebuff = {
                 name = function()
@@ -361,7 +371,7 @@ function Unitframes:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.buffsdebuffs.enabled end,
-                order = 20
+                order = 21
             },
             buffsize = {
                 name = "Buff Size",
@@ -372,7 +382,7 @@ function Unitframes:OnInitialize()
                 step = 1,
                 set = function(_, val) mUI.db.profile.unitframes.buffsdebuffs.buffsize = val end,
                 get = function() return mUI.db.profile.unitframes.buffsdebuffs.buffsize end,
-                order = 21
+                order = 22
             },
             debuffsize = {
                 name = "Debuff Size",
@@ -383,7 +393,7 @@ function Unitframes:OnInitialize()
                 step = 1,
                 set = function(_, val) mUI.db.profile.unitframes.buffsdebuffs.debuffsize = val end,
                 get = function() return mUI.db.profile.unitframes.buffsdebuffs.debuffsize end,
-                order = 22
+                order = 23
             }
         }
     }
