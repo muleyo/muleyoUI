@@ -10,6 +10,9 @@ function Theme:OnInitialize()
 end
 
 function Theme:OnEnable()
+    -- Prevent Errors from other AddOns
+    INSPECTED_UNIT = "player"
+
     -- Load AddOns
     C_AddOns.LoadAddOn("Blizzard_AchievementUI")
     C_AddOns.LoadAddOn("Blizzard_ProfessionsCustomerOrders")

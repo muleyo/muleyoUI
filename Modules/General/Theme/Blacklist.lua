@@ -94,5 +94,6 @@ function Theme:ForbiddenFrames()
         [select(4, QuestObjectiveTracker.Header:GetRegions())] = true,
         [select(3, CampaignQuestObjectiveTracker.Header:GetRegions())] = true,
         [select(4, CampaignQuestObjectiveTracker.Header:GetRegions())] = true,
+        [select(9, ReportFrame:GetRegions())] = true,
     }
 end

@@ -29,6 +29,9 @@ function Theme:Update()
         end
     end
 
+    -- BuffFrame Expand/Collapse Button
+    mUI:Skin(BuffFrame.CollapseAndExpandButton)
+
     -- Castbar Icon Skinning
     for castbar in pairs(Theme.castbarIcons) do
         if Theme.db.theme == "Disabled" then
@@ -195,6 +198,10 @@ function Theme:Update()
         WardrobeCollectionFrameScrollFrameScrollBarThumbTexture
     }, true)
 
+    -- Campsites
+    mUI:Skin(WarbandSceneJournal)
+    mUI:Skin(WarbandSceneJournal.IconsFrame.NineSlice)
+
     -- Specific Frames
     mUI:Skin({
         CollectionsJournalBg,
@@ -205,7 +212,8 @@ function Theme:Update()
         PetJournalListScrollFrameScrollBarThumbTexture,
         PetJournalListScrollFrameScrollBarTop,
         PetJournalListScrollFrameScrollBarMiddle,
-        PetJournalListScrollFrameScrollBarBottom
+        PetJournalListScrollFrameScrollBarBottom,
+        WarbandSceneJournal.IconsFrame.BackgroundTile,
     }, true)
 
     -- Tabs
@@ -214,6 +222,7 @@ function Theme:Update()
     mUI:Skin(CollectionsJournalTab3)
     mUI:Skin(CollectionsJournalTab4)
     mUI:Skin(CollectionsJournalTab5)
+    mUI:Skin(CollectionsJournalTab6)
     mUI:Skin(WardrobeCollectionFrameTab1)
     mUI:Skin(WardrobeCollectionFrameTab2)
 
@@ -778,6 +787,11 @@ function Theme:Update()
     mUI:Skin(WorldMapFrame.BorderFrame.NineSlice)
     mUI:Skin(WorldMapFrame.NavBar)
     mUI:Skin(WorldMapFrame.NavBar.overlay)
+    mUI:Skin({
+        QuestMapFrame.QuestsTab.Background,
+        QuestMapFrame.EventsTab.Background,
+        QuestMapFrame.MapLegendTab.Background
+    }, true)
 
     -- Merchant
     mUI:Skin(MerchantFrame)
