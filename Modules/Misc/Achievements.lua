@@ -9,48 +9,55 @@ function Achievements:OnInitialize()
     }
 
     function Achievements:CreateButton(name, parent, label, yOffset)
-        local button = CreateFrame("Button", name, parent, "UIPanelButtonTemplate")
+        local button = CreateFrame("Button", name, UIParent, "UIPanelButtonTemplate")
         button:SetSize(25, 25)
-        button:SetPoint("TOPLEFT", -360, yOffset)
         button:SetText(label)
         return button
     end
 
-    -- Create Frame
-    Achievements.frame = CreateFrame("Frame", "mUIAchievementButtons")
-    Achievements.frame:SetSize(200, 150)
-    Achievements.frame:SetPoint("CENTER")
-
     -- Create Buttons
-    Achievements.shuffleButton = Achievements:CreateButton("mUITrackShuffle", Achievements.frame, ">", 277.5)
-    Achievements.blitzButton = Achievements:CreateButton("mUITrackBlitz", Achievements.frame, ">", 220)
-    Achievements.gladButton = Achievements:CreateButton("mUITrackGlad", Achievements.frame, ">", 110)
+    Achievements.shuffleButton = Achievements:CreateButton("mUITrackShuffle", nil, ">", 0)
+    Achievements.blitzButton = Achievements:CreateButton("mUITrackBlitz", nil, ">", 0)
+    Achievements.gladButton = Achievements:CreateButton("mUITrackGlad", nil, ">", 0)
 
     -- Set Scripts
     Achievements.shuffleButton:SetScript("OnClick", function()
         C_ContentTracking.ToggleTracking(2, Achievements.ids.shuffle, 2)
     end)
-
     Achievements.blitzButton:SetScript("OnClick", function()
         C_ContentTracking.ToggleTracking(2, Achievements.ids.blitz, 2)
     end)
-
     Achievements.gladButton:SetScript("OnClick", function()
         C_ContentTracking.ToggleTracking(2, Achievements.ids.gladiator, 2)
     end)
 
-    -- Hide Frame
-    Achievements.frame:Hide()
+    Achievements.shuffleButton:Hide()
+    Achievements.blitzButton:Hide()
+    Achievements.gladButton:Hide()
 end
 
 function Achievements:OnEnable()
     C_Timer.After(0, function()
-        Achievements.frame:SetParent(ConquestFrame.RatedSoloShuffle)
+        -- Set Parents
+        Achievements.shuffleButton:SetParent(ConquestFrame.RatedSoloShuffle)
+        Achievements.blitzButton:SetParent(ConquestFrame.RatedBGBlitz)
+        Achievements.gladButton:SetParent(ConquestFrame.Arena3v3)
+
+        -- Set Points
+        Achievements.shuffleButton:SetPoint("TOPRIGHT", ConquestFrame.RatedSoloShuffle, "TOPRIGHT", 10, -17.5)
+        Achievements.blitzButton:SetPoint("TOPRIGHT", ConquestFrame.RatedBGBlitz, "TOPRIGHT", 10, -17.5)
+        Achievements.gladButton:SetPoint("TOPRIGHT", ConquestFrame.Arena3v3, "TOPRIGHT", 10, -17.5)
     end)
 
-    Achievements.frame:Show()
+    -- Show Buttons
+    Achievements.shuffleButton:Show()
+    Achievements.blitzButton:Show()
+    Achievements.gladButton:Show()
 end
 
 function Achievements:OnDisable()
-    Achievements.frame:Hide()
+    -- Hide Buttons
+    Achievements.shuffleButton:Hide()
+    Achievements.blitzButton:Hide()
+    Achievements.gladButton:Hide()
 end
