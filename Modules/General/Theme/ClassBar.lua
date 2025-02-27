@@ -123,7 +123,8 @@ function Theme:ClassBar()
             ClassNameplateBarPaladinFrame.Background,
             ClassNameplateBarPaladinFrame.ActiveTexture
         }, true)
-    elseif (playerClass == "SHAMAN") then
+    end
+    if (playerClass == "SHAMAN" or playerClass == "PALADIN" or playerClass == "PRIEST" or playerClass == "DRUID") then
         for totem, _ in TotemFrame.totemPool:EnumerateActive() do
             mUI:Skin({ totem.Border }, true)
         end

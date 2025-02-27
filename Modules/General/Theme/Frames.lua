@@ -1053,7 +1053,8 @@ function Theme:Update()
         Theme:ClassBar()
     elseif (playerClass == "PALADIN") then
         Theme:ClassBar()
-    elseif (playerClass == "SHAMAN") then
+    end
+    if (playerClass == "SHAMAN" or playerClass == "PALADIN" or playerClass == "PRIEST" or playerClass == "DRUID") then
         -- Totem Bar
         if not Theme:IsHooked(TotemFrame, "OnUpdate") then
             Theme:HookScript(TotemFrame, "OnUpdate", function(frame)

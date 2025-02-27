@@ -52,7 +52,7 @@ function Health:OnInitialize()
         if not nameplate or nameplate:IsForbidden() then return end
         if nameplate.unit and nameplate.unit:find('nameplate%d') then
             local playerRole = UnitGroupRolesAssigned("player")
-            if UnitIsPlayer(nameplate.unit) or (not UnitCanAttack("player", nameplate.unit)) then return end
+            if UnitIsPlayer(nameplate.unit) then return end
             local healthBar = nameplate.healthBar
             local _, _, _, _, _, id = strsplit("-", UnitGUID(nameplate.unit) or "")
             local _, status = UnitDetailedThreatSituation("player", nameplate.unit)
@@ -75,8 +75,6 @@ function Health:OnInitialize()
                         local reaction = FACTION_BAR_COLORS[UnitReaction(nameplate.unit, "player")];
                         if reaction then
                             healthBar:SetStatusBarColor(reaction.r, reaction.g, reaction.b);
-                        else
-                            healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b)
                         end
                     end
                 end
@@ -94,8 +92,6 @@ function Health:OnInitialize()
                         local reaction = FACTION_BAR_COLORS[UnitReaction(nameplate.unit, "player")];
                         if reaction then
                             healthBar:SetStatusBarColor(reaction.r, reaction.g, reaction.b);
-                        else
-                            healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b)
                         end
                     end
                 end
@@ -106,8 +102,6 @@ function Health:OnInitialize()
                     local reaction = FACTION_BAR_COLORS[UnitReaction(nameplate.unit, "player")];
                     if reaction then
                         healthBar:SetStatusBarColor(reaction.r, reaction.g, reaction.b);
-                    else
-                        healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b)
                     end
                 end
             end
