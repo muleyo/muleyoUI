@@ -1068,4 +1068,6 @@ function Theme:Update()
     for i, tooltip in next, Theme.tooltips do
         Theme:StyleTooltip(tooltip)
     end
+
+    mUI:Skin(FriendsTooltip.NineSlice)
 end

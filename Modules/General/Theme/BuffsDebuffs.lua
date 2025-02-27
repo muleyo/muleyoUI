@@ -84,13 +84,13 @@ function Theme:ButtonDefault(button, isDebuff)
     border.texture:SetTexture("Interface\\Addons\\mUI\\Media\\Textures\\Core\\gloss")
     border.texture:SetTexCoord(0, 1, 0, 1)
     border.texture:SetDrawLayer("BACKGROUND", -7)
-    border.texture:SetVertexColor(0.4, 0.35, 0.35)
+    border.texture:SetVertexColor(unpack(mUI:Color(0.25)))
 
     border.shadow = CreateFrame("Frame", nil, border, "BackdropTemplate")
     border.shadow:SetPoint("TOPLEFT", border, "TOPLEFT", -4, 4)
     border.shadow:SetPoint("BOTTOMRIGHT", border, "BOTTOMRIGHT", 4, -4)
     border.shadow:SetBackdrop(Backdrop)
-    border.shadow:SetBackdropBorderColor(unpack(mUI:Color(0.15)))
+    border.shadow:SetBackdropBorderColor(unpack(mUI:Color(0.25)))
 
     button.mUIBorder = border
 
@@ -205,7 +205,7 @@ function Theme:UpdateUnitframeAuras(aura, isDebuff, unit)
             aura.mUIBorder.shadow:SetBackdropBorderColor(unpack(mUI:Color(0.15)))
         end
     else
-        aura.mUIBorder.shadow:SetBackdropBorderColor(unpack(mUI:Color(0.15)))
+        aura.mUIBorder.shadow:SetBackdropBorderColor(unpack(mUI:Color(0.25)))
     end
 
     if aura.Border then

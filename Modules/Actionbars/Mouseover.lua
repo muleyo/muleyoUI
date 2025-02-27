@@ -278,9 +278,6 @@ function Mouseover:OnInitialize()
     end
 
     function Mouseover:Update(bar, state)
-        if bar == "bar1" then
-            print(state)
-        end
         if (not state) or state == "Default" then
             Mouseover:UnhookBars(bar)
             Mouseover:SetAlpha(bar, 1)
@@ -337,9 +334,6 @@ end
 
 function Mouseover:OnEnable()
     for bar, state in pairs(Mouseover.bars) do
-        if bar == "bar1" then
-            print(state)
-        end
         Mouseover:Update(bar, state)
     end
 
