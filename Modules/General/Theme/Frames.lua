@@ -1043,7 +1043,7 @@ function Theme:Update()
         Theme:ClassBar()
     elseif (playerClass == "DEATHKNIGHT") then
         if not Theme:IsHooked(RuneFrame, "OnUpdate") then
-            Theme:HookScript(RuneFrame, "OnUpdate", OnUpdate)
+            Theme:HookScript(RuneFrame, "OnUpdate", Theme.ClassBar)
         end
     elseif (playerClass == "EVOKER") then
         if not Theme:IsHooked(EssencePlayerFrame, "OnUpdate") then
