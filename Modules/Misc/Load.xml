@@ -8,5 +8,7 @@
     <Include file="Statusbar.lua" />
     <Include file="Surrender.lua" />
     <Include file="Tabbinder.lua" />
+    <Include file="Buffcollapse.lua" />
+    <Include file="Achievements.lua" />
     <Include file="Modules.lua" />
 </Ui>

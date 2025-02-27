@@ -1,9 +1,15 @@
 local Statusbar = mUI:NewModule("mUI.Modules.Misc.Statusbar", "AceHook-3.0")
 
+function Statusbar:OnInitialize()
+    Statusbar.func = StatusTrackingBarManager.Show
+end
+
 function Statusbar:OnEnable()
-    Statusbar:RawHookScript(StatusTrackingBarManager, "OnEvent", StatusTrackingBarManager.Hide)
+    StatusTrackingBarManager.Show = function() end
+    StatusTrackingBarManager:Hide()
 end
 
 function Statusbar:OnDisable()
-    Statusbar:UnhookAll()
+    StatusTrackingBarManager.Show = Statusbar.func
+    StatusTrackingBarManager:Show()
 end
