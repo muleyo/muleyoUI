@@ -17,7 +17,9 @@ function Icon:OnEnable()
 
     if Icon.db.theme ~= "Disabled" then
         C_Timer.After(0.1, function()
-            PlayerCastingBarFrame.mUIBorder:Show()
+            if PlayerCastingBarFrame.mUIBorder then
+                PlayerCastingBarFrame.mUIBorder:Show()
+            end
         end)
     end
 end

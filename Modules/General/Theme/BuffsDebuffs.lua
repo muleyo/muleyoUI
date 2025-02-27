@@ -202,7 +202,7 @@ function Theme:UpdateUnitframeAuras(aura, isDebuff, unit)
         if mUI.db.profile.unitframes.buffsdebuffs.debuffcolors then
             aura.mUIBorder.shadow:SetBackdropBorderColor(color.r, color.g, color.b)
         else
-            aura.mUIBorder.shadow:SetBackdropBorderColor(unpack(mUI:Color(0.15)))
+            aura.mUIBorder.shadow:SetBackdropBorderColor(unpack(mUI:Color(0.25)))
         end
     else
         aura.mUIBorder.shadow:SetBackdropBorderColor(unpack(mUI:Color(0.25)))
