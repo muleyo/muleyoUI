@@ -3,21 +3,11 @@ local Friendlist = mUI:NewModule("mUI.Modules.General.Friendlist", "AceHook-3.0"
 function Friendlist:OnInitialize()
     -- Variables
     Friendlist.pause = false
-    Friendlist.classes = {
-        ["Warrior"] = "WARRIOR",
-        ["Death Knight"] = "DEATHKNIGHT",
-        ["Paladin"] = "PALADIN",
-        ["Hunter"] = "HUNTER",
-        ["Rogue"] = "ROGUE",
-        ["Priest"] = "PRIEST",
-        ["Shaman"] = "SHAMAN",
-        ["Mage"] = "MAGE",
-        ["Warlock"] = "WARLOCK",
-        ["Monk"] = "MONK",
-        ["Druid"] = "DRUID",
-        ["Demon Hunter"] = "DEMONHUNTER",
-        ["Evoker"] = "EVOKER",
-    }
+    Friendlist.classes = {}
+
+    for className, localizedClass in pairs(LOCALIZED_CLASS_NAMES_FEMALE) do
+        Friendlist.classes[localizedClass] = className
+    end
 
     function Friendlist:AddFieldAlias(data, isBNet)
         local function first(...)
@@ -120,9 +110,7 @@ function Friendlist:OnInitialize()
             local level = friendWrapper.data.level
             local characterName = friendWrapper.data.characterName
             local class = friendWrapper.data.class
-            local classcolor = RAID_CLASS_COLORS[Friendlist.classes[class]]
-            local color = format("%02X%02X%02X", floor(classcolor.r * 255), floor(classcolor.g * 255),
-                floor(classcolor.b * 255))
+            local color = RAID_CLASS_COLORS[Friendlist.classes[class]]:GenerateHexColorNoAlpha()
 
             if level == GetMaxLevelForLatestExpansion() then
                 frame:SetText("|cff" .. color .. accountName .. " [" .. characterName .. "]|r")
