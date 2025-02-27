@@ -73,11 +73,7 @@ function Health:OnInitialize()
                         healthBar:SetStatusBarColor(0.5, 0.5, 0.5)
                     elseif (not UnitIsTapDenied(nameplate.unit)) then
                         local reaction = FACTION_BAR_COLORS[UnitReaction(nameplate.unit, "player")];
-                        if reaction and UnitReaction(nameplate.unit, "player") == 4 then
-                            healthBar:SetStatusBarColor(reaction.r, reaction.g, reaction.b);
-                        elseif reaction and UnitReaction(nameplate.unit, "player") == 2 then
-                            healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b)
-                        elseif reaction then
+                        if reaction then
                             healthBar:SetStatusBarColor(reaction.r, reaction.g, reaction.b);
                         else
                             healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b)
@@ -96,11 +92,7 @@ function Health:OnInitialize()
                         healthBar:SetStatusBarColor(0.5, 0.5, 0.5)
                     elseif (not UnitIsTapDenied(nameplate.unit)) then
                         local reaction = FACTION_BAR_COLORS[UnitReaction(nameplate.unit, "player")];
-                        if reaction and UnitReaction(nameplate.unit, "player") == 4 then
-                            healthBar:SetStatusBarColor(reaction.r, reaction.g, reaction.b);
-                        elseif reaction and UnitReaction(nameplate.unit, "player") == 2 then
-                            healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b)
-                        elseif reaction then
+                        if reaction then
                             healthBar:SetStatusBarColor(reaction.r, reaction.g, reaction.b);
                         else
                             healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b)
@@ -112,11 +104,7 @@ function Health:OnInitialize()
                     healthBar:SetStatusBarColor(0.5, 0.5, 0.5)
                 elseif (not UnitIsTapDenied(nameplate.unit)) then
                     local reaction = FACTION_BAR_COLORS[UnitReaction(nameplate.unit, "player")];
-                    if reaction and UnitReaction(nameplate.unit, "player") == 4 then
-                        healthBar:SetStatusBarColor(reaction.r, reaction.g, reaction.b);
-                    elseif reaction and UnitReaction(nameplate.unit, "player") == 2 then
-                        healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b)
-                    elseif reaction then
+                    if reaction then
                         healthBar:SetStatusBarColor(reaction.r, reaction.g, reaction.b);
                     else
                         healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b)
@@ -139,6 +127,9 @@ end
 function Health:OnEnable()
     Health:SecureHook("CompactUnitFrame_UpdateHealth", function(nameplate)
         Health:HealthText(nameplate)
+    end)
+
+    Health:SecureHook("CompactUnitFrame_UpdateHealthColor", function(nameplate)
         Health:Colors(nameplate)
     end)
 end
