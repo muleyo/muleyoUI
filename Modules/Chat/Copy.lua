@@ -86,6 +86,8 @@ function Copy:OnInitialize()
             Copy.frame:Show()
         end)
     end
+
+    Copy.button:Hide()
 end
 
 function Copy:OnEnable()
