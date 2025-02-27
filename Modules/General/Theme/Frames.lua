@@ -37,7 +37,9 @@ function Theme:Update()
         if Theme.db.theme == "Disabled" then
             castbar.mUIBorder:Hide()
         else
-            castbar.mUIBorder:Show()
+            if mUI.db.profile.castbars.icon then
+                castbar.mUIBorder:Show()
+            end
             castbar.mUIBorder.shadow:SetBackdropBorderColor(unpack(mUI:Color(0.15)))
         end
     end
