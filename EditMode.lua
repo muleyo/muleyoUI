@@ -42,7 +42,7 @@ function EditMode:OnInitialize()
         if not EditMode.db[layout] then
             EditMode.db[layout] = {
                 ["statsframe"] = {
-                    ["point"] = "BOTTOM",
+                    ["point"] = "BOTTOMLEFT",
                     ["x"] = 0,
                     ["y"] = 0
                 },
