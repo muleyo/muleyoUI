@@ -186,6 +186,8 @@ function Style:OnInitialize()
     end
 
     function Style:OnItemTooltipSetColor(tooltip)
+        if not Style.db.style == "mUI" then return end
+        if mUI.db.profile.general.theme == "Disabled" then return end
         if tooltip.NineSlice then
             local itemGUID
             local itemLink
@@ -216,6 +218,8 @@ function Style:OnInitialize()
     end
 
     function Style:OnMacroTooltipSetColor(tooltip)
+        if not Style.db.style == "mUI" then return end
+        if mUI.db.profile.general.theme == "Disabled" then return end
         if tooltip:GetTooltipData() and tooltip:GetTooltipData().lines and tooltip:GetTooltipData().lines[2] and
             tooltip:GetTooltipData().lines[2].leftText and tooltip:GetTooltipData().lines[2].leftColor then
             local tooltipData = tooltip:GetTooltipData()
