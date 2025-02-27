@@ -1,6 +1,6 @@
 ## Interface: 110100
 ## Author: muleyo
-## Version: 1.0.9
+## Version: 1.0.10
 ## Title: |cff009cffmuleyo|r|cffffd100UI|r
 ## Notes: Unleash your real potential
 ## SavedVariables: mUIDB
@@ -26,6 +26,9 @@ Libs\Load.xml
 ## Init
 Core\Load.xml
 
+## Media
+Media\Load.xml
+
 ## Database
 Config\Database.lua
 
@@ -37,9 +40,6 @@ Config\Load.xml
 
 ## Core
 Core.lua
-
-## Media
-Media\Load.xml
 
 ## Modules
 Modules\Load.xml

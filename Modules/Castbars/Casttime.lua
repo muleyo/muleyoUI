@@ -1,6 +1,9 @@
 local Casttime = mUI:NewModule("mUI.Modules.Castbars.Casttime", "AceHook-3.0")
 
 function Casttime:OnInitialize()
+    -- Load Database
+    Casttime.db = mUI.db.profile.general
+
     -- Tables
     Casttime.castbars = {
         player = "PlayerCastingBarFrame",
@@ -13,15 +16,18 @@ function Casttime:OnInitialize()
         boss5 = "Boss5TargetFrameSpellBar"
     }
 
+    Casttime.LSM = LibStub("LibSharedMedia-3.0")
+    Casttime.font = Casttime.LSM:Fetch('font', Casttime.db.font)
+
     for unitframe, castbar in pairs(Casttime.castbars) do
         if unitframe == "player" then
             _G[castbar].timer = _G[castbar]:CreateFontString(nil)
-            _G[castbar].timer:SetFont(STANDARD_TEXT_FONT, 14, "OUTLINE")
+            _G[castbar].timer:SetFont(Casttime.font, 14, "OUTLINE")
             _G[castbar].timer:SetPoint("LEFT", _G[castbar], "RIGHT", 5, 0)
             _G[castbar].update = 0.1
         else
             _G[castbar].timer = _G[castbar]:CreateFontString(nil)
-            _G[castbar].timer:SetFont(STANDARD_TEXT_FONT, 11, "OUTLINE")
+            _G[castbar].timer:SetFont(Casttime.font, 11, "OUTLINE")
             _G[castbar].timer:SetPoint("LEFT", _G[castbar], "RIGHT", 4, 0)
             _G[castbar].update = 0.1
         end

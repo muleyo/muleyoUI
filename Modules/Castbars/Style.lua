@@ -7,6 +7,9 @@ function Style:OnInitialize()
         general = mUI.db.profile.general
     }
 
+    Style.LSM = LibStub("LibSharedMedia-3.0")
+    Style.font = Style.LSM:Fetch('font', Style.db.general.font)
+
     -- Frames
     Style.frame = CreateFrame("Frame")
 
@@ -34,7 +37,7 @@ function Style:OnInitialize()
                 _G[castbar].Border:Hide()
                 _G[castbar].Text:ClearAllPoints()
                 _G[castbar].Text:SetPoint("TOP", _G[castbar], "TOP", 0, -1)
-                _G[castbar].Text:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE")
+                _G[castbar].Text:SetFont(Style.font, 12, "OUTLINE")
             else
                 _G[castbar]:SetSize(150, 12)
                 _G[castbar].TextBorder:Hide()
@@ -45,7 +48,7 @@ function Style:OnInitialize()
                 _G[castbar].Icon:SetPoint("TOPLEFT", _G[castbar], "TOPLEFT", -22, 2)
                 _G[castbar].Text:ClearAllPoints()
                 _G[castbar].Text:SetPoint("TOP", _G[castbar], "TOP", 0, 2.5)
-                _G[castbar].Text:SetFont(STANDARD_TEXT_FONT, 11, "OUTLINE")
+                _G[castbar].Text:SetFont(Style.font, 11, "OUTLINE")
                 _G[castbar].Text.SetText = function(frame, text)
                     if strlen(text) > 19 then
                         Style.textfunc(frame, strsub(text, 0, 19) .. "...")
