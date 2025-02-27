@@ -4,6 +4,21 @@ function Mouseover:OnInitialize()
     -- Load Database
     Mouseover.db = mUI.db.profile.actionbars.mouseover
 
+    Mouseover.bars = {
+        bar1 = mUI.db.profile.actionbars.mouseover.bar1,
+        bar2 = mUI.db.profile.actionbars.mouseover.bar2,
+        bar3 = mUI.db.profile.actionbars.mouseover.bar3,
+        bar4 = mUI.db.profile.actionbars.mouseover.bar4,
+        bar5 = mUI.db.profile.actionbars.mouseover.bar5,
+        bar6 = mUI.db.profile.actionbars.mouseover.bar6,
+        bar7 = mUI.db.profile.actionbars.mouseover.bar7,
+        bar8 = mUI.db.profile.actionbars.mouseover.bar8,
+        petbar = mUI.db.profile.actionbars.mouseover.petbar,
+        stancebar = mUI.db.profile.actionbars.mouseover.stancebar,
+        micromenu = mUI.db.profile.actionbars.mouseover.micromenu,
+        bagbuttons = mUI.db.profile.actionbars.mouseover.bagbuttons
+    }
+
     -- Variables
     Mouseover.hookedBars = {}
     Mouseover.func = {}
@@ -263,6 +278,9 @@ function Mouseover:OnInitialize()
     end
 
     function Mouseover:Update(bar, state)
+        if bar == "bar1" then
+            print(state)
+        end
         if (not state) or state == "Default" then
             Mouseover:UnhookBars(bar)
             Mouseover:SetAlpha(bar, 1)
@@ -318,22 +336,10 @@ function Mouseover:OnInitialize()
 end
 
 function Mouseover:OnEnable()
-    Mouseover.bars = {
-        bar1 = mUI.db.profile.actionbars.mouseover.bar1,
-        bar2 = mUI.db.profile.actionbars.mouseover.bar2,
-        bar3 = mUI.db.profile.actionbars.mouseover.bar3,
-        bar4 = mUI.db.profile.actionbars.mouseover.bar4,
-        bar5 = mUI.db.profile.actionbars.mouseover.bar5,
-        bar6 = mUI.db.profile.actionbars.mouseover.bar6,
-        bar7 = mUI.db.profile.actionbars.mouseover.bar7,
-        bar8 = mUI.db.profile.actionbars.mouseover.bar8,
-        petbar = mUI.db.profile.actionbars.mouseover.petbar,
-        stancebar = mUI.db.profile.actionbars.mouseover.stancebar,
-        micromenu = mUI.db.profile.actionbars.mouseover.micromenu,
-        bagbuttons = mUI.db.profile.actionbars.mouseover.bagbuttons
-    }
-
     for bar, state in pairs(Mouseover.bars) do
+        if bar == "bar1" then
+            print(state)
+        end
         Mouseover:Update(bar, state)
     end
 
