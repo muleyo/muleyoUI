@@ -24,7 +24,7 @@ function Repair:OnInitialize()
                         RepairAllItems()
                         mUI:Debug("|cffead000Repair cost: " .. formattedCost .. "|r")
                     else
-                        mUI:Debug("cffead000Not enough gold to cover the repair cost.|r")
+                        mUI:Debug("|cffead000Not enough gold to cover the repair cost.|r")
                     end
                 end
             end
