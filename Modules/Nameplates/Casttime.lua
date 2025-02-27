@@ -2,7 +2,14 @@ local Casttime = mUI:NewModule("mUI.Modules.Nameplates.Casttime", "AceHook-3.0")
 
 function Casttime:OnInitialize()
     -- Load Database
-    Casttime.db = mUI.db.profile.nameplates
+    Casttime.db = {
+        nameplates = mUI.db.profile.nameplates,
+        general = mUI.db.profile.general
+    }
+
+    -- Load Database
+    Casttime.LSM = LibStub("LibSharedMedia-3.0")
+    Casttime.font = Casttime.LSM:Fetch('font', Casttime.db.general.font)
 
     function Casttime:IconSkin(icon, parent)
         if not icon or (icon and icon.styled) then return end
@@ -60,7 +67,7 @@ function Casttime:OnInitialize()
 
                 frame.Icon:ClearAllPoints();
                 PixelUtil.SetPoint(frame.Icon, "CENTER", frame, "LEFT", -10, 0);
-                frame.Text:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
+                frame.Text:SetFont(Casttime.font, 10, "OUTLINE")
                 Casttime:IconSkin(frame.Icon, frame)
 
                 if castInterrupt or channelInterrupt then
@@ -73,10 +80,10 @@ function Casttime:OnInitialize()
                     frame.Icon.bg:Show()
                 end
 
-                if Casttime.db.casttime then
+                if Casttime.db.nameplates.casttime then
                     if not frame.timer then
                         frame.timer = frame:CreateFontString(nil)
-                        frame.timer:SetFont(STANDARD_TEXT_FONT, 8, "THINOUTLINE")
+                        frame.timer:SetFont(Casttime.font, 8, "THINOUTLINE")
                         frame.timer:SetPoint("CENTER", frame.Icon, "BOTTOM", 0, -5)
                         frame.timer:SetDrawLayer("OVERLAY")
                     else
@@ -108,7 +115,7 @@ function Casttime:OnInitialize()
 
             frame.castBar.Icon:ClearAllPoints();
             PixelUtil.SetPoint(frame.castBar.Icon, "CENTER", frame.castBar, "LEFT", -10, 0);
-            frame.castBar.Text:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
+            frame.castBar.Text:SetFont(Casttime.font, 10, "OUTLINE")
         end
     end
 end

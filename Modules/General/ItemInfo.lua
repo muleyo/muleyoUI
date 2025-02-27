@@ -1,6 +1,11 @@
 local ItemInfo = mUI:NewModule("mUI.Modules.General.ItemInfo", "AceHook-3.0")
 
 function ItemInfo:OnInitialize()
+    -- Load Database
+    ItemInfo.db = mUI.db.profile.general
+    ItemInfo.LSM = LibStub("LibSharedMedia-3.0")
+    ItemInfo.font = ItemInfo.LSM:Fetch('font', ItemInfo.db.font)
+
     -- CharacterFrame / InspectFrame Equipment Enchants, Gems and ItemLevels
     -- Variables & Tables
     ItemInfo.iteminfo = CreateFrame("Frame")
@@ -683,7 +688,7 @@ function ItemInfo:OnInitialize()
 
     function ItemInfo:CreateItemLevelString(button)
         button.levelString = button:CreateFontString(nil, "OVERLAY")
-        button.levelString:SetFont(STANDARD_TEXT_FONT, 13, "OUTLINE")
+        button.levelString:SetFont(ItemInfo.font, 13, "OUTLINE")
         button.levelString:SetPoint("CENTER", button, "BOTTOM", 0, 8)
 
         ItemInfo.levelstrings[button.levelString] = true

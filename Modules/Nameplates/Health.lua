@@ -2,7 +2,13 @@ local Health = mUI:NewModule("mUI.Modules.Nameplates.Health", "AceHook-3.0")
 
 function Health:OnInitialize()
     -- Load Database
-    Health.db = mUI.db.profile.nameplates
+    Health.db = {
+        nameplates = mUI.db.profile.nameplates,
+        general = mUI.db.profile.general
+    }
+
+    Health.LSM = LibStub("LibSharedMedia-3.0")
+    Health.font = Health.LSM:Fetch('font', Health.db.general.font)
 
     -- Create Frame
     Health.health = CreateFrame("Frame")
@@ -11,7 +17,7 @@ function Health:OnInitialize()
     Health.healthtexts = {}
 
     function Health:HealthText(nameplate)
-        if not Health.db.healthtext then
+        if not Health.db.nameplates.healthtext then
             for healthtext in pairs(Health.healthtexts) do
                 healthtext:SetText(nil)
             end
@@ -29,12 +35,12 @@ function Health:OnInitialize()
                 if not healthBar.text then
                     healthBar.text = healthBar:CreateFontString(nil, "ARTWORK", nil)
                     healthBar.text:SetPoint("CENTER")
-                    healthBar.text:SetFont(STANDARD_TEXT_FONT, 8, 'OUTLINE')
-                    healthBar.text:SetText(string.format("%." .. Health.db.decimals .. "f",
+                    healthBar.text:SetFont(Health.font, 8, 'OUTLINE')
+                    healthBar.text:SetText(string.format("%." .. Health.db.nameplates.decimals .. "f",
                         (currentHealth / maxHealth) * 100) .. "%")
                     Health.healthtexts[healthBar.text] = true
                 else
-                    healthBar.text:SetText(string.format("%." .. Health.db.decimals .. "f",
+                    healthBar.text:SetText(string.format("%." .. Health.db.nameplates.decimals .. "f",
                         (currentHealth / maxHealth) * 100) .. "%")
                 end
             end
@@ -42,15 +48,15 @@ function Health:OnInitialize()
     end
 
     function Health:Colors(nameplate)
-        if not Health.db.colors then return end
+        if not Health.db.nameplates.colors then return end
         if not nameplate or nameplate:IsForbidden() then return end
         if nameplate.unit and nameplate.unit:find('nameplate%d') then
             local playerRole = UnitGroupRolesAssigned("player")
             if UnitIsPlayer(nameplate.unit) or (not UnitCanAttack("player", nameplate.unit)) then return end
             local _, _, _, _, _, id = strsplit("-", UnitGUID(nameplate.unit) or "")
             local _, status = UnitDetailedThreatSituation("player", nameplate.unit)
-            local color = Health.db.npccolors[tonumber(id)] or { r = 0, g = 1, b = 0.6, a = 1 }
-            local nColor = Health.db.npccolors[tonumber(id)] or { r = 1, g = 0, b = 0.3, a = 1 }
+            local color = Health.db.nameplates.npccolors[tonumber(id)] or { r = 0, g = 1, b = 0.6, a = 1 }
+            local nColor = Health.db.nameplates.npccolors[tonumber(id)] or { r = 1, g = 0, b = 0.3, a = 1 }
             local unit = nameplate.unit
             local healthBar = nameplate.healthBar
 
