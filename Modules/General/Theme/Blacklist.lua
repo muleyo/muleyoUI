@@ -95,5 +95,6 @@ function Theme:ForbiddenFrames()
         [select(3, CampaignQuestObjectiveTracker.Header:GetRegions())] = true,
         [select(4, CampaignQuestObjectiveTracker.Header:GetRegions())] = true,
         [select(9, ReportFrame:GetRegions())] = true,
+        [select(2, CommunitiesFrame.ChatEditBox:GetRegions())] = true,
     }
 end
