@@ -808,12 +808,12 @@ function Theme:Update()
     mUI:Skin(MerchantExtraCurrencyInset.NineSlice)
     mUI:Skin(MerchantFrameTab1)
     mUI:Skin(MerchantFrameTab2)
+    mUI:Skin(MerchantRepairItemButton)
+    mUI:Skin(MerchantRepairAllButton)
+    mUI:Skin(MerchantGuildBankRepairButton)
+    mUI:Skin(MerchantSellAllJunkButton)
     mUI:Skin({
-        MerchantBuyBackItemSlotTexture,
-        select(1, select(1, MerchantRepairItemButton:GetRegions())),
-        select(1, select(1, MerchantRepairAllButton:GetRegions())),
-        select(1, select(1, MerchantGuildBankRepairButton:GetRegions())),
-        select(1, select(1, MerchantSellAllJunkButton:GetRegions()))
+        MerchantBuyBackItemSlotTexture
     }, true)
 
     -- Item Upgrade

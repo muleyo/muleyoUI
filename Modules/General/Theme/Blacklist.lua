@@ -96,5 +96,9 @@ function Theme:ForbiddenFrames()
         [select(4, CampaignQuestObjectiveTracker.Header:GetRegions())] = true,
         [select(9, ReportFrame:GetRegions())] = true,
         [select(2, CommunitiesFrame.ChatEditBox:GetRegions())] = true,
+        [select(2, MerchantRepairItemButton:GetRegions())] = true,
+        [select(2, MerchantRepairAllButton:GetRegions())] = true,
+        [select(2, MerchantGuildBankRepairButton:GetRegions())] = true,
+        [select(2, MerchantSellAllJunkButton:GetRegions())] = true,
     }
 end
