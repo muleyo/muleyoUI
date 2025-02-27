@@ -204,7 +204,7 @@ function Unitframes_Textures:OnInitialize()
                 elseif name == "targettarget" or name == "focustarget" then
                     select(4, healthbar:GetRegions()):SetTexture(texture)
                     if not Unitframes_Textures.db.color then
-                        select(7, healthbar:GetRegions()):SetVertexColor(0, 1, 0)
+                        select(4, healthbar:GetRegions()):SetVertexColor(0, 1, 0)
                     end
                 else
                     healthbar.HealthBarTexture:SetTexture(texture)

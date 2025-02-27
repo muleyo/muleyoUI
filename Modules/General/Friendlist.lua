@@ -114,7 +114,7 @@ function Friendlist:OnInitialize()
         local friendWrapper = Friendlist:PackageFriend(buttonType, id)
         if not friendWrapper then return end
 
-        if friendWrapper.data.class then
+        if friendWrapper.data.class and friendWrapper.data.class ~= "Unknown" then
             Friendlist.pause = true
             local accountName = friendWrapper.data.accountName
             local level = friendWrapper.data.level
