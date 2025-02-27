@@ -79,9 +79,12 @@ function Copy:OnInitialize()
             end
         end
 
-        Copy.editbox:SetText(chatHistory)
-        Copy.title:SetText("Chat Log (" .. chatFrame.name .. ")")
-        Copy.frame:Show()
+        -- Add a delay before setting the text in the editbox
+        C_Timer.After(0.1, function()
+            Copy.editbox:SetText(chatHistory)
+            Copy.title:SetText("Chat Log (" .. chatFrame.name .. ")")
+            Copy.frame:Show()
+        end)
     end
 end
 
