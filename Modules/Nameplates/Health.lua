@@ -53,72 +53,73 @@ function Health:OnInitialize()
         if nameplate.unit and nameplate.unit:find('nameplate%d') then
             local playerRole = UnitGroupRolesAssigned("player")
             if UnitIsPlayer(nameplate.unit) or (not UnitCanAttack("player", nameplate.unit)) then return end
+            local healthBar = nameplate.healthBar
             local _, _, _, _, _, id = strsplit("-", UnitGUID(nameplate.unit) or "")
             local _, status = UnitDetailedThreatSituation("player", nameplate.unit)
-            local color = Health.db.nameplates.npccolors[tonumber(id)] or { r = 0, g = 1, b = 0.6, a = 1 }
-            local nColor = Health.db.nameplates.npccolors[tonumber(id)] or { r = 1, g = 0, b = 0.3, a = 1 }
-            local unit = nameplate.unit
-            local healthBar = nameplate.healthBar
+            local color = mUI.db.profile.nameplates.npccolors[tonumber(id)] and
+                mUI.db.profile.nameplates.npccolors[tonumber(id)].color or { r = 0, g = 1, b = 0.6 }
+            local nColor = mUI.db.profile.nameplates.npccolors[tonumber(id)] and
+                mUI.db.profile.nameplates.npccolors[tonumber(id)].color or { r = 1, g = 0, b = 0.3 }
 
             if playerRole == "TANK" then
                 if status and status == 3 then
-                    healthBar:SetStatusBarColor(color.r, color.g, color.b, color.a)
+                    healthBar:SetStatusBarColor(color.r, color.g, color.b)
                 elseif status and status == 2 then
                     healthBar:SetStatusBarColor(1, 0.8, 0, 1)
                 elseif status and (status == 1 or status == 0) then
                     healthBar:SetStatusBarColor(1, 0, 0.3, 1)
                 else
-                    if (UnitIsTapDenied(unit)) and not UnitPlayerControlled(unit) then
+                    if (UnitIsTapDenied(nameplate.unit)) and not UnitPlayerControlled(nameplate.unit) then
                         healthBar:SetStatusBarColor(0.5, 0.5, 0.5)
-                    elseif (not UnitIsTapDenied(unit)) then
-                        local reaction = FACTION_BAR_COLORS[UnitReaction(unit, "player")];
-                        if reaction and UnitReaction(unit, "player") == 4 then
+                    elseif (not UnitIsTapDenied(nameplate.unit)) then
+                        local reaction = FACTION_BAR_COLORS[UnitReaction(nameplate.unit, "player")];
+                        if reaction and UnitReaction(nameplate.unit, "player") == 4 then
                             healthBar:SetStatusBarColor(reaction.r, reaction.g, reaction.b);
-                        elseif reaction and UnitReaction(unit, "player") == 2 then
-                            healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b, nColor.a)
+                        elseif reaction and UnitReaction(nameplate.unit, "player") == 2 then
+                            healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b)
                         elseif reaction then
                             healthBar:SetStatusBarColor(reaction.r, reaction.g, reaction.b);
                         else
-                            healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b, nColor.a)
+                            healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b)
                         end
                     end
                 end
             elseif playerRole == "HEALER" or playerRole == "DAMAGER" then
                 if status and status == 3 then
-                    healthBar:SetStatusBarColor(1, 0, 0.3, 1)
+                    healthBar:SetStatusBarColor(1, 0, 0.3)
                 elseif status and status == 2 then
-                    healthBar:SetStatusBarColor(1, 0.8, 0, 1)
+                    healthBar:SetStatusBarColor(1, 0.8, 0)
                 elseif status and (status == 1 or status == 0) then
-                    healthBar:SetStatusBarColor(color.r, color.g, color.b, color.a)
+                    healthBar:SetStatusBarColor(color.r, color.g, color.b)
                 else
-                    if (UnitIsTapDenied(unit)) and not UnitPlayerControlled(unit) then
+                    if (UnitIsTapDenied(nameplate.unit)) and not UnitPlayerControlled(nameplate.unit) then
                         healthBar:SetStatusBarColor(0.5, 0.5, 0.5)
-                    elseif (not UnitIsTapDenied(unit)) then
-                        local reaction = FACTION_BAR_COLORS[UnitReaction(unit, "player")];
-                        if reaction and UnitReaction(unit, "player") == 4 then
+                    elseif (not UnitIsTapDenied(nameplate.unit)) then
+                        local reaction = FACTION_BAR_COLORS[UnitReaction(nameplate.unit, "player")];
+                        if reaction and UnitReaction(nameplate.unit, "player") == 4 then
                             healthBar:SetStatusBarColor(reaction.r, reaction.g, reaction.b);
-                        elseif reaction and UnitReaction(unit, "player") == 2 then
-                            healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b, nColor.a)
+                        elseif reaction and UnitReaction(nameplate.unit, "player") == 2 then
+                            healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b)
                         elseif reaction then
                             healthBar:SetStatusBarColor(reaction.r, reaction.g, reaction.b);
                         else
-                            healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b, nColor.a)
+                            healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b)
                         end
                     end
                 end
             else
-                if (UnitIsTapDenied(unit)) and not UnitPlayerControlled(unit) then
+                if (UnitIsTapDenied(nameplate.unit)) and not UnitPlayerControlled(nameplate.unit) then
                     healthBar:SetStatusBarColor(0.5, 0.5, 0.5)
-                elseif (not UnitIsTapDenied(unit)) then
-                    local reaction = FACTION_BAR_COLORS[UnitReaction(unit, "player")];
-                    if reaction and UnitReaction(unit, "player") == 4 then
+                elseif (not UnitIsTapDenied(nameplate.unit)) then
+                    local reaction = FACTION_BAR_COLORS[UnitReaction(nameplate.unit, "player")];
+                    if reaction and UnitReaction(nameplate.unit, "player") == 4 then
                         healthBar:SetStatusBarColor(reaction.r, reaction.g, reaction.b);
-                    elseif reaction and UnitReaction(unit, "player") == 2 then
-                        healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b, nColor.a)
+                    elseif reaction and UnitReaction(nameplate.unit, "player") == 2 then
+                        healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b)
                     elseif reaction then
                         healthBar:SetStatusBarColor(reaction.r, reaction.g, reaction.b);
                     else
-                        healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b, nColor.a)
+                        healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b)
                     end
                 end
             end
