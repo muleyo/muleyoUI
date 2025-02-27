@@ -28,32 +28,42 @@ function Style:OnInitialize()
     -- Backup Default Functions
     Style.textfunc = TargetFrameSpellBar.Text.SetText
 
-    function Style:EnableStyle()
-        for unitframe, castbar in pairs(Style.castbars) do
-            if unitframe == "player" then
-                _G[castbar]:SetSize(209, 18)
-                _G[castbar].StandardGlow:Hide()
-                _G[castbar].TextBorder:Hide()
-                _G[castbar].Border:Hide()
-                _G[castbar].Text:ClearAllPoints()
-                _G[castbar].Text:SetPoint("TOP", _G[castbar], "TOP", 0, -1)
-                _G[castbar].Text:SetFont(Style.font, 12, "OUTLINE")
-            else
-                _G[castbar]:SetSize(150, 12)
-                _G[castbar].TextBorder:Hide()
-                _G[castbar].BorderShield:ClearAllPoints()
-                _G[castbar].BorderShield:SetPoint("CENTER", _G[castbar].Icon, "CENTER", 0, -2.5)
-                _G[castbar].Icon:SetSize(16, 16)
-                _G[castbar].Icon:ClearAllPoints()
-                _G[castbar].Icon:SetPoint("TOPLEFT", _G[castbar], "TOPLEFT", -22, 2)
-                _G[castbar].Text:ClearAllPoints()
-                _G[castbar].Text:SetPoint("TOP", _G[castbar], "TOP", 0, 2.5)
-                _G[castbar].Text:SetFont(Style.font, 11, "OUTLINE")
-                _G[castbar].Text.SetText = function(frame, text)
-                    if strlen(text) > 19 then
-                        Style.textfunc(frame, strsub(text, 0, 19) .. "...")
-                    else
-                        Style.textfunc(frame, text)
+    function Style:EnableStyle(unit)
+        if unit and unit == "player" then
+            _G[Style.castbars[unit]]:SetSize(209, 18)
+            _G[Style.castbars[unit]].StandardGlow:Hide()
+            _G[Style.castbars[unit]].TextBorder:Hide()
+            _G[Style.castbars[unit]].Border:Hide()
+            _G[Style.castbars[unit]].Text:ClearAllPoints()
+            _G[Style.castbars[unit]].Text:SetPoint("TOP", _G[Style.castbars[unit]], "TOP", 0, -1)
+            _G[Style.castbars[unit]].Text:SetFont(Style.font, 12, "OUTLINE")
+        else
+            for unitframe, castbar in pairs(Style.castbars) do
+                if unitframe == "player" then
+                    _G[castbar]:SetSize(209, 18)
+                    _G[castbar].StandardGlow:Hide()
+                    _G[castbar].TextBorder:Hide()
+                    _G[castbar].Border:Hide()
+                    _G[castbar].Text:ClearAllPoints()
+                    _G[castbar].Text:SetPoint("TOP", _G[castbar], "TOP", 0, -1)
+                    _G[castbar].Text:SetFont(Style.font, 12, "OUTLINE")
+                else
+                    _G[castbar]:SetSize(150, 12)
+                    _G[castbar].TextBorder:Hide()
+                    _G[castbar].BorderShield:ClearAllPoints()
+                    _G[castbar].BorderShield:SetPoint("CENTER", _G[castbar].Icon, "CENTER", 0, -2.5)
+                    _G[castbar].Icon:SetSize(16, 16)
+                    _G[castbar].Icon:ClearAllPoints()
+                    _G[castbar].Icon:SetPoint("TOPLEFT", _G[castbar], "TOPLEFT", -22, 2)
+                    _G[castbar].Text:ClearAllPoints()
+                    _G[castbar].Text:SetPoint("TOP", _G[castbar], "TOP", 0, 2.5)
+                    _G[castbar].Text:SetFont(Style.font, 11, "OUTLINE")
+                    _G[castbar].Text.SetText = function(frame, text)
+                        if strlen(text) > 19 then
+                            Style.textfunc(frame, strsub(text, 0, 19) .. "...")
+                        else
+                            Style.textfunc(frame, text)
+                        end
                     end
                 end
             end
@@ -98,9 +108,14 @@ end
 function Style:OnEnable()
     -- Enable Style
     Style:EnableStyle()
-
-    Style.frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-    Style:HookScript(Style.frame, "OnEvent", Style.EnableStyle)
+    Style:HookScript(Style.frame, "OnEvent", function()
+        C_Timer.After(0, function()
+            Style:EnableStyle()
+        end)
+    end)
+    Style:HookScript(PlayerCastingBarFrame, "OnEvent", function()
+        Style:EnableStyle("player")
+    end)
     Style:SecureHook(C_EditMode, "OnEditModeExit", Style.EnableStyle)
 end
 
