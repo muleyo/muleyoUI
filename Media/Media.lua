@@ -8,7 +8,7 @@ function Media:OnInitialize()
     -- Border
 
     -- Font
-    Media.LSM:Register("font", "None", [[None]])
+    Media.LSM:Register("font", "None", STANDARD_TEXT_FONT)
     Media.LSM:Register("font", "Arial Bold", [[Interface\Addons\mUI\Media\Fonts\ArialBold.ttf]])
     Media.LSM:Register("font", "Avant Garde", [[Interface\Addons\mUI\Media\Fonts\AvantGarde.ttf]])
     Media.LSM:Register("font", "Doris P Bold", [[Interface\Addons\mUI\Media\Fonts\DorisPBold.ttf]])
