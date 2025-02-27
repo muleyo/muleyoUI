@@ -3,7 +3,7 @@ local TalkingHead = mUI:NewModule("mUI.Modules.General.TalkingHead", "AceHook-3.
 function TalkingHead:OnInitialize()
     TalkingHead.talkinghead = CreateFrame("Frame")
 
-    function TalkingHead:Update()
+    function TalkingHead:Update(event)
         if not event == "TALKINGHEAD_REQUESTED" then return end
         TalkingHeadFrame:CloseImmediately()
     end
