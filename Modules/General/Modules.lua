@@ -54,7 +54,7 @@ function Modules:OnEnable()
     if Modules.db.automation.cinematic then
         Modules.Cinematic:Enable()
     end
-    if Modules.db.automation.talkingHead then
+    if Modules.db.automation.talkinghead then
         Modules.TalkingHead:Enable()
     end
     if Modules.db.display.iteminfo then
