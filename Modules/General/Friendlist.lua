@@ -9,6 +9,10 @@ function Friendlist:OnInitialize()
         Friendlist.classes[localizedClass] = className
     end
 
+    for className, localizedClass in pairs(LOCALIZED_CLASS_NAMES_MALE) do
+        Friendlist.classes[localizedClass] = className
+    end
+
     function Friendlist:AddFieldAlias(data, isBNet)
         local function first(...)
             local temp
