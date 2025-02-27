@@ -7,6 +7,8 @@ function Gui:OnInitialize()
     -- Libraries
     local AceGUI = LibStub("AceGUI-3.0")
     local ACD = LibStub("AceConfigDialog-3.0")
+    local LSM = LibStub("LibSharedMedia-3.0")
+    local font = LSM:Fetch('font', mUI.db.profile.general.font)
 
     -- Create Options Frame
     local gui = CreateFrame("Frame", "mUIOptions", UIParent, "PortraitFrameTemplate")
@@ -19,7 +21,7 @@ function Gui:OnInitialize()
 
     -- Set Background, Title and Portrait
     gui.TitleContainer.TitleText:SetText("|cff009cffmuleyo|rUI (" .. C_AddOns.GetAddOnMetadata("mUI", "version") .. ")")
-    gui.TitleContainer.TitleText:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE")
+    gui.TitleContainer.TitleText:SetFont(font, 12, "OUTLINE")
     gui.PortraitContainer.portrait:SetTexture([[Interface\AddOns\mUI\Media\Logo.png]])
     gui.Bg:SetColorTexture(-0.05, -0.05, -0.05, 0.8)
 
@@ -43,7 +45,7 @@ function Gui:OnInitialize()
     -- Create Slider Value Text
     gui.scaleText = gui.TitleContainer:CreateFontString(nil, "OVERLAY")
     gui.scaleText:SetPoint("RIGHT", gui.TitleContainer, "RIGHT", -80, -1)
-    gui.scaleText:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE")
+    gui.scaleText:SetFont(font, 12, "OUTLINE")
     gui.scaleText:SetText(math.floor(Gui.db.scale * 100) .. "%")
     gui.scaleText:SetTextColor(1, 0.81960791349411, 0, 1)
 

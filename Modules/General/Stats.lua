@@ -10,12 +10,7 @@ function Stats:OnInitialize()
 
     -- Get Font
     Stats.LSM = LibStub("LibSharedMedia-3.0")
-
-    if Stats.db.general.font ~= "None" then
-        Stats.font = Stats.LSM:Fetch('font', Stats.db.general.font)
-    else
-        Stats.font = STANDARD_TEXT_FONT
-    end
+    Stats.font = Stats.LSM:Fetch('font', Stats.db.general.font)
 
     -- Variables
     Stats.stats = {}
