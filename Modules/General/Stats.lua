@@ -3,9 +3,19 @@ local Stats = mUI:NewModule("mUI.Modules.General.Stats", "AceHook-3.0")
 function Stats:OnInitialize()
     -- Load Database
     Stats.db = {
+        general = mUI.db.profile.general,
         display = mUI.db.profile.general.display,
         pos = mUI.db.profile.edit
     }
+
+    -- Get Font
+    Stats.LSM = LibStub("LibSharedMedia-3.0")
+
+    if Stats.db.general.font ~= "None" then
+        Stats.font = Stats.LSM:Fetch('font', Stats.db.general.font)
+    else
+        Stats.font = STANDARD_TEXT_FONT
+    end
 
     -- Variables
     Stats.stats = {}
@@ -21,7 +31,7 @@ function Stats:OnInitialize()
     mUI.statsFrame:SetSize(75, 20)
     mUI.statsFrame.text = mUI.statsFrame:CreateFontString(nil, "BACKGROUND")
     mUI.statsFrame.text:SetPoint("CENTER", mUI.statsFrame)
-    mUI.statsFrame.text:SetFont(STANDARD_TEXT_FONT, 13, "OUTLINE")
+    mUI.statsFrame.text:SetFont(Stats.font, 13, "OUTLINE")
     mUI.statsFrame.text:SetShadowOffset(1, -1)
     mUI.statsFrame.text:SetShadowColor(0, 0, 0)
     mUI.statsFrame.text:SetTextColor(Stats.color.r, Stats.color.g, Stats.color.b)
