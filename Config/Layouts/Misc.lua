@@ -78,7 +78,7 @@ function Misc:OnInitialize()
             },
             statusbar = {
                 name = "XP/Rep/Honor Bar",
-                desc = "Hide the XP/Rep/Honor Bar\n\n|cffffff00Info:|r Requires Reload",
+                desc = "Hide the XP/Rep/Honor Bar",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.misc.statusbar = val
@@ -112,10 +112,28 @@ function Misc:OnInitialize()
                 get = function() return mUI.db.profile.misc.dragonflying end,
                 order = 7
             },
+            buffcollapse = {
+                name = "Collapse Button",
+                desc = "Hide the BuffFrame Collapse Button",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.misc.buffcollapse = val
+
+                    if not Misc.Module:IsEnabled() then return end
+
+                    if val then
+                        Misc.Module.Buffcollapse:Enable()
+                    else
+                        Misc.Module.Buffcollapse:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.misc.buffcollapse end,
+                order = 8
+            },
             header3 = {
                 name = "PvP Options",
                 type = "header",
-                order = 8
+                order = 9
             },
             tabbinder = {
                 name = "Tab Binder",
@@ -133,7 +151,7 @@ function Misc:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.misc.tabbinder end,
-                order = 9
+                order = 10
             },
             dampening = {
                 name = "Dampening",
@@ -151,7 +169,7 @@ function Misc:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.misc.dampening end,
-                order = 10
+                order = 11
             },
             surrender = {
                 name = "Surrender",
@@ -169,7 +187,7 @@ function Misc:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.misc.surrender end,
-                order = 11
+                order = 12
             },
             safequeue = {
                 name = "Safe Queue",
@@ -187,7 +205,7 @@ function Misc:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.misc.safequeue end,
-                order = 12
+                order = 13
             },
             losecontrol = {
                 name = "LoseControl",
@@ -205,7 +223,25 @@ function Misc:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.misc.losecontrol end,
-                order = 13
+                order = 14
+            },
+            achievements = {
+                name = "Track Achievements",
+                desc = "Click to Track Achievements (Gladiator / Strategist / Legend) in the Conquest Frame",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.misc.achievements = val
+
+                    if not Misc.Module:IsEnabled() then return end
+
+                    if val then
+                        Misc.Module.Achievements:Enable()
+                    else
+                        Misc.Module.Achievements:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.misc.achievements end,
+                order = 15
             }
         }
     }

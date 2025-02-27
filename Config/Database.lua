@@ -243,7 +243,9 @@ local defaults = {
             dampening = true,
             surrender = true,
             safequeue = true,
-            losecontrol = true
+            losecontrol = true,
+            buffcollapse = false,
+            achievements = false
         },
         edit = {},
     }
