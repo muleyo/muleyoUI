@@ -104,15 +104,9 @@ end
 function Style:OnEnable()
     -- Enable Style
     Style:Update()
-    Style:HookScript(Style.frame, "OnEvent", function()
-        C_Timer.After(0, function()
-            Style:EnableStyle()
-        end)
-    end)
     Style:HookScript(PlayerCastingBarFrame, "OnEvent", function()
         Style:EnableStyle("player")
     end)
-    Style:SecureHook(C_EditMode, "OnEditModeExit", Style.EnableStyle)
 end
 
 function Style:OnDisable()
