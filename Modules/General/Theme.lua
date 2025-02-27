@@ -49,35 +49,38 @@ function Theme:OnEnable()
     Theme:Update()
 
     -- Buffs & Debuffs
-    Theme:HookDurationUpdates(BuffFrame.auraFrames)
-    Theme:HookDurationUpdates(DebuffFrame.auraFrames)
-    Theme:SecureHook(AuraFrameMixin, "Update", Theme.AuraPositions)
-    Theme.auras:RegisterEvent("PLAYER_ENTERING_WORLD")
-    Theme.auras:RegisterEvent("PLAYER_TARGET_CHANGED")
-    Theme.auras:RegisterEvent("PLAYER_FOCUS_CHANGED")
-    Theme.auras:RegisterEvent("WEAPON_ENCHANT_CHANGED")
-    Theme.auras:RegisterUnitEvent("UNIT_AURA", "player", "target", "focus")
-    Theme:HookScript(Theme.auras, "OnEvent", function()
-        -- Player Auras
-        Theme:UpdatePlayerBuffs()
-        Theme:UpdatePlayerDebuffs()
+    if not C_AddOns.IsAddOnLoaded("BlizzBuffsFacade") then
+        Theme:SecureHook(AuraFrameMixin, "Update", Theme.AuraPositions)
+        Theme:HookDurationUpdates(BuffFrame.auraFrames)
+        Theme:HookDurationUpdates(DebuffFrame.auraFrames)
 
-        -- Target Auras
-        for aura in TargetFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
-            Theme:UpdateUnitframeAuras(aura)
-        end
-        for aura in TargetFrame.auraPools:GetPool("TargetDebuffFrameTemplate"):EnumerateActive() do
-            Theme:UpdateUnitframeAuras(aura, true, "target")
-        end
+        Theme.auras:RegisterEvent("PLAYER_ENTERING_WORLD")
+        Theme.auras:RegisterEvent("PLAYER_TARGET_CHANGED")
+        Theme.auras:RegisterEvent("PLAYER_FOCUS_CHANGED")
+        Theme.auras:RegisterEvent("WEAPON_ENCHANT_CHANGED")
+        Theme.auras:RegisterUnitEvent("UNIT_AURA", "player", "target", "focus")
+        Theme:HookScript(Theme.auras, "OnEvent", function()
+            -- Player Auras
+            Theme:UpdatePlayerBuffs()
+            Theme:UpdatePlayerDebuffs()
 
-        -- Focus Auras
-        for aura in FocusFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
-            Theme:UpdateUnitframeAuras(aura)
-        end
-        for aura in FocusFrame.auraPools:GetPool("TargetDebuffFrameTemplate"):EnumerateActive() do
-            Theme:UpdateUnitframeAuras(aura, true, "focus")
-        end
-    end)
+            -- Target Auras
+            for aura in TargetFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
+                Theme:UpdateUnitframeAuras(aura)
+            end
+            for aura in TargetFrame.auraPools:GetPool("TargetDebuffFrameTemplate"):EnumerateActive() do
+                Theme:UpdateUnitframeAuras(aura, true, "target")
+            end
+
+            -- Focus Auras
+            for aura in FocusFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
+                Theme:UpdateUnitframeAuras(aura)
+            end
+            for aura in FocusFrame.auraPools:GetPool("TargetDebuffFrameTemplate"):EnumerateActive() do
+                Theme:UpdateUnitframeAuras(aura, true, "focus")
+            end
+        end)
+    end
 
     -- Castbar Icon Skins
     Theme:InitCastbarIcons()
