@@ -22,7 +22,6 @@ function Dampening:OnInitialize()
 
     function Dampening:Update(event)
         Dampening.frame:Show()
-        Dampening.frame.Text:SetText("Test")
         if event == "PLAYER_ENTERING_WORLD" then
             local _, instanceType = IsInInstance()
 
@@ -39,7 +38,7 @@ function Dampening:OnInitialize()
                 if not Dampening.frame:IsShown() then Dampening.frame:Show() end
                 if Dampening.value ~= percent then
                     Dampening.value = percent
-                    Dampening.frame:SetText(Dampening.spellInfo.name .. " " .. percent .. "%")
+                    Dampening.frame.Text:SetText(Dampening.spellInfo.name .. " " .. percent .. "%")
                 end
             elseif Dampening.frame:IsShown() then
                 Dampening.frame:Hide()
