@@ -197,7 +197,7 @@ function Theme:UpdateUnitframeAuras(aura, isDebuff, unit)
     local color
     if unit and aura.auraInstanceID then
         local auraData = C_UnitAuras.GetAuraDataByAuraInstanceID(unit, aura.auraInstanceID)
-        color = Theme.debuffColors[auraData.dispelName or "none"]
+        color = Theme.debuffColors[auraData and auraData.dispelName or "none"]
 
         if mUI.db.profile.unitframes.buffsdebuffs.debuffcolors then
             aura.mUIBorder.shadow:SetBackdropBorderColor(color.r, color.g, color.b)
