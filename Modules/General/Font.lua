@@ -151,6 +151,9 @@ function Font:OnInitialize()
         mUI:ApplyFont(SystemFont_NamePlate, 9, "OUTLINE")
         mUI:ApplyFont(SystemFont_LargeNamePlateFixed, 9, "OUTLINE")
         mUI:ApplyFont(SystemFont_NamePlateFixed, 9, "OUTLINE")
+
+        -- Set Font Size for Community Chat
+        CommunitiesFrame.Chat.MessageFrame:SetFont(font, 14, "OUTLINE")
     end
 end
 
