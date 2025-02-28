@@ -112,7 +112,7 @@ function General:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.general.font = val
                     General.Module.Font:Update()
-                    mUI:Reload("Changed Font")
+                    mUI:Reload("Changed Font\n\nHint: Damage Font applies after a relog")
                 end,
                 get = function() return mUI.db.profile.general.font end,
                 order = 5
