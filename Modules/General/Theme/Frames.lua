@@ -1,9 +1,5 @@
 local Theme = mUI:GetModule("mUI.Modules.General.Theme")
 
-C_Timer.After(0, function()
-    print(TimerTrackerTimer1)
-end)
-
 local _, playerClass = UnitClass("player")
 -- Theme Function
 function Theme:Update()
