@@ -14,6 +14,7 @@ function Theme:OnEnable()
     INSPECTED_UNIT = "player"
 
     -- Load AddOns
+    C_AddOns.LoadAddOn("Blizzard_InspectUI")
     C_AddOns.LoadAddOn("Blizzard_AchievementUI")
     C_AddOns.LoadAddOn("Blizzard_ProfessionsCustomerOrders")
     C_AddOns.LoadAddOn("Blizzard_AuctionHouseUI")
@@ -39,8 +40,9 @@ function Theme:OnEnable()
     C_AddOns.LoadAddOn("Blizzard_TradeSkillUI")
     C_AddOns.LoadAddOn("Blizzard_Wardrobe")
     C_AddOns.LoadAddOn("Blizzard_WeeklyRewards")
-    C_AddOns.LoadAddOn("Blizzard_InspectUI")
     C_AddOns.LoadAddOn("Blizzard_ItemUpgradeUI")
+
+    --local factiongroup = UnitFactionGroup("player")
 
     -- Load Blacklist
     Theme:ForbiddenFrames()
