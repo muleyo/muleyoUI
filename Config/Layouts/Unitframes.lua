@@ -394,6 +394,71 @@ function Unitframes:OnInitialize()
                 set = function(_, val) mUI.db.profile.unitframes.buffsdebuffs.debuffsize = val end,
                 get = function() return mUI.db.profile.unitframes.buffsdebuffs.debuffsize end,
                 order = 23
+            },
+            header4 = {
+                name = "Raid / Partyframes",
+                type = "header",
+                order = 24
+            },
+            enablesizing = {
+                name = function()
+                    if mUI.db.profile.unitframes.raidframes.size.enabled then
+                        return "|cff00ff00Enabled|r"
+                    else
+                        return "|cffff0000Disabled|r"
+                    end
+                end,
+                desc = "Enable / Disable Raidframes re-sizing",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.size.enabled = val
+
+                    if not Unitframes.Module:IsEnabled() then return end
+
+                    if val then
+                        Unitframes.Module.Raidframes_Size:Enable()
+                    else
+                        Unitframes.Module.Raidframes_Size:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.unitframes.raidframes.size.enabled end,
+                order = 25
+            },
+            width = {
+                name = "Width",
+                desc = "Set the Width of Raidframes",
+                type = "range",
+                min = 0,
+                max = 200,
+                step = 1,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.size.width = val
+
+                    if not Unitframes.Module:IsEnabled() then return end
+                    if not Unitframes.Module.Raidframes_Size:IsEnabled() then return end
+
+                    Unitframes.Module.Raidframes_Size:Update(val, mUI.db.profile.unitframes.raidframes.size.height)
+                end,
+                get = function() return mUI.db.profile.unitframes.raidframes.size.width end,
+                order = 26
+            },
+            height = {
+                name = "Height",
+                desc = "Set the Height of Raidframes",
+                type = "range",
+                min = 0,
+                max = 200,
+                step = 1,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.size.height = val
+
+                    if not Unitframes.Module:IsEnabled() then return end
+                    if not Unitframes.Module.Raidframes_Size:IsEnabled() then return end
+
+                    Unitframes.Module.Raidframes_Size:Update(mUI.db.profile.unitframes.raidframes.size.width, val)
+                end,
+                get = function() return mUI.db.profile.unitframes.raidframes.size.height end,
+                order = 27
             }
         }
     }

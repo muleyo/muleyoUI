@@ -14,5 +14,6 @@
     <Include file="Level.lua" />
     <Include file="Restingtextures.lua" />
     <Include file="Elitecolor.lua" />
+    <Include file="Raidframes_Size.lua" />
     <Include file="Modules.lua" />
 </Ui>

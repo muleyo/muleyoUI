@@ -7,6 +7,9 @@ function Raidframes_Textures:OnInitialize()
     -- Load Database
     Raidframes_Textures.db = mUI.db.profile.unitframes.textures
 
+    -- Hide Partyframe Title
+    CompactPartyFrameTitle:Hide()
+
     -- Tables
     Raidframes_Textures.frames = {
         "PartyFrameMember1", "PartyFrameMember2", "PartyFrameMember3", "PartyFrameMember4", "PartyFrameMember5",

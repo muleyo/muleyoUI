@@ -77,6 +77,18 @@ local defaults = {
                 buffsize = 24,
                 debuffsize = 24,
                 debuffcolors = false
+            },
+            raidframes = {
+                size = {
+                    enabled = false,
+                    width = 100,
+                    height = 75
+                },
+                name = "Class",
+                healthtext = "Class",
+                role = false,
+                healthcolor = { 0.3, 0.3, 0.3 },
+                powercolor = { 0.3, 0.3, 0.3 }
             }
         },
         castbars = {

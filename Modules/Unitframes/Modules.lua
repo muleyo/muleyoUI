@@ -17,6 +17,7 @@ function Modules:OnInitialize()
     Modules.Level = mUI:GetModule("mUI.Modules.Unitframes.Level")
     Modules.Restingtextures = mUI:GetModule("mUI.Modules.Unitframes.Restingtextures")
     Modules.Elitecolor = mUI:GetModule("mUI.Modules.Unitframes.Elitecolor")
+    Modules.Raidframes_Size = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Size")
 end
 
 function Modules:OnEnable()
@@ -70,6 +71,9 @@ function Modules:OnEnable()
     if Modules.db.elitecolor then
         Modules.Elitecolor:Enable()
     end
+    if Modules.db.raidframes.size.enabled then
+        Modules.Raidframes_Size:Enable()
+    end
 end
 
 function Modules:OnDisable()
@@ -89,4 +93,5 @@ function Modules:OnDisable()
     Modules.Reputationcolor:Disable()
     Modules.Restingtextures:Disable()
     Modules.Elitecolor:Disable()
+    Modules.Raidframes_Size:Disable()
 end
