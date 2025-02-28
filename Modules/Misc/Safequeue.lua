@@ -4,6 +4,7 @@ function Safequeue:OnInitialize()
     -- Create Frame
     Safequeue.frame = CreateFrame("Frame")
     Safequeue.timer = TOOLTIP_UPDATE_TIME
+    Safequeue.queues = {}
 
     -- Tables
     Safequeue.colors = {
@@ -21,11 +22,11 @@ function Safequeue:OnInitialize()
 
         if time <= 0 then time = 1 end
         if time > 20 then
-            text = "SafeQueue expires in |cff" .. Safequeue.colors.green .. SecondsToTime(time) .. "|r"
+            text = "Queue expires in |cff" .. Safequeue.colors.green .. SecondsToTime(time) .. "|r"
         elseif time > 10 then
-            text = "SafeQueue expires in |cff" .. Safequeue.colors.yellow .. SecondsToTime(time) .. "|r"
+            text = "Queue expires in |cff" .. Safequeue.colors.yellow .. SecondsToTime(time) .. "|r"
         else
-            text = "SafeQueue expires in |cff" .. Safequeue.colors.red .. SecondsToTime(time) .. "|r"
+            text = "Queue expires in |cff" .. Safequeue.colors.red .. SecondsToTime(time) .. "|r"
         end
 
         if PVPReadyDialog then
@@ -57,17 +58,42 @@ function Safequeue:OnInitialize()
 
         Safequeue:SetExpiresText()
     end
+
+    function Safequeue:Popped()
+        for i = 1, GetMaxBattlefieldID() do
+            local status = GetBattlefieldStatus(i)
+            if status == "queued" then
+                Safequeue.queues[i] = Safequeue.queues[i] or GetTime() - (GetBattlefieldTimeWaited(i) / 1000)
+            elseif status == "confirm" then
+                if Safequeue.queues[i] then
+                    local secs = GetTime() - self.queues[i]
+                    if secs < 1 then
+                        mUI:Debug("Queue popped instantly!")
+                    else
+                        mUI:Debug("Queue popped after " .. SecondsToTime(secs))
+                    end
+
+                    self.queues[i] = nil
+                end
+            end
+        end
+    end
 end
 
 function Safequeue:OnEnable()
     PVPReadyDialog.label:SetWidth(250)
 
-    Safequeue:HookScript(Safequeue.frame, "OnEvent", function(_, elapsed)
+    Safequeue:HookScript(Safequeue.frame, "OnUpdate", function(_, elapsed)
         Safequeue:SetExpiresText(_, elapsed)
     end)
 
-    Safequeue:SecureHook("PVPReadyDialog_Display", function(id)
-        Safequeue.ReadyDialog(id)
+    Safequeue:SecureHook("PVPReadyDialog_Display", function(_, id)
+        Safequeue:ReadyDialog(id)
+    end)
+
+    Safequeue.frame:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
+    Safequeue:HookScript(Safequeue.frame, "OnEvent", function()
+        Safequeue:Popped()
     end)
 end
 
