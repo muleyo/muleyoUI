@@ -108,6 +108,13 @@ function Theme:OnEnable()
             frame.Button.Border:SetDesaturated(true)
         end
     end)
+
+    -- TImer Tracker
+    TimerTracker:HookScript("OnEvent", function(self)
+        for i = 1, #self.timerList do
+            _G['TimerTrackerTimer' .. i .. 'StatusBarBorder']:SetVertexColor(unpack(mUI:Color(0.15)))
+        end
+    end)
 end
 
 function Theme:OnDisable()
