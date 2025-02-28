@@ -9,16 +9,20 @@ function Raidframes_Size:OnInitialize()
 
     function Raidframes_Size:Update(x, y)
         for i = 1, 5 do
-            local frame = _G["CompactPartyFrameMember" .. i]
-            if frame then
-                frame.SetSize = Raidframes_Size.backup
+            local member = _G["CompactPartyFrameMember" .. i]
+            local pet = _G["CompactPartyFramePet" .. i]
+            member.SetSize = Raidframes_Size.backup
+            pet.SetSize = Raidframes_Size.backup
 
-                if x and y then
-                    frame:SetSize(x, y)
-                else
-                    frame:SetSize(Raidframes_Size.db.width, Raidframes_Size.db.height)
-                end
-                frame.SetSize = function() end
+            if x and y then
+                member:SetSize(x, y)
+                pet:SetWidth(x)
+            else
+                member:SetSize(Raidframes_Size.db.width, Raidframes_Size.db.height)
+                pet:SetWidth(Raidframes_Size.db.width)
+            end
+            member.SetSize = function() end
+            pet.SetSize = function()
             end
         end
     end
