@@ -1,6 +1,7 @@
 local Achievements = mUI:NewModule("mUI.Modules.Misc.Achievements")
 
 function Achievements:OnInitialize()
+    Achievements.frame = CreateFrame("Frame")
     -- Current Achievement IDs
     Achievements.ids = {
         gladiator = 41032,
@@ -37,22 +38,25 @@ function Achievements:OnInitialize()
 end
 
 function Achievements:OnEnable()
-    C_Timer.After(0, function()
-        -- Set Parents
-        Achievements.shuffleButton:SetParent(ConquestFrame.RatedSoloShuffle)
-        Achievements.blitzButton:SetParent(ConquestFrame.RatedBGBlitz)
-        Achievements.gladButton:SetParent(ConquestFrame.Arena3v3)
+    Achievements.frame:RegisterEvent("ADDON_LOADED")
+    Achievements.frame:SetScript("OnEvent", function(self, event, addon)
+        if addon == "Blizzard_PVPUI" then
+            -- Set Parents
+            Achievements.shuffleButton:SetParent(ConquestFrame.RatedSoloShuffle)
+            Achievements.blitzButton:SetParent(ConquestFrame.RatedBGBlitz)
+            Achievements.gladButton:SetParent(ConquestFrame.Arena3v3)
 
-        -- Set Points
-        Achievements.shuffleButton:SetPoint("TOPRIGHT", ConquestFrame.RatedSoloShuffle, "TOPRIGHT", 10, -17.5)
-        Achievements.blitzButton:SetPoint("TOPRIGHT", ConquestFrame.RatedBGBlitz, "TOPRIGHT", 10, -17.5)
-        Achievements.gladButton:SetPoint("TOPRIGHT", ConquestFrame.Arena3v3, "TOPRIGHT", 10, -17.5)
+            -- Set Points
+            Achievements.shuffleButton:SetPoint("TOPRIGHT", ConquestFrame.RatedSoloShuffle, "TOPRIGHT", 10, -17.5)
+            Achievements.blitzButton:SetPoint("TOPRIGHT", ConquestFrame.RatedBGBlitz, "TOPRIGHT", 10, -17.5)
+            Achievements.gladButton:SetPoint("TOPRIGHT", ConquestFrame.Arena3v3, "TOPRIGHT", 10, -17.5)
+
+            -- Show Buttons
+            Achievements.shuffleButton:Show()
+            Achievements.blitzButton:Show()
+            Achievements.gladButton:Show()
+        end
     end)
-
-    -- Show Buttons
-    Achievements.shuffleButton:Show()
-    Achievements.blitzButton:Show()
-    Achievements.gladButton:Show()
 end
 
 function Achievements:OnDisable()

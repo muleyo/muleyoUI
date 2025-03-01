@@ -156,8 +156,8 @@ function Functions:OnInitialize()
             theme = themes[mUI.db.profile.general.theme]
         end
 
-        -- Get forbiden frames
-        local forbiddenFrames = mUI:GetModule("mUI.Modules.General.Theme").forbiddenFrames
+        -- Get blacklisted frames
+        local blacklist = mUI:GetModule("mUI.Modules.General.Theme").blacklist
 
         if frame then
             if isGui then
@@ -169,7 +169,7 @@ function Functions:OnInitialize()
                 end
             elseif not isTable then
                 for _, v in pairs({ frame:GetRegions() }) do
-                    if (not forbiddenFrames[v:GetName()]) and (not forbiddenFrames[v]) then
+                    if (not blacklist[v:GetName()]) and (not blacklist[v]) then
                         if v:GetObjectType() == "Texture" then
                             if themes["Disabled"] == theme then
                                 v:SetDesaturated(false)

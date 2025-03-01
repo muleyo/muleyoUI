@@ -1,5 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <!-- Theme-->
+    <!-- Theme -->
     <Include file="Theme.lua" />
     <Include file="Theme\Blacklist.lua" />
     <Include file="Theme\Actionbars.lua" />

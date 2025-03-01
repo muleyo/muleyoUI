@@ -9,6 +9,7 @@ function ItemInfo:OnInitialize()
     -- CharacterFrame / InspectFrame Equipment Enchants, Gems and ItemLevels
     -- Variables & Tables
     ItemInfo.iteminfo = CreateFrame("Frame")
+    ItemInfo.frame = CreateFrame("Frame")
     ItemInfo.buttons = {}
     ItemInfo.LEGENDARY_ITEM_LEVEL = 483
     ItemInfo.STEP_ITEM_LEVEL = 17
@@ -731,27 +732,53 @@ end
 
 function ItemInfo:OnEnable()
     -- CharacterFrame / InspectFrame Equipment Enchants, Gems and ItemLevels
-    C_AddOns.LoadAddOn("Blizzard_InspectUI")
+    --C_AddOns.LoadAddOn("Blizzard_InspectUI")
 
     ItemInfo:SecureHook("PaperDollItemSlotButton_Update", function(button)
         ItemInfo:updateButton(button, "player")
     end)
 
-    ItemInfo:SecureHook("InspectPaperDollItemSlotButton_Update", function(button)
-        ItemInfo:updateButton(button, InspectFrame.unit)
-    end)
+    if C_AddOns.IsAddOnLoaded("Blizzard_InspectUI") then
+        if not ItemInfo:IsHooked("InspectPaperDollItemSlotButton_Update") then
+            ItemInfo:SecureHook("InspectPaperDollItemSlotButton_Update", function(button)
+                ItemInfo:updateButton(button, InspectFrame.unit)
+            end)
+        end
 
-    ItemInfo:SecureHook("InspectPaperDollFrame_SetLevel", function()
-        if not InspectFrame.unit then return end
-        ItemInfo:CreateInspectIlvlDisplay()
-        ItemInfo:UpdateInspectIlvlDisplay(InspectFrame.unit)
-    end)
+        if not ItemInfo:IsHooked("InspectPaperDollFrame_SetLevel") then
+            ItemInfo:SecureHook("InspectPaperDollFrame_SetLevel", function()
+                if not InspectFrame.unit then return end
+                ItemInfo:CreateInspectIlvlDisplay()
+                ItemInfo:UpdateInspectIlvlDisplay(InspectFrame.unit)
+            end)
+        end
 
-    local talentButton = InspectPaperDollItemsFrame.InspectTalents
-    ItemInfo:MoveTalentButton(talentButton)
-
-    if not mUI.db.profile.general.theme == "Disabled" then
+        local talentButton = InspectPaperDollItemsFrame.InspectTalents
+        ItemInfo:MoveTalentButton(talentButton)
         mUI:Skin(talentButton)
+    else
+        ItemInfo.frame:RegisterEvent("ADDON_LOADED")
+        ItemInfo:HookScript(ItemInfo.frame, "OnEvent", function(_, _, addon)
+            if addon == "Blizzard_InspectUI" then
+                if not ItemInfo:IsHooked("InspectPaperDollItemSlotButton_Update") then
+                    ItemInfo:SecureHook("InspectPaperDollItemSlotButton_Update", function(button)
+                        ItemInfo:updateButton(button, InspectFrame.unit)
+                    end)
+                end
+
+                if not ItemInfo:IsHooked("InspectPaperDollFrame_SetLevel") then
+                    ItemInfo:SecureHook("InspectPaperDollFrame_SetLevel", function()
+                        if not InspectFrame.unit then return end
+                        ItemInfo:CreateInspectIlvlDisplay()
+                        ItemInfo:UpdateInspectIlvlDisplay(InspectFrame.unit)
+                    end)
+                end
+
+                local talentButton = InspectPaperDollItemsFrame.InspectTalents
+                ItemInfo:MoveTalentButton(talentButton)
+                mUI:Skin(talentButton)
+            end
+        end)
     end
 
     ItemInfo.iteminfo:RegisterEvent("SOCKET_INFO_UPDATE")

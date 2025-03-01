@@ -7,45 +7,12 @@ function Theme:OnInitialize()
     -- Create Frames
     Theme.dragonriding = CreateFrame("Frame")
     Theme.auras = CreateFrame("Frame")
-
-    -- Potential error fix
-    InspectUnit("player")
-    C_Timer.After(0, function()
-        InspectFrame:Hide()
-    end)
+    Theme.addons = CreateFrame("Frame")
 end
 
 function Theme:OnEnable()
-    -- Load AddOns
-    C_AddOns.LoadAddOn("Blizzard_AchievementUI")
-    C_AddOns.LoadAddOn("Blizzard_ProfessionsCustomerOrders")
-    C_AddOns.LoadAddOn("Blizzard_AuctionHouseUI")
-    C_AddOns.LoadAddOn("Blizzard_AlliedRacesUI")
-    C_AddOns.LoadAddOn("Blizzard_ArchaeologyUI")
-    C_AddOns.LoadAddOn("Blizzard_Calendar")
-    C_AddOns.LoadAddOn("Blizzard_ChallengesUI")
-    C_AddOns.LoadAddOn("Blizzard_ItemSocketingUI")
-    C_AddOns.LoadAddOn("Blizzard_TrainerUI")
-    C_AddOns.LoadAddOn("Blizzard_Collections")
-    C_AddOns.LoadAddOn("Blizzard_EncounterJournal")
-    C_AddOns.LoadAddOn("Blizzard_FlightMap")
-    C_AddOns.LoadAddOn("Blizzard_GarrisonUI")
-    C_AddOns.LoadAddOn("Blizzard_GuildBankUI")
-    C_AddOns.LoadAddOn("Blizzard_Professions")
-    C_AddOns.LoadAddOn("Blizzard_IslandsQueueUI")
-    C_AddOns.LoadAddOn("Blizzard_PVPUI")
-    C_AddOns.LoadAddOn("Blizzard_MacroUI")
-    C_AddOns.LoadAddOn("Blizzard_ScrappingMachineUI")
-    C_AddOns.LoadAddOn("Blizzard_ProfessionsBook")
-    C_AddOns.LoadAddOn("Blizzard_PlayerSpells")
-    C_AddOns.LoadAddOn("Blizzard_TimeManager")
-    C_AddOns.LoadAddOn("Blizzard_TradeSkillUI")
-    C_AddOns.LoadAddOn("Blizzard_Wardrobe")
-    C_AddOns.LoadAddOn("Blizzard_WeeklyRewards")
-    C_AddOns.LoadAddOn("Blizzard_ItemUpgradeUI")
-
     -- Load Blacklist
-    Theme:ForbiddenFrames()
+    Theme:Blacklist()
 
     -- Update Theme
     Theme:Update()
@@ -93,23 +60,10 @@ function Theme:OnEnable()
     end)
 
     -- Dragonriding
+    Theme:StyleDragonriding()
     Theme.dragonriding:RegisterEvent("UPDATE_UI_WIDGET")
     Theme:HookScript(Theme.dragonriding, "OnEvent", Theme.StyleDragonriding)
 
-    -- Update Spellbok Text Colors
-    Theme:SecureHook(SpellBookItemMixin, "UpdateVisuals", function(frame)
-        if Theme.db.theme == "Disabled" then
-            frame.Name:SetTextColor(0.1803921610117, 0.10588236153126, 0.05882353335619)
-            frame.SubName:SetTextColor(0.1803921610117, 0.10588236153126, 0.05882353335619)
-            frame.Button.Border:SetVertexColor(1, 1, 1)
-            frame.Button.Border:SetDesaturated(false)
-        else
-            frame.Name:SetTextColor(0.8, 0.8, 0.8)
-            frame.SubName:SetTextColor(0.8, 0.8, 0.8)
-            frame.Button.Border:SetVertexColor(0.5, 0.5, 0.5)
-            frame.Button.Border:SetDesaturated(true)
-        end
-    end)
 
     -- TImer Tracker
     TimerTracker:HookScript("OnEvent", function(self)
@@ -117,11 +71,70 @@ function Theme:OnEnable()
             _G['TimerTrackerTimer' .. i .. 'StatusBarBorder']:SetVertexColor(unpack(mUI:Color(0.15)))
         end
     end)
+
+    Theme.addons:RegisterEvent("ADDON_LOADED")
+    Theme:HookScript(Theme.addons, "OnEvent", function(_, _, addon)
+        if (addon == "Blizzard_InspectUI") then
+            Theme:Inspect()
+        elseif (addon == "Blizzard_AchievementUI") then
+            Theme:Achievements()
+        elseif (addon == "Blizzard_ProfessionsCustomerOrders") then
+            Theme:CraftingOrders()
+        elseif (addon == "Blizzard_AuctionHouseUI") then
+            Theme:AuctionHouse()
+        elseif (addon == "Blizzard_AlliedRacesUI") then
+            Theme:AlliedRaces()
+        elseif (addon == "Blizzard_ArchaeologyUI") then
+            Theme:Archaeology()
+        elseif (addon == "Blizzard_Calendar") then
+            Theme:Calendar()
+        elseif (addon == "Blizzard_ChallengesUI") then
+            Theme:Challenges()
+        elseif (addon == "Blizzard_ItemSocketingUI") then
+            Theme:Socketing()
+        elseif (addon == "Blizzard_TrainerUI") then
+            Theme:Trainer()
+        elseif (addon == "Blizzard_Collections") then
+            Theme:Collections()
+        elseif (addon == "Blizzard_EncounterJournal") then
+            Theme:EncounterJournal()
+        elseif (addon == "Blizzard_FlightMap") then
+            Theme:FlightMap()
+        elseif (addon == "Blizzard_GarrisonUI") then
+            Theme:Garrison()
+        elseif (addon == "Blizzard_GuildBankUI") then
+            Theme:GuildBank()
+        elseif (addon == "Blizzard_Professions") then
+            Theme:Professions()
+        elseif (addon == "Blizzard_IslandsQueueUI") then
+            Theme:Islands()
+        elseif (addon == "Blizzard_PVPUI") then
+            Theme:PVP()
+        elseif (addon == "Blizzard_MacroUI") then
+            Theme:Macros()
+        elseif (addon == "Blizzard_ScrappingMachineUI") then
+            Theme:Scrapping()
+        elseif (addon == "Blizzard_ProfessionsBook") then
+            Theme:ProfessionsBook()
+        elseif (addon == "Blizzard_PlayerSpells") then
+            Theme:PlayerSpells()
+        elseif (addon == "Blizzard_TimeManager") then
+            Theme:TimeManager()
+        elseif (addon == "Blizzard_TradeSkillUI") then
+            Theme:TradeSkill()
+        elseif (addon == "Blizzard_WeeklyRewards") then
+            Theme:Rewards()
+        elseif (addon == "Blizzard_ItemUpgradeUI") then
+            Theme:ItemUpgrade()
+        end
+    end)
 end
 
 function Theme:OnDisable()
     -- Update Theme
     Theme:Update()
+
+    Theme:StyleDragonriding()
 
     -- Unhook Frames
     Theme:UnhookAll()

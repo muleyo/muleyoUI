@@ -81,5 +81,5 @@ function Raidframes_Textures:OnEnable()
 end
 
 function Raidframes_Textures:OnDisable()
-    Raidframes_Textures:Unhook("CompactUnitFrame_UpdateAll", "OnUpdate")
+    Raidframes_Textures:UnhookAll()
 end

@@ -17,6 +17,6 @@ function TalkingHead:OnEnable()
 end
 
 function TalkingHead:OnDisable()
-    TalkingHead.talkinhead:UnregisterEvent("TALKINGHEAD_REQUESTED")
+    TalkingHead.talkinghead:UnregisterEvent("TALKINGHEAD_REQUESTED")
     TalkingHead:UnhookAll()
 end

@@ -4,9 +4,7 @@ function Theme:StyleDragonriding()
     for _, child in ipairs({ UIWidgetPowerBarContainerFrame:GetChildren() }) do
         mUI:Skin(child)
         for _, vigor in ipairs({ child:GetChildren() }) do
-            if not Theme.forbiddenFrames[select(5, vigor:GetRegions())] then
-                Theme.forbiddenFrames[select(5, vigor:GetRegions())] = true
-            end
+            Theme.dragonridingDefault = select(5, vigor:GetRegions()):GetVertexColor()
             mUI:Skin(vigor)
         end
     end
