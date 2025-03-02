@@ -205,7 +205,12 @@ function Theme:UpdateUnitframeAuras(aura, isDebuff, unit)
             aura.mUIBorder.shadow:SetBackdropBorderColor(unpack(mUI:Color(0.25)))
         end
     else
-        aura.mUIBorder.shadow:SetBackdropBorderColor(unpack(mUI:Color(0.25)))
+        if aura.Stealable and aura.Stealable:IsShown() then
+            aura.Stealable:SetAlpha(0)
+            aura.mUIBorder.shadow:SetBackdropBorderColor(1, 1, 1)
+        else
+            aura.mUIBorder.shadow:SetBackdropBorderColor(unpack(mUI:Color(0.25)))
+        end
     end
 
     if aura.Border then
