@@ -87,7 +87,8 @@ local defaults = {
                 healthcolor = false,
                 names = false,
                 roleicons = false,
-                health = false
+                health = false,
+                solo = false
             }
         },
         castbars = {

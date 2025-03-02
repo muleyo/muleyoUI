@@ -396,7 +396,7 @@ function Unitframes:OnInitialize()
                 order = 23
             },
             header4 = {
-                name = "Partyframes Resize",
+                name = "Party / Raidframes Resize",
                 type = "header",
                 order = 24
             },
@@ -536,6 +536,24 @@ function Unitframes:OnInitialize()
                 end,
                 get = function() return mUI.db.profile.unitframes.raidframes.health end,
                 order = 32
+            },
+            solo = {
+                name = "Solo Partyframes",
+                desc = "Show Partyframes even when not in a group",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.solo = val
+
+                    if not Unitframes.Module:IsEnabled() then return end
+
+                    if val then
+                        Unitframes.Module.RF_Solo:Enable()
+                    else
+                        Unitframes.Module.RF_Solo:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.unitframes.raidframes.solo end,
+                order = 33
             }
         }
     }
