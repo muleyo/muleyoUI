@@ -22,6 +22,7 @@ function RF_Solo:OnEnable()
     RF_Solo:SecureHook(CompactPartyFrame, "UpdateVisibility", RF_Solo.Update)
     RF_Solo:Update()
     RF_Solo:HookScript(RF_Solo.frame, "OnEvent", RF_Solo.Update)
+    CompactPartyFrame:SetShown(true)
 end
 
 function RF_Solo:OnDisable()
