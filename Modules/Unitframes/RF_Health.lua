@@ -40,6 +40,9 @@ function RF_Health:OnInitialize()
                 local cvar = C_CVar.GetCVar("raidFramesHealthText")
                 local connected = UnitIsConnected(frame.unit)
 
+                frame.statusText:ClearAllPoints()
+                frame.statusText:SetPoint("CENTER", frame, "CENTER")
+
                 if cvar == "perc" then
                     if connected then
                         frame.statusText:SetText(value)
