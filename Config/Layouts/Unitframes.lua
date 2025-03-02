@@ -396,7 +396,7 @@ function Unitframes:OnInitialize()
                 order = 23
             },
             header4 = {
-                name = "Raid / Partyframes",
+                name = "Partyframes Resize",
                 type = "header",
                 order = 24
             },
@@ -416,9 +416,9 @@ function Unitframes:OnInitialize()
                     if not Unitframes.Module:IsEnabled() then return end
 
                     if val then
-                        Unitframes.Module.Raidframes_Size:Enable()
+                        Unitframes.Module.RF_Size:Enable()
                     else
-                        Unitframes.Module.Raidframes_Size:Disable()
+                        Unitframes.Module.RF_Size:Disable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.raidframes.size.enabled end,
@@ -435,9 +435,9 @@ function Unitframes:OnInitialize()
                     mUI.db.profile.unitframes.raidframes.size.width = val
 
                     if not Unitframes.Module:IsEnabled() then return end
-                    if not Unitframes.Module.Raidframes_Size:IsEnabled() then return end
+                    if not Unitframes.Module.RF_Size:IsEnabled() then return end
 
-                    Unitframes.Module.Raidframes_Size:Update(val, mUI.db.profile.unitframes.raidframes.size.height)
+                    Unitframes.Module.RF_Size:Update(val, mUI.db.profile.unitframes.raidframes.size.height)
                 end,
                 get = function() return mUI.db.profile.unitframes.raidframes.size.width end,
                 order = 26
@@ -453,12 +453,89 @@ function Unitframes:OnInitialize()
                     mUI.db.profile.unitframes.raidframes.size.height = val
 
                     if not Unitframes.Module:IsEnabled() then return end
-                    if not Unitframes.Module.Raidframes_Size:IsEnabled() then return end
+                    if not Unitframes.Module.RF_Size:IsEnabled() then return end
 
-                    Unitframes.Module.Raidframes_Size:Update(mUI.db.profile.unitframes.raidframes.size.width, val)
+                    Unitframes.Module.RF_Size:Update(mUI.db.profile.unitframes.raidframes.size.width, val)
                 end,
                 get = function() return mUI.db.profile.unitframes.raidframes.size.height end,
                 order = 27
+            },
+            header5 = {
+                name = "Raidframes",
+                type = "header",
+                order = 28
+            },
+            healthcolor = {
+                name = "Dark Mode",
+                desc = "Make the Healthbars of Party/Raidframes dark",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.healthcolor = val
+
+                    if not Unitframes.Module:IsEnabled() then return end
+
+                    if val then
+                        Unitframes.Module.RF_Colors:Enable()
+                    else
+                        Unitframes.Module.RF_Colors:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.unitframes.raidframes.healthcolor end,
+                order = 29
+            },
+            roleicons = {
+                name = "Role Icons",
+                desc = "Hide Role Icons on Party/Raidframes",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.roleicons = val
+
+                    if not Unitframes.Module:IsEnabled() then return end
+
+                    if val then
+                        Unitframes.Module.RF_RoleIcons:Enable()
+                    else
+                        Unitframes.Module.RF_RoleIcons:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.unitframes.raidframes.roleicons end,
+                order = 30
+            },
+            names = {
+                name = "Classcolor Names",
+                desc = "Show Names in Classcolor on Party/Raidframes",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.names = val
+
+                    if not Unitframes.Module:IsEnabled() then return end
+
+                    if val then
+                        Unitframes.Module.RF_Name:Enable()
+                    else
+                        Unitframes.Module.RF_Name:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.unitframes.raidframes.names end,
+                order = 31
+            },
+            health = {
+                name = "Classcolor Health",
+                desc = "Show Health in Classcolor on Party/Raidframes",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.health = val
+
+                    if not Unitframes.Module:IsEnabled() then return end
+
+                    if val then
+                        Unitframes.Module.RF_Health:Enable()
+                    else
+                        Unitframes.Module.RF_Health:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.unitframes.raidframes.health end,
+                order = 32
             }
         }
     }

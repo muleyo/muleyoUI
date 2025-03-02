@@ -2,22 +2,26 @@ local Modules = mUI:NewModule("mUI.Modules.Unitframes")
 
 function Modules:OnInitialize()
     -- Modules
+    Modules.RF_Textures = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Textures")
+    Modules.RF_Size = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Size")
+    Modules.RF_Colors = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Colors")
+    Modules.RF_Health = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Health")
+    Modules.RF_Name = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Name")
+    Modules.RF_RoleIcons = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_RoleIcons")
+    Modules.UF_Textures = mUI:GetModule("mUI.Modules.Unitframes.Unitframes_Textures")
+    Modules.Color = mUI:GetModule("mUI.Modules.Unitframes.Color")
     Modules.BuffsDebuffs = mUI:GetModule("mUI.Modules.Unitframes.BuffsDebuffs")
     Modules.Classbar = mUI:GetModule("mUI.Modules.Unitframes.Classbar")
-    Modules.Color = mUI:GetModule("mUI.Modules.Unitframes.Color")
     Modules.Reputationcolor = mUI:GetModule("mUI.Modules.Unitframes.Reputationcolor")
     Modules.Combatindicator = mUI:GetModule("mUI.Modules.Unitframes.Combatindicator")
     Modules.Cornericon = mUI:GetModule("mUI.Modules.Unitframes.Cornericon")
     Modules.Hitindicator = mUI:GetModule("mUI.Modules.Unitframes.Hitindicator")
     Modules.Pvpbadge = mUI:GetModule("mUI.Modules.Unitframes.Pvpbadge")
-    Modules.Unitframes_Textures = mUI:GetModule("mUI.Modules.Unitframes.Unitframes_Textures")
-    Modules.Raidframes_Textures = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Textures")
     Modules.Totemicons = mUI:GetModule("mUI.Modules.Unitframes.Totemicons")
     Modules.Name = mUI:GetModule("mUI.Modules.Unitframes.Name")
     Modules.Level = mUI:GetModule("mUI.Modules.Unitframes.Level")
     Modules.Restingtextures = mUI:GetModule("mUI.Modules.Unitframes.Restingtextures")
     Modules.Elitecolor = mUI:GetModule("mUI.Modules.Unitframes.Elitecolor")
-    Modules.Raidframes_Size = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Size")
 end
 
 function Modules:OnEnable()
@@ -25,10 +29,10 @@ function Modules:OnEnable()
 
     -- Enable Modules
     if Modules.db.textures.unitframes ~= "None" then
-        Modules.Unitframes_Textures:Enable()
+        Modules.UF_Textures:Enable()
     end
     if Modules.db.textures.raidframes ~= "None" then
-        Modules.Raidframes_Textures:Enable()
+        Modules.RF_Textures:Enable()
     end
     if Modules.db.color then
         Modules.Color:Enable()
@@ -72,7 +76,19 @@ function Modules:OnEnable()
         Modules.Elitecolor:Enable()
     end
     if Modules.db.raidframes.size.enabled then
-        Modules.Raidframes_Size:Enable()
+        Modules.RF_Size:Enable()
+    end
+    if Modules.db.raidframes.roleicons then
+        Modules.RF_RoleIcons:Enable()
+    end
+    if Modules.db.raidframes.healthcolor then
+        Modules.RF_Colors:Enable()
+    end
+    if Modules.db.raidframes.health then
+        Modules.RF_Health:Enable()
+    end
+    if Modules.db.raidframes.names then
+        Modules.RF_Name:Enable()
     end
 end
 
@@ -94,4 +110,8 @@ function Modules:OnDisable()
     Modules.Restingtextures:Disable()
     Modules.Elitecolor:Disable()
     Modules.Raidframes_Size:Disable()
+    Modules.Raidframes_RoleIcons:Disable()
+    Modules.Raidframes_Colors:Disable()
+    Modules.Raidframes_Health:Disable()
+    Modules.Raidframes_Name:Disable()
 end

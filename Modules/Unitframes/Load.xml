@@ -1,4 +1,14 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <!-- Raidframes -->
+    <Include file="RF_Textures.lua" />
+    <Include file="RF_Size.lua" />
+    <Include file="RF_Colors.lua" />
+    <Include file="RF_Health.lua" />
+    <Include file="RF_Name.lua" />
+    <Include file="RF_RoleIcons.lua" />
+
+    <!-- Unitframes -->
+    <Include file="UF_Textures.lua" />
     <Include file="BuffsDebuffs.lua" />
     <Include file="Classbar.lua" />
     <Include file="Color.lua" />
@@ -7,13 +17,10 @@
     <Include file="Hitindicator.lua" />
     <Include file="Pvpbadge.lua" />
     <Include file="Reputationcolor.lua" />
-    <Include file="Unitframes_Textures.lua" />
-    <Include file="Raidframes_Textures.lua" />
     <Include file="Totemicons.lua" />
     <Include file="Name.lua" />
     <Include file="Level.lua" />
     <Include file="Restingtextures.lua" />
     <Include file="Elitecolor.lua" />
-    <Include file="Raidframes_Size.lua" />
     <Include file="Modules.lua" />
 </Ui>

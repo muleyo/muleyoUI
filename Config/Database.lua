@@ -82,7 +82,11 @@ local defaults = {
                 size = {
                     enabled = false,
                     width = 100,
-                    height = 75
+                    height = 75,
+                    healthcolor = true,
+                    names = true,
+                    roleicons = true,
+                    health = true
                 },
                 name = "Class",
                 healthtext = "Class",
