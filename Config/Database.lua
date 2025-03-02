@@ -83,16 +83,11 @@ local defaults = {
                     enabled = false,
                     width = 100,
                     height = 75,
-                    healthcolor = true,
-                    names = true,
-                    roleicons = true,
-                    health = true
                 },
-                name = "Class",
-                healthtext = "Class",
-                role = false,
-                healthcolor = { 0.3, 0.3, 0.3 },
-                powercolor = { 0.3, 0.3, 0.3 }
+                healthcolor = false,
+                names = false,
+                roleicons = false,
+                health = false
             }
         },
         castbars = {
