@@ -36,7 +36,7 @@ function Casttime:OnInitialize()
         border:SetTexture("Interface\\Addons\\mUI\\Media\\Textures\\Core\\gloss")
         border:SetTexCoord(0, 1, 0, 1)
         border:SetDrawLayer("BACKGROUND", -7)
-        --border:SetVertexColor(unpack(mUI:Color()))
+        border:SetVertexColor(unpack(mUI:Color(0.25)))
         border:ClearAllPoints()
         border:SetPoint("TOPLEFT", icon, "TOPLEFT", -1, 1)
         border:SetPoint("BOTTOMRIGHT", icon, "BOTTOMRIGHT", 1, -1)
@@ -47,7 +47,7 @@ function Casttime:OnInitialize()
         back:SetPoint("BOTTOMRIGHT", icon, "BOTTOMRIGHT", 4, -4)
         back:SetFrameLevel(frame:GetFrameLevel() - 1)
         back:SetBackdrop(backdrop)
-        back:SetBackdropBorderColor(unpack(mUI:Color(0.15)))
+        back:SetBackdropBorderColor(unpack(mUI:Color(0.25)))
         back:SetAlpha(0.9)
         icon.bg = back
         icon.styled = true
@@ -62,6 +62,7 @@ function Casttime:OnInitialize()
             if frame and frame.Icon then
                 if frame.BorderShield then
                     frame.BorderShield:ClearAllPoints()
+                    frame.BorderShield:SetAtlas("ui-castingbar-shield")
                     PixelUtil.SetPoint(frame.BorderShield, "CENTER", frame, "LEFT", -10, 0)
                 end
 
