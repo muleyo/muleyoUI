@@ -59,6 +59,9 @@ function RF_Textures:OnInitialize()
                     frame.otherHealPrediction:SetTexture(RF_Textures.defaultTextures.health)
                 end
 
+                frame.selectionHighlight:SetTexture([[Interface\AddOns\mUI\Media\Textures\Raidframes\border.png]])
+                frame.aggroHighlight:SetTexture([[Interface\AddOns\mUI\Media\Textures\Raidframes\border.png]])
+
                 frame.vertLeftBorder:Hide()
                 frame.vertRightBorder:Hide()
                 frame.horizTopBorder:Hide()
