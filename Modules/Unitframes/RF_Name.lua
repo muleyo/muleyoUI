@@ -26,6 +26,8 @@ function RF_Name:OnInitialize()
         "RaidGroup8Member1", "RaidGroup8Member2", "RaidGroup8Member3", "RaidGroup8Member4", "RaidGroup8Member5",
     }
 
+    RF_Name.backup = {}
+
     function RF_Name:SetName(frame)
         if (not frame) or frame:IsForbidden() then return end
         if frame:GetName() and frame.unit then
@@ -33,6 +35,11 @@ function RF_Name:OnInitialize()
             if name and name:match("^Compact") then
                 local color = RAID_CLASS_COLORS[select(2, UnitClass(frame.unit))]
                 local unitName = UnitName(frame.unit)
+
+                if not RF_Name.backup[1] then
+                    RF_Name.backup[1], RF_Name.backup[2], RF_Name.backup[3] = frame.name:GetFont()
+                    RF_Name.backup[4], RF_Name.backup[5], RF_Name.backup[6] = frame.name:GetTextColor()
+                end
 
                 if color then
                     frame.name:SetText(unitName)
@@ -53,6 +60,15 @@ function RF_Name:OnInitialize()
             end
         end
     end
+
+    function RF_Name:Restore()
+        for _, frame in pairs(RF_Name.frames) do
+            if _G["Compact" .. frame] then
+                _G["Compact" .. frame].name:SetFont(RF_Name.backup[1], RF_Name.backup[2], RF_Name.backup[3])
+                _G["Compact" .. frame].name:SetTextColor(RF_Name.backup[4], RF_Name.backup[5], RF_Name.backup[6])
+            end
+        end
+    end
 end
 
 function RF_Name:OnEnable()
@@ -65,6 +81,7 @@ end
 
 function RF_Name:OnDisable()
     RF_Name:UnhookAll()
+    RF_Name:Restore()
     EditModeManagerFrame:Show()
     EditModeManagerFrame:Hide()
 end

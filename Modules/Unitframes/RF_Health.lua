@@ -26,6 +26,9 @@ function RF_Health:OnInitialize()
         "RaidGroup8Member1", "RaidGroup8Member2", "RaidGroup8Member3", "RaidGroup8Member4", "RaidGroup8Member5",
     }
 
+    RF_Health.backup = {}
+
+
     function RF_Health:SetHealth(frame)
         if (not frame) or frame:IsForbidden() then return end
         if frame:GetName() and frame.unit then
@@ -39,6 +42,11 @@ function RF_Health:OnInitialize()
                 local value = math.floor((health + absorb - healAbsorb) / maxHealth * 100)
                 local cvar = C_CVar.GetCVar("raidFramesHealthText")
                 local connected = UnitIsConnected(frame.unit)
+
+                if not RF_Health.backup[1] then
+                    RF_Health.backup[1], RF_Health.backup[2], RF_Health.backup[3] = frame.statusText:GetFont()
+                    RF_Health.backup[4], RF_Health.backup[5], RF_Health.backup[6] = frame.statusText:GetTextColor()
+                end
 
                 frame.statusText:ClearAllPoints()
                 frame.statusText:SetPoint("CENTER", frame, "CENTER")
@@ -66,6 +74,16 @@ function RF_Health:OnInitialize()
             end
         end
     end
+
+    function RF_Health:Restore()
+        for _, frame in pairs(RF_Health.frames) do
+            if _G["Compact" .. frame] then
+                _G["Compact" .. frame].statusText:SetFont(RF_Health.backup[1], RF_Health.backup[2], RF_Health.backup[3])
+                _G["Compact" .. frame].statusText:SetTextColor(RF_Health.backup[4], RF_Health.backup[5],
+                    RF_Health.backup[6])
+            end
+        end
+    end
 end
 
 function RF_Health:OnEnable()
@@ -82,6 +100,7 @@ end
 
 function RF_Health:OnDisable()
     RF_Health:UnhookAll()
+    RF_Health:Restore()
     EditModeManagerFrame:Show()
     EditModeManagerFrame:Hide()
 end
