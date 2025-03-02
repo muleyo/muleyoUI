@@ -241,6 +241,7 @@ local defaults = {
                 [144248] = { name = "Head Machinist Sparkflux", color = { r = 1, g = 0.55, b = 0 } },
                 [150396] = { name = "Aerial Unit R-21/X", color = { r = 1, g = 0.55, b = 0 } },
                 [144249] = { name = "Omega Buster", color = { r = 1, g = 0.55, b = 0 } },
+                [151657] = { name = "Bomb Tonk", color = { r = 0, g = 0.55, b = 1 } },
             }
         },
         tooltips = {
