@@ -23,5 +23,6 @@
     <Include file="Level.lua" />
     <Include file="Restingtextures.lua" />
     <Include file="Elitecolor.lua" />
+    <Include file="Overshields.lua" />
     <Include file="Modules.lua" />
 </Ui>

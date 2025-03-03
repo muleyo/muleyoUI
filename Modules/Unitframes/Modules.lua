@@ -23,6 +23,7 @@ function Modules:OnInitialize()
     Modules.Level = mUI:GetModule("mUI.Modules.Unitframes.Level")
     Modules.Restingtextures = mUI:GetModule("mUI.Modules.Unitframes.Restingtextures")
     Modules.Elitecolor = mUI:GetModule("mUI.Modules.Unitframes.Elitecolor")
+    Modules.Overshields = mUI:GetModule("mUI.Modules.Unitframes.Overshields")
 end
 
 function Modules:OnEnable()
@@ -94,6 +95,9 @@ function Modules:OnEnable()
     if Modules.db.raidframes.solo then
         Modules.RF_Solo:Enable()
     end
+    if Modules.db.overshields then
+        Modules.Overshields:Enable()
+    end
 end
 
 function Modules:OnDisable()
@@ -119,4 +123,5 @@ function Modules:OnDisable()
     Modules.Raidframes_Health:Disable()
     Modules.Raidframes_Name:Disable()
     Modules.Raidframes_Solo:Disable()
+    Modules.Overshields:Disable()
 end

@@ -72,6 +72,7 @@ local defaults = {
             name = false,
             level = false,
             elitecolor = false,
+            overshields = true,
             buffsdebuffs = {
                 enabled = true,
                 buffsize = 24,

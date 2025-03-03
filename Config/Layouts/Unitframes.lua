@@ -344,10 +344,28 @@ function Unitframes:OnInitialize()
                 get = function() return mUI.db.profile.unitframes.buffsdebuffs.debuffcolors end,
                 order = 19
             },
+            overshields = {
+                name = "Overshields",
+                desc = "Show Absorbshields on Unitframes",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.overshields = val
+
+                    if not Unitframes.Module:IsEnabled() then return end
+
+                    if val then
+                        Unitframes.Module.Overshields:Enable()
+                    else
+                        Unitframes.Module.Overshields:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.unitframes.overshields end,
+                order = 20
+            },
             header3 = {
                 name = "Buffs & Debuffs",
                 type = "header",
-                order = 20
+                order = 21
             },
             enablebuffdebuff = {
                 name = function()
@@ -371,7 +389,7 @@ function Unitframes:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.buffsdebuffs.enabled end,
-                order = 21
+                order = 22
             },
             buffsize = {
                 name = "Buff Size",
@@ -382,7 +400,7 @@ function Unitframes:OnInitialize()
                 step = 1,
                 set = function(_, val) mUI.db.profile.unitframes.buffsdebuffs.buffsize = val end,
                 get = function() return mUI.db.profile.unitframes.buffsdebuffs.buffsize end,
-                order = 22
+                order = 23
             },
             debuffsize = {
                 name = "Debuff Size",
@@ -393,12 +411,12 @@ function Unitframes:OnInitialize()
                 step = 1,
                 set = function(_, val) mUI.db.profile.unitframes.buffsdebuffs.debuffsize = val end,
                 get = function() return mUI.db.profile.unitframes.buffsdebuffs.debuffsize end,
-                order = 23
+                order = 24
             },
             header4 = {
                 name = "Party / Raidframes Resize",
                 type = "header",
-                order = 24
+                order = 25
             },
             enablesizing = {
                 name = function()
@@ -422,7 +440,7 @@ function Unitframes:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.raidframes.size.enabled end,
-                order = 25
+                order = 26
             },
             width = {
                 name = "Width",
@@ -440,7 +458,7 @@ function Unitframes:OnInitialize()
                     Unitframes.Module.RF_Size:Update(val, mUI.db.profile.unitframes.raidframes.size.height)
                 end,
                 get = function() return mUI.db.profile.unitframes.raidframes.size.width end,
-                order = 26
+                order = 27
             },
             height = {
                 name = "Height",
@@ -458,12 +476,12 @@ function Unitframes:OnInitialize()
                     Unitframes.Module.RF_Size:Update(mUI.db.profile.unitframes.raidframes.size.width, val)
                 end,
                 get = function() return mUI.db.profile.unitframes.raidframes.size.height end,
-                order = 27
+                order = 28
             },
             header5 = {
                 name = "Raidframes",
                 type = "header",
-                order = 28
+                order = 29
             },
             darkmode = {
                 name = "Dark Mode",
@@ -481,7 +499,7 @@ function Unitframes:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.raidframes.darkmode end,
-                order = 29
+                order = 30
             },
             roleicons = {
                 name = "Role Icons",
@@ -499,7 +517,7 @@ function Unitframes:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.raidframes.roleicons end,
-                order = 30
+                order = 31
             },
             health = {
                 name = "Accurate Health",
@@ -525,7 +543,7 @@ function Unitframes:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.raidframes.health end,
-                order = 31
+                order = 32
             },
             healthcolor = {
                 name = "Classcolor Health",
@@ -551,7 +569,7 @@ function Unitframes:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.raidframes.healthcolor end,
-                order = 32
+                order = 33
             },
             names = {
                 name = "Classcolor Names",
@@ -569,7 +587,7 @@ function Unitframes:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.raidframes.names end,
-                order = 33
+                order = 34
             },
             solo = {
                 name = "Solo Partyframes",
@@ -587,7 +605,7 @@ function Unitframes:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.raidframes.solo end,
-                order = 34
+                order = 35
             }
         }
     }

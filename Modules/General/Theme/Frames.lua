@@ -550,13 +550,13 @@ function Theme:Actionbars()
         local Bar = Theme.Bars[j]
         if Bar then
             local Num = Bar.numButtonsShowable
-            Theme:StyleAction(Bar, Num)
+            Theme:StyleAction(Bar, 12)
         end
     end
 
     local DefaultActionBarShowable = _G["MainMenuBar"].numButtonsShowable
 
-    for i = 1, DefaultActionBarShowable do
+    for i = 1, 12 do
         local Button = _G["ActionButton" .. i]
 
         if C_AddOns.IsAddOnLoaded("Masque") and C_AddOns.IsAddOnLoaded("MasqueBlizzBars") then return end
