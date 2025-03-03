@@ -103,9 +103,8 @@ function RF_Health:OnEnable()
         RF_Health:SetHealth(frame)
     end)
 
-    RF_Health.frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-    RF_Health:HookScript(RF_Health.frame, "OnEvent", function()
-        RF_Health:Update()
+    RF_Health:SecureHook("CompactUnitFrame_UpdateStatusText", function(frame)
+        RF_Health:SetHealth(frame)
     end)
 
     RF_Health:Update()
