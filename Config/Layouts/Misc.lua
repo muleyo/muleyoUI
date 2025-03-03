@@ -23,8 +23,10 @@ function Misc:OnInitialize()
 
                     if val then
                         Misc.Module:Enable()
+                        mUI:Reload('Enable Misc Module')
                     else
                         Misc.Module:Disable()
+                        mUI:Reload('Disable Misc Module')
                     end
                 end,
                 get = function() return mUI.db.profile.misc.enabled end,

@@ -24,9 +24,11 @@ function Chat:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.chat.enabled = val
                     if val then
-                        mUI:EnableModule("Enable Chat Module")
+                        Chat.Module:Enable()
+                        mUI:Reload('Enable Chat Module')
                     else
-                        mUI:DisableModule("Disable Chat Module")
+                        Chat.Module:Disable()
+                        mUI:Reload("Disable Chat Module")
                     end
                 end,
                 get = function() return mUI.db.profile.chat.enabled end,
