@@ -4,6 +4,9 @@ function RF_Health:OnInitialize()
     -- Load Database
     RF_Health.db = mUI.db.profile.unitframes.raidframes
 
+    -- Create Fra,es
+    RF_Health.frame = CreateFrame("Frame")
+
     -- Tables
     RF_Health.frames = {
         "PartyFrameMember1", "PartyFrameMember2", "PartyFrameMember3", "PartyFrameMember4", "PartyFrameMember5",
@@ -51,21 +54,26 @@ function RF_Health:OnInitialize()
                 frame.statusText:ClearAllPoints()
                 frame.statusText:SetPoint("CENTER", frame, "CENTER")
 
-                if cvar == "perc" then
-                    if connected then
-                        if UnitIsDead(frame.unit) then
-                            frame.statusText:SetText("Dead")
+                if RF_Health.db.health then
+                    if cvar == "perc" then
+                        if connected then
+                            if UnitIsDead(frame.unit) then
+                                frame.statusText:SetText("Dead")
+                            else
+                                frame.statusText:SetText(value)
+                            end
                         else
-                            frame.statusText:SetText(value)
+                            frame.statusText:SetText("Offline")
                         end
-                    else
-                        frame.statusText:SetText("Offline")
                     end
                 end
 
-                if color then
+                if RF_Health.db.healthcolor and color then
                     frame.statusText:SetTextColor(color.r, color.g, color.b)
-                    frame.statusText:SetFont(STANDARD_TEXT_FONT, 18, "OUTLINE")
+                    frame.statusText:SetFont(STANDARD_TEXT_FONT, 16, "OUTLINE")
+                else
+                    frame.statusText:SetTextColor(1, 0.82, 0)
+                    frame.statusText:SetFont(STANDARD_TEXT_FONT, 16, "OUTLINE")
                 end
             end
         end
@@ -95,8 +103,9 @@ function RF_Health:OnEnable()
         RF_Health:SetHealth(frame)
     end)
 
-    RF_Health:SecureHook("CompactUnitFrame_UpdateHealthColor", function(frame)
-        RF_Health:SetHealth(frame)
+    RF_Health.frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+    RF_Health:HookScript(RF_Health.frame, "OnEvent", function()
+        RF_Health:Update()
     end)
 
     RF_Health:Update()

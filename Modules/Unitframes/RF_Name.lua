@@ -44,10 +44,15 @@ function RF_Name:OnInitialize()
                 if color then
                     frame.name:SetText(unitName)
                     frame.name:SetTextColor(color.r, color.g, color.b)
-                    frame.name:SetFont(STANDARD_TEXT_FONT, 14, "OUTLINE")
+                    frame.name:SetFont(STANDARD_TEXT_FONT, 13, "OUTLINE")
 
-                    frame.name:ClearAllPoints()
-                    frame.name:SetPoint("TOP", frame, "TOP", 0, -5)
+                    if RF_Name.db.roleicons then
+                        frame.name:ClearAllPoints()
+                        frame.name:SetPoint("TOPLEFT", frame, 2, -5)
+                    else
+                        frame.name:ClearAllPoints()
+                        frame.name:SetPoint("TOPLEFT", frame, 15, -5)
+                    end
                 end
             end
         end

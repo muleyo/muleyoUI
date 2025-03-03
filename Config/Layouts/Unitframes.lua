@@ -465,12 +465,12 @@ function Unitframes:OnInitialize()
                 type = "header",
                 order = 28
             },
-            healthcolor = {
+            darkmode = {
                 name = "Dark Mode",
                 desc = "Make the Healthbars of Party/Raidframes dark",
                 type = "toggle",
                 set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.healthcolor = val
+                    mUI.db.profile.unitframes.raidframes.darkmode = val
 
                     if not Unitframes.Module:IsEnabled() then return end
 
@@ -480,7 +480,7 @@ function Unitframes:OnInitialize()
                         Unitframes.Module.RF_Colors:Disable()
                     end
                 end,
-                get = function() return mUI.db.profile.unitframes.raidframes.healthcolor end,
+                get = function() return mUI.db.profile.unitframes.raidframes.darkmode end,
                 order = 29
             },
             roleicons = {
@@ -501,6 +501,58 @@ function Unitframes:OnInitialize()
                 get = function() return mUI.db.profile.unitframes.raidframes.roleicons end,
                 order = 30
             },
+            health = {
+                name = "Accurate Health",
+                desc = "Show accurate Health Percentage (counts in absorb shields and heal absorbs)",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.health = val
+
+                    if not Unitframes.Module:IsEnabled() then return end
+
+                    if val then
+                        if not Unitframes.Module.RF_Health:IsEnabled() then
+                            Unitframes.Module.RF_Health:Enable()
+                        else
+                            Unitframes.Module.RF_Health:Update()
+                        end
+                    else
+                        if (not val) and (not mUI.db.profile.unitframes.raidframes.healthcolor) then
+                            Unitframes.Module.RF_Health:Disable()
+                        else
+                            Unitframes.Module.RF_Health:Update()
+                        end
+                    end
+                end,
+                get = function() return mUI.db.profile.unitframes.raidframes.health end,
+                order = 31
+            },
+            healthcolor = {
+                name = "Classcolor Health",
+                desc = "Show Health in Classcolor on Party/Raidframes",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.healthcolor = val
+
+                    if not Unitframes.Module:IsEnabled() then return end
+
+                    if val then
+                        if not Unitframes.Module.RF_Health:IsEnabled() then
+                            Unitframes.Module.RF_Health:Enable()
+                        else
+                            Unitframes.Module.RF_Health:Update()
+                        end
+                    else
+                        if (not val) and (not mUI.db.profile.unitframes.raidframes.health) then
+                            Unitframes.Module.RF_Health:Disable()
+                        else
+                            Unitframes.Module.RF_Health:Update()
+                        end
+                    end
+                end,
+                get = function() return mUI.db.profile.unitframes.raidframes.healthcolor end,
+                order = 32
+            },
             names = {
                 name = "Classcolor Names",
                 desc = "Show Names in Classcolor on Party/Raidframes",
@@ -517,25 +569,7 @@ function Unitframes:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.raidframes.names end,
-                order = 31
-            },
-            health = {
-                name = "Classcolor Health",
-                desc = "Show Health in Classcolor on Party/Raidframes",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.health = val
-
-                    if not Unitframes.Module:IsEnabled() then return end
-
-                    if val then
-                        Unitframes.Module.RF_Health:Enable()
-                    else
-                        Unitframes.Module.RF_Health:Disable()
-                    end
-                end,
-                get = function() return mUI.db.profile.unitframes.raidframes.health end,
-                order = 32
+                order = 33
             },
             solo = {
                 name = "Solo Partyframes",
@@ -553,7 +587,7 @@ function Unitframes:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.raidframes.solo end,
-                order = 33
+                order = 34
             }
         }
     }

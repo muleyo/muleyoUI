@@ -82,10 +82,10 @@ function Modules:OnEnable()
     if Modules.db.raidframes.roleicons then
         Modules.RF_RoleIcons:Enable()
     end
-    if Modules.db.raidframes.healthcolor then
+    if Modules.db.raidframes.darkmode then
         Modules.RF_Colors:Enable()
     end
-    if Modules.db.raidframes.health then
+    if Modules.db.raidframes.health or Modules.db.raidframes.healthcolor then
         Modules.RF_Health:Enable()
     end
     if Modules.db.raidframes.names then

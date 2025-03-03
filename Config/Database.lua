@@ -84,10 +84,11 @@ local defaults = {
                     width = 100,
                     height = 75,
                 },
+                darkmode = false,
+                health = false,
                 healthcolor = false,
                 names = false,
                 roleicons = false,
-                health = false,
                 solo = false
             }
         },
