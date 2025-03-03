@@ -53,7 +53,11 @@ function RF_Health:OnInitialize()
 
                 if cvar == "perc" then
                     if connected then
-                        frame.statusText:SetText(value)
+                        if UnitIsDead(frame.unit) then
+                            frame.statusText:SetText("Dead")
+                        else
+                            frame.statusText:SetText(value)
+                        end
                     else
                         frame.statusText:SetText("Offline")
                     end
