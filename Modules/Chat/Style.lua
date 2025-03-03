@@ -1,6 +1,9 @@
 local Style = mUI:GetModule("mUI.Modules.Chat.Style")
 
 function Style:OnEnable()
+	-- Disable Altkeys for EditBox
+	ChatFrame1EditBox:SetAltArrowKeyMode(false)
+
 	-- Create Fonts
 	Style:CreateFonts()
 
