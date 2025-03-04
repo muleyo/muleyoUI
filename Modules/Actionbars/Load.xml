@@ -4,5 +4,6 @@
     <Include file="Flash.lua" />
     <Include file="Range.lua" />
     <Include file="Mouseover.lua" />
+    <Include file="Fontsize.lua" />
     <Include file="Modules.lua" />
 </Ui>

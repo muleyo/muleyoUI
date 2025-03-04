@@ -7,6 +7,7 @@ function Modules:OnInitialize()
     Modules.Macro = mUI:GetModule("mUI.Modules.Actionbars.Macro")
     Modules.Mouseover = mUI:GetModule("mUI.Modules.Actionbars.Mouseover")
     Modules.Range = mUI:GetModule("mUI.Modules.Actionbars.Range")
+    Modules.Fontsize = mUI:GetModule("mUI.Modules.Actionbars.Fontsize")
 end
 
 function Modules:OnEnable()
@@ -27,6 +28,9 @@ function Modules:OnEnable()
     end
     if Modules.db.range then
         Modules.Range:Enable()
+    end
+    if Modules.db.fontsize > 12 or Modules.db.fontsize < 12 then
+        Modules.Fontsize:Enable()
     end
 end
 
