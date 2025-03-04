@@ -52,6 +52,15 @@ function Theme:AuctionHouse()
         mUI:Skin(AuctionHouseFrameAuctionsTab)
         mUI:Skin(AuctionHouseFrameAuctionsFrameAuctionsTab)
         mUI:Skin(AuctionHouseFrameAuctionsFrameBidsTab)
+
+        if C_AddOns.IsAddOnLoaded("Auctionator") then
+            C_Timer.After(0, function()
+                mUI:Skin(_G["LibAHFrame-1.0-AuctionatorTabs_Shopping"])
+                mUI:Skin(_G["LibAHFrame-1.0-AuctionatorTabs_Selling"])
+                mUI:Skin(_G["LibAHFrame-1.0-AuctionatorTabs_Cancelling"])
+                mUI:Skin(_G["LibAHFrame-1.0-AuctionatorTabs_Auctionator"])
+            end)
+        end
     end
 end
 
