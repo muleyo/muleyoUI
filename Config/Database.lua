@@ -38,6 +38,7 @@ local defaults = {
             macro = false,
             flash = true,
             range = true,
+            fontsize = 12,
             mouseover = {
                 enabled = false,
                 bar1 = false,
@@ -52,7 +53,6 @@ local defaults = {
                 stancebar = false,
                 micromenu = "Default",
                 bagbuttons = "Default",
-                fontsize = 12
             }
         },
         unitframes = {
