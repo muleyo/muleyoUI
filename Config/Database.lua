@@ -51,7 +51,8 @@ local defaults = {
                 petbar = false,
                 stancebar = false,
                 micromenu = "Default",
-                bagbuttons = "Default"
+                bagbuttons = "Default",
+                fontsize = 12
             }
         },
         unitframes = {
@@ -321,7 +322,8 @@ local defaults = {
             safequeue = true,
             losecontrol = true,
             buffcollapse = false,
-            achievements = false
+            achievements = false,
+            fastloot = false
         },
         edit = {},
     }

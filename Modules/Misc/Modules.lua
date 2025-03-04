@@ -13,6 +13,7 @@ function Modules:OnInitialize()
     Modules.Tabbinder = mUI:GetModule("mUI.Modules.Misc.Tabbinder")
     Modules.Buffcollapse = mUI:GetModule("mUI.Modules.Misc.Buffcollapse")
     Modules.Achievements = mUI:GetModule("mUI.Modules.Misc.Achievements")
+    Modules.Fastloot = mUI:GetModule("mUI.Modules.Misc.Fastloot")
 end
 
 function Modules:OnEnable()
@@ -51,6 +52,9 @@ function Modules:OnEnable()
     if Modules.db.achievements then
         Modules.Achievements:Enable()
     end
+    if Modules.db.fastloot then
+        Modules.Fastloot:Enable()
+    end
 end
 
 function Modules:OnDisable()
@@ -66,4 +70,5 @@ function Modules:OnDisable()
     Modules.Tabbinder:Disable()
     Modules.Buffcollapse:Disable()
     Modules.Achievements:Disable()
+    Modules.Fastloot:Disable()
 end
