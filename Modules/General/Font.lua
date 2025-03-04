@@ -2,13 +2,10 @@ local Font = mUI:NewModule("mUI.Modules.General.Font", "AceHook-3.0")
 
 function Font:OnInitialize()
     -- Load Database
-    Font.db = mUI.db.profile.general
+    Font.db    = mUI.db.profile.general
 
     -- Load LSM
-    Font.LSM = LibStub("LibSharedMedia-3.0")
-
-    -- Get current font
-    Font.font = Font.LSM:Fetch('font', Font.db.font)
+    Font.LSM   = LibStub("LibSharedMedia-3.0")
 
     Font.fonts = {
         SystemFont_NamePlateCastBar, SystemFont_NamePlateFixed, SystemFont_LargeNamePlateFixed,
@@ -50,18 +47,14 @@ function Font:OnInitialize()
         Game15Font_Shadow
     }
 
-    if not Font.db.font == "None" then
-        if not (C_AddOns.IsAddOnLoaded("NiceDamage") and C_AddOns.IsAddOnLoaded("ClassicNumbers")) then
-            DAMAGE_TEXT_FONT = Font.font
-        end
-    end
-
     -- Functions
     function Font:Update()
-        if Font.db.font == "None" then return end
-        local fontSizes          = { 9, 9, 14, 14, 12, 64, 64 }
-        Font.font                = Font.LSM:Fetch('font', Font.db.font)
+        local fontSizes = { 9, 9, 14, 14, 12, 64, 64 }
+        Font.font       = Font.LSM:Fetch('font', Font.db.font)
 
+        if (not C_AddOns.IsAddOnLoaded("NiceDamage")) and (not C_AddOns.IsAddOnLoaded("ClassicNumbers")) then
+            DAMAGE_TEXT_FONT = Font.LSM:Fetch('font', Font.db.font)
+        end
         STANDARD_TEXT_FONT       = Font.font
         UNIT_NAME_FONT           = Font.font
         NAMEPLATE_FONT           = Font.font
@@ -84,7 +77,9 @@ function Font:OnInitialize()
         CommunitiesFrame.Chat.MessageFrame:SetFont(Font.font, 14, "OUTLINE")
     end
 
-    Font:Update()
+    if Font.db.font ~= "None" then
+        Font:Update()
+    end
 end
 
 function Font:OnEnable()
