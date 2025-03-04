@@ -155,6 +155,13 @@ function Style:OnInitialize()
             GameTooltip:AddDoubleLine(("|c%s%s|r"):format(Style.cfg.targetColorHex, "Target"),
                 Style:GetTarget(unit .. "target") or "Unknown")
         end
+
+        if not UnitIsPlayer(unit) then
+            local _, _, _, _, _, id = strsplit("-", UnitGUID(unit) or "")
+            if id then
+                frame:AddDoubleLine("|cff0099ffID|r", id)
+            end
+        end
     end
 
     function Style:OnTooltipSetSpell(tooltip, spellid)
