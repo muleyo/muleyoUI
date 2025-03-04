@@ -4,9 +4,6 @@ function Font:OnInitialize()
     -- Load Database
     Font.db    = mUI.db.profile.general
 
-    -- Load LSM
-    Font.LSM   = LibStub("LibSharedMedia-3.0")
-
     Font.fonts = {
         SystemFont_NamePlateCastBar, SystemFont_NamePlateFixed, SystemFont_LargeNamePlateFixed,
         SystemFont_LargeNamePlate, SystemFont_NamePlate, SystemFont_World,
@@ -50,21 +47,20 @@ function Font:OnInitialize()
     -- Functions
     function Font:Update()
         local fontSizes = { 9, 9, 14, 14, 12, 64, 64 }
-        Font.font       = Font.LSM:Fetch('font', Font.db.font)
 
         if (not C_AddOns.IsAddOnLoaded("NiceDamage")) and (not C_AddOns.IsAddOnLoaded("ClassicNumbers")) then
-            DAMAGE_TEXT_FONT = Font.LSM:Fetch('font', Font.db.font)
+            DAMAGE_TEXT_FONT = Font.db.fontpath
         end
-        STANDARD_TEXT_FONT       = Font.font
-        UNIT_NAME_FONT           = Font.font
-        NAMEPLATE_FONT           = Font.font
-        NAMEPLATE_SPELLCAST_FONT = Font.font
-        UNIT_NAME_FONT_ROMAN     = Font.font
+        STANDARD_TEXT_FONT       = Font.db.fontpath
+        UNIT_NAME_FONT           = Font.db.fontpath
+        NAMEPLATE_FONT           = Font.db.fontpath
+        NAMEPLATE_SPELLCAST_FONT = Font.db.fontpath
+        UNIT_NAME_FONT_ROMAN     = Font.db.fontpath
 
         -- Apply fonts
         for i, gameFont in pairs(Font.fonts) do
             local _, fontSize, fontStyle = gameFont:GetFont()
-            gameFont:SetFont(Font.font, fontSizes[i] or fontSize, fontStyle)
+            gameFont:SetFont(Font.db.fontpath, fontSizes[i] or fontSize, fontStyle)
         end
 
         -- Set Font Size for Nameplate Names
@@ -74,7 +70,7 @@ function Font:OnInitialize()
         mUI:ApplyFont(SystemFont_NamePlateFixed, 9, "OUTLINE")
 
         -- Set Font Size for Community Chat
-        CommunitiesFrame.Chat.MessageFrame:SetFont(Font.font, 14, "OUTLINE")
+        CommunitiesFrame.Chat.MessageFrame:SetFont(Font.db.fontpath, 14, "OUTLINE")
     end
 
     if Font.db.font ~= "None" then

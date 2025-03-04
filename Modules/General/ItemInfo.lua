@@ -4,7 +4,6 @@ function ItemInfo:OnInitialize()
     -- Load Database
     ItemInfo.db = mUI.db.profile.general
     ItemInfo.LSM = LibStub("LibSharedMedia-3.0")
-    ItemInfo.font = ItemInfo.LSM:Fetch('font', ItemInfo.db.font)
 
     -- CharacterFrame / InspectFrame Equipment Enchants, Gems and ItemLevels
     -- Variables & Tables
@@ -689,7 +688,11 @@ function ItemInfo:OnInitialize()
 
     function ItemInfo:CreateItemLevelString(button)
         button.levelString = button:CreateFontString(nil, "OVERLAY")
-        button.levelString:SetFont(ItemInfo.font, 13, "OUTLINE")
+        if ItemInfo.db.font ~= "None" then
+            button.levelString:SetFont(ItemInfo.db.fontpath, 13, "OUTLINE")
+        else
+            button.levelString:SetFont(STANDARD_TEXT_FONT, 13, "OUTLINE")
+        end
         button.levelString:SetPoint("CENTER", button, "BOTTOM", 0, 8)
 
         ItemInfo.levelstrings[button.levelString] = true

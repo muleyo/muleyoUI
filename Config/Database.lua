@@ -12,6 +12,7 @@ local defaults = {
             theme = "Dark",
             color = { 0, 0, 0, 1 },
             font = "Prototype",
+            fontpath = [[Interface\AddOns\mUI\Media\Fonts\Prototype.ttf]],
             automation = {
                 repair = "Personal",
                 sell = true,

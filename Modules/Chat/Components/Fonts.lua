@@ -20,7 +20,7 @@ function Style:CreateFonts()
 		if not mFont then
 			-- a corrupt, missing, or misplaced font was supplied, reset it
 			messageFont:SetFont(
-				STANDARD_TEXT_FONT,
+				"Fonts\\ARIALN.TTF",
 				Style.db.chat.font.size,
 				Style.db.chat.font.outline and "OUTLINE" or ""
 			)
@@ -49,7 +49,7 @@ function Style:CreateFonts()
 	local ebFont = editBoxFont:GetFont()
 	if not ebFont then
 		editBoxFont:SetFont(
-			STANDARD_TEXT_FONT,
+			"Fonts\\ARIALN.TTF",
 			Style.db.edit.font.size,
 			Style.db.edit.font.outline and "OUTLINE" or ""
 		)
@@ -79,7 +79,7 @@ function Style:UpdateMessageFont(id)
 	if not font then
 		-- a corrupt, missing, or misplaced font was supplied, reset it
 		messageFont:SetFont(
-			STANDARD_TEXT_FONT,
+			"Fonts\\ARIALN.TTF",
 			Style.db.chat.font.size,
 			Style.db.chat.font.outline and "OUTLINE" or ""
 		)
@@ -111,7 +111,7 @@ function Style:UpdateEditBoxFont()
 	local font = mUIEditBoxFont:GetFont()
 	if not font then
 		mUIEditBoxFont:SetFont(
-			STANDARD_TEXT_FONT,
+			"Fonts\\ARIALN.TTF",
 			Style.db.edit.font.size,
 			Style.db.edit.font.outline and "OUTLINE" or ""
 		)
