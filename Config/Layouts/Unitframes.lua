@@ -346,7 +346,7 @@ function Unitframes:OnInitialize()
             },
             overshields = {
                 name = "Overshields",
-                desc = "Show Absorbshields on Unitframes",
+                desc = "Show Absorbshields on Unitframes\n\n|cffffff00Info:|r Requires Reload",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.unitframes.overshields = val
@@ -357,6 +357,7 @@ function Unitframes:OnInitialize()
                         Unitframes.Module.Overshields:Enable()
                     else
                         Unitframes.Module.Overshields:Disable()
+                        mUI:Reload("Disable Overshields")
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.overshields end,
