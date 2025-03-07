@@ -95,4 +95,19 @@ function Core:OnInitialize()
 end
 
 function Core:OnEnable()
+    if C_AddOns.IsAddOnLoaded("Plater") or C_AddOns.IsAddOnLoaded("TidyPlates_ThreatPlates") or C_AddOns.IsAddOnLoaded("TidyPlates") or C_AddOns.IsAddOnLoaded("Kui_Nameplates") then
+        Core.db.nameplates.enabled = false
+        Core.modules.nameplates:Disable()
+        mUI:Debug("Nameplates Module disabled because another Nameplates AddOn is active.")
+    end
+
+    if C_AddOns.IsAddOnLoaded("LS_Glass") then
+        Core.db.chat.enabled = false
+        Core.modules.chat:Disable()
+        mUI:Debug("Chat Module disabled because another Chat AddOn is active.")
+    end
+
+    if C_AddOns.IsAddOnLoaded("BetterBlizzFrames") then
+        mUI:Debug("BetterBlizzFrames AddOn detected. You might want to disable it, if you encounter any issues.")
+    end
 end
