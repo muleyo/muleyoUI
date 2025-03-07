@@ -1214,7 +1214,7 @@ function Theme:Auras()
             button.mUIBorder:Show()
 
             if type == "playerbuff" or type == "unitframebuff" then
-                button.mUIBorder.shadow:SetBackdropBorderColor(unpack(mUI:Color(0.15)))
+                button.mUIBorder.shadow:SetBackdropBorderColor(unpack(mUI:Color(0.25)))
             end
 
             if button.DebuffBorder then

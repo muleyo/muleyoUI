@@ -131,9 +131,11 @@ local defaults = {
                 -- Cyan: { r = 0, g = 1, b = 0.8 }
 
                 -- Priory of the Sacred Flame
-                [206705] = { name = "Arathi Footman", color = { r = 0, g = 1, b = 0.8 } },
-                [206696] = { name = "Arathi Footman", color = { r = 0, g = 1, b = 0.8 } },
-                [212835] = { name = "Risen Footman", color = { r = 0, g = 1, b = 0.8 } },
+                [212827] = { name = "High Priest Aemya", color = { r = 1, g = 0.55, b = 0 } },
+                [212831] = { name = "Forge Master Damian", color = { r = 1, g = 0.55, b = 0 } },
+                [239833] = { name = "Elaena Emberlanz", color = { r = 1, g = 0.55, b = 0 } },
+                [239836] = { name = "Sergeant Shaynemail", color = { r = 1, g = 0.55, b = 0 } },
+                [206696] = { name = "Arathi Knight", color = { r = 1, g = 0.55, b = 0 } },
                 [212826] = { name = "Guard Captain Suleyman", color = { r = 1, g = 0.55, b = 0 } },
                 [206697] = { name = "Devout Priest", color = { r = 0.65, g = 0, b = 1 } },
                 [206698] = { name = "Fanatical Conjuror", color = { r = 0, g = 0.55, b = 1 } },
@@ -147,6 +149,7 @@ local defaults = {
 
                 -- Cinderbrew Meadery
                 [218671] = { name = "Venture Co. Pyromaniac", color = { r = 0, g = 0.55, b = 1 } },
+                [210271] = { name = "Brewmaster Aldryr", color = { r = 1, g = 0.55, b = 0 } },
                 [214697] = { name = "Chef Chewie", color = { r = 1, g = 0.55, b = 0 } },
                 [210264] = { name = "Bee Wrangler", color = { r = 0, g = 0.55, b = 1 } },
                 [220141] = { name = "Royal Jelly Purveyor", color = { r = 0, g = 0.55, b = 1 } },
@@ -156,6 +159,7 @@ local defaults = {
                 [218002] = { name = "Benk Buzzbee", color = { r = 1, g = 0.55, b = 0 } },
                 [210267] = { name = "I'pa", color = { r = 1, g = 0.55, b = 0 } },
                 [214661] = { name = "Goldie Baronbottom", color = { r = 1, g = 0.55, b = 0 } },
+                [220946] = { name = "Venture Co. Honey Harvester", color = { r = 1, g = 0.55, b = 0 } },
 
                 -- Darkflame Cleft
                 [210818] = { name = "Lowly Moleherd", color = { r = 0, g = 0.55, b = 1 } },
@@ -168,6 +172,9 @@ local defaults = {
                 [208456] = { name = "Shuffling Horror", color = { r = 0, g = 0.55, b = 1 } },
                 [208747] = { name = "The Darkness", color = { r = 1, g = 0.55, b = 0 } },
                 [213008] = { name = "Wriggling Darkspawn", color = { r = 0, g = 0.55, b = 1 } },
+                [210539] = { name = "Corridor Creeper", color = { r = 1, g = 0.55, b = 0 } },
+                [212411] = { name = "Torchsnarl", color = { r = 1, g = 0.55, b = 0 } },
+                [208450] = { name = "Wandering Candle", color = { r = 1, g = 0.55, b = 0 } },
 
                 -- The Rookery
                 [207198] = { name = "Cursed Thunderer", color = { r = 0, g = 0.55, b = 1 } },
@@ -192,6 +199,13 @@ local defaults = {
                 [231312] = { name = "Venture Co. Electrician", color = { r = 0, g = 0.55, b = 1 } },
                 [231197] = { name = "Bubbles", color = { r = 1, g = 0.55, b = 0 } },
                 [226404] = { name = "Geezle Gigazap", color = { r = 1, g = 0.55, b = 0 } },
+                [209801] = { name = "Quartermaster Koratite", color = { r = 1, g = 0.55, b = 0 } },
+                [212786] = { name = "Voidrider", color = { r = 1, g = 0.55, b = 0 } },
+                [214421] = { name = "Coalescing Void Diffuser", color = { r = 1, g = 0.55, b = 0 } },
+                [212739] = { name = "Radiating Voidstone", color = { r = 1, g = 0.55, b = 0 } },
+                [230740] = { name = "Shreddinator 3000", color = { r = 1, g = 0.55, b = 0 } },
+                [231325] = { name = "Darkfuse Jumpstarter", color = { r = 1, g = 0.55, b = 0 } },
+                [226396] = { name = "Swampface", color = { r = 1, g = 0.55, b = 0 } },
 
                 -- The Motherlode
                 [136470] = { name = "Refreshment Vendor", color = { r = 0, g = 0.55, b = 1 } },
@@ -208,6 +222,10 @@ local defaults = {
                 [129231] = { name = "Rixxa Fluxflame", color = { r = 1, g = 0.55, b = 0 } },
                 [129232] = { name = "Mogul Razdunk", color = { r = 1, g = 0.55, b = 0 } },
                 [141303] = { name = "B.O.O.M.B.A.", color = { r = 1, g = 0.55, b = 0 } },
+                [136139] = { name = "Mechanized Peacekeeper", color = { r = 1, g = 0.55, b = 0 } },
+                [136643] = { name = "Azerite Extractor", color = { r = 1, g = 0.55, b = 0 } },
+                [133430] = { name = "Venture Co. Mastermind", color = { r = 1, g = 0.55, b = 0 } },
+                [133463] = { name = "Venture Co. War Machine", color = { r = 1, g = 0.55, b = 0 } },
                 [132056] = { name = "Venture Co. Skyscorcher", color = { r = 0.65, g = 0, b = 1 } },
 
                 -- Theater of Pain
@@ -220,13 +238,13 @@ local defaults = {
                 [167538] = { name = "Dokigg the Brutalizer", color = { r = 1, g = 0.55, b = 0 } },
                 [167536] = { name = "Harugia the Bloodthirsty", color = { r = 1, g = 0.55, b = 0 } },
                 [167532] = { name = "Heavin the Breaker", color = { r = 1, g = 0.55, b = 0 } },
-                [164506] = { name = "Ancient Captain", color = { r = 0, g = 1, b = 0.8 } },
+                [164506] = { name = "Ancient Captain", color = { r = 1, g = 0.55, b = 0 } },
                 [167534] = { name = "Rek the Hardened", color = { r = 1, g = 0.55, b = 0 } },
                 [167533] = { name = "Advent Nevermore", color = { r = 1, g = 0.55, b = 0 } },
                 [162329] = { name = "Xav the Unfallen", color = { r = 1, g = 0.55, b = 0 } },
                 [170234] = { name = "Oppressive Banner", color = { r = 0.65, g = 0, b = 1 } },
                 [174210] = { name = "Blighted Sludge-Spewer", color = { r = 0, g = 0.55, b = 1 } },
-                [169927] = { name = "Putrid Butcher", color = { r = 0.65, g = 0, b = 1 } },
+                [169927] = { name = "Putrid Butcher", color = { r = 1, g = 0.55, b = 0 } },
                 [163086] = { name = "Rancid Gasbag", color = { r = 1, g = 0.55, b = 0 } },
                 [162317] = { name = "Gorechop", color = { r = 1, g = 0.55, b = 0 } },
                 [169875] = { name = "Shackled Soul", color = { r = 0, g = 0.55, b = 1 } },
@@ -235,6 +253,7 @@ local defaults = {
                 [170882] = { name = "Bone Magus", color = { r = 0, g = 0.55, b = 1 } },
                 [169893] = { name = "Nefarious Darkspeaker", color = { r = 0, g = 0.55, b = 1 } },
                 [162309] = { name = "Kul'tharok", color = { r = 1, g = 0.55, b = 0 } },
+                [170850] = { name = "Raging Bloodhorn", color = { r = 1, g = 0.55, b = 0 } },
 
                 -- Mechagon: Workshop
                 [144244] = { name = "The Platinum Pummeler", color = { r = 1, g = 0.55, b = 0 } },
@@ -245,6 +264,8 @@ local defaults = {
                 [144248] = { name = "Head Machinist Sparkflux", color = { r = 1, g = 0.55, b = 0 } },
                 [150396] = { name = "Aerial Unit R-21/X", color = { r = 1, g = 0.55, b = 0 } },
                 [144249] = { name = "Omega Buster", color = { r = 1, g = 0.55, b = 0 } },
+                [144293] = { name = "Waste Processing Unit", color = { r = 1, g = 0.55, b = 0 } },
+                [144298] = { name = "Defense Bot Mk III", color = { r = 1, g = 0.55, b = 0 } },
                 [151657] = { name = "Bomb Tonk", color = { r = 0, g = 0.55, b = 1 } },
             }
         },
