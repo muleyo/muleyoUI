@@ -63,6 +63,12 @@ function Textures:OnInitialize()
                     end
                 end
             end
+
+            -- Move Debuff Anchor
+            if nameplate.BuffFrame then
+                nameplate.BuffFrame:ClearAllPoints()
+                nameplate.BuffFrame:SetPoint("TOPLEFT", nameplate.healthBar, "TOPLEFT", 0, -5)
+            end
         end
     end
 
