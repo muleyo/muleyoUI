@@ -18,6 +18,8 @@ function Theme:StyleButton(Button, Type)
     local Icon = _G[Name .. "Icon"]
     local Cooldown = _G[Name .. "Cooldown"]
 
+    Icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+
     mUI:Skin({ NormalTexture }, true)
 
     if Type ~= "StanceOrPet" then
