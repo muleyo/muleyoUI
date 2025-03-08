@@ -12,45 +12,25 @@ function Casttime:OnInitialize()
     Casttime.font = Casttime.LSM:Fetch('font', Casttime.db.general.font)
 
     function Casttime:IconSkin(icon, parent)
-        if not icon or (icon and icon.styled) then return end
+        if not icon or (parent and parent.mUIBorder) then return end
 
-        local backdrop = {
-            bgFile = nil,
-            edgeFile = "Interface\\Addons\\mUI\\Media\\Textures\\Core\\outer_shadow",
-            tile = false,
-            tileSize = 32,
-            edgeSize = 4,
-            insets = {
-                left = 4,
-                right = 4,
-                top = 4,
-                bottom = 4,
-            },
-        }
+        icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
-        local frame = CreateFrame("Frame", nil, parent)
+        -- Create Border
+        parent.mUIBorder = parent:CreateTexture()
+        parent.mUIBorder:SetAtlas("UI-HUD-ActionBar-IconFrame")
+        parent.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
 
-        icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+        -- Set Icon Mask
+        parent.mUIBorder.mask = parent:CreateMaskTexture()
+        parent.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]],
+            "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+        parent.mUIBorder.mask:SetAllPoints(icon)
+        parent.mUIBorder:SetDrawLayer("OVERLAY", 1)
+        icon:AddMaskTexture(parent.mUIBorder.mask)
 
-        local border = frame:CreateTexture(nil, "BACKGROUND")
-        border:SetTexture("Interface\\Addons\\mUI\\Media\\Textures\\Core\\gloss")
-        border:SetTexCoord(0, 1, 0, 1)
-        border:SetDrawLayer("BACKGROUND", -7)
-        border:SetVertexColor(unpack(mUI:Color(0.25)))
-        border:ClearAllPoints()
-        border:SetPoint("TOPLEFT", icon, "TOPLEFT", -1, 1)
-        border:SetPoint("BOTTOMRIGHT", icon, "BOTTOMRIGHT", 1, -1)
-        icon.border = border
-
-        local back = CreateFrame("Frame", nil, parent, "BackdropTemplate")
-        back:SetPoint("TOPLEFT", icon, "TOPLEFT", -4, 4)
-        back:SetPoint("BOTTOMRIGHT", icon, "BOTTOMRIGHT", 4, -4)
-        back:SetFrameLevel(frame:GetFrameLevel() - 1)
-        back:SetBackdrop(backdrop)
-        back:SetBackdropBorderColor(unpack(mUI:Color(0.25)))
-        back:SetAlpha(0.9)
-        icon.bg = back
-        icon.styled = true
+        parent.mUIBorder:SetPoint("TOPLEFT", icon, "TOPLEFT", -0.75, 0.75)
+        parent.mUIBorder:SetPoint("BOTTOMRIGHT", icon, "BOTTOMRIGHT", 1.8, -0.75)
     end
 
     function Casttime:NameplateCastbar(frame)
@@ -67,18 +47,16 @@ function Casttime:OnInitialize()
                 end
 
                 frame.Icon:ClearAllPoints();
-                PixelUtil.SetPoint(frame.Icon, "CENTER", frame, "LEFT", -10, 0);
+                PixelUtil.SetPoint(frame.Icon, "CENTER", frame, "LEFT", -10, 0)
                 frame.Text:SetFont(Casttime.font, 10, "OUTLINE")
                 Casttime:IconSkin(frame.Icon, frame)
 
                 if castInterrupt or channelInterrupt then
                     frame.Icon:Hide()
-                    frame.Icon.border:Hide()
-                    frame.Icon.bg:Hide()
+                    frame.Icon.mUIBorder:Hide()
                 else
                     frame.Icon:Show()
-                    frame.Icon.border:Show()
-                    frame.Icon.bg:Show()
+                    frame.mUIBorder:Show()
                 end
 
                 if Casttime.db.nameplates.casttime then

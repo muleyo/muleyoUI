@@ -26,8 +26,6 @@ function Theme:StyleButton(Button, Type)
         Cooldown:SetPoint("BOTTOMRIGHT", Button, "BOTTOMRIGHT", -3, 3)
     end
 
-    Icon:SetTexCoord(.08, .92, .08, .92)
-
     if C_AddOns.IsAddOnLoaded("Bartender4") then
         local ButtonWidth, ButtonHeight = Button:GetSize()
         Button:GetNormalTexture():SetSize(ButtonWidth + 2, ButtonHeight + 1)

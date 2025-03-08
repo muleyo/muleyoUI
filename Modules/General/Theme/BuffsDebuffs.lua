@@ -36,63 +36,50 @@ function Theme:HookDurationUpdates(auraFrames)
 end
 
 function Theme:ButtonDefault(button, isDebuff)
-    local Backdrop = {
-        bgFile = nil,
-        edgeFile = "Interface\\Addons\\mUI\\Media\\Textures\\Core\\outer_shadow",
-        tile = false,
-        tileSize = 32,
-        edgeSize = 6,
-        insets = { left = 6, right = 6, top = 6, bottom = 6 },
-    }
+    button.Icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
-    local icon = button.Icon
+    -- Create Border
+    button.mUIBorder = button:CreateTexture()
+    button.mUIBorder:SetAtlas("UI-HUD-ActionBar-IconFrame")
+    button.mUIBorder:SetPoint("TOPLEFT", button.Icon, "TOPLEFT", -0.5, 0.5)
+    button.mUIBorder:SetPoint("BOTTOMRIGHT", button.Icon, "BOTTOMRIGHT", 2.5, -1.5)
+    button.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
 
-    local border = CreateFrame("Frame", button.mUIBorder, button)
-    border:SetSize(icon:GetWidth() + 4, icon:GetHeight() + 4)
+    button.mUIBorder.mask = button:CreateMaskTexture()
+    button.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]],
+        "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    button.mUIBorder.mask:SetAllPoints(button.Icon)
+    button.Icon:AddMaskTexture(button.mUIBorder.mask)
+
     if not isDebuff then
         if BuffFrame.AuraContainer.isHorizontal then
             if BuffFrame.AuraContainer.addIconsToTop then
-                border:SetPoint("CENTER", button, "CENTER", 0, -5)
+                button.mUIBorder:SetPoint("CENTER", button, "CENTER", 0, -5)
             else
-                border:SetPoint("CENTER", button, "CENTER", 0, 5)
+                button.mUIBorder:SetPoint("CENTER", button, "CENTER", 0, 5)
             end
         else
             if not BuffFrame.AuraContainer.addIconsToRight then
-                border:SetPoint("CENTER", button, "CENTER", 15, 0)
+                button.mUIBorder:SetPoint("CENTER", button, "CENTER", 15, 0)
             else
-                border:SetPoint("CENTER", button, "CENTER", -15, 0)
+                button.mUIBorder:SetPoint("CENTER", button, "CENTER", -15, 0)
             end
         end
     else
         if DebuffFrame.AuraContainer.isHorizontal then
             if DebuffFrame.AuraContainer.addIconsToTop then
-                border:SetPoint("CENTER", button, "CENTER", 0, -5)
+                button.mUIBorder:SetPoint("CENTER", button, "CENTER", 0, -5)
             else
-                border:SetPoint("CENTER", button, "CENTER", 0, 5)
+                button.mUIBorder:SetPoint("CENTER", button, "CENTER", 0, 5)
             end
         else
             if not DebuffFrame.AuraContainer.addIconsToRight then
-                border:SetPoint("CENTER", button, "CENTER", 15, 0)
+                button.mUIBorder:SetPoint("CENTER", button, "CENTER", 15, 0)
             else
-                border:SetPoint("CENTER", button, "CENTER", -15, 0)
+                button.mUIBorder:SetPoint("CENTER", button, "CENTER", -15, 0)
             end
         end
     end
-
-    border.texture = border:CreateTexture()
-    border.texture:SetAllPoints()
-    border.texture:SetTexture("Interface\\Addons\\mUI\\Media\\Textures\\Core\\gloss")
-    border.texture:SetTexCoord(0, 1, 0, 1)
-    border.texture:SetDrawLayer("BACKGROUND", -7)
-    border.texture:SetVertexColor(unpack(mUI:Color(0.25)))
-
-    border.shadow = CreateFrame("Frame", nil, border, "BackdropTemplate")
-    border.shadow:SetPoint("TOPLEFT", border, "TOPLEFT", -4, 4)
-    border.shadow:SetPoint("BOTTOMRIGHT", border, "BOTTOMRIGHT", 4, -4)
-    border.shadow:SetBackdrop(Backdrop)
-    border.shadow:SetBackdropBorderColor(unpack(mUI:Color(0.25)))
-
-    button.mUIBorder = border
 
     if not isDebuff then
         Theme.aurabuttons[button] = "playerbuff"
@@ -106,10 +93,6 @@ function Theme:UpdatePlayerBuffs()
 
     for index, child in pairs(Children) do
         local frame = select(index, BuffFrame.AuraContainer:GetChildren())
-        local icon = frame.Icon
-        local count = frame.count
-
-        icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
         if frame.TempEnchantBorder then frame.TempEnchantBorder:Hide() end
 
@@ -124,9 +107,6 @@ function Theme:UpdatePlayerDebuffs()
 
     for index, child in pairs(Children) do
         local frame = select(index, DebuffFrame.AuraContainer:GetChildren())
-        local icon = frame.Icon
-
-        icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
         if not frame.mUIBorder then
             Theme:ButtonDefault(frame, true)
@@ -144,48 +124,28 @@ function Theme:UpdatePlayerDebuffs()
             color = DebuffTypeColor["none"]
         end
 
-        frame.mUIBorder.shadow:SetBackdropBorderColor(color.r, color.g, color.b, 1)
+        frame.mUIBorder:SetVertexColor(color.r, color.g, color.b, 1)
     end
 end
 
 function Theme:UpdateUnitframeAuras(aura, isDebuff, unit)
     if not aura.mUIBorder then
-        local Backdrop = {
-            bgFile = nil,
-            edgeFile = "Interface\\Addons\\mUI\\Media\\Textures\\Core\\outer_shadow",
-            tile = false,
-            tileSize = 32,
-            edgeSize = 4,
-            insets = {
-                left = 4,
-                right = 4,
-                top = 4,
-                bottom = 4,
-            },
-        }
+        aura.Icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
-        local icon = aura.Icon
-        icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        icon:SetDrawLayer("BACKGROUND", -8)
+        -- Create Border
+        aura.mUIBorder = aura:CreateTexture()
+        aura.mUIBorder:SetAtlas("UI-HUD-ActionBar-IconFrame")
+        aura.mUIBorder:SetPoint("TOPLEFT", aura.Icon, "TOPLEFT", -0.5, 0)
+        aura.mUIBorder:SetPoint("BOTTOMRIGHT", aura.Icon, "BOTTOMRIGHT", 2.25, -1.25)
+        aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
 
-        local border = CreateFrame("Frame", aura.mUIBorder, aura)
-
-        border.texture = border:CreateTexture(aura.mUIBorder, "BACKGROUND", nil, -7)
-        border.texture:SetTexture("Interface\\Addons\\mUI\\Media\\Textures\\Core\\gloss")
-        border.texture:SetTexCoord(0, 1, 0, 1)
-        border.texture:SetDrawLayer("BACKGROUND", -7)
-        border.texture:ClearAllPoints()
-        border.texture:SetPoint("TOPLEFT", aura, "TOPLEFT", -1, 1)
-        border.texture:SetPoint("BOTTOMRIGHT", aura, "BOTTOMRIGHT", 1, -1)
-        border.texture:SetVertexColor(0.4, 0.35, 0.35)
-
-        border.shadow = CreateFrame("Frame", nil, border, "BackdropTemplate")
-        border.shadow:SetPoint("TOPLEFT", aura, "TOPLEFT", -4, 4)
-        border.shadow:SetPoint("BOTTOMRIGHT", aura, "BOTTOMRIGHT", 4, -4)
-        border.shadow:SetFrameLevel(aura:GetFrameLevel() - 1)
-        border.shadow:SetBackdrop(Backdrop)
-
-        aura.mUIBorder = border
+        -- Set Icon Mask
+        aura.mUIBorder.mask = aura:CreateMaskTexture()
+        aura.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]],
+            "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+        aura.mUIBorder.mask:SetAllPoints(aura.Icon)
+        aura.Icon:AddMaskTexture(aura.mUIBorder.mask)
+        aura.Cooldown:SetSwipeTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]])
 
         if not isDebuff then
             Theme.aurabuttons[aura] = "unitframebuff"
@@ -194,22 +154,21 @@ function Theme:UpdateUnitframeAuras(aura, isDebuff, unit)
         end
     end
 
-    local color
     if unit and aura.auraInstanceID then
         local auraData = C_UnitAuras.GetAuraDataByAuraInstanceID(unit, aura.auraInstanceID)
-        color = Theme.debuffColors[auraData and auraData.dispelName or "none"]
+        local color = Theme.debuffColors[auraData and auraData.dispelName or "none"]
 
         if mUI.db.profile.unitframes.buffsdebuffs.debuffcolors then
-            aura.mUIBorder.shadow:SetBackdropBorderColor(color.r, color.g, color.b)
+            aura.mUIBorder:SetVertexColor(color.r, color.g, color.b)
         else
-            aura.mUIBorder.shadow:SetBackdropBorderColor(unpack(mUI:Color(0.25)))
+            aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
         end
     else
         if aura.Stealable and aura.Stealable:IsShown() then
             aura.Stealable:SetAlpha(0)
-            aura.mUIBorder.shadow:SetBackdropBorderColor(1, 1, 1)
+            aura.mUIBorder:SetVertexColor(1, 1, 1)
         else
-            aura.mUIBorder.shadow:SetBackdropBorderColor(unpack(mUI:Color(0.25)))
+            aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
         end
     end
 
