@@ -1185,14 +1185,7 @@ function Theme:Castbars()
 
     -- Castbar Icon Skinning
     for castbar in pairs(Theme.castbarIcons) do
-        if Theme.db.theme == "Disabled" then
-            castbar.mUIBorder:Hide()
-        else
-            if mUI.db.profile.castbars.icon then
-                castbar.mUIBorder:Show()
-            end
-            castbar.mUIBorder.shadow:SetBackdropBorderColor(unpack(mUI:Color(0.15)))
-        end
+        castbar.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
     end
 end
 
@@ -1202,27 +1195,8 @@ function Theme:Auras()
 
     -- Aura Skinning
     for button, type in pairs(Theme.aurabuttons) do
-        if Theme.db.theme == "Disabled" then
-            button.mUIBorder:Hide()
-            if button.DebuffBorder then
-                button.DebuffBorder:SetAlpha(1)
-            end
-            if button.Border then
-                button.Border:SetAlpha(1)
-            end
-        else
-            button.mUIBorder:Show()
-
-            if type == "playerbuff" or type == "unitframebuff" then
-                button.mUIBorder.shadow:SetBackdropBorderColor(unpack(mUI:Color(0.25)))
-            end
-
-            if button.DebuffBorder then
-                button.DebuffBorder:SetAlpha(0)
-            end
-            if button.Border then
-                button.Border:SetAlpha(0)
-            end
+        if type == "playerbuff" or type == "unitframebuff" then
+            button.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
         end
     end
 end

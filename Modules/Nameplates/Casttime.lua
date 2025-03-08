@@ -53,7 +53,7 @@ function Casttime:OnInitialize()
 
                 if castInterrupt or channelInterrupt then
                     frame.Icon:Hide()
-                    frame.Icon.mUIBorder:Hide()
+                    frame.mUIBorder:Hide()
                 else
                     frame.Icon:Show()
                     frame.mUIBorder:Show()
