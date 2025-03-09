@@ -9,10 +9,9 @@ function Options:OnInitialize()
 
     function Options:Update()
         if Options.db.smartstacking then
-            SetCVar("nameplateMotion", 1)     -- Set Nameplate to Stacking-Mode
-            SetCVar("nameplateOverlapH", 0.5) -- Set Nameplate Stacking Distance Horizontal
-            SetCVar("nameplateOverlapV", 0.5) -- Set Nameplate Stacking Distance Vertical
-            SetCVar("nameplateMinScale", 1)   -- Set Nameplate Stacking Distance Vertical
+            SetCVar("nameplateMotion", 1)      -- Set Nameplate to Stacking-Mode
+            SetCVar("nameplateOverlapV", 0.25) -- Set Nameplate Stacking Distance Vertical
+            SetCVar("nameplateMinScale", 1)    -- Set Nameplate Stacking Distance Vertical
         end
 
         SetCVar("NamePlateVerticalScale", Options.db.height)  -- Set Nameplate Height
