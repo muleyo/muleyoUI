@@ -928,6 +928,10 @@ function Theme:Loot()
     -- Loot
     mUI:Skin(LootFrame)
     mUI:Skin(LootFrame.NineSlice)
+    mUI:Skin(GroupLootHistoryFrame)
+    mUI:Skin(GroupLootHistoryFrameBg)
+    mUI:Skin(GroupLootHistoryFrame.TitleContainer)
+    mUI:Skin(GroupLootHistoryFrame.NineSlice)
 end
 
 function Theme:Mail()
