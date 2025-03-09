@@ -72,6 +72,7 @@ function Style:OnInitialize()
     function Style:DisableStyle()
         for unit, castbar in pairs(Style.castbars) do
             if unit == "player" then
+                if InCombatLockdown() then return end
                 _G[castbar]:SetSize(208.00001525879, 11.000000953674)
                 _G[castbar].StandardGlow:Show()
                 _G[castbar].TextBorder:Show()
