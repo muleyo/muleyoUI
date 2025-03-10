@@ -72,7 +72,6 @@ function Style:OnInitialize()
     function Style:DisableStyle()
         for unit, castbar in pairs(Style.castbars) do
             if unit == "player" then
-                if InCombatLockdown() then return end
                 _G[castbar]:SetSize(208.00001525879, 11.000000953674)
                 _G[castbar].StandardGlow:Show()
                 _G[castbar].TextBorder:Show()
@@ -95,9 +94,7 @@ function Style:OnInitialize()
 
     function Style:Update()
         for unit, castbar in pairs(Style.castbars) do
-            if unit ~= "player" then
-                Style:EnableStyle(unit, castbar)
-            end
+            Style:EnableStyle(unit, castbar)
         end
     end
 end
@@ -105,7 +102,21 @@ end
 function Style:OnEnable()
     -- Enable Style
     Style:Update()
-    Style:HookScript(PlayerCastingBarFrame, "OnEvent", function()
+    Style.frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+    Style.frame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "player")
+    Style.frame:RegisterUnitEvent("UNIT_SPELLCAST_DELAYED", "player")
+    Style.frame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", "player")
+    Style.frame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", "player")
+    Style.frame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", "player")
+    Style.frame:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_START", "player")
+    Style.frame:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_UPDATE", "player")
+    Style.frame:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_STOP", "player")
+    Style.frame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTIBLE", "player")
+    Style.frame:RegisterUnitEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", "player")
+    Style.frame:RegisterUnitEvent("UNIT_SPELLCAST_START", "player")
+    Style.frame:RegisterUnitEvent("UNIT_SPELLCAST_STOP", "player")
+    Style.frame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "player")
+    Style:HookScript(Style.frame, "OnEvent", function()
         Style:EnableStyle("player", "PlayerCastingBarFrame")
     end)
 end
