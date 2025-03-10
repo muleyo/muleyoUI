@@ -1,6 +1,6 @@
 ## Interface: 110100
 ## Author: muleyo
-## Version: 1.1.5
+## Version: 1.1.6
 ## Title: |cff009cffmuleyo|r|cffffd100UI|r
 ## Notes: Unleash your real potential
 ## SavedVariables: mUIDB
