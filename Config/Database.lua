@@ -260,7 +260,7 @@ local defaults = {
                 [145185] = { name = "Gnomercy 4.U.", color = { r = 1, g = 0.55, b = 0 } },
                 [144246] = { name = "K.U.-J.0.", color = { r = 1, g = 0.55, b = 0 } },
                 [144295] = { name = "Mechagon Mechanic", color = { r = 0.65, g = 0, b = 1 } },
-                [144294] = { name = "Mechagon Tinkerer", color = { r = 0, g = 1, b = 0.8 } },
+                [144294] = { name = "Mechagon Tinkerer", color = { r = 0, g = 0.55, b = 1 } },
                 [144248] = { name = "Head Machinist Sparkflux", color = { r = 1, g = 0.55, b = 0 } },
                 [150396] = { name = "Aerial Unit R-21/X", color = { r = 1, g = 0.55, b = 0 } },
                 [144249] = { name = "Omega Buster", color = { r = 1, g = 0.55, b = 0 } },

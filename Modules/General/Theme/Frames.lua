@@ -386,6 +386,9 @@ function Theme:Professions()
         mUI:Skin(ProfessionsFrame.OrdersPage.BrowseFrame.GuildOrdersButton)
         mUI:Skin(ProfessionsFrame.OrdersPage.BrowseFrame.NpcOrdersButton)
         mUI:Skin(ProfessionsFrame.OrdersPage.BrowseFrame.PersonalOrdersButton)
+        mUI:Skin(ProfessionsFrame.CraftingPage.CraftingOutputLog)
+        mUI:Skin(ProfessionsFrame.CraftingPage.CraftingOutputLog.TitleContainer)
+        mUI:Skin(ProfessionsFrame.CraftingPage.CraftingOutputLog.NineSlice)
         mUI:Skin({
             ProfessionsFrame.CraftingPage.RankBar.Border
         }, true)

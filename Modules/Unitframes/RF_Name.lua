@@ -45,6 +45,11 @@ function RF_Name:OnInitialize()
                     frame.name:SetText(unitName)
                     frame.name:SetTextColor(color.r, color.g, color.b)
                     frame.name:SetFont(STANDARD_TEXT_FONT, 13, "OUTLINE")
+                    if IsInRaid() then
+                        if strlen(frame.name:GetText()) > 10 then
+                            frame.name:SetText(string.sub(frame.name:GetText(), 1, 8) .. "...")
+                        end
+                    end
 
                     if RF_Name.db.roleicons then
                         frame.name:ClearAllPoints()
