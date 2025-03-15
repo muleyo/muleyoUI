@@ -39,6 +39,7 @@ local defaults = {
             flash = true,
             range = true,
             fontsize = 12,
+            cooldown = false,
             mouseover = {
                 enabled = false,
                 bar1 = false,

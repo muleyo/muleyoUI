@@ -110,6 +110,24 @@ function Actionbars:OnInitialize()
                 get = function() return mUI.db.profile.actionbars.range end,
                 order = 6
             },
+            cooldown = {
+                name = "Desaturate Cooldown",
+                desc = "Desaturate Actionbutton when Spell is on Cooldown",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.actionbars.cooldown = val
+
+                    if not Actionbars.Module:IsEnabled() then return end
+
+                    if val then
+                        Actionbars.Module.Cooldown:Enable()
+                    else
+                        Actionbars.Module.Cooldown:Disable()
+                    end
+                end,
+                get = function() return mUI.db.profile.actionbars.cooldown end,
+                order = 7
+            },
             fontsize = {
                 name = "Fontsize",
                 desc = "Change the Fontsize of the Hotkey Text\n\n|cffffff00Info:|r 12 is default",
@@ -125,12 +143,12 @@ function Actionbars:OnInitialize()
                     Actionbars.Module.Fontsize:Update()
                 end,
                 get = function() return mUI.db.profile.actionbars.fontsize end,
-                order = 7
+                order = 8
             },
             header2 = {
                 name = "Mouseover",
                 type = "header",
-                order = 8
+                order = 9
             },
             enablemouseover = {
                 name = function()
@@ -154,12 +172,12 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.enabled end,
-                order = 9
+                order = 10
             },
             spacer = {
                 name = "",
                 type = "description",
-                order = 10
+                order = 11
             },
             bar1 = {
                 name = "ActionBar 1",
@@ -179,7 +197,7 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar1 end,
-                order = 11
+                order = 12
             },
             bar2 = {
                 name = "ActionBar 2",
@@ -199,7 +217,7 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar2 end,
-                order = 12
+                order = 13
             },
             bar3 = {
                 name = "ActionBar 3",
@@ -219,7 +237,7 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar3 end,
-                order = 13
+                order = 14
             },
             bar4 = {
                 name = "ActionBar 4",
@@ -239,7 +257,7 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar4 end,
-                order = 14
+                order = 15
             },
             bar5 = {
                 name = "ActionBar 5",
@@ -259,7 +277,7 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar5 end,
-                order = 15
+                order = 16
             },
             bar6 = {
                 name = "ActionBar 6",
@@ -279,7 +297,7 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar6 end,
-                order = 16
+                order = 17
             },
             bar7 = {
                 name = "ActionBar 7",
@@ -299,7 +317,7 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar7 end,
-                order = 17
+                order = 18
             },
             bar8 = {
                 name = "ActionBar 8",
@@ -319,7 +337,7 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bar8 end,
-                order = 18
+                order = 19
             },
             petbar = {
                 name = "Pet Actionbar",
@@ -339,7 +357,7 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.petbar end,
-                order = 19
+                order = 20
             },
             stancebar = {
                 name = "Stance Actionbar",
@@ -359,7 +377,7 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.stancebar end,
-                order = 20
+                order = 21
             },
             micromenu = {
                 name = "Micro Menu",
@@ -392,7 +410,7 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.micromenu end,
-                order = 21
+                order = 22
             },
             bagbuttons = {
                 name = "Bag Buttons",
@@ -425,7 +443,7 @@ function Actionbars:OnInitialize()
                     end
                 end,
                 get = function() return mUI.db.profile.actionbars.mouseover.bagbuttons end,
-                order = 22
+                order = 23
             }
         }
     }
