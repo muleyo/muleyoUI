@@ -164,12 +164,7 @@ function Theme:UpdateUnitframeAuras(aura, isDebuff, unit)
             aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
         end
     else
-        if aura.Stealable and aura.Stealable:IsShown() then
-            aura.Stealable:SetAlpha(0)
-            aura.mUIBorder:SetVertexColor(1, 1, 1)
-        else
-            aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
-        end
+        aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
     end
 
     if aura.Border then
