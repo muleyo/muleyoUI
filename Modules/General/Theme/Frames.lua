@@ -407,6 +407,9 @@ end
 function Theme:PVP()
     -- PVP UI
     if HonorFrame then
+        Theme.blacklist[select(4, HonorFrame.ConquestBar:GetRegions())] = true
+        Theme.blacklist[select(4, ConquestFrame.ConquestBar:GetRegions())] = true
+
         mUI:Skin(PlunderstormFrame.Inset)
         mUI:Skin(PlunderstormFrame.Inset.NineSlice)
         mUI:Skin(HonorFrame)
@@ -414,6 +417,7 @@ function Theme:PVP()
         mUI:Skin(HonorFrame.Inset)
         mUI:Skin(HonorFrame.Inset.NineSlice)
         mUI:Skin(HonorFrame.BonusFrame)
+        mUI:Skin(HonorFrame.ConquestBar)
         mUI:Skin(ConquestFrame)
         mUI:Skin(ConquestFrame.ConquestBar)
         mUI:Skin(ConquestFrame.Inset)
