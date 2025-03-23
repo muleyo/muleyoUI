@@ -180,7 +180,7 @@ function Theme:AuraPositions()
         local border = BuffFrame.auraFrames[i].mUIBorder
 
         count:SetFont(STANDARD_TEXT_FONT, 11, "OUTLINE")
-        duration:SetFont(STANDARD_TEXT_FONT, 11, "OUTLINE")
+        duration:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
         duration:SetDrawLayer("OVERLAY")
 
         if BuffFrame.AuraContainer.isHorizontal then
@@ -226,7 +226,7 @@ function Theme:AuraPositions()
                     local count = DebuffFrame.auraFrames[i].Count
 
                     count:SetPoint("TOPRIGHT", 0, 12)
-                    count:SetFont(STANDARD_TEXT_FONT, 11, "OUTLINE")
+                    count:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
                 end
 
                 if DebuffFrame.auraFrames[i].Duration then

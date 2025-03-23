@@ -4,7 +4,7 @@ local _, playerClass = UnitClass("player")
 function Theme:ClassBar()
     -- Rogue
     if (playerClass == "ROGUE") then
-        for _, child in ipairs({ RogueComboPointBarFrame:GetChildren() }) do
+        for _, child in pairs({ RogueComboPointBarFrame:GetChildren() }) do
             mUI:Skin({
                 child.BGActive,
                 child.BGInactive,
@@ -16,7 +16,7 @@ function Theme:ClassBar()
                 }, true)
             end
         end
-        for _, child in ipairs({ ClassNameplateBarRogueFrame:GetChildren() }) do
+        for _, child in pairs({ ClassNameplateBarRogueFrame:GetChildren() }) do
             mUI:Skin({
                 child.BGActive,
                 child.BGInactive,
@@ -30,13 +30,13 @@ function Theme:ClassBar()
         end
     elseif (playerClass == "MAGE") then
         -- Mage
-        for _, child in ipairs({ MageArcaneChargesFrame:GetChildren() }) do
+        for _, child in pairs({ MageArcaneChargesFrame:GetChildren() }) do
             mUI:Skin({
                 child.ArcaneBG,
                 child.ArcaneBGShadow
             }, true)
         end
-        for _, child in ipairs({ ClassNameplateBarMageFrame:GetChildren() }) do
+        for _, child in pairs({ ClassNameplateBarMageFrame:GetChildren() }) do
             mUI:Skin({
                 child.ArcaneBG,
                 child.ArcaneBGShadow
@@ -44,26 +44,26 @@ function Theme:ClassBar()
         end
     elseif (playerClass == "WARLOCK") then
         -- Warlock
-        for _, child in ipairs({ WarlockPowerFrame:GetChildren() }) do
+        for _, child in pairs({ WarlockPowerFrame:GetChildren() }) do
             mUI:Skin({
                 child.Background
             }, true)
         end
-        for _, child in ipairs({ ClassNameplateBarWarlockFrame:GetChildren() }) do
+        for _, child in pairs({ ClassNameplateBarWarlockFrame:GetChildren() }) do
             mUI:Skin({
                 child.Background
             }, true)
         end
     elseif (playerClass == "DRUID") then
         -- Druid
-        for _, child in ipairs({ DruidComboPointBarFrame:GetChildren() }) do
+        for _, child in pairs({ DruidComboPointBarFrame:GetChildren() }) do
             mUI:Skin({
                 child.BG_Active,
                 child.BG_Inactive,
                 child.BG_Shadow
             }, true)
         end
-        for _, child in ipairs({ ClassNameplateBarFeralDruidFrame:GetChildren() }) do
+        for _, child in pairs({ ClassNameplateBarFeralDruidFrame:GetChildren() }) do
             mUI:Skin({
                 child.BG_Active,
                 child.BG_Inactive,
@@ -72,13 +72,13 @@ function Theme:ClassBar()
         end
     elseif (playerClass == "MONK") then
         -- Monk
-        for _, child in ipairs({ MonkHarmonyBarFrame:GetChildren() }) do
+        for _, child in pairs({ MonkHarmonyBarFrame:GetChildren() }) do
             mUI:Skin({
                 child.Chi_BG,
                 child.Chi_BG_Active
             }, true)
         end
-        for _, child in ipairs({ ClassNameplateBarWindwalkerMonkFrame:GetChildren() }) do
+        for _, child in pairs({ ClassNameplateBarWindwalkerMonkFrame:GetChildren() }) do
             mUI:Skin({
                 child.Chi_BG,
                 child.Chi_BG_Active
@@ -86,14 +86,14 @@ function Theme:ClassBar()
         end
     elseif (playerClass == "DEATHKNIGHT") then
         -- Death Knight
-        for _, child in ipairs({ RuneFrame:GetChildren() }) do
+        for _, child in pairs({ RuneFrame:GetChildren() }) do
             mUI:Skin({
                 child.BG_Active,
                 child.BG_Inactive,
                 child.BG_Shadow
             }, true)
         end
-        for _, child in ipairs({ DeathKnightResourceOverlayFrame:GetChildren() }) do
+        for _, child in pairs({ DeathKnightResourceOverlayFrame:GetChildren() }) do
             mUI:Skin({
                 child.BG_Active,
                 child.BG_Inactive,
@@ -102,14 +102,14 @@ function Theme:ClassBar()
         end
     elseif (playerClass == "EVOKER") then
         -- Evoker
-        for _, child in ipairs({ EssencePlayerFrame:GetChildren() }) do
+        for _, child in pairs({ EssencePlayerFrame:GetChildren() }) do
             mUI:Skin({
                 child.EssenceFillDone.CircBG,
                 child.EssenceFillDone.CircBGActive
             }, true)
         end
 
-        for _, child in ipairs({ ClassNameplateBarDracthyrFrame:GetChildren() }) do
+        for _, child in pairs({ ClassNameplateBarDracthyrFrame:GetChildren() }) do
             mUI:Skin({
                 child.EssenceFillDone.CircBG,
                 child.EssenceFillDone.CircBGActive

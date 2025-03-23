@@ -20,8 +20,8 @@ function Theme:OnEnable()
     -- Buffs & Debuffs
     if not C_AddOns.IsAddOnLoaded("BlizzBuffsFacade") then
         Theme:SecureHook(AuraFrameMixin, "Update", Theme.AuraPositions)
-        Theme:HookDurationUpdates(BuffFrame.auraFrames)
-        Theme:HookDurationUpdates(DebuffFrame.auraFrames)
+        --Theme:HookDurationUpdates(BuffFrame.auraFrames)
+        --Theme:HookDurationUpdates(DebuffFrame.auraFrames)
 
         Theme.auras:RegisterEvent("PLAYER_ENTERING_WORLD")
         Theme.auras:RegisterEvent("PLAYER_TARGET_CHANGED")
