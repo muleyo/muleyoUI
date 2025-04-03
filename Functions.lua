@@ -158,6 +158,7 @@ function Functions:OnInitialize()
 
         -- Get blacklisted frames
         local blacklist = mUI:GetModule("mUI.Modules.General.Theme").blacklist
+        if not blacklist then return end
 
         if frame then
             if isGui then
