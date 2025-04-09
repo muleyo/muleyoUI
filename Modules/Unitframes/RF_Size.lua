@@ -8,6 +8,7 @@ function Raidframes_Size:OnInitialize()
     Raidframes_Size.backup = CompactPartyFrameMember1.SetSize
 
     function Raidframes_Size:Update(x, y)
+        if InCombatLockdown() then return end
         for i = 1, 5 do
             local member = _G["CompactPartyFrameMember" .. i]
             local pet = _G["CompactPartyFramePet" .. i]

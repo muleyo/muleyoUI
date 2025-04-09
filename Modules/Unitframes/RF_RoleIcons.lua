@@ -27,6 +27,7 @@ function RF_RoleIcons:OnInitialize()
     }
 
     function RF_RoleIcons:HideIcons(frame)
+        if InCombatLockdown() then return end
         if (not frame) or frame:IsForbidden() then return end
         if frame:GetName() and frame.unit then
             local name = frame:GetName()
