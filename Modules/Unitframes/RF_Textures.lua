@@ -38,7 +38,6 @@ function RF_Textures:OnInitialize()
     }
 
     function RF_Textures:SetTextures(frame)
-        if InCombatLockdown() then return end
         if frame and frame:IsForbidden() then return end
         if frame and frame:GetName() then
             local name = frame:GetName()
