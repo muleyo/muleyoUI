@@ -4,7 +4,9 @@ function Theme:StyleDragonriding()
     for _, child in ipairs({ UIWidgetPowerBarContainerFrame:GetChildren() }) do
         mUI:Skin(child)
         for _, vigor in ipairs({ child:GetChildren() }) do
-            Theme.dragonridingDefault = select(5, vigor:GetRegions()):GetVertexColor()
+            if select(5, vigor:GetRegions()) then
+                Theme.dragonridingDefault = select(5, vigor:GetRegions()):GetVertexColor()
+            end
             mUI:Skin(vigor)
         end
     end

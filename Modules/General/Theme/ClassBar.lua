@@ -103,6 +103,7 @@ function Theme:ClassBar()
     elseif (playerClass == "EVOKER") then
         -- Evoker
         for _, child in pairs({ EssencePlayerFrame:GetChildren() }) do
+            if not child.EssenceFillDone then return end
             mUI:Skin({
                 child.EssenceFillDone.CircBG,
                 child.EssenceFillDone.CircBGActive
