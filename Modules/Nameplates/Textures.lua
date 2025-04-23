@@ -65,9 +65,12 @@ function Textures:OnInitialize()
             end
 
             -- Move Debuff Anchor
-            if nameplate.BuffFrame then
+            if nameplate.BuffFrame and C_CVar.GetCVar("UnitNameNPC") == "1" then
                 nameplate.BuffFrame:ClearAllPoints()
                 nameplate.BuffFrame:SetPoint("TOPLEFT", nameplate.healthBar, "TOPLEFT", 0, -5)
+            elseif nameplate.BuffFrame and C_CVar.GetCVar("UnitNameNPC") == "0" then
+                nameplate.BuffFrame:ClearAllPoints()
+                nameplate.BuffFrame:SetPoint("TOPLEFT", nameplate.healthBar, "TOPLEFT", 0, 17.5)
             end
         end
     end

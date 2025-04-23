@@ -334,7 +334,7 @@ local defaults = {
         },
         misc = {
             enabled = true,
-            interrupt = true,
+            interrupt = false,
             menubutton = true,
             statusbar = false,
             dragonflying = true,
