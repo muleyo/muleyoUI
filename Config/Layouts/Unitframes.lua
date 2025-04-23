@@ -53,10 +53,10 @@ function Unitframes:OnInitialize()
                     if not Unitframes.Module:IsEnabled() then return end
 
                     if val == "None" then
-                        Unitframes.Module.Unitframes_Textures:Disable()
-                        Unitframes.Module.Unitframes_Textures:Update()
+                        Unitframes.Module.UF_Textures:Disable()
+                        Unitframes.Module.UF_Textures:Update()
                     else
-                        Unitframes.Module.Unitframes_Textures:Enable()
+                        Unitframes.Module.UF_Textures:Enable()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.textures.unitframes end,
@@ -74,11 +74,11 @@ function Unitframes:OnInitialize()
                     if not Unitframes.Module:IsEnabled() then return end
 
                     if val == "None" then
-                        Unitframes.Module.Raidframes_Textures:Disable()
-                        Unitframes.Module.Raidframes_Textures:Update()
+                        Unitframes.Module.RF_Textures:Disable()
+                        Unitframes.Module.RF_Textures:Update()
                     else
-                        Unitframes.Module.Raidframes_Textures:Enable()
-                        Unitframes.Module.Raidframes_Textures:Update()
+                        Unitframes.Module.RF_Textures:Enable()
+                        Unitframes.Module.RF_Textures:Update()
                     end
                 end,
                 get = function() return mUI.db.profile.unitframes.textures.raidframes end,
