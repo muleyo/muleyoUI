@@ -726,6 +726,10 @@ function object_proto:UpdateFading()
 end
 
 function object_proto:ShouldShowMessage(delta)
+	if not Style.db.fade.enabled then
+		return true
+	end
+
 	delta = delta - Style.db.fade.out_delay
 	if delta >= CHAT_FADE_OUT_DURATION then
 		return false
