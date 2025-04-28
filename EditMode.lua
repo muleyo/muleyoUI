@@ -18,7 +18,6 @@ function EditMode:OnInitialize()
     QueueStatusButton:SetPoint("CENTER", EditMode.QueueStatus)
     EditMode:SecureHook(QueueStatusButton, "SetPoint", function()
         QueueStatusButton:SetAllPoints(EditMode.QueueStatus)
-        QueueStatusButton:SetScale(0.8)
     end)
 
     -- Stats Frame
@@ -65,5 +64,28 @@ function EditMode:OnInitialize()
             EditMode.db[layout].queueicon.point,
             EditMode.db[layout].queueicon.x,
             EditMode.db[layout].queueicon.y)
+
+        QueueStatusButton:SetScale(EditMode.db[layout].queueicon.scale or 0.8)
     end)
+
+    EditMode.LEM:AddFrameSettings(EditMode.QueueStatus, {
+        {
+            name = 'Button Size',
+            kind = EditMode.LEM.SettingType.Slider,
+            default = 1,
+            get = function(layout)
+                return EditMode.db[layout].queueicon.scale
+            end,
+            set = function(layout, value)
+                EditMode.db[layout].queueicon.scale = value
+                QueueStatusButton:SetScale(value)
+            end,
+            minValue = 0.1,
+            maxValue = 5,
+            valueStep = 0.1,
+            formatter = function(value)
+                return FormatPercentage(value, true)
+            end,
+        }
+    })
 end
