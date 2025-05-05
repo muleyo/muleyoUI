@@ -164,7 +164,9 @@ function Functions:OnInitialize()
             if isGui then
                 for _, v in pairs({ frame:GetRegions() }) do
                     if v:GetObjectType() == "Texture" then
-                        v:SetDesaturated(true)
+                        if v.SetDesaturated then
+                            v:SetDesaturated(true)
+                        end
                         v:SetVertexColor(0.15, 0.15, 0.15, 1)
                     end
                 end
@@ -173,9 +175,13 @@ function Functions:OnInitialize()
                     if (not blacklist[v:GetName()]) and (not blacklist[v]) then
                         if v:GetObjectType() == "Texture" then
                             if themes["Disabled"] == theme then
-                                v:SetDesaturated(false)
+                                if v.SetDesaturated then
+                                    v:SetDesaturated(false)
+                                end
                             else
-                                v:SetDesaturated(true)
+                                if v.SetDesaturated then
+                                    v:SetDesaturated(true)
+                                end
                             end
                             v:SetVertexColor(unpack(mUI:Color(0.15)))
                         end
@@ -185,9 +191,13 @@ function Functions:OnInitialize()
                 for _, v in pairs(frame) do
                     if v then
                         if themes["Disabled"] == theme then
-                            v:SetDesaturated(false)
+                            if v.SetDesaturated then
+                                v:SetDesaturated(false)
+                            end
                         else
-                            v:SetDesaturated(true)
+                            if v.SetDesaturated then
+                                v:SetDesaturated(true)
+                            end
                         end
                         v:SetVertexColor(unpack(mUI:Color(0.15)))
                     end
