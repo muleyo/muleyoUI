@@ -28,6 +28,7 @@ function Font:OnInitialize()
         InvoiceFont_Small, Tooltip_Med, Tooltip_Small,
         AchievementFont_Small, ReputationDetailFont, FriendsFont_Normal,
         FriendsFont_Small, FriendsFont_Large, FriendsFont_UserText,
+        GameFontHighlightSmall, GameFontHighlightLarge, SystemFont_Shadow_Small,
         GameFont_Gigantic, GameFontNormalMed3, ChatBubbleFont,
         Fancy16Font, Fancy18Font, Fancy20Font,
         Fancy24Font, Fancy27Font, Fancy30Font,

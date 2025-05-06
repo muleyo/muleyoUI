@@ -82,7 +82,9 @@ function Style:OnInitialize()
             if GetRaidTargetIndex(unit) == 16 then
                 GameTooltipTextLeft1:SetText(("%s"):format(unitName))
             else
-                GameTooltipTextLeft1:SetText(("%s %s"):format(ICON_LIST[raidIconIndex] .. "14|t", unitName))
+                if raidIconIndex and ICON_LIST[raidIconIndex] then
+                    GameTooltipTextLeft1:SetText(("%s %s"):format(ICON_LIST[raidIconIndex] .. "14|t", unitName))
+                end
             end
         end
 

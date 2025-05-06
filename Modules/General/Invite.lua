@@ -9,8 +9,7 @@ function Invite:OnInitialize()
         if event == 'PARTY_INVITE_REQUEST' then
             if not guid or guid == '' or IsInGroup() then return end
 
-            local queueButton = GetQueueStatusButton() -- don't auto accept during a queue
-            if queueButton and queueButton:IsShown() then return end
+            if QueueStatusButton and QueueStatusButton:IsShown() then return end
 
             if BNGetGameAccountInfoByGUID(guid) or C_FriendList.IsFriend(guid) or IsGuildMember(guid) then
                 hideStatic = true
