@@ -1264,6 +1264,10 @@ function Theme:Frames()
     mUI:Skin(PVPScoreboardTab1)
     mUI:Skin(PVPScoreboardTab2)
     mUI:Skin(PVPScoreboardTab3)
+
+    -- ReadyCheck
+    mUI:Skin(ReadyCheckListenerFrame)
+    mUI:Skin(ReadyCheckListenerFrame.NineSlice)
 end
 
 function Theme:Update()
