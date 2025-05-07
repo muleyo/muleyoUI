@@ -867,8 +867,17 @@ function Theme:Guild()
     -- Guild
     mUI:Skin(GuildRegistrarFrame)
     mUI:Skin(GuildRegistrarFrame.NineSlice)
+    mUI:Skin(GuildRegistrarFrameInset)
+    mUI:Skin(GuildRegistrarFrameInset.NineSlice)
     mUI:Skin(TabardFrame)
     mUI:Skin(TabardFrame.NineSlice)
+    mUI:Skin(TabardFrameInset)
+    mUI:Skin(TabardFrameInset.NineSlice)
+
+    select(3, GuildRegistrarButton1:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+    select(3, GuildRegistrarButton2:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+    select(1, GuildRegistrarGreetingFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+    select(1, GuildRegistrarPurchaseFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
 end
 
 function Theme:Gossip()
@@ -1020,6 +1029,19 @@ function Theme:Petition()
     mUI:Skin(PetitionFrame)
     mUI:Skin(PetitionFrame.NineSlice)
     mUI:Skin(PetitionFrameInset)
+    mUI:Skin(PetitionFrameInset.NineSlice)
+
+    select(5, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+    select(6, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+    select(7, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+    select(8, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+    select(9, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+    select(9, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+    select(10, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+    select(11, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+    select(12, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+    select(13, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+    select(19, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
 end
 
 function Theme:Quest()

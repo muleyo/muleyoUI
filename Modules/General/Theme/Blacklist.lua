@@ -85,6 +85,6 @@ function Theme:Blacklist()
         [select(2, MerchantRepairAllButton:GetRegions())] = true,
         [select(2, MerchantGuildBankRepairButton:GetRegions())] = true,
         [select(2, MerchantSellAllJunkButton:GetRegions())] = true,
-
+        [select(3, PetitionFrame:GetRegions())] = true
     }
 end
