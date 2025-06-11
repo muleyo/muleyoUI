@@ -26,6 +26,7 @@ function Media:OnInitialize()
     Media.LSM:Register("statusbar", "Aluminium", [[Interface\Addons\mUI\Media\Textures\Status\Aluminium.tga]])
     Media.LSM:Register("statusbar", "Banto", [[Interface\Addons\mUI\Media\Textures\Status\Banto.tga]])
     Media.LSM:Register("statusbar", "Charcoal", [[Interface\Addons\mUI\Media\Textures\Status\Charcoal.tga]])
+    Media.LSM:Register("statusbar", "D1", [[Interface\Addons\mUI\Media\Textures\Status\D1.tga]])
     Media.LSM:Register("statusbar", "Dragonflight",
         [[Interface\Addons\mUI\Media\Textures\Status\DragonflightTexture.tga]])
     Media.LSM:Register("statusbar", "Flat", [[Interface\Addons\mUI\Media\Textures\Status\Flat.tga]])
