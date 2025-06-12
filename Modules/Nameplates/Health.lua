@@ -99,21 +99,47 @@ function Health:OnInitialize()
                         healthBar:SetStatusBarColor(0.8, 0.3, 0.22)
                     end
                 else
-                    if status and status == 3 then
-                        healthBar:SetStatusBarColor(0.8, 0.3, 0.22)
-                    elseif status and status == 2 then
-                        healthBar:SetStatusBarColor(0.9, 0.7, 0)
+                    if playerClass == "DRUID" then
+                        if AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL") and (not AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL")) then
+                            healthBar:SetStatusBarColor(0.09, 0.96, 1)
+                        elseif AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL") and (not AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL")) then
+                            healthBar:SetStatusBarColor(0.99, 1, 0.52)
+                        else
+                            if status and status == 3 then
+                                healthBar:SetStatusBarColor(0.8, 0.3, 0.22)
+                            elseif status and status == 2 then
+                                healthBar:SetStatusBarColor(0.9, 0.7, 0)
+                            else
+                                if playerClass == "DRUID" then
+                                    if AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL") and (not AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL")) then
+                                        healthBar:SetStatusBarColor(0.09, 0.96, 1)
+                                    elseif AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL") and (not AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL")) then
+                                        healthBar:SetStatusBarColor(0.99, 1, 0.52)
+                                    else
+                                        healthBar:SetStatusBarColor(color.r, color.g, color.b)
+                                    end
+                                else
+                                    healthBar:SetStatusBarColor(color.r, color.g, color.b)
+                                end
+                            end
+                        end
                     else
-                        if playerClass == "DRUID" then
-                            if AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL") and (not AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL")) then
-                                healthBar:SetStatusBarColor(0.09, 0.96, 1)
-                            elseif AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL") and (not AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL")) then
-                                healthBar:SetStatusBarColor(0.99, 1, 0.52)
+                        if status and status == 3 then
+                            healthBar:SetStatusBarColor(0.8, 0.3, 0.22)
+                        elseif status and status == 2 then
+                            healthBar:SetStatusBarColor(0.9, 0.7, 0)
+                        else
+                            if playerClass == "DRUID" then
+                                if AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL") and (not AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL")) then
+                                    healthBar:SetStatusBarColor(0.09, 0.96, 1)
+                                elseif AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL") and (not AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL")) then
+                                    healthBar:SetStatusBarColor(0.99, 1, 0.52)
+                                else
+                                    healthBar:SetStatusBarColor(color.r, color.g, color.b)
+                                end
                             else
                                 healthBar:SetStatusBarColor(color.r, color.g, color.b)
                             end
-                        else
-                            healthBar:SetStatusBarColor(color.r, color.g, color.b)
                         end
                     end
                 end
