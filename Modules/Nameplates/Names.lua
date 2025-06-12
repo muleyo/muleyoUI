@@ -15,7 +15,11 @@ function Names:OnInitialize()
                         local color = RAID_CLASS_COLORS[class]
                         if not Names.color then Names.color = nameplate.name:GetVertexColor() end
                         nameplate.name:SetVertexColor(color.r, color.g, color.b)
+                    else
+                        nameplate.name:SetVertexColor(1, 1, 1)
                     end
+                else
+                    nameplate.name:SetVertexColor(1, 1, 1)
                 end
 
                 -- Hide Servername
