@@ -2,41 +2,49 @@ local Overshields = mUI:NewModule("mUI.Modules.Unitframes.Overshields", "AceHook
 
 function Overshields:OnInitialize()
     function Overshields:Update(frame)
-        if not frame or frame:IsForbidden() then return end
-        if not frame.totalAbsorbBar then return end
-        if not frame.overAbsorbGlow then return end
-        if not frame.healthBar then return end
-
         local absorbBar = frame.totalAbsorbBar
-        local absorbGlow = frame.overAbsorbGlow
-        local healthBar = frame.healthbar or frame.healthBar
+        if not absorbBar or absorbBar:IsForbidden() then
+            return
+        end
 
-        -- Get Textures
+        local absorbGlow = frame.overAbsorbGlow
+        if not absorbGlow or absorbGlow:IsForbidden() then
+            return
+        end
+
+        local healthBar = frame.healthbar
+        if not healthBar or healthBar:IsForbidden() then
+            return
+        end
+
         local healthBarTexture = healthBar:GetStatusBarTexture()
         local absorbFillMaskTexture = absorbBar.FillMask
 
         local curHealth = healthBar:GetValue()
-        if curHealth <= 0 then return end
+        if curHealth <= 0 then
+            return
+        end
 
         local _, maxHealth = healthBar:GetMinMaxValues()
-        if maxHealth <= 0 then return end
+        if maxHealth <= 0 then
+            return
+        end
 
         local totalAbsorb = UnitGetTotalAbsorbs(frame.unit) or 0
-        if totalAbsorb <= 0 then return end
+        if totalAbsorb <= 0 then
+            return
+        end
 
         local effectiveHealth = curHealth + totalAbsorb
         if effectiveHealth <= maxHealth then
-            -- normal - fill health deficit with absorb bar
             absorbGlow:ClearAllPoints()
             absorbGlow:SetPoint("TOPLEFT", healthBarTexture, "TOPRIGHT", -7, 0)
             absorbGlow:SetPoint("BOTTOMLEFT", healthBarTexture, "BOTTOMRIGHT", -7, 0)
             absorbGlow:SetAlpha(0.6)
         else
-            -- overshield - fill health deficit and remaining absorb percentage into health bar
             local xOffset = (maxHealth / effectiveHealth) - 1
             absorbBar:UpdateFillPosition(healthBar:GetStatusBarTexture(), totalAbsorb, xOffset)
 
-            -- anchor overabsorb glow left into health bar
             absorbGlow:ClearAllPoints()
             absorbGlow:SetPoint("TOPLEFT", absorbFillMaskTexture, "TOPLEFT", -7, 0)
             absorbGlow:SetPoint("BOTTOMLEFT", absorbFillMaskTexture, "BOTTOMLEFT", -7, 0)
@@ -45,30 +53,41 @@ function Overshields:OnInitialize()
     end
 
     function Overshields:UpdateHealPrediction(frame)
-        if not frame or frame:IsForbidden() then return end
-        if not frame.totalAbsorb then return end
-        if not frame.totalAbsorbOverlay then return end
-        if not frame.overAbsorbGlow then return end
-        if not frame.healthBar then return end
-
         local absorbBar = frame.totalAbsorb
+        if not absorbBar or absorbBar:IsForbidden() then
+            return
+        end
+
         local absorbOverlay = frame.totalAbsorbOverlay
+        if not absorbOverlay or absorbOverlay:IsForbidden() then
+            return
+        end
+
         local absorbGlow = frame.overAbsorbGlow
+        if not absorbGlow or absorbGlow:IsForbidden() then
+            return
+        end
+
         local healthBar = frame.healthBar
+        if not healthBar or healthBar:IsForbidden() then
+            return
+        end
 
         local _, maxHealth = healthBar:GetMinMaxValues()
-        if maxHealth <= 0 then return end
+        if maxHealth <= 0 then
+            return
+        end
 
         local totalAbsorb = UnitGetTotalAbsorbs(frame.displayedUnit) or 0
         if totalAbsorb > maxHealth then
             totalAbsorb = maxHealth
         end
 
-        if totalAbsorb > 0 then
+        if totalAbsorb > 0 then            -- show overlay when there's a positive absorb amount
             absorbOverlay:SetParent(healthBar)
-            absorbOverlay:ClearAllPoints()
+            absorbOverlay:ClearAllPoints() -- we'll be attaching the overlay on heal prediction update.
 
-            if absorbBar:IsShown() then
+            if absorbBar:IsShown() then    -- If absorb bar is shown, attach absorb overlay to it; otherwise, attach to health bar.
                 absorbOverlay:SetPoint("TOPRIGHT", absorbBar, "TOPRIGHT", 0, 0)
                 absorbOverlay:SetPoint("BOTTOMRIGHT", absorbBar, "BOTTOMRIGHT", 0, 0)
             else
@@ -87,6 +106,8 @@ function Overshields:OnInitialize()
             absorbGlow:SetPoint("TOPLEFT", absorbOverlay, "TOPLEFT", -7, 0)
             absorbGlow:SetPoint("BOTTOMLEFT", absorbOverlay, "BOTTOMLEFT", -7, 0)
             absorbGlow:SetAlpha(0.6)
+
+            -- frame.overAbsorbGlow:Show();	--uncomment this if you want to ALWAYS show the glow to the left of the shield overlay
         end
     end
 end
