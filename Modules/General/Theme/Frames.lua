@@ -1189,6 +1189,7 @@ function Theme:Unitframes()
     mUI:Skin(Boss2TargetFrame.TargetFrameContainer)
     mUI:Skin(Boss3TargetFrame.TargetFrameContainer)
     mUI:Skin(Boss4TargetFrame.TargetFrameContainer)
+    mUI:Skin(Boss5TargetFrame.TargetFrameContainer)
     mUI:Skin({
         PetFrameTexture,
         TargetFrameToT.FrameTexture,

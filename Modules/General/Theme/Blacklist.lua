@@ -72,6 +72,7 @@ function Theme:Blacklist()
         [select(1, Boss2TargetFrame.TargetFrameContainer:GetRegions())] = true,
         [select(1, Boss3TargetFrame.TargetFrameContainer:GetRegions())] = true,
         [select(1, Boss4TargetFrame.TargetFrameContainer:GetRegions())] = true,
+        [select(1, Boss5TargetFrame.TargetFrameContainer:GetRegions())] = true,
         [select(5, CommunitiesFrame.GuildBenefitsFrame.FactionFrame.Bar:GetRegions())] = true,
         [select(3, QuestObjectiveTracker.Header:GetRegions())] = true,
         [select(4, QuestObjectiveTracker.Header:GetRegions())] = true,
