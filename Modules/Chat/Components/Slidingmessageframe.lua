@@ -554,11 +554,11 @@ function object_proto:ResetStateAfterUserScroll()
 end
 
 function object_proto:SetFirstVisibleMessageID(id)
-	self.firstVisibleMessageID = id
+	self.firstActiveMessageID = id
 end
 
 function object_proto:SetFirstVisibleMessageInfo(id, offset)
-	self.firstVisibleMessageID = id
+	self.firstActiveMessageID = id
 	self.firstVisibleMessageOffset = offset
 end
 
@@ -636,8 +636,15 @@ function object_proto:RefreshBackfill(startIndex, maxLines, maxPixels, fadeIn)
 			end
 		end
 
-		messageLine:SetMessage(messageID, messageInfo.timestamp, messageInfo.message, messageInfo.r, messageInfo.g,
-			messageInfo.b)
+		-- Apply Battle.net friend class coloring if applicable
+		local coloredMessage = Style:getBNetFriendClassColor(messageInfo.message)
+		if coloredMessage then
+			messageLine:SetMessage(messageID, messageInfo.timestamp, coloredMessage, messageInfo.r, messageInfo.g,
+				messageInfo.b)
+		else
+			messageLine:SetMessage(messageID, messageInfo.timestamp, messageInfo.message, messageInfo.r, messageInfo.g,
+				messageInfo.b)
+		end
 
 		if fadeIn then
 			messageLine:SetAlpha(0)
@@ -781,8 +788,15 @@ function object_proto:RefreshActive(startIndex, maxPixels)
 			end
 		end
 
-		messageLine:SetMessage(messageID, messageInfo.timestamp, messageInfo.message, messageInfo.r, messageInfo.g,
-			messageInfo.b)
+		-- Apply Battle.net friend class coloring if applicable
+		local coloredMessage = Style:getBNetFriendClassColor(messageInfo.message)
+		if coloredMessage then
+			messageLine:SetMessage(messageID, messageInfo.timestamp, coloredMessage, messageInfo.r, messageInfo.g,
+				messageInfo.b)
+		else
+			messageLine:SetMessage(messageID, messageInfo.timestamp, messageInfo.message, messageInfo.r, messageInfo.g,
+				messageInfo.b)
+		end
 		messageLine:StopFading(1)
 
 		-- if :GetTop() is nil, then it means that the line is already hidden
@@ -1180,3 +1194,123 @@ function Style:EnableAlerts()
 		alertingFrames[chatFrame] = nil
 	end)
 end
+
+-----------------------
+-- BNET CLASS COLORS --
+-----------------------
+
+function Style:getBNetFriendClassColor(message)
+	-- Check if this is a Battle.net whisper
+	if not message then
+		return nil
+	end
+
+	local senderName = nil
+	local fullPattern = nil
+
+	-- Pattern for sent whispers: [AccountName] whispers:
+	fullPattern = message:match("^(%[.-%] whispers:)")
+	if fullPattern then
+		senderName = fullPattern:match("^%[(.-)%] whispers:")
+	end
+
+	-- Pattern for received whispers: |HBNplayer:...|h[AccountName]|h
+	if not senderName then
+		fullPattern = message:match("(|HBNplayer:.-|h%[.-%]|h)")
+		if fullPattern then
+			senderName = fullPattern:match("|HBNplayer:.-|h%[(.-)%]|h")
+		end
+	end
+
+	if not senderName or not fullPattern then
+		return nil
+	end
+	-- Cache to avoid repeated lookups
+	if not Style.bnetCache then
+		Style.bnetCache = {}
+	end
+
+	-- Check cache first
+	if Style.bnetCache[senderName] then
+		local cachedColor = Style.bnetCache[senderName]
+		if cachedColor == false then
+			return nil
+		else
+			-- Apply cached class color
+			local colorCode = string.format("|cff%02x%02x%02x", cachedColor.r * 255, cachedColor.g * 255,
+				cachedColor.b * 255)
+			local coloredMessage = nil
+			if fullPattern:match("^%[.-%] whispers:") then
+				coloredMessage = message:gsub("(%[)(.-)(%] whispers:)", "%1" .. colorCode .. "%2|r%3", 1)
+			elseif fullPattern:match("|HBNplayer:.-|h%[.-%]|h") then
+				coloredMessage = message:gsub("(|HBNplayer:.-|h%[)(.-)(%]|h)", "%1" .. colorCode .. "%2|r%3", 1)
+			end
+			return coloredMessage
+		end
+	end
+
+	-- Get all Battle.net friends and find the one with matching account name
+	local numBNetFriends = BNGetNumFriends()
+	for i = 1, numBNetFriends do
+		local accountInfo = C_BattleNet.GetFriendAccountInfo(i)
+		if accountInfo and accountInfo.accountName == senderName then
+			-- Check all game accounts for WoW character info
+			local numGameAccounts = C_BattleNet.GetFriendNumGameAccounts(i)
+			for j = 1, numGameAccounts do
+				local gameAccountInfo = C_BattleNet.GetFriendGameAccountInfo(i, j)
+				if gameAccountInfo and gameAccountInfo.clientProgram == BNET_CLIENT_WOW and gameAccountInfo.className then
+					-- Convert localized class name to English class name
+					local englishClassName = nil
+					for engClass, localizedClass in pairs(LOCALIZED_CLASS_NAMES_FEMALE) do
+						if localizedClass == gameAccountInfo.className then
+							englishClassName = engClass
+							break
+						end
+					end
+					if not englishClassName then
+						for engClass, localizedClass in pairs(LOCALIZED_CLASS_NAMES_MALE) do
+							if localizedClass == gameAccountInfo.className then
+								englishClassName = engClass
+								break
+							end
+						end
+					end
+
+					-- Cache and return class color if found
+					if englishClassName and RAID_CLASS_COLORS[englishClassName] then
+						local classColor = RAID_CLASS_COLORS[englishClassName]
+						Style.bnetCache[senderName] = classColor
+
+						-- Apply class color to message
+						local colorCode = string.format("|cff%02x%02x%02x", classColor.r * 255, classColor.g * 255,
+							classColor.b * 255)
+						local coloredMessage = nil
+						if fullPattern:match("^%[.-%] whispers:") then
+							coloredMessage = message:gsub("(%[)(.-)(%] whispers:)", "%1" .. colorCode .. "%2|r%3", 1)
+						elseif fullPattern:match("|HBNplayer:.-|h%[.-%]|h") then
+							coloredMessage = message:gsub("(|HBNplayer:.-|h%[)(.-)(%]|h)", "%1" .. colorCode .. "%2|r%3",
+								1)
+						end
+						return coloredMessage
+					end
+				end
+			end
+		end
+	end
+
+	-- Cache negative result to avoid repeated lookups
+	Style.bnetCache[senderName] = false
+	return nil
+end
+
+-- Clear the BNet friend cache when friend status changes
+local bnetCacheFrame = CreateFrame("Frame")
+bnetCacheFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+bnetCacheFrame:RegisterEvent("BN_FRIEND_INFO_CHANGED")
+bnetCacheFrame:RegisterEvent("BN_FRIEND_ACCOUNT_ONLINE")
+bnetCacheFrame:RegisterEvent("BN_FRIEND_ACCOUNT_OFFLINE")
+bnetCacheFrame:SetScript("OnEvent", function()
+	if Style.bnetCache then
+		Style.bnetCache = {}
+	end
+end)
