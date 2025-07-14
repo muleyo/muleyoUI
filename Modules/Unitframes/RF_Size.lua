@@ -1,26 +1,26 @@
-local Raidframes_Size = mUI:NewModule("mUI.Modules.Unitframes.Raidframes_Size")
+local RF_Size = mUI:NewModule("mUI.Modules.Unitframes.Raidframes_Size", "AceHook-3.0")
 
-function Raidframes_Size:OnInitialize()
+function RF_Size:OnInitialize()
     -- Load Database
-    Raidframes_Size.db = mUI.db.profile.unitframes.raidframes.size
+    RF_Size.db = mUI.db.profile.unitframes.raidframes.size
 
     -- Backup original function
-    Raidframes_Size.backup = CompactPartyFrameMember1.SetSize
+    RF_Size.backup = CompactPartyFrameMember1.SetSize
 
-    function Raidframes_Size:Update(x, y)
+    function RF_Size:Update(x, y)
         if InCombatLockdown() then return end
         for i = 1, 5 do
             local member = _G["CompactPartyFrameMember" .. i]
             local pet = _G["CompactPartyFramePet" .. i]
-            member.SetSize = Raidframes_Size.backup
-            pet.SetSize = Raidframes_Size.backup
+            member.SetSize = RF_Size.backup
+            pet.SetSize = RF_Size.backup
 
             if x and y then
                 member:SetSize(x, y)
                 pet:SetWidth(x)
             else
-                member:SetSize(Raidframes_Size.db.width, Raidframes_Size.db.height)
-                pet:SetWidth(Raidframes_Size.db.width)
+                member:SetSize(RF_Size.db.width, RF_Size.db.height)
+                pet:SetWidth(RF_Size.db.width)
             end
             member.SetSize = function() end
             pet.SetSize = function()
@@ -29,18 +29,18 @@ function Raidframes_Size:OnInitialize()
     end
 end
 
-function Raidframes_Size:OnEnable()
-    Raidframes_Size.x, Raidframes_Size.y = CompactPartyFrameMember1:GetSize()
-    Raidframes_Size:Update()
+function RF_Size:OnEnable()
+    RF_Size.x, RF_Size.y = CompactPartyFrameMember1:GetSize()
+    RF_Size:Update()
 end
 
-function Raidframes_Size:OnDisable()
-    Raidframes_Size:Update(Raidframes_Size.x, Raidframes_Size.y)
+function RF_Size:OnDisable()
+    RF_Size:Update(RF_Size.x, RF_Size.y)
 
     for i = 1, 5 do
         local member = _G["CompactPartyFrameMember" .. i]
         local pet = _G["CompactPartyFramePet" .. i]
-        member.SetSize = Raidframes_Size.backup
-        pet.SetSize = Raidframes_Size.backup
+        member.SetSize = RF_Size.backup
+        pet.SetSize = RF_Size.backup
     end
 end
