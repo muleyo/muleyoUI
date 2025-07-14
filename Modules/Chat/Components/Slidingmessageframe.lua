@@ -554,11 +554,11 @@ function object_proto:ResetStateAfterUserScroll()
 end
 
 function object_proto:SetFirstVisibleMessageID(id)
-	self.firstActiveMessageID = id
+	self.firstVisibleMessageID = id
 end
 
 function object_proto:SetFirstVisibleMessageInfo(id, offset)
-	self.firstActiveMessageID = id
+	self.firstVisibleMessageID = id
 	self.firstVisibleMessageOffset = offset
 end
 
