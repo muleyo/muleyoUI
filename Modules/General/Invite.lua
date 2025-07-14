@@ -11,7 +11,7 @@ function Invite:OnInitialize()
 
             if QueueStatusButton and QueueStatusButton:IsShown() then return end
 
-            if BNGetGameAccountInfoByGUID(guid) or C_FriendList.IsFriend(guid) or IsGuildMember(guid) then
+            if C_BattleNet.GetAccountInfoByGUID(guid) or C_FriendList.IsFriend(guid) or IsGuildMember(guid) then
                 hideStatic = true
                 AcceptGroup()
             end
