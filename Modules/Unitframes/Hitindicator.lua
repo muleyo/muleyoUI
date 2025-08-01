@@ -7,7 +7,7 @@ function Hitindicator:OnInitialize()
     if mUI:IsClassic() then
         Hitindicator.player = PlayerHitIndicator.SetText
     else
-        Hitindicator.player = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HitIndicator.SetText
+        Hitindicator.player = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HitIndicator.HitText.SetText
     end
 end
 
@@ -17,8 +17,8 @@ function Hitindicator:OnEnable()
         PlayerHitIndicator:SetText(nil)
         PlayerHitIndicator.SetText = function() end
     else
-        PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HitIndicator:SetText(nil)
-        PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HitIndicator.SetText = function() end
+        PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HitIndicator.HitText:SetText(nil)
+        PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HitIndicator.HitText.SetText = function() end
     end
 
     -- Hide PetFrame Hit Indicator
@@ -31,7 +31,7 @@ function Hitindicator:OnDisable()
     if mUI:IsClassic() then
         PlayerHitIndicator.SetText = Hitindicator.player
     else
-        PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HitIndicator.SetText = Hitindicator.player
+        PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HitIndicator.HitText.SetText = Hitindicator.player
     end
 
     PetHitIndicator.SetText = Hitindicator.pet

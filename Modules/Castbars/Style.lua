@@ -59,10 +59,15 @@ function Style:OnInitialize()
                 _G[castbar].StandardGlow:Hide()
                 _G[castbar].TextBorder:Hide()
                 _G[castbar].Border:Hide()
+                _G[castbar].CastTimeText:Hide()
             end
 
             _G[castbar].Text:ClearAllPoints()
-            _G[castbar].Text:SetPoint("TOP", _G[castbar], "TOP", 0, 2)
+            if mUI:IsClassic() then
+                _G[castbar].Text:SetPoint("TOP", _G[castbar], "TOP", 0, 2)
+            else
+                _G[castbar].Text:SetPoint("TOP", _G[castbar], "TOP", 0, 0)
+            end
             _G[castbar].Text:SetFont(Style.font, 12, "OUTLINE")
 
             if Style.db.castbars.icon then
