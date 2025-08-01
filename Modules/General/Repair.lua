@@ -34,7 +34,7 @@ end
 
 function Repair:OnEnable()
     Repair.repair:RegisterEvent("MERCHANT_SHOW")
-    Repair:HookScript(Repair.repair, "OnEvent", function(_, event)
+    Repair:SecureHookScript(Repair.repair, "OnEvent", function(_, event)
         Repair:Update(event)
     end)
 end
