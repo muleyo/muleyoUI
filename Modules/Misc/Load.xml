@@ -11,5 +11,6 @@
     <Include file="Buffcollapse.lua" />
     <Include file="Achievements.lua" />
     <Include file="Fastloot.lua" />
+    <Include file="Gryphons.lua" />
     <Include file="Modules.lua" />
 </Ui>
