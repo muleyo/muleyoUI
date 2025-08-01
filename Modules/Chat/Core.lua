@@ -102,7 +102,7 @@ do
 	end
 
 	function Style:EnableDispatcher()
-		Style:HookScript(Style.dispatcher, "OnEvent", function(_, event, ...)
+		Style:SecureHookScript(Style.dispatcher, "OnEvent", function(_, event, ...)
 			for func in next, Style.registeredEvents[event] do
 				func(...)
 			end

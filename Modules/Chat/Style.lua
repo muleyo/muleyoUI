@@ -15,22 +15,46 @@ function Style:OnEnable()
 	local expectedChatFrames = {}
 
 	-- static chat frames
-	for i = 1, NUM_CHAT_WINDOWS do
-		local frame = Style:HandleChatFrame(_G["ChatFrame" .. i], i)
-		if frame then
-			chatFrames[frame] = true
+	if mUI:IsClassic() then
+		for i = 1, NUM_CHAT_WINDOWS do -- Classic WoW typically has 7 chat frames
+			local chatFrame = _G["ChatFrame" .. i]
+			if chatFrame then
+				local success, frame = pcall(Style.HandleChatFrame, Style, chatFrame, i)
+				if success and frame then
+					chatFrames[frame] = true
+				end
+
+				pcall(Style.HandleChatTab, Style, _G["ChatFrame" .. i .. "Tab"])
+				pcall(Style.HandleEditBox, Style, _G["ChatFrame" .. i .. "EditBox"])
+				pcall(Style.HandleMinimizeButton, Style, _G["ChatFrame" .. i .. "MinimizeButton"],
+					_G["ChatFrame" .. i .. "Tab"])
+			end
+
+			if i == 1 then
+				pcall(Style.HandleQuickJoinToastButton, Style, FriendsMicroButton)
+				pcall(Style.HandleChannelButton, Style, ChatFrameChannelButton)
+				pcall(Style.HandleMenuButton, Style, ChatFrameMenuButton)
+				pcall(Style.HandleTTSButton, Style, TextToSpeechButton)
+			end
 		end
+	else
+		for i = 1, NUM_CHAT_WINDOWS do
+			local frame = Style:HandleChatFrame(_G["ChatFrame" .. i], i)
+			if frame then
+				chatFrames[frame] = true
+			end
 
-		Style:HandleChatTab(_G["ChatFrame" .. i .. "Tab"])
-		Style:HandleEditBox(_G["ChatFrame" .. i .. "EditBox"])
-		Style:HandleMinimizeButton(_G["ChatFrame" .. i .. "ButtonFrameMinimizeButton"], _G
-			["ChatFrame" .. i .. "Tab"])
+			Style:HandleChatTab(_G["ChatFrame" .. i .. "Tab"])
+			Style:HandleEditBox(_G["ChatFrame" .. i .. "EditBox"])
+			Style:HandleMinimizeButton(_G["ChatFrame" .. i .. "ButtonFrameMinimizeButton"], _G
+				["ChatFrame" .. i .. "Tab"])
 
-		if i == 1 then
-			Style:HandleQuickJoinToastButton(QuickJoinToastButton)
-			Style:HandleChannelButton(ChatFrameChannelButton)
-			Style:HandleMenuButton(ChatFrameMenuButton)
-			Style:HandleTTSButton(TextToSpeechButton)
+			if i == 1 then
+				Style:HandleQuickJoinToastButton(QuickJoinToastButton)
+				Style:HandleChannelButton(ChatFrameChannelButton)
+				Style:HandleMenuButton(ChatFrameMenuButton)
+				Style:HandleTTSButton(TextToSpeechButton)
+			end
 		end
 	end
 
@@ -57,8 +81,13 @@ function Style:OnEnable()
 			if frame then
 				Style:HandleChatTab(_G[chatFrame:GetName() .. "Tab"])
 				Style:HandleEditBox(_G[chatFrame:GetName() .. "EditBox"])
-				Style:HandleMinimizeButton(_G[chatFrame:GetName() .. "ButtonFrameMinimizeButton"],
-					_G[chatFrame:GetName() .. "Tab"])
+				if mUI:IsClassic() then
+					Style:HandleMinimizeButton(_G[chatFrame:GetName() .. "MinimizeButton"],
+						_G[chatFrame:GetName() .. "Tab"])
+				else
+					Style:HandleMinimizeButton(_G[chatFrame:GetName() .. "ButtonFrameMinimizeButton"],
+						_G[chatFrame:GetName() .. "Tab"])
+				end
 
 				tempChatFrames[frame] = true
 			end
@@ -82,7 +111,7 @@ function Style:OnEnable()
 
 	-- ? consider moving it elsewhere
 	Style.updater = CreateFrame("Frame", "mUIUpdater", UIParent)
-	Style:HookScript(Style.updater, "OnUpdate", function(self, elapsed)
+	Style:SecureHookScript(Style.updater, "OnUpdate", function(self, elapsed)
 		self.elapsed = (self.elapsed or 0) + elapsed
 		if self.elapsed >= 0.01 then
 			for frame in next, chatFrames do

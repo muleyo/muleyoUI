@@ -6,15 +6,24 @@ local next = _G.next
 
 local handledEditBoxes = {}
 
-local EDIT_BOX_TEXTURES = {
-	"Left",
-	"Mid",
-	"Right",
+local EDIT_BOX_TEXTURES
+if WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC then
+	EDIT_BOX_TEXTURES = {
+		"Left",
+		"Mid",
+		"Right",
+	}
+else
+	EDIT_BOX_TEXTURES = {
+		"Left",
+		"Mid",
+		"Right",
 
-	"FocusLeft",
-	"FocusMid",
-	"FocusRight",
-}
+		"FocusLeft",
+		"FocusMid",
+		"FocusRight",
+	}
+end
 
 function Style:HandleEditBox(frame)
 	if not handledEditBoxes[frame] then
@@ -40,7 +49,9 @@ function Style:HandleEditBox(frame)
 	frame:SetFontObject("mUIEditBoxFont")
 	frame.header:SetFontObject("mUIEditBoxFont")
 	frame.headerSuffix:SetFontObject("mUIEditBoxFont")
-	frame.NewcomerHint:SetFontObject("mUIEditBoxFont")
+	if not mUI:IsClassic() then
+		frame.NewcomerHint:SetFontObject("mUIEditBoxFont")
+	end
 	frame.prompt:SetFontObject("mUIEditBoxFont")
 end
 

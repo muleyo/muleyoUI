@@ -123,7 +123,7 @@ local function chatFrame_OnSizeChanged(self, width, height)
 end
 
 local function chatFrame_SetShownHook(self, isShown)
-	if isShown then
+	if mUI:IsClassic() then
 		self.FontStringContainer:Hide()
 
 		local slidingFrame = Style:GetSlidingFrameForChatFrame(self)
@@ -131,6 +131,18 @@ local function chatFrame_SetShownHook(self, isShown)
 			-- FCF indiscriminately calls :SetShown(true) when adding new tabs, I don't need to do anything when that happens
 			if not slidingFrame:IsShown() then
 				slidingFrame:Show()
+			end
+		end
+	else
+		if isShown then
+			self.FontStringContainer:Hide()
+
+			local slidingFrame = Style:GetSlidingFrameForChatFrame(self)
+			if slidingFrame then
+				-- FCF indiscriminately calls :SetShown(true) when adding new tabs, I don't need to do anything when that happens
+				if not slidingFrame:IsShown() then
+					slidingFrame:Show()
+				end
 			end
 		end
 	end
@@ -234,6 +246,7 @@ local object_proto = {
 	numIncomingMessages = 0,
 	numIncomingMessagesWhileScrolling = 0,
 	overrideFadeTimestamp = 0,
+	pendingAutoScroll = false,
 }
 
 function object_proto:CaptureChatFrame(chatFrame)
@@ -271,6 +284,11 @@ function object_proto:CaptureChatFrame(chatFrame)
 
 	Style:ForceHide(chatFrame.ScrollBar)
 	Style:ForceHide(chatFrame.ScrollToBottomButton)
+	if mUI:IsClassic() then
+		Style:ForceHide(chatFrame.buttonFrame.upButton)
+		Style:ForceHide(chatFrame.buttonFrame.downButton)
+		Style:ForceHide(chatFrame.buttonFrame.bottomButton)
+	end
 
 	for _, texture in next, CHAT_FRAME_TEXTURES do
 		local obj = _G[chatFrame:GetName() .. texture]
@@ -291,9 +309,13 @@ function object_proto:CaptureChatFrame(chatFrame)
 	chatFrame.FontStringContainer:Hide()
 
 	if not hookedChatFrames[chatFrame] then
-		Style:HookScript(chatFrame, "OnSizeChanged", chatFrame_OnSizeChanged)
+		Style:SecureHookScript(chatFrame, "OnSizeChanged", chatFrame_OnSizeChanged)
 
-		Style:SecureHook(chatFrame, "SetShown", chatFrame_SetShownHook)
+		if mUI:IsClassic() then
+			Style:SecureHook(chatFrame, "Show", chatFrame_SetShownHook)
+		else
+			Style:SecureHook(chatFrame, "SetShown", chatFrame_SetShownHook)
+		end
 		Style:SecureHook(chatFrame, "Hide", chatFrame_HideHook)
 
 		-- some addon devs tend to hook AddMessage to add filtering, so do it the hard way
@@ -308,8 +330,8 @@ function object_proto:CaptureChatFrame(chatFrame)
 		Style:SecureHook(chatFrame, "RemoveMessagesByPredicate", chatFrame_RefreshMessagesInPlace)
 		Style:SecureHook(chatFrame, "TransformMessages", chatFrame_RefreshMessagesInPlace)
 
-		Style:HookScript(chatFrame, "OnHyperlinkEnter", chatFrame_OnHyperlinkEnterHook)
-		Style:HookScript(chatFrame, "OnHyperlinkLeave", chatFrame_OnHyperlinkLeaveHook)
+		Style:SecureHookScript(chatFrame, "OnHyperlinkEnter", chatFrame_OnHyperlinkEnterHook)
+		Style:SecureHookScript(chatFrame, "OnHyperlinkLeave", chatFrame_OnHyperlinkLeaveHook)
 
 		hookedChatFrames[chatFrame] = true
 	end
@@ -460,16 +482,46 @@ function object_proto:SetScrolling(state)
 end
 
 function object_proto:SetSmoothScroll(func, change, callback)
-	if Style.db.smooth then
-		setSmoothScroll(self, func, change, callback)
+	if mUI:IsClassic() then
+		if Style.db.smooth then
+			-- Enhanced smooth scrolling for auto-scroll scenarios
+			local isAutoScroll = self:IsAtBottom() and self:CanProcessIncoming()
 
-		self.numIncomingMessagesWhileScrolling = 0
-		self:SetScrolling(true)
+			setSmoothScroll(self, func, change, function()
+				-- Call original callback if provided
+				if callback then
+					callback()
+				end
+
+				-- Additional handling for auto-scroll scenarios
+				if isAutoScroll then
+					-- Ensure we stay at bottom after auto-scroll
+					self:SetAtBottom(true)
+					self:EnableIncomingProcessing(true)
+				end
+			end)
+
+			self.numIncomingMessagesWhileScrolling = 0
+			self:SetScrolling(true)
+		else
+			func(self:GetVerticalScroll() + change)
+
+			if callback then
+				callback()
+			end
+		end
 	else
-		func(self:GetVerticalScroll() + change)
+		if Style.db.smooth then
+			setSmoothScroll(self, func, change, callback)
 
-		if callback then
-			callback()
+			self.numIncomingMessagesWhileScrolling = 0
+			self:SetScrolling(true)
+		else
+			func(self:GetVerticalScroll() + change)
+
+			if callback then
+				callback()
+			end
 		end
 	end
 end
@@ -538,6 +590,11 @@ function object_proto:ResetState(doNotRefresh)
 	end
 
 	self:SetScrolling(false)
+
+	if mUI:IsClassic() then
+		-- Clear any pending auto-scroll when state is reset
+		self.pendingAutoScroll = false
+	end
 end
 
 function object_proto:EnableIncomingProcessing(state)
@@ -919,17 +976,23 @@ function object_proto:NewIncomingMessage()
 	if self:IsShown() then
 		if self:IsScrolling() or not self:CanProcessIncoming() then
 			self.numIncomingMessagesWhileScrolling = self.numIncomingMessagesWhileScrolling + 1
-			-- TODO: auto-scroll to the bottom if we reached reached the end of the historyBuffer
+			-- If at bottom, queue for auto-scroll after scrolling stops
+			if self:IsAtBottom() and self.numIncomingMessagesWhileScrolling > 0 then
+				self.pendingAutoScroll = true
+			end
 		end
 
+		-- Always count new messages for processing
 		if self:CanProcessIncoming() then
 			self.numIncomingMessages = self.numIncomingMessages + 1
 		end
 
+		-- Update scroll to bottom button state
 		if not self:IsAtBottom() then
 			self.ScrollToBottomButton:SetState(2)
 		end
 	else
+		-- Handle messages when frame is hidden
 		if not self:IsAtBottom() then
 			self:SetFirstVisibleMessageID(self:GetFirstVisibleMessageID() + 1)
 		end
@@ -941,11 +1004,25 @@ function object_proto:IsMouseOverHyperlink()
 end
 
 function object_proto:OnFrame()
-	if not self:IsShown() or self.ScrollChild:GetHeight() == 0 or self:IsScrolling() then return end
+	if not self:IsShown() or self.ScrollChild:GetHeight() == 0 then return end
 
+	-- Don't process while actively scrolling
+	if self:IsScrolling() then return end
+
+	-- Handle pending auto-scroll after scrolling completes
+	if self.pendingAutoScroll and self:IsAtBottom() and self.numIncomingMessagesWhileScrolling > 0 then
+		self.pendingAutoScroll = false
+		local pendingMessages = self.numIncomingMessagesWhileScrolling
+		self.numIncomingMessagesWhileScrolling = 0
+		self:ProcessIncoming(pendingMessages)
+		return
+	end
+
+	-- Process regular incoming messages
 	if self:HasIncomingMessages() and self:CanProcessIncoming() then
-		self:ProcessIncoming(self.numIncomingMessages)
+		local numMessages = self.numIncomingMessages
 		self.numIncomingMessages = 0
+		self:ProcessIncoming(numMessages)
 	end
 
 	self:UpdateChatWidgetFading()
@@ -1050,9 +1127,28 @@ function object_proto:UpdateChatWidgetFading()
 end
 
 function object_proto:ProcessIncoming(num)
+	if not self:IsShown() or self.ScrollChild:GetHeight() == 0 then return end
+
+	-- Only auto-scroll if we're at bottom
+	if not self:IsAtBottom() then
+		-- Just refresh to show new messages are available but don't auto-scroll
+		self:RefreshActive(self:GetFirstActiveMessageID())
+		return
+	end
+
+	-- We're at bottom, so we want to auto-scroll to show new messages
+	-- Use the backfill approach to add new messages
 	self:RefreshBackfill(num, num, nil, true)
-	self:SetSmoothScroll(self.funcCache.baseScroll, self:GetLastBackfillMessageOffset(),
-		self.funcCache.baseScrollCallback)
+
+	-- Get the scroll offset needed and perform smooth scroll
+	local offset = self:GetLastBackfillMessageOffset()
+	if offset > 0 then
+		self:SetSmoothScroll(self.funcCache.baseScroll, offset, self.funcCache.baseScrollCallback)
+	else
+		-- No scrolling needed, just refresh the display
+		self:RefreshActive(self:GetFirstActiveMessageID())
+		self:UpdateFading()
+	end
 end
 
 function object_proto:Release()
@@ -1090,6 +1186,9 @@ do
 			frame:SetScript("OnHide", frame.OnHide)
 			frame:SetScript("OnShow", frame.OnShow)
 			frame:SetScript("OnMouseWheel", frame.OnMouseWheel)
+			if mUI:IsClassic() then
+				frame:SetScript("OnUpdate", frame.OnFrame)
+			end
 
 			local scrollToBottomButton = Style:CreateScrollToBottomButton(frame)
 			scrollToBottomButton:SetPoint("BOTTOMRIGHT", -4, 4)
@@ -1161,9 +1260,7 @@ do
 	)
 
 	function Style:HandleChatFrame(chatFrame, id)
-		if chatFrame == ChatFrame2 then
-			-- Combat Log, I might want to skin it, but without sliding
-		else
+		if chatFrame ~= ChatFrame2 then
 			-- for the sake of matching names, otherwise it breaks my brain
 			curID = chatFrame:GetID()
 

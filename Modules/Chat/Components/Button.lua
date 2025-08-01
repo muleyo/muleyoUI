@@ -79,14 +79,22 @@ function Style:HandleMinimizeButton(frame, tab)
 	handleButton(frame, 0.25, 0.5, 0, 0.5)
 
 	frame:ClearAllPoints()
-	frame:SetPoint("BOTTOMLEFT", tab, "BOTTOMRIGHT", 1, 0)
+	if mUI:IsClassic() then
+		frame:SetPoint("BOTTOMRIGHT", tab, "BOTTOMRIGHT", 20, 0)
+	else
+		frame:SetPoint("BOTTOMLEFT", tab, "BOTTOMRIGHT", 1, 0)
+	end
 end
 
 function Style:HandleMaximizeButton(frame)
 	handleButton(frame, 0.5, 0.75, 0, 0.5)
 
 	frame:ClearAllPoints()
-	frame:SetPoint("BOTTOMLEFT", frame:GetParent(), "BOTTOMRIGHT", 1, 0)
+	if mUI:IsClassic() then
+		frame:SetPoint("BOTTOMRIGHT", frame:GetParent(), "BOTTOMRIGHT", 20, 0)
+	else
+		frame:SetPoint("BOTTOMLEFT", frame:GetParent(), "BOTTOMRIGHT", 1, 0)
+	end
 end
 
 function Style:HandleQuickJoinToastButton(frame)
@@ -98,69 +106,99 @@ function Style:HandleQuickJoinToastButton(frame)
 
 	handleButton(frame, 0.5, 0.75, 0.5, 1)
 
-	frame:SetParent(ChatFrame1.buttonFrame)
-	frame:SetSize(20, 30)
-	frame:ClearAllPoints()
-	frame:SetPoint("TOPRIGHT", ChatFrame1.buttonFrame, "TOPRIGHT", 2, 0)
-
-	frame.FriendCount:ClearAllPoints()
-	frame.FriendCount:SetPoint("BOTTOMLEFT", -1.5, 4)
-	frame.FriendCount:SetPoint("BOTTOMRIGHT", 2.5, 4)
-	frame.FriendCount:SetTextColor(color.r, color.g, color.b)
-
-	Style:SecureHook(frame, "UpdateDisplayedFriendCount", function(self)
-		local value = tonumber(self.FriendCount:GetText())
-		if not value or value > 99 then
-			self.FriendCount:SetText("++")
-		end
-	end)
-
-	frame.FriendsButton:SetTexture(0)
-	frame.FriendsButton:Hide()
-
-	frame.QueueCount:SetTextColor(color.r, color.g, color.b)
-
-	frame.QueueButton:SetTexture(0)
-	frame.QueueButton:Hide()
-
-	frame.FlashingLayer:SetTexture(0)
-	frame.FlashingLayer:Hide()
-
-	Style:HookScript(frame.FriendToToastAnim, "OnPlay", function()
-		frame.FriendCount:SetAlpha(0)
-	end)
-
-	Style:HookScript(frame.ToastToFriendAnim, "OnFinished", function()
-		frame.FriendCount:SetAlpha(1)
-	end)
-
-	local function resetToastPoint(self, _, anchor, _, _, _, shouldIgnore)
-		if shouldIgnore then return end
-
-		if anchor == QuickJoinToastButton then
-			self:ClearAllPoints()
-			self:SetPoint("BOTTOMLEFT", ChatAlertFrame, "BOTTOMRIGHT", 2, 0, true)
-		end
+	if mUI:IsClassic() then
+		local _, relativeTo, _, offsetX, offsetY = ChatFrame1.buttonFrame:GetPoint()
+		ChatFrame1.buttonFrame:ClearAllPoints()
+		ChatFrame1.buttonFrame:SetPoint("TOPRIGHT", relativeTo, "TOPLEFT", offsetX, offsetY)
+	else
+		frame:SetParent(ChatFrame1.buttonFrame)
+		frame:SetSize(20, 30)
+		frame:ClearAllPoints()
+		frame:SetPoint("TOPRIGHT", ChatFrame1.buttonFrame, "TOPRIGHT", 2, 0)
 	end
 
-	frame.Toast:ClearAllPoints()
-	frame.Toast:SetPoint("TOPLEFT", ChatAlertFrame, "BOTTOMLEFT", 0, -2)
-	Style:SecureHook(frame.Toast, "SetPoint", resetToastPoint)
+	frame:SetSize(20, 30)
 
-	frame.Toast2:ClearAllPoints()
-	frame.Toast2:SetPoint("TOPLEFT", ChatAlertFrame, "BOTTOMLEFT", 0, -2)
-	Style:SecureHook(frame.Toast2, "SetPoint", resetToastPoint)
+	if mUI:IsClassic() then
+		FriendsMicroButtonCount:ClearAllPoints()
+		FriendsMicroButtonCount:SetPoint("BOTTOMLEFT", -1.5, 4)
+		FriendsMicroButtonCount:SetPoint("BOTTOMRIGHT", 2.5, 4)
+		FriendsMicroButtonCount:SetTextColor(color.r, color.g, color.b)
+	else
+		frame.FriendCount:ClearAllPoints()
+		frame.FriendCount:SetPoint("BOTTOMLEFT", -1.5, 4)
+		frame.FriendCount:SetPoint("BOTTOMRIGHT", 2.5, 4)
+		frame.FriendCount:SetTextColor(color.r, color.g, color.b)
+	end
 
-	-- ? mb move it elsewhere
-	ChatAlertFrame:ClearAllPoints()
-	ChatAlertFrame:SetPoint("BOTTOMLEFT", ChatFrame1.buttonFrame, "TOPRIGHT", -18, 56)
+	if not mUI:IsClassic() then
+		Style:SecureHook(frame, "UpdateDisplayedFriendCount", function(self)
+			local value = tonumber(self.FriendCount:GetText())
+			if not value or value > 99 then
+				self.FriendCount:SetText("++")
+			end
+		end)
+	end
+
+	if not mUI:IsClassic() then
+		frame.FriendsButton:SetTexture(0)
+		frame.FriendsButton:Hide()
+		frame.QueueCount:SetTextColor(color.r, color.g, color.b)
+		frame.QueueButton:SetTexture(0)
+		frame.QueueButton:Hide()
+
+		frame.FlashingLayer:SetTexture(0)
+		frame.FlashingLayer:Hide()
+
+		Style:SecureHookScript(frame.FriendToToastAnim, "OnPlay", function()
+			frame.FriendCount:SetAlpha(0)
+		end)
+
+		Style:SecureHookScript(frame.ToastToFriendAnim, "OnFinished", function()
+			frame.FriendCount:SetAlpha(1)
+		end)
+
+		local function resetToastPoint(self, _, anchor, _, _, _, shouldIgnore)
+			if shouldIgnore then return end
+
+			if mUI:IsClassic() then
+				if anchor == FriendsMicroButton then
+					self:ClearAllPoints()
+					self:SetPoint("BOTTOMLEFT", ChatAlertFrame, "BOTTOMRIGHT", 2, 0, true)
+				end
+			else
+				if anchor == QuickJoinToastButton then
+					self:ClearAllPoints()
+					self:SetPoint("BOTTOMLEFT", ChatAlertFrame, "BOTTOMRIGHT", 2, 0, true)
+				end
+			end
+		end
+
+		frame.Toast:ClearAllPoints()
+		frame.Toast:SetPoint("TOPLEFT", ChatAlertFrame, "BOTTOMLEFT", 0, -2)
+		Style:SecureHook(frame.Toast, "SetPoint", resetToastPoint)
+
+		frame.Toast2:ClearAllPoints()
+		frame.Toast2:SetPoint("TOPLEFT", ChatAlertFrame, "BOTTOMLEFT", 0, -2)
+		Style:SecureHook(frame.Toast2, "SetPoint", resetToastPoint)
+	end
+
+	if mUI:IsClassic() then
+		ChatAlertFrame:ClearAllPoints()
+		ChatAlertFrame:SetPoint("BOTTOMLEFT", ChatFrame1.buttonFrame, "TOPRIGHT", -18, 65)
+	else
+		ChatAlertFrame:ClearAllPoints()
+		ChatAlertFrame:SetPoint("BOTTOMLEFT", ChatFrame1.buttonFrame, "TOPRIGHT", -18, 56)
+	end
 end
 
 function Style:HandleChannelButton(frame)
 	handleButton(frame, 0, 0.25, 0.5, 1)
 
-	frame:ClearAllPoints()
-	frame:SetPoint("TOPRIGHT", QuickJoinToastButton, "BOTTOMRIGHT", 0, -1)
+	if not mUI:IsClassic() then
+		frame:ClearAllPoints()
+		frame:SetPoint("TOPRIGHT", QuickJoinToastButton, "BOTTOMRIGHT", 0, -1)
+	end
 
 	frame.Icon:SetTexture(0)
 
@@ -173,8 +211,10 @@ end
 function Style:HandleMenuButton(frame)
 	handleButton(frame, 0.75, 1, 0, 0.5)
 
-	frame:ClearAllPoints()
-	frame:SetPoint("TOPRIGHT", ChatFrameChannelButton, "BOTTOMRIGHT", 0, -1)
+	if not mUI:IsClassic() then
+		frame:ClearAllPoints()
+		frame:SetPoint("TOPRIGHT", ChatFrameChannelButton, "BOTTOMRIGHT", 0, -1)
+	end
 end
 
 function Style:HandleOverflowButton(frame)
