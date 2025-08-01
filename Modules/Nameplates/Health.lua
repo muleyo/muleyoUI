@@ -46,6 +46,14 @@ function Health:OnInitialize()
                     healthBar.text:SetText(string.format("%." .. Health.db.nameplates.decimals .. "f",
                         (currentHealth / maxHealth) * 100) .. "%")
                 end
+
+                if mUI:IsClassic() then
+                    mUI:Skin(nameplate.healthBar.border)
+                    mUI:Skin({
+                        nameplate.CastBar.Border,
+                        nameplate.CastBar.BorderShield
+                    }, true)
+                end
             end
         end
     end
@@ -69,23 +77,31 @@ function Health:OnInitialize()
                 if (UnitIsTapDenied(nameplate.unit)) and not UnitPlayerControlled(nameplate.unit) then
                     healthBar:SetStatusBarColor(0.5, 0.5, 0.5)
                 elseif (not UnitIsTapDenied(nameplate.unit)) then
-                    if playerClass == "DRUID" then
-                        if AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL") and (not AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL")) then
-                            healthBar:SetStatusBarColor(0.09, 0.96, 1)
-                        elseif AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL") and (not AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL")) then
-                            healthBar:SetStatusBarColor(0.99, 1, 0.52)
+                    if mUI:IsClassic() then
+                        if mUI.db.profile.nameplates.npccolors[tonumber(id)] then
+                            healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b)
+                        else
+                            healthBar:SetStatusBarColor(rColor.r, rColor.g, rColor.b)
+                        end
+                    else
+                        if playerClass == "DRUID" then
+                            if AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL") and (not AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL")) then
+                                healthBar:SetStatusBarColor(0.09, 0.96, 1)
+                            elseif AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL") and (not AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL")) then
+                                healthBar:SetStatusBarColor(0.99, 1, 0.52)
+                            else
+                                if mUI.db.profile.nameplates.npccolors[tonumber(id)] then
+                                    healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b)
+                                else
+                                    healthBar:SetStatusBarColor(rColor.r, rColor.g, rColor.b)
+                                end
+                            end
                         else
                             if mUI.db.profile.nameplates.npccolors[tonumber(id)] then
                                 healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b)
                             else
                                 healthBar:SetStatusBarColor(rColor.r, rColor.g, rColor.b)
                             end
-                        end
-                    else
-                        if mUI.db.profile.nameplates.npccolors[tonumber(id)] then
-                            healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b)
-                        else
-                            healthBar:SetStatusBarColor(rColor.r, rColor.g, rColor.b)
                         end
                     end
                 end
@@ -99,11 +115,49 @@ function Health:OnInitialize()
                         healthBar:SetStatusBarColor(0.8, 0.3, 0.22)
                     end
                 else
-                    if playerClass == "DRUID" then
-                        if AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL") and (not AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL")) then
-                            healthBar:SetStatusBarColor(0.09, 0.96, 1)
-                        elseif AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL") and (not AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL")) then
-                            healthBar:SetStatusBarColor(0.99, 1, 0.52)
+                    if mUI:IsClassic() then
+                        if status and status == 3 then
+                            healthBar:SetStatusBarColor(0.8, 0.3, 0.22)
+                        elseif status and status == 2 then
+                            healthBar:SetStatusBarColor(0.9, 0.7, 0)
+                        else
+                            if playerClass == "DRUID" then
+                                if AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL") and (not AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL")) then
+                                    healthBar:SetStatusBarColor(0.09, 0.96, 1)
+                                elseif AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL") and (not AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL")) then
+                                    healthBar:SetStatusBarColor(0.99, 1, 0.52)
+                                else
+                                    healthBar:SetStatusBarColor(color.r, color.g, color.b)
+                                end
+                            else
+                                healthBar:SetStatusBarColor(color.r, color.g, color.b)
+                            end
+                        end
+                    else
+                        if playerClass == "DRUID" then
+                            if AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL") and (not AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL")) then
+                                healthBar:SetStatusBarColor(0.09, 0.96, 1)
+                            elseif AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL") and (not AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL")) then
+                                healthBar:SetStatusBarColor(0.99, 1, 0.52)
+                            else
+                                if status and status == 3 then
+                                    healthBar:SetStatusBarColor(0.8, 0.3, 0.22)
+                                elseif status and status == 2 then
+                                    healthBar:SetStatusBarColor(0.9, 0.7, 0)
+                                else
+                                    if playerClass == "DRUID" then
+                                        if AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL") and (not AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL")) then
+                                            healthBar:SetStatusBarColor(0.09, 0.96, 1)
+                                        elseif AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL") and (not AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL")) then
+                                            healthBar:SetStatusBarColor(0.99, 1, 0.52)
+                                        else
+                                            healthBar:SetStatusBarColor(color.r, color.g, color.b)
+                                        end
+                                    else
+                                        healthBar:SetStatusBarColor(color.r, color.g, color.b)
+                                    end
+                                end
+                            end
                         else
                             if status and status == 3 then
                                 healthBar:SetStatusBarColor(0.8, 0.3, 0.22)
@@ -121,24 +175,6 @@ function Health:OnInitialize()
                                 else
                                     healthBar:SetStatusBarColor(color.r, color.g, color.b)
                                 end
-                            end
-                        end
-                    else
-                        if status and status == 3 then
-                            healthBar:SetStatusBarColor(0.8, 0.3, 0.22)
-                        elseif status and status == 2 then
-                            healthBar:SetStatusBarColor(0.9, 0.7, 0)
-                        else
-                            if playerClass == "DRUID" then
-                                if AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL") and (not AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL")) then
-                                    healthBar:SetStatusBarColor(0.09, 0.96, 1)
-                                elseif AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL") and (not AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL")) then
-                                    healthBar:SetStatusBarColor(0.99, 1, 0.52)
-                                else
-                                    healthBar:SetStatusBarColor(color.r, color.g, color.b)
-                                end
-                            else
-                                healthBar:SetStatusBarColor(color.r, color.g, color.b)
                             end
                         end
                     end
