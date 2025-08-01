@@ -9,6 +9,7 @@ function Modules:OnInitialize()
     Modules.Range = mUI:GetModule("mUI.Modules.Actionbars.Range")
     Modules.Fontsize = mUI:GetModule("mUI.Modules.Actionbars.Fontsize")
     Modules.Cooldown = mUI:GetModule("mUI.Modules.Actionbars.Cooldown")
+    Modules.Style = mUI:GetModule("mUI.Modules.Actionbars.Style")
 end
 
 function Modules:OnEnable()
@@ -30,9 +31,7 @@ function Modules:OnEnable()
     if Modules.db.range then
         Modules.Range:Enable()
     end
-    if Modules.db.fontsize > 12 or Modules.db.fontsize < 12 then
-        Modules.Fontsize:Enable()
-    end
+    Modules.Fontsize:Enable()
     if Modules.db.cooldown then
         Modules.Cooldown:Enable()
     end
@@ -47,4 +46,5 @@ function Modules:OnDisable()
     Modules.Range:Disable()
     Modules.Fontsize:Disable()
     Modules.Cooldown:Disable()
+    Modules.Style:Disable()
 end
