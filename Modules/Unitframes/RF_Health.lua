@@ -99,9 +99,15 @@ function RF_Health:OnInitialize()
 end
 
 function RF_Health:OnEnable()
-    RF_Health:SecureHook("CompactUnitFrame_OnUpdate", function(frame)
-        RF_Health:SetHealth(frame)
-    end)
+    if mUI:IsClassic() then
+        RF_Health:SecureHook("CompactUnitFrame_UpdateAuras", function(frame)
+            RF_Health:SetHealth(frame)
+        end)
+    else
+        RF_Health:SecureHook("CompactUnitFrame_OnUpdate", function(frame)
+            RF_Health:SetHealth(frame)
+        end)
+    end
 
     RF_Health:SecureHook("CompactUnitFrame_UpdateStatusText", function(frame)
         RF_Health:SetHealth(frame)
@@ -113,6 +119,9 @@ end
 function RF_Health:OnDisable()
     RF_Health:UnhookAll()
     RF_Health:Restore()
-    EditModeManagerFrame:Show()
-    EditModeManagerFrame:Hide()
+
+    if not mUI:IsClassic() then
+        EditModeManagerFrame:Show()
+        EditModeManagerFrame:Hide()
+    end
 end

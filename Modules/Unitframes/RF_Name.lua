@@ -92,6 +92,9 @@ end
 function RF_Name:OnDisable()
     RF_Name:UnhookAll()
     RF_Name:Restore()
-    EditModeManagerFrame:Show()
-    EditModeManagerFrame:Hide()
+
+    if not mUI:IsClassic() then
+        EditModeManagerFrame:Show()
+        EditModeManagerFrame:Hide()
+    end
 end

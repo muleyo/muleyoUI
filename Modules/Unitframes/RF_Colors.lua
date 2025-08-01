@@ -64,6 +64,9 @@ end
 
 function RF_Colors:OnDisable()
     RF_Colors:UnhookAll()
-    EditModeManagerFrame:Show()
-    EditModeManagerFrame:Hide()
+
+    if not mUI:IsClassic() then
+        EditModeManagerFrame:Show()
+        EditModeManagerFrame:Hide()
+    end
 end
