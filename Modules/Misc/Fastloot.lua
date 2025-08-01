@@ -20,7 +20,7 @@ end
 
 function Fastloot:OnEnable()
     Fastloot.frame:RegisterEvent("LOOT_READY")
-    Fastloot:HookScript(Fastloot.frame, "OnEvent", Fastloot.Loot)
+    Fastloot:SecureHookScript(Fastloot.frame, "OnEvent", Fastloot.Loot)
 end
 
 function Fastloot:OnDisable()
