@@ -1,17 +1,28 @@
 local Theme = mUI:GetModule("mUI.Modules.General.Theme")
 
--- Style ActionButton
-Theme.Bars = {
-    _G["MultiBarBottomLeft"],
-    _G["MultiBarBottomRight"],
-    _G["MultiBarRight"],
-    _G["MultiBarLeft"],
-    _G["MultiBarRight"],
-    _G["MultiBar5"],
-    _G["MultiBar6"],
-    _G["MultiBar7"],
-}
 
+if WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC then
+    Theme.Bars = {
+        _G["MultiBarBottomLeft"],
+        _G["MultiBarBottomRight"],
+        _G["MultiBarRight"],
+        _G["MultiBarLeft"]
+    }
+
+    Theme.backup = ActionButton1NormalTexture.SetVertexColor
+else
+    Theme.Bars = {
+        _G["MultiBarBottomLeft"],
+        _G["MultiBarBottomRight"],
+        _G["MultiBarRight"],
+        _G["MultiBarLeft"],
+        _G["MultiBar5"],
+        _G["MultiBar6"],
+        _G["MultiBar7"],
+    }
+end
+
+-- Style ActionButton
 function Theme:StyleButton(Button, Type)
     local Name = Button:GetName()
     local NormalTexture = _G[Name .. "NormalTexture"]
@@ -20,12 +31,22 @@ function Theme:StyleButton(Button, Type)
 
     Icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
-    mUI:Skin({ NormalTexture }, true)
+    if mUI:IsClassic() then
+        if Type == "StanceOrPet" then
+            mUI:Skin({ _G[Name .. "NormalTexture2"] }, true)
+        else
+            mUI:Skin({ NormalTexture }, true)
+        end
+    else
+        mUI:Skin({ NormalTexture }, true)
+    end
 
-    if Type ~= "StanceOrPet" then
-        Cooldown:ClearAllPoints()
-        Cooldown:SetPoint("TOPLEFT", Button, "TOPLEFT", 2, -2.5)
-        Cooldown:SetPoint("BOTTOMRIGHT", Button, "BOTTOMRIGHT", -3, 3)
+    if not mUI:IsClassic() then
+        if Type ~= "StanceOrPet" then
+            Cooldown:ClearAllPoints()
+            Cooldown:SetPoint("TOPLEFT", Button, "TOPLEFT", 2, -2.5)
+            Cooldown:SetPoint("BOTTOMRIGHT", Button, "BOTTOMRIGHT", -3, 3)
+        end
     end
 
     if C_AddOns.IsAddOnLoaded("Bartender4") then
