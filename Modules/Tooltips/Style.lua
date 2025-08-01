@@ -198,29 +198,48 @@ function Style:OnInitialize()
         if not Style.db.style == "mUI" then return end
         if mUI.db.profile.general.theme == "Disabled" then return end
         if tooltip.NineSlice then
-            local itemGUID
-            local itemLink
-            if tooltip:GetTooltipData() then
-                if tooltip:GetTooltipData().guid then
-                    itemGUID = tooltip:GetTooltipData().guid
-                    itemLink = C_Item.GetItemLinkByGUID(itemGUID)
-                end
+            if mUI:IsClassic() then
+                local _, itemLink = tooltip:GetItem()
 
-                if tooltip:GetTooltipData().hyperlink then
-                    itemLink = tooltip:GetTooltipData().hyperlink
-                end
-            end
-
-            if itemLink then
-                local azerite = C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or
-                    C_AzeriteItem.IsAzeriteItemByID(itemLink) or false
-                local _, _, itemRarity = C_Item.GetItemInfo(itemLink)
-
-                if itemRarity and itemRarity >= 2 then
-                    local r, g, b = C_Item.GetItemQualityColor(itemRarity)
-                    tooltip.NineSlice:SetBorderColor(r, g, b, 0.9)
+                if itemLink then
+                    local azerite = C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or
+                        C_AzeriteItem.IsAzeriteItemByID(itemLink) or false
+                    local _, _, itemRarity = GetItemInfo(itemLink)
+                    local r, g, b = 0.1, 0.1, 0.1
+                    if itemRarity then r, g, b = GetItemQualityColor(itemRarity) end
+                    if azerite and backdrop.azeriteBorderColor then
+                        tooltip.NineSlice:SetBorderColor(unpack(backdrop.azeriteBorderColor))
+                    else
+                        tooltip.NineSlice:SetBorderColor(r, g, b, 0.9)
+                    end
                 else
-                    tooltip.NineSlice:SetBorderColor(unpack(mUI:Color(0.15)))
+                    mUI:Skin(tooltip.NineSlice)
+                end
+            else
+                local itemGUID
+                local itemLink
+                if tooltip:GetTooltipData() then
+                    if tooltip:GetTooltipData().guid then
+                        itemGUID = tooltip:GetTooltipData().guid
+                        itemLink = C_Item.GetItemLinkByGUID(itemGUID)
+                    end
+
+                    if tooltip:GetTooltipData().hyperlink then
+                        itemLink = tooltip:GetTooltipData().hyperlink
+                    end
+                end
+
+                if itemLink then
+                    local azerite = C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or
+                        C_AzeriteItem.IsAzeriteItemByID(itemLink) or false
+                    local _, _, itemRarity = C_Item.GetItemInfo(itemLink)
+
+                    if itemRarity and itemRarity >= 2 then
+                        local r, g, b = C_Item.GetItemQualityColor(itemRarity)
+                        tooltip.NineSlice:SetBorderColor(r, g, b, 0.9)
+                    else
+                        tooltip.NineSlice:SetBorderColor(unpack(mUI:Color(0.15)))
+                    end
                 end
             end
         end
@@ -244,25 +263,54 @@ end
 
 function Style:OnEnable()
     -- Hook Tooltips
-    if not Style.hooked then
-        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Macro, function(tooltip)
-            Style:OnMacroTooltipSetSpell(tooltip)
-            Style:OnMacroTooltipSetColor(tooltip)
-        end)
-        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, function(tooltip, data)
-            Style:OnTooltipSetSpell(tooltip, data.id)
-        end)
-        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.UnitAura, function(tooltip, data)
-            Style:OnTooltipSetSpell(tooltip, data.id)
-        end)
-        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, function(frame)
-            Style:OnTooltipSetUnit(frame)
-        end)
-        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function(tooltip)
+    if mUI:IsClassic() then
+        Style:SecureHook("SharedTooltip_SetBackdropStyle", function(tooltip)
             Style:OnItemTooltipSetColor(tooltip)
         end)
 
-        Style.hooked = true
+        Style:SecureHookScript(GameTooltip, "OnTooltipSetUnit", function(tooltip)
+            Style:OnTooltipSetUnit(tooltip)
+        end)
+
+        Style:SecureHookScript(GameTooltip, "OnTooltipSetSpell", function(tooltip)
+            Style:OnTooltipSetSpell(tooltip, select(2, tooltip:GetSpell()))
+        end)
+
+        Style:SecureHook(GameTooltip, "SetUnitBuff", function(tooltip, unit, index)
+            local _, spellID = UnitBuff(unit, index)
+            Style:OnTooltipSetSpell(tooltip, spellID)
+        end)
+
+        Style:SecureHook(GameTooltip, "SetUnitDebuff", function(tooltip, unit, index)
+            local _, spellID = UnitDebuff(unit, index)
+            Style:OnTooltipSetSpell(tooltip, spellID)
+        end)
+
+        Style:SecureHook(GameTooltip, "SetUnitAura", function(tooltip, unit, index, filter)
+            local _, spellID = AuraUtil.UnpackAuraData(C_UnitAuras.GetAuraDataByIndex(unit, index, filter))
+            Style:OnTooltipSetSpell(tooltip, spellID)
+        end)
+    else
+        if not Style.hooked then
+            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Macro, function(tooltip)
+                Style:OnMacroTooltipSetSpell(tooltip)
+                Style:OnMacroTooltipSetColor(tooltip)
+            end)
+            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, function(tooltip, data)
+                Style:OnTooltipSetSpell(tooltip, data.id)
+            end)
+            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.UnitAura, function(tooltip, data)
+                Style:OnTooltipSetSpell(tooltip, data.id)
+            end)
+            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, function(frame)
+                Style:OnTooltipSetUnit(frame)
+            end)
+            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function(tooltip)
+                Style:OnItemTooltipSetColor(tooltip)
+            end)
+
+            Style.hooked = true
+        end
     end
 
     Style:SecureHook(GameTooltipStatusBar, "SetStatusBarColor", function(frame, r, g, b)
@@ -285,7 +333,7 @@ end
 
 function Style:OnDisable()
     -- Unhook
-    Style:Unhook(GameTooltipStatusBar, "SetStatusBarColor")
+    Style:UnhookAll()
 
     -- Reset Healthbar Texture
     GameTooltipStatusBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-TargetingFrame-BarFill]])
