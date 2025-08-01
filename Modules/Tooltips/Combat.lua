@@ -25,7 +25,7 @@ function Combat:OnEnable()
     -- Register Events and hook the OnEvent function
     Combat.combat:RegisterEvent("PLAYER_REGEN_DISABLED")
     Combat.combat:RegisterEvent("PLAYER_REGEN_ENABLED")
-    Combat:HookScript(Combat.combat, "OnEvent", function(_, event)
+    Combat:SecureHookScript(Combat.combat, "OnEvent", function(_, event)
         Combat:Update(event)
     end)
 end
