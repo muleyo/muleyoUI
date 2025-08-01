@@ -277,17 +277,19 @@ function Style:OnEnable()
         end)
 
         Style:SecureHook(GameTooltip, "SetUnitBuff", function(tooltip, unit, index)
-            local _, spellID = UnitBuff(unit, index)
+            print(unit)
+            local _, _, _, _, _, _, _, _, _, spellID = UnitBuff(unit, index)
             Style:OnTooltipSetSpell(tooltip, spellID)
         end)
 
         Style:SecureHook(GameTooltip, "SetUnitDebuff", function(tooltip, unit, index)
-            local _, spellID = UnitDebuff(unit, index)
+            local _, _, _, _, _, _, _, _, _, spellID = UnitDebuff(unit, index)
             Style:OnTooltipSetSpell(tooltip, spellID)
         end)
 
         Style:SecureHook(GameTooltip, "SetUnitAura", function(tooltip, unit, index, filter)
-            local _, spellID = AuraUtil.UnpackAuraData(C_UnitAuras.GetAuraDataByIndex(unit, index, filter))
+            local _, _, _, _, _, _, _, _, _, spellID = AuraUtil.UnpackAuraData(C_UnitAuras.GetAuraDataByIndex(unit, index,
+                filter))
             Style:OnTooltipSetSpell(tooltip, spellID)
         end)
     else
