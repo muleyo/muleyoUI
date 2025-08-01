@@ -2,25 +2,44 @@ local Theme = mUI:GetModule("mUI.Modules.General.Theme")
 
 local _, playerClass = UnitClass("player")
 
+if WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC then
+    Theme.bagsbackup = MainMenuBarBackpackButtonNormalTexture.SetVertexColor
+end
+
 function Theme:Achievements()
     -- Achievements Frame
     if AchievementFrame then
-        -- Blacklist Frames
-        Theme.blacklist[select(8, AchievementFrame.Header:GetRegions())] = true
+        if mUI:IsClassic() then
+            -- Blacklist Frames
+            Theme.blacklist[AchievementFrameHeaderShield] = true
 
-        -- Skin frames
-        mUI:Skin(AchievementFrame)
-        mUI:Skin(AchievementFrame.Header)
-        mUI:Skin(AchievementFrame.Searchbox)
-        mUI:Skin(AchievementFrameSummary)
-        mUI:Skin(AchievementFrameTab1)
-        mUI:Skin(AchievementFrameTab2)
-        mUI:Skin(AchievementFrameTab3)
-        AchievementFrame.Header.PointBorder:SetAlpha(0)
+            -- Skin frames
+            mUI:Skin(AchievementFrame)
+            mUI:Skin(AchievementFrameHeader)
+            mUI:Skin(AchievementFrameSummary)
+            mUI:Skin(AchievementFrameTab1)
+            mUI:Skin(AchievementFrameTab2)
+            mUI:Skin(AchievementFrameTab3)
+            AchievementFrameHeaderPointBorder:SetAlpha(0)
+        else
+            -- Blacklist Frames
+            Theme.blacklist[select(8, AchievementFrame.Header:GetRegions())] = true
+
+            -- Skin frames
+            mUI:Skin(AchievementFrame)
+            mUI:Skin(AchievementFrame.Header)
+            mUI:Skin(AchievementFrame.Searchbox)
+            mUI:Skin(AchievementFrameSummary)
+            mUI:Skin(AchievementFrameTab1)
+            mUI:Skin(AchievementFrameTab2)
+            mUI:Skin(AchievementFrameTab3)
+            AchievementFrame.Header.PointBorder:SetAlpha(0)
+        end
     end
 end
 
 function Theme:CraftingOrders()
+    if mUI:IsClassic() then return end
     -- Crafting Orders
     if ProfessionsCustomerOrdersFrame then
         mUI:Skin(ProfessionsCustomerOrdersFrame)
@@ -38,34 +57,54 @@ end
 function Theme:AuctionHouse()
     -- Auction House
     if AuctionHouseFrame then
-        mUI:Skin(AuctionHouseFrame)
-        mUI:Skin(AuctionHouseFrame.NineSlice)
-        mUI:Skin(AuctionHouseFrame.NineSlice)
-        mUI:Skin(AuctionHouseFrame.WoWTokenResults.GameTimeTutorial.NineSlice)
-        mUI:Skin(AuctionHouseFrame.BuyDialog)
-        mUI:Skin(AuctionHouseFrame.BuyDialog.Border)
-        mUI:Skin(AuctionHouseFrame.MoneyFrameBorder)
-        mUI:Skin(AuctionHouseFrame.MoneyFrameInset.NineSlice)
-        mUI:Skin(AuctionHouseFrame.CategoriesList)
-        mUI:Skin(AuctionHouseFrameBuyTab)
-        mUI:Skin(AuctionHouseFrameSellTab)
-        mUI:Skin(AuctionHouseFrameAuctionsTab)
-        mUI:Skin(AuctionHouseFrameAuctionsFrameAuctionsTab)
-        mUI:Skin(AuctionHouseFrameAuctionsFrameBidsTab)
+        if mUI:IsClassic() then
+            mUI:Skin(AuctionHouseFrame)
+            mUI:Skin(AuctionHouseFrameBuyTab)
+            mUI:Skin(AuctionHouseFrameSellTab)
+            mUI:Skin(AuctionHouseFrameAuctionsTab)
+            mUI:Skin(AuctionHouseFrame.CategoriesList)
+            mUI:Skin(AuctionHouseFrame.CategoriesList.NineSlice)
+            mUI:Skin(AuctionHouseFrame.BrowseResultsFrame.ItemList)
+            mUI:Skin(AuctionHouseFrame.BrowseResultsFrame.ItemList.NineSlice)
+            mUI:Skin(AuctionHouseFrame.CategoriesList.ScrollBar)
+            mUI:Skin(AuctionHouseFrame.CategoriesList.ScrollBar.Background)
+            mUI:Skin(AuctionHouseFrame.BrowseResultsFrame.ItemList.ScrollBar)
+            mUI:Skin(AuctionHouseFrame.BrowseResultsFrame.ItemList.ScrollBar.Background)
+            mUI:Skin(AuctionHouseFrame.MoneyFrameInset)
+            mUI:Skin(AuctionHouseFrame.MoneyFrameBorder)
+        else
+            if AuctionHouseFrame then
+                mUI:Skin(AuctionHouseFrame)
+                mUI:Skin(AuctionHouseFrame.NineSlice)
+                mUI:Skin(AuctionHouseFrame.NineSlice)
+                mUI:Skin(AuctionHouseFrame.WoWTokenResults.GameTimeTutorial.NineSlice)
+                mUI:Skin(AuctionHouseFrame.BuyDialog)
+                mUI:Skin(AuctionHouseFrame.BuyDialog.Border)
+                mUI:Skin(AuctionHouseFrame.MoneyFrameBorder)
+                mUI:Skin(AuctionHouseFrame.MoneyFrameInset.NineSlice)
+                mUI:Skin(AuctionHouseFrame.CategoriesList)
+                mUI:Skin(AuctionHouseFrameBuyTab)
+                mUI:Skin(AuctionHouseFrameSellTab)
+                mUI:Skin(AuctionHouseFrameAuctionsTab)
+                mUI:Skin(AuctionHouseFrameAuctionsFrameAuctionsTab)
+                mUI:Skin(AuctionHouseFrameAuctionsFrameBidsTab)
 
-        if C_AddOns.IsAddOnLoaded("Auctionator") then
-            C_Timer.After(0, function()
-                mUI:Skin(_G["LibAHFrame-1.0-AuctionatorTabs_Shopping"])
-                mUI:Skin(_G["LibAHFrame-1.0-AuctionatorTabs_Selling"])
-                mUI:Skin(_G["LibAHFrame-1.0-AuctionatorTabs_Cancelling"])
-                mUI:Skin(_G["LibAHFrame-1.0-AuctionatorTabs_Auctionator"])
-            end)
+                if C_AddOns.IsAddOnLoaded("Auctionator") then
+                    C_Timer.After(0, function()
+                        mUI:Skin(_G["LibAHFrame-1.0-AuctionatorTabs_Shopping"])
+                        mUI:Skin(_G["LibAHFrame-1.0-AuctionatorTabs_Selling"])
+                        mUI:Skin(_G["LibAHFrame-1.0-AuctionatorTabs_Cancelling"])
+                        mUI:Skin(_G["LibAHFrame-1.0-AuctionatorTabs_Auctionator"])
+                    end)
+                end
+            end
         end
     end
 end
 
 function Theme:AlliedRaces()
     -- Allied Races
+    if mUI:IsClassic() then return end
     if AlliedRacesFrame then
         mUI:Skin(AlliedRacesFrame)
         mUI:Skin(AlliedRacesFrame.NineSlice)
@@ -76,7 +115,16 @@ end
 function Theme:Archaeology()
     -- Archaeology Frame
     if ArchaeologyFrame then
-        mUI:Skin(ArchaeologyFrame.NineSlice)
+        if mUI:IsClassic() then
+            -- Blacklist Frames
+            Theme.blacklist[ArchaeologyFrameBgLeft] = true
+            Theme.blacklist[ArchaeologyFrameBgRight] = true
+
+            mUI:Skin(ArchaeologyFrame)
+            mUI:Skin(ArchaeologyFrame.NineSlice)
+        else
+            mUI:Skin(ArchaeologyFrame.NineSlice)
+        end
     end
 end
 
@@ -95,8 +143,10 @@ function Theme:Calendar()
         Theme.blacklist[select(3, CalendarClassButton9:GetRegions())] = true
         Theme.blacklist[select(3, CalendarClassButton10:GetRegions())] = true
         Theme.blacklist[select(3, CalendarClassButton11:GetRegions())] = true
-        Theme.blacklist[select(3, CalendarClassButton12:GetRegions())] = true
-        Theme.blacklist[select(3, CalendarClassButton13:GetRegions())] = true
+        if not mUI:IsClassic() then
+            Theme.blacklist[select(3, CalendarClassButton12:GetRegions())] = true
+            Theme.blacklist[select(3, CalendarClassButton13:GetRegions())] = true
+        end
 
         -- Skin frames
         mUI:Skin(CalendarFrame)
@@ -141,23 +191,44 @@ function Theme:Socketing()
     if ItemSocketingFrame then
         mUI:Skin(ItemSocketingFrame)
         mUI:Skin(ItemSocketingFrame.NineSlice)
+
+        if mUI:IsClassic() then
+            mUI:Skin(ItemSocketingScrollFrame.ScrollBar)
+            mUI:Skin(ItemSocketingScrollFrame.ScrollBar.Background)
+        end
     end
 end
 
 function Theme:Trainer()
     -- Profession/Class Trainer
     if ClassTrainerFrame then
-        mUI:Skin(ClassTrainerFrame)
-        mUI:Skin(ClassTrainerFrame.NineSlice)
-        mUI:Skin(ClassTrainerFrameBottomInset.NineSlice)
-        mUI:Skin(ClassTrainerFrameInset.NineSlice)
+        if mUI:IsClassic() then
+            -- Blacklist Frames
+            Theme.blacklist[ClassTrainerFramePortrait] = true
+
+            mUI:Skin(ClassTrainerFrame)
+            mUI:Skin(ClassTrainerFrame.NineSlice)
+            mUI:Skin({
+                select(1, ClassTrainerListScrollFrame:GetRegions()):Hide(),
+                select(2, ClassTrainerListScrollFrame:GetRegions()):Hide()
+            }, true)
+        else
+            mUI:Skin(ClassTrainerFrame)
+            mUI:Skin(ClassTrainerFrame.NineSlice)
+            mUI:Skin(ClassTrainerFrameBottomInset.NineSlice)
+            mUI:Skin(ClassTrainerFrameInset.NineSlice)
+        end
     end
 end
 
 function Theme:Collections()
     if CollectionsJournal then
         -- Blacklist frames
-        Theme.blacklist[select(2, MountJournal.BottomLeftInset.SlotButton:GetRegions())] = true
+        if mUI:IsClassic() then
+            Theme.blacklist[select(3, CollectionsJournal:GetRegions())] = true
+        else
+            Theme.blacklist[select(2, MountJournal.BottomLeftInset.SlotButton:GetRegions())] = true
+        end
 
         -- Skin frames
         -- Collections Frame
@@ -168,14 +239,20 @@ function Theme:Collections()
         mUI:Skin(MountJournal)
         mUI:Skin(MountJournal.MountDisplay)
         mUI:Skin(MountJournal.LeftInset.NineSlice)
-        mUI:Skin(MountJournal.BottomLeftInset)
-        mUI:Skin(MountJournal.BottomLeftInset.NineSlice)
         mUI:Skin(MountJournal.RightInset.NineSlice)
-        mUI:Skin(MountJournal.BottomLeftInset.SlotButton)
-        mUI:Skin({
-            MountJournal.ToggleDynamicFlightFlyoutButton.Border,
-            MountJournalSummonRandomFavoriteButtonBorder
-        }, true)
+        if mUI:IsClassic() then
+            mUI:Skin(MountJournal.ScrollBar.Background)
+            MountJournalMountButton_RightSeparator:Hide()
+        else
+            mUI:Skin(MountJournal.BottomLeftInset)
+            mUI:Skin(MountJournal.BottomLeftInset.NineSlice)
+            mUI:Skin(MountJournal.RightInset.NineSlice)
+            mUI:Skin(MountJournal.BottomLeftInset.SlotButton)
+            mUI:Skin({
+                MountJournal.ToggleDynamicFlightFlyoutButton.Border,
+                MountJournalSummonRandomFavoriteButtonBorder
+            }, true)
+        end
 
         -- ToyBox
         mUI:Skin(ToyBox)
@@ -202,6 +279,9 @@ function Theme:Collections()
             PetJournalSummonRandomFavoritePetButtonBorder,
             PetJournalHealPetButtonBorder
         }, true)
+        if mUI:IsClassic() then
+            PetJournalSummonButton_RightSeparator:Hide()
+        end
 
         -- Wardrobe
         mUI:Skin(WardrobeCollectionFrame)
@@ -226,9 +306,11 @@ function Theme:Collections()
             WardrobeCollectionFrameScrollFrameScrollBarThumbTexture
         }, true)
 
-        -- Campsites
-        mUI:Skin(WarbandSceneJournal)
-        mUI:Skin(WarbandSceneJournal.IconsFrame.NineSlice)
+        if not mUI:IsClassic() then
+            -- Campsites
+            mUI:Skin(WarbandSceneJournal)
+            mUI:Skin(WarbandSceneJournal.IconsFrame.NineSlice)
+        end
 
         -- Specific Frames
         mUI:Skin({
@@ -241,8 +323,11 @@ function Theme:Collections()
             PetJournalListScrollFrameScrollBarTop,
             PetJournalListScrollFrameScrollBarMiddle,
             PetJournalListScrollFrameScrollBarBottom,
-            WarbandSceneJournal.IconsFrame.BackgroundTile,
         }, true)
+
+        if not mUI:IsClassic() then
+            mUI:Skin({ WarbandSceneJournal.IconsFrame.BackgroundTile }, true)
+        end
 
         -- Tabs
         mUI:Skin(CollectionsJournalTab1)
@@ -265,9 +350,6 @@ function Theme:EncounterJournal()
         mUI:Skin(EncounterJournalInset.NineSlice)
         mUI:Skin(EncounterJournalNavBar)
         mUI:Skin(EncounterJournalNavBar.overlay)
-        mUI:Skin(EncounterJournalEncounterFrameInfo.LootContainer.filter)
-        mUI:Skin(EncounterJournalEncounterFrameInfo.LootContainer.slotFilter)
-        mUI:Skin(EncounterJournalEncounterFrameInfoDifficulty)
         mUI:Skin(EncounterJournalMonthlyActivitiesTab)
         mUI:Skin(EncounterJournalSuggestTab)
         mUI:Skin(EncounterJournalDungeonTab)
@@ -278,10 +360,16 @@ end
 
 function Theme:FlightMap()
     -- Flightmap
-    if FlightMapFrame then
-        mUI:Skin(FlightMapFrame)
-        mUI:Skin(FlightMapFrame.BorderFrame)
-        mUI:Skin(FlightMapFrame.BorderFrame.NineSlice)
+    if mUI:IsClassic() then
+        if TaxiFrame then
+            mUI:Skin(TaxiFrame)
+        end
+    else
+        if FlightMapFrame then
+            mUI:Skin(FlightMapFrame)
+            mUI:Skin(FlightMapFrame.BorderFrame)
+            mUI:Skin(FlightMapFrame.BorderFrame.NineSlice)
+        end
     end
 end
 
@@ -336,7 +424,9 @@ function Theme:Inspect()
         mUI:Skin(InspectFrameTab1)
         mUI:Skin(InspectFrameTab2)
         mUI:Skin(InspectFrameTab3)
+        mUI:Skin(InspectFrameTab4)
         InspectMainHandSlotFrame:Hide()
+        InspectSecondaryHandSlotFrame:Hide()
         _G.select(InspectMainHandSlot:GetNumRegions(), InspectMainHandSlot:GetRegions()):Hide()
         _G.select(InspectSecondaryHandSlot:GetNumRegions(), InspectSecondaryHandSlot:GetRegions()):Hide()
     end
@@ -350,11 +440,31 @@ function Theme:GuildBank()
         mUI:Skin(GuildBankFrameTab3)
         mUI:Skin(GuildBankFrameTab4)
         mUI:Skin(GuildBankFrame)
-        mUI:Skin({
-            GuildBankFrameLeft,
-            GuildBankFrameMiddle,
-            GuildBankFrameRight
-        }, true)
+
+        if mUI:IsClassic() then
+            mUI:Skin({
+                GuildBankFrameLeft,
+                GuildBankFrameMiddle,
+                GuildBankFrameRight,
+                select(1, GuildBankInfoScrollFrame:GetRegions()),
+                select(2, GuildBankInfoScrollFrame:GetRegions())
+            }, true)
+
+            mUI:Skin(GuildBankTab1)
+            mUI:Skin(GuildBankTab2)
+            mUI:Skin(GuildBankTab3)
+            mUI:Skin(GuildBankTab4)
+            mUI:Skin(GuildBankTab5)
+            mUI:Skin(GuildBankTab6)
+            mUI:Skin(GuildBankTab7)
+            mUI:Skin(GuildBankTab8)
+        else
+            mUI:Skin({
+                GuildBankFrameLeft,
+                GuildBankFrameMiddle,
+                GuildBankFrameRight
+            }, true)
+        end
         mUI:Skin(GuildBankFrame.MoneyFrameBG)
         mUI:Skin(GuildBankFrame.Column1)
         mUI:Skin(GuildBankFrame.Column2)
@@ -368,30 +478,42 @@ end
 
 function Theme:Professions()
     -- Professions
-    if ProfessionsFrame then
-        mUI:Skin(InspectRecipeFrame)
-        mUI:Skin(InspectRecipeFrame.NineSlice)
-        mUI:Skin(ProfessionsFrame)
-        mUI:Skin(ProfessionsFrame.NineSlice)
-        mUI:Skin(ProfessionsFrame.SpecPage.PanelFooter)
-        mUI:Skin(ProfessionsFrame.CraftingPage.RecipeList.BackgroundNineSlice)
-        mUI:Skin(ProfessionsFrame.CraftingPage.SchematicForm.NineSlice)
-        mUI:Skin(ProfessionsFrame.CraftingPage.SchematicForm.Details)
-        mUI:Skin(ProfessionsFrame.OrdersPage.BrowseFrame.OrderList.NineSlice)
-        mUI:Skin(ProfessionsFrame.OrdersPage.BrowseFrame.RecipeList.BackgroundNineSlice)
-        mUI:Skin(ProfessionsFrame.TabSystem.tabs[1])
-        mUI:Skin(ProfessionsFrame.TabSystem.tabs[2])
-        mUI:Skin(ProfessionsFrame.TabSystem.tabs[3])
-        mUI:Skin(ProfessionsFrame.OrdersPage.BrowseFrame.PublicOrdersButton)
-        mUI:Skin(ProfessionsFrame.OrdersPage.BrowseFrame.GuildOrdersButton)
-        mUI:Skin(ProfessionsFrame.OrdersPage.BrowseFrame.NpcOrdersButton)
-        mUI:Skin(ProfessionsFrame.OrdersPage.BrowseFrame.PersonalOrdersButton)
-        mUI:Skin(ProfessionsFrame.CraftingPage.CraftingOutputLog)
-        mUI:Skin(ProfessionsFrame.CraftingPage.CraftingOutputLog.TitleContainer)
-        mUI:Skin(ProfessionsFrame.CraftingPage.CraftingOutputLog.NineSlice)
-        mUI:Skin({
-            ProfessionsFrame.CraftingPage.RankBar.Border
-        }, true)
+    if mUI:IsClassic() then
+        if TradeSkillFrame then
+            -- Blacklist Frames
+            Theme.blacklist[TradeSkillFramePortrait] = true
+            mUI:Skin(TradeSkillFrame)
+            mUI:Skin({
+                select(1, TradeSkillListScrollFrame:GetRegions()),
+                select(2, TradeSkillListScrollFrame:GetRegions()),
+            }, true)
+        end
+    else
+        if ProfessionsFrame then
+            mUI:Skin(InspectRecipeFrame)
+            mUI:Skin(InspectRecipeFrame.NineSlice)
+            mUI:Skin(ProfessionsFrame)
+            mUI:Skin(ProfessionsFrame.NineSlice)
+            mUI:Skin(ProfessionsFrame.SpecPage.PanelFooter)
+            mUI:Skin(ProfessionsFrame.CraftingPage.RecipeList.BackgroundNineSlice)
+            mUI:Skin(ProfessionsFrame.CraftingPage.SchematicForm.NineSlice)
+            mUI:Skin(ProfessionsFrame.CraftingPage.SchematicForm.Details)
+            mUI:Skin(ProfessionsFrame.OrdersPage.BrowseFrame.OrderList.NineSlice)
+            mUI:Skin(ProfessionsFrame.OrdersPage.BrowseFrame.RecipeList.BackgroundNineSlice)
+            mUI:Skin(ProfessionsFrame.TabSystem.tabs[1])
+            mUI:Skin(ProfessionsFrame.TabSystem.tabs[2])
+            mUI:Skin(ProfessionsFrame.TabSystem.tabs[3])
+            mUI:Skin(ProfessionsFrame.OrdersPage.BrowseFrame.PublicOrdersButton)
+            mUI:Skin(ProfessionsFrame.OrdersPage.BrowseFrame.GuildOrdersButton)
+            mUI:Skin(ProfessionsFrame.OrdersPage.BrowseFrame.NpcOrdersButton)
+            mUI:Skin(ProfessionsFrame.OrdersPage.BrowseFrame.PersonalOrdersButton)
+            mUI:Skin(ProfessionsFrame.CraftingPage.CraftingOutputLog)
+            mUI:Skin(ProfessionsFrame.CraftingPage.CraftingOutputLog.TitleContainer)
+            mUI:Skin(ProfessionsFrame.CraftingPage.CraftingOutputLog.NineSlice)
+            mUI:Skin({
+                ProfessionsFrame.CraftingPage.RankBar.Border
+            }, true)
+        end
     end
 end
 
@@ -407,25 +529,56 @@ end
 function Theme:PVP()
     -- PVP UI
     if HonorFrame then
-        Theme.blacklist[select(4, HonorFrame.ConquestBar:GetRegions())] = true
-        Theme.blacklist[select(4, ConquestFrame.ConquestBar:GetRegions())] = true
+        if mUI:IsClassic() then
+            mUI:Skin(HonorFrame)
+            mUI:Skin(WorldStateScoreFrame)
+            mUI:Skin(WorldStateScoreFrameTab1)
+            mUI:Skin(WorldStateScoreFrameTab2)
+            mUI:Skin(WorldStateScoreFrameTab3)
+        else
+            Theme.blacklist[select(4, HonorFrame.ConquestBar:GetRegions())] = true
+            Theme.blacklist[select(4, ConquestFrame.ConquestBar:GetRegions())] = true
 
-        mUI:Skin(PlunderstormFrame.Inset)
-        mUI:Skin(PlunderstormFrame.Inset.NineSlice)
-        mUI:Skin(HonorFrame)
-        mUI:Skin(HonorFrame.ConquestFrame)
-        mUI:Skin(HonorFrame.Inset)
-        mUI:Skin(HonorFrame.Inset.NineSlice)
-        mUI:Skin(HonorFrame.BonusFrame)
-        mUI:Skin(HonorFrame.ConquestBar)
-        mUI:Skin(ConquestFrame)
-        mUI:Skin(ConquestFrame.ConquestBar)
-        mUI:Skin(ConquestFrame.Inset)
-        mUI:Skin(ConquestFrame.Inset.NineSlice)
-        mUI:Skin(PVPQueueFrame)
-        mUI:Skin(PVPQueueFrame.HonorInset)
-        mUI:Skin(PVPQueueFrame.HonorInset.NineSlice)
-        PVPQueueFrame.HonorInset:Hide()
+            mUI:Skin(PlunderstormFrame.Inset)
+            mUI:Skin(PlunderstormFrame.Inset.NineSlice)
+            mUI:Skin(HonorFrame)
+            mUI:Skin(HonorFrame.ConquestFrame)
+            mUI:Skin(HonorFrame.Inset)
+            mUI:Skin(HonorFrame.Inset.NineSlice)
+            mUI:Skin(HonorFrame.BonusFrame)
+            mUI:Skin(HonorFrame.ConquestBar)
+            mUI:Skin(ConquestFrame)
+            mUI:Skin(ConquestFrame.ConquestBar)
+            mUI:Skin(ConquestFrame.Inset)
+            mUI:Skin(ConquestFrame.Inset.NineSlice)
+            mUI:Skin(PVPQueueFrame)
+            mUI:Skin(PVPQueueFrame.HonorInset)
+            mUI:Skin(PVPQueueFrame.HonorInset.NineSlice)
+            PVPQueueFrame.HonorInset:Hide()
+        end
+    end
+
+    if mUI:IsClassic() then
+        if HonorQueueFrame then
+            mUI:Skin(HonorQueueFrame.Inset)
+            mUI:Skin(HonorQueueFrame.Inset.NineSlice)
+            mUI:Skin(HonorQueueFrame.RoleInset)
+            mUI:Skin(HonorQueueFrame.RoleInset.NineSlice)
+            mUI:Skin(WarGamesQueueFrame)
+            mUI:Skin(WarGamesQueueFrame.RightInset)
+            mUI:Skin(WarGamesQueueFrame.RightInset.NineSlice)
+            mUI:Skin(WarGamesQueueFrame.HorizontalBar)
+            mUI:Skin(WarGamesQueueFrameInfoScrollFrame.ScrollBar.Background)
+            mUI:Skin({
+                WarGamesQueueFrameScrollFrameScrollBarTop,
+                WarGamesQueueFrameScrollFrameScrollBarMiddle,
+                WarGamesQueueFrameScrollFrameScrollBarBottom
+            }, true)
+            HonorQueueFrameGroupQueueButton_LeftSeparator:Hide()
+            HonorQueueFrameSoloQueueButton_RightSeparator:Hide()
+            WarGameStartButton_LeftSeparator:Hide()
+            WarGameStartButton_RightSeparator:Hide()
+        end
     end
 end
 
@@ -434,6 +587,9 @@ function Theme:Macros()
     if MacroFrame then
         -- Blacklist frames
         Theme.blacklist[select(9, MacroFrameTextBackground.NineSlice:GetRegions())] = true
+        if mUI:IsClassic() then
+            Theme.blacklist[select(18, MacroFrame:GetRegions())] = true
+        end
 
         -- Skin frames
         mUI:Skin(MacroFrame)
@@ -442,6 +598,9 @@ function Theme:Macros()
         mUI:Skin(MacroFrameInset.NineSlice)
         mUI:Skin(MacroFrameTextBackground)
         mUI:Skin(MacroFrameTextBackground.NineSlice)
+        if mUI:IsClassic() then
+            mUI:Skin(MacroFrame.MacroSelector.ScrollBar.Background)
+        end
         mUI:Skin(MacroPopupFrame)
         mUI:Skin(MacroPopupFrame.BorderBox)
         mUI:Skin(MacroFrameTab1)
@@ -464,6 +623,7 @@ function Theme:Scrapping()
 end
 
 function Theme:ProfessionsBook()
+    if mUI:IsClassic() then return end
     -- Professions Book
     if ProfessionsBookFrame then
         mUI:Skin(ProfessionsBookFrame)
@@ -488,6 +648,7 @@ function Theme:ProfessionsBook()
 end
 
 function Theme:PlayerSpells()
+    if mUI:IsClassic() then return end
     -- Spellbook / Talent Frame
     if PlayerSpellsFrame then
         -- Blacklist frames
@@ -536,37 +697,144 @@ function Theme:PlayerSpells()
     end
 end
 
+function Theme:Talents()
+    if PlayerTalentFrame then
+        -- Blacklist Frames
+        Theme.blacklist[select(2, PlayerSpecTab1:GetRegions())] = true
+        Theme.blacklist[select(2, PlayerSpecTab2:GetRegions())] = true
+
+        mUI:Skin(PlayerTalentFrame)
+        mUI:Skin(PlayerTalentFrameInset)
+        mUI:Skin(PlayerTalentFrameInset.NineSlice)
+        mUI:Skin(PlayerTalentFrameTalents)
+        mUI:Skin(PlayerTalentFrameTab1)
+        mUI:Skin(PlayerTalentFrameTab2)
+        mUI:Skin(PlayerTalentFrameTab3)
+        mUI:Skin(PlayerTalentFrameTab4)
+        mUI:Skin(PlayerSpecTab1)
+        mUI:Skin(PlayerSpecTab2)
+
+        if GlyphFrame then
+            mUI:Skin(GlyphFrameSideInset)
+            mUI:Skin(GlyphFrameSideInset.NineSlice)
+            mUI:Skin({
+                GlyphFrameScrollFrameScrollBarTop,
+                GlyphFrameScrollFrameScrollBarMiddle,
+                GlyphFrameScrollFrameScrollBarBottom,
+            }, true)
+        end
+
+        PlayerTalentFrameSpecializationLearnButton_LeftSeparator:Hide()
+        PlayerTalentFrameSpecializationLearnButton_RightSeparator:Hide()
+        PlayerTalentFrameTalentsLearnButton_LeftSeparator:Hide()
+        PlayerTalentFrameTalentsLearnButton_RightSeparator:Hide()
+        PlayerTalentFramePetSpecializationLearnButton_LeftSeparator:Hide()
+        PlayerTalentFramePetSpecializationLearnButton_RightSeparator:Hide()
+    end
+end
+
+function Theme:Spellbook()
+    -- Spellbook
+    if SpellBookFrame then
+        SpellBookFrame:Show()
+        SpellBookFrame:Hide()
+
+        mUI:Skin(SpellBookFrame)
+        mUI:Skin(SpellBookFrame.NineSlice)
+        mUI:Skin(SpellBookFrameInset)
+        mUI:Skin(SpellBookFrameInset.NineSlice)
+        mUI:Skin(SpellBookProfessionFrame)
+        mUI:Skin(SpellBookProfessionFrame.NineSlice)
+        mUI:Skin({
+            ProfessionsBookPage1,
+            ProfessionsBookPage2,
+            select(1, SpellBookSkillLineTab1:GetRegions()),
+            select(1, SpellBookSkillLineTab2:GetRegions()),
+            select(1, SpellBookSkillLineTab3:GetRegions()),
+            select(1, SpellBookSkillLineTab4:GetRegions()),
+            select(1, SpellBookSkillLineTab5:GetRegions())
+        }, true)
+        mUI:Skin(SpellBookFrameTabButton1)
+        mUI:Skin(SpellBookFrameTabButton2)
+        mUI:Skin(SpellBookFrameTabButton3)
+        mUI:Skin(SpellBookFrameTabButton4)
+        mUI:Skin(SpellBookFrameTabButton5)
+
+        -- Reset Icon Colors
+        select(2, SpellBookSkillLineTab1:GetRegions()):SetVertexColor(1, 1, 1)
+        select(2, SpellBookSkillLineTab2:GetRegions()):SetVertexColor(1, 1, 1)
+        select(2, SpellBookSkillLineTab3:GetRegions()):SetVertexColor(1, 1, 1)
+        select(2, SpellBookSkillLineTab4:GetRegions()):SetVertexColor(1, 1, 1)
+        select(2, SpellBookSkillLineTab5:GetRegions()):SetVertexColor(1, 1, 1)
+    end
+end
+
 function Theme:TimeManager()
     -- Time Manager
     if TimeManagerFrame then
+        if mUI:IsClassic() then
+            -- Blacklist Frames
+            Theme.blacklist[select(18, TimeManagerFrame:GetRegions())] = true
+        end
+
         mUI:Skin(TimeManagerFrame)
         mUI:Skin(TimeManagerFrame.NineSlice)
         mUI:Skin(TimeManagerFrameInset)
         mUI:Skin(TimeManagerFrameInset.NineSlice)
-        mUI:Skin({ StopwatchFrameBackgroundLeft }, true)
+        mUI:Skin(TimeManagerClockButton)
+        if mUI:IsClassic() then
+            mUI:Skin({ StopwatchFrameBackgroundLeft, select(2, StopwatchFrame:GetRegions()) }, true)
+        else
+            mUI:Skin({ StopwatchFrameBackgroundLeft }, true)
+        end
     end
 end
 
 function Theme:Actionbars()
     -- Actionbars
-    mUI:Skin(MainMenuBar)
-    mUI:Skin(MainMenuBar.EndCaps)
-    mUI:Skin(MainMenuBar.ActionBarPageNumber.UpButton)
-    mUI:Skin(MainMenuBar.ActionBarPageNumber.DownButton)
+    if mUI:IsClassic() then
+        mUI:Skin(MainMenuBarArtFrame)
+        mUI:Skin(ActionBarUpButton)
+        mUI:Skin(ActionBarDownButton)
+        mUI:Skin(OverrideActionBarPitchFrame)
+        mUI:Skin(OverrideActionBarExpBar)
+        mUI:Skin(StanceBarFrame)
+        mUI:Skin(PetActionBarFrame)
+        mUI:Skin({
+            OverrideActionBarHealthBarOverlay,
+            OverrideActionBarPowerBarOverlay,
+            MainMenuXPBarTexture0,
+            MainMenuXPBarTexture1,
+            MainMenuXPBarTexture2,
+            MainMenuXPBarTexture3,
+            ExhaustionTickNormal,
+            ExhaustionTickHighlight
+        }, true)
+    else
+        mUI:Skin(MainMenuBar)
+        mUI:Skin(MainMenuBar.EndCaps)
+        mUI:Skin(MainMenuBar.ActionBarPageNumber.UpButton)
+        mUI:Skin(MainMenuBar.ActionBarPageNumber.DownButton)
+        MainMenuBar.ActionBarPageNumber.Text:SetVertexColor(unpack(mUI:Color(0.15)))
+        mUI:Skin(StatusTrackingBarManager)
+        mUI:Skin(StatusTrackingBarManager.BottomBarFrameTexture)
+        mUI:Skin(StatusTrackingBarManager.MainStatusTrackingBarContainer)
+        mUI:Skin(StatusTrackingBarManager.SecondaryStatusTrackingBarContainer)
+    end
     mUI:Skin(OverrideActionBar)
-    MainMenuBar.ActionBarPageNumber.Text:SetVertexColor(unpack(mUI:Color(0.15)))
-    mUI:Skin(StatusTrackingBarManager)
-    mUI:Skin(StatusTrackingBarManager.BottomBarFrameTexture)
-    mUI:Skin(StatusTrackingBarManager.MainStatusTrackingBarContainer)
-    mUI:Skin(StatusTrackingBarManager.SecondaryStatusTrackingBarContainer)
     mUI:Skin({ OverrideActionBarLeaveFrameDivider3 }, true)
 
     -- Actionbars
     for j = 1, #Theme.Bars do
         local Bar = Theme.Bars[j]
+        local Num
         if Bar then
-            local Num = Bar.numButtonsShowable
-            Theme:StyleAction(Bar, 12)
+            if mUI:IsClassic() then
+                Num = 12
+            else
+                Num = Bar.numButtonsShowable
+            end
+            Theme:StyleAction(Bar, Num)
         end
     end
 
@@ -639,56 +907,119 @@ function Theme:AddonList()
     mUI:Skin(AddonList.NineSlice)
     mUI:Skin(AddonList)
     mUI:Skin(AddonListInset.NineSlice)
-    mUI:Skin({ AddonListBg }, true)
+    if mUI:IsClassic() then
+        mUI:Skin(
+            { AddonListBg, AddonListScrollFrameScrollBarTop, AddonListScrollFrameScrollBarMiddle,
+                AddonListScrollFrameScrollBarBottom }, true)
+        AddonListEnableAllButton_RightSeparator:Hide()
+        AddonListDisableAllButton_RightSeparator:Hide()
+        AddonListOkayButton_LeftSeparator:Hide()
+        AddonListCancelButton_LeftSeparator:Hide()
+    else
+        mUI:Skin({ AddonListBg }, true)
+    end
 end
 
 function Theme:Bags()
     -- Bags
-    mUI:Skin(ContainerFrameCombinedBags.NineSlice)
-    mUI:Skin(ContainerFrameCombinedBags.Bg)
-    mUI:Skin(ContainerFrameCombinedBags.MoneyFrame.Border)
-    mUI:Skin(ContainerFrame1MoneyFrame.Border)
-    mUI:Skin(BackpackTokenFrame.Border)
-    mUI:Skin(ContainerFrame1.NineSlice)
-    mUI:Skin(ContainerFrame1.Bg)
-    mUI:Skin(ContainerFrame2.NineSlice)
-    mUI:Skin(ContainerFrame2.Bg)
-    mUI:Skin(ContainerFrame3.NineSlice)
-    mUI:Skin(ContainerFrame3.Bg)
-    mUI:Skin(ContainerFrame4.NineSlice)
-    mUI:Skin(ContainerFrame4.Bg)
-    mUI:Skin(ContainerFrame5.NineSlice)
-    mUI:Skin(ContainerFrame5.Bg)
-    mUI:Skin(ContainerFrame6.NineSlice)
-    mUI:Skin(ContainerFrame6.Bg)
-    mUI:Skin(ContainerFrame7.NineSlice)
-    mUI:Skin(ContainerFrame7.Bg)
-    mUI:Skin(ContainerFrame8.NineSlice)
-    mUI:Skin(ContainerFrame8.Bg)
-    mUI:Skin(ContainerFrame9.NineSlice)
-    mUI:Skin(ContainerFrame9.Bg)
-    mUI:Skin(ContainerFrame10.NineSlice)
-    mUI:Skin(ContainerFrame10.Bg)
-    mUI:Skin(ContainerFrame11.NineSlice)
-    mUI:Skin(ContainerFrame11.Bg)
-    mUI:Skin(ContainerFrame12.NineSlice)
-    mUI:Skin(ContainerFrame12.Bg)
-    mUI:Skin(ContainerFrame13.NineSlice)
-    mUI:Skin(ContainerFrame13.Bg)
+    if mUI:IsClassic() then
+        mUI:Skin(BackpackTokenFrame)
+        mUI:Skin({ ContainerFrame1BackgroundBottom }, true)
+        mUI:Skin(ContainerFrame1)
+        mUI:Skin(ContainerFrame2)
+        mUI:Skin(ContainerFrame3)
+        mUI:Skin(ContainerFrame4)
+        mUI:Skin(ContainerFrame5)
+        mUI:Skin(ContainerFrame6)
+        mUI:Skin(ContainerFrame7)
+        mUI:Skin(ContainerFrame8)
+        mUI:Skin(ContainerFrame9)
+        mUI:Skin(ContainerFrame10)
+        mUI:Skin(ContainerFrame11)
+        mUI:Skin(ContainerFrame12)
+        mUI:Skin(ContainerFrame13)
+
+        MainMenuBarBackpackButtonNormalTexture.SetVertexColor = Theme.bagsbackup
+        CharacterBag0SlotNormalTexture.SetVertexColor = Theme.bagsbackup
+        CharacterBag1SlotNormalTexture.SetVertexColor = Theme.bagsbackup
+        CharacterBag2SlotNormalTexture.SetVertexColor = Theme.bagsbackup
+        CharacterBag3SlotNormalTexture.SetVertexColor = Theme.bagsbackup
+
+        mUI:Skin({
+            MainMenuBarBackpackButtonNormalTexture,
+            CharacterBag0SlotNormalTexture,
+            CharacterBag1SlotNormalTexture,
+            CharacterBag2SlotNormalTexture,
+            CharacterBag3SlotNormalTexture
+        }, true)
+
+        MainMenuBarBackpackButtonNormalTexture.SetVertexColor = function() end
+        CharacterBag0SlotNormalTexture.SetVertexColor = function() end
+        CharacterBag1SlotNormalTexture.SetVertexColor = function() end
+        CharacterBag2SlotNormalTexture.SetVertexColor = function() end
+        CharacterBag3SlotNormalTexture.SetVertexColor = function() end
+
+        C_Timer.After(0.1, function()
+            MainMenuBarBackpackButtonCount:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
+        end)
+    else
+        mUI:Skin(ContainerFrameCombinedBags.NineSlice)
+        mUI:Skin(ContainerFrameCombinedBags.Bg)
+        mUI:Skin(ContainerFrameCombinedBags.MoneyFrame.Border)
+        mUI:Skin(ContainerFrame1MoneyFrame.Border)
+        mUI:Skin(BackpackTokenFrame.Border)
+        mUI:Skin(ContainerFrame1.NineSlice)
+        mUI:Skin(ContainerFrame1.Bg)
+        mUI:Skin(ContainerFrame2.NineSlice)
+        mUI:Skin(ContainerFrame2.Bg)
+        mUI:Skin(ContainerFrame3.NineSlice)
+        mUI:Skin(ContainerFrame3.Bg)
+        mUI:Skin(ContainerFrame4.NineSlice)
+        mUI:Skin(ContainerFrame4.Bg)
+        mUI:Skin(ContainerFrame5.NineSlice)
+        mUI:Skin(ContainerFrame5.Bg)
+        mUI:Skin(ContainerFrame6.NineSlice)
+        mUI:Skin(ContainerFrame6.Bg)
+        mUI:Skin(ContainerFrame7.NineSlice)
+        mUI:Skin(ContainerFrame7.Bg)
+        mUI:Skin(ContainerFrame8.NineSlice)
+        mUI:Skin(ContainerFrame8.Bg)
+        mUI:Skin(ContainerFrame9.NineSlice)
+        mUI:Skin(ContainerFrame9.Bg)
+        mUI:Skin(ContainerFrame10.NineSlice)
+        mUI:Skin(ContainerFrame10.Bg)
+        mUI:Skin(ContainerFrame11.NineSlice)
+        mUI:Skin(ContainerFrame11.Bg)
+        mUI:Skin(ContainerFrame12.NineSlice)
+        mUI:Skin(ContainerFrame12.Bg)
+        mUI:Skin(ContainerFrame13.NineSlice)
+        mUI:Skin(ContainerFrame13.Bg)
+    end
 end
 
 function Theme:Bank()
     -- Bank
-    mUI:Skin(BankFrame)
-    mUI:Skin(BankFrame.NineSlice)
-    mUI:Skin(BankSlotsFrame.NineSlice)
-    mUI:Skin(BankFrameMoneyFrameBorder)
-    mUI:Skin(AccountBankPanel.NineSlice)
-    mUI:Skin(AccountBankPanel.MoneyFrame.Border)
-    mUI:Skin(ReagentBankFrame.NineSlice)
-    mUI:Skin(BankFrameTab1)
-    mUI:Skin(BankFrameTab2)
-    mUI:Skin(BankFrameTab3)
+    if mUI:IsClassic() then
+        -- Blacklist Frames
+        Theme.blacklist[select(15, BankFrame:GetRegions())] = true
+        mUI:Skin(BankFrame)
+        mUI:Skin(BankFrame.NineSlice)
+        mUI:Skin(BankSlotsFrame.NineSlice)
+        mUI:Skin(BankFrameMoneyFrameBorder)
+        mUI:Skin(BankFrameMoneyFrameInset)
+        mUI:Skin(BankFrameMoneyFrameInset.NineSlice)
+    else
+        mUI:Skin(BankFrame)
+        mUI:Skin(BankFrame.NineSlice)
+        mUI:Skin(BankSlotsFrame.NineSlice)
+        mUI:Skin(BankFrameMoneyFrameBorder)
+        mUI:Skin(AccountBankPanel.NineSlice)
+        mUI:Skin(AccountBankPanel.MoneyFrame.Border)
+        mUI:Skin(ReagentBankFrame.NineSlice)
+        mUI:Skin(BankFrameTab1)
+        mUI:Skin(BankFrameTab2)
+        mUI:Skin(BankFrameTab3)
+    end
 end
 
 function Theme:Character()
@@ -702,17 +1033,29 @@ function Theme:Character()
     mUI:Skin(TokenFramePopup)
     mUI:Skin(TokenFramePopup.Border)
     mUI:Skin(CharacterStatsPane)
-    mUI:Skin(ReputationFrame.ReputationDetailFrame)
-    mUI:Skin(ReputationFrame.ReputationDetailFrame.Border)
-    mUI:Skin(CurrencyTransferLog)
-    mUI:Skin(CurrencyTransferLog.TitleContainer)
-    mUI:Skin(CurrencyTransferLog.NineSlice)
-    mUI:Skin(CurrencyTransferLogInset.NineSlice)
+    if mUI:IsClassic() then
+        mUI:Skin(ReputationFrame)
+        mUI:Skin(ReputationListScrollFrame)
+        mUI:Skin(CharacterFrameTab4)
+        mUI:Skin(GearManagerPopupFrame.IconSelector.ScrollBar.Background)
+        mUI:Skin({
+            PetPaperDollXPBar1,
+            select(2, PetPaperDollFrameExpBar:GetRegions())
+        }, true)
+    else
+        mUI:Skin(ReputationFrame.ReputationDetailFrame)
+        mUI:Skin(ReputationFrame.ReputationDetailFrame.Border)
+        mUI:Skin(CurrencyTransferLog)
+        mUI:Skin(CurrencyTransferLog.TitleContainer)
+        mUI:Skin(CurrencyTransferLog.NineSlice)
+        mUI:Skin(CurrencyTransferLogInset.NineSlice)
+    end
     mUI:Skin(GearManagerPopupFrame)
     mUI:Skin(GearManagerPopupFrame.BorderBox)
     mUI:Skin(CharacterFrameTab1)
     mUI:Skin(CharacterFrameTab2)
     mUI:Skin(CharacterFrameTab3)
+
     mUI:Skin({
         CharacterFeetSlotFrame,
         CharacterHandsSlotFrame,
@@ -831,16 +1174,21 @@ function Theme:Friendlist()
     mUI:Skin(FriendsFrameInset.NineSlice)
     mUI:Skin(FriendsFriendsFrame)
     mUI:Skin(FriendsFriendsFrame.Border)
-    mUI:Skin(RecruitAFriendFrame)
-    mUI:Skin(RecruitAFriendFrame.RecruitList)
-    mUI:Skin(RecruitAFriendFrame.RecruitList.Header)
-    mUI:Skin(RecruitAFriendFrame.RecruitList.ScrollFrameInset)
-    mUI:Skin(RecruitAFriendFrame.RecruitList.ScrollFrameInset.NineSlice)
-    mUI:Skin(RecruitAFriendFrame.RewardClaiming)
-    mUI:Skin(RecruitAFriendFrame.RewardClaiming.Inset)
-    mUI:Skin(RecruitAFriendFrame.RewardClaiming.Inset.NineSlice)
-    mUI:Skin(RecruitAFriendRecruitmentFrame)
-    mUI:Skin(RecruitAFriendRecruitmentFrame.Border)
+    if mUI:IsClassic() then
+        mUI:Skin(FriendsFrameFriendsScrollFrame)
+        mUI:Skin(WhoListScrollFrame)
+    else
+        mUI:Skin(RecruitAFriendFrame)
+        mUI:Skin(RecruitAFriendFrame.RecruitList)
+        mUI:Skin(RecruitAFriendFrame.RecruitList.Header)
+        mUI:Skin(RecruitAFriendFrame.RecruitList.ScrollFrameInset)
+        mUI:Skin(RecruitAFriendFrame.RecruitList.ScrollFrameInset.NineSlice)
+        mUI:Skin(RecruitAFriendFrame.RewardClaiming)
+        mUI:Skin(RecruitAFriendFrame.RewardClaiming.Inset)
+        mUI:Skin(RecruitAFriendFrame.RewardClaiming.Inset.NineSlice)
+        mUI:Skin(RecruitAFriendRecruitmentFrame)
+        mUI:Skin(RecruitAFriendRecruitmentFrame.Border)
+    end
     mUI:Skin(WhoFrameListInset)
     mUI:Skin(WhoFrameListInset.NineSlice)
     mUI:Skin(WhoFrameEditBoxInset)
@@ -873,6 +1221,11 @@ function Theme:Guild()
     mUI:Skin(TabardFrame.NineSlice)
     mUI:Skin(TabardFrameInset)
     mUI:Skin(TabardFrameInset.NineSlice)
+    if mUI:IsClassic() then
+        mUI:Skin(TabardFrameMoneyBg)
+        mUI:Skin(TabardFrameMoneyInset)
+        mUI:Skin(TabardFrameMoneyInset.NineSlice)
+    end
 
     select(3, GuildRegistrarButton1:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
     select(3, GuildRegistrarButton2:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
@@ -886,12 +1239,21 @@ function Theme:Gossip()
     mUI:Skin(GossipFrame.NineSlice)
     mUI:Skin(GossipFrameInset)
     mUI:Skin(GossipFrameInset.NineSlice)
+    if mUI:IsClassic() then
+        mUI:Skin(GossipFrame.GreetingPanel.ScrollBar.Background)
+    end
 end
 
 function Theme:Item()
     -- Item
     mUI:Skin(ItemTextFrame)
     mUI:Skin(ItemTextFrame.NineSlice)
+
+    if mUI:IsClassic() then
+        mUI:Skin(ItemTextScrollFrame)
+        mUI:Skin(ItemTextFrameInset)
+        mUI:Skin(ItemTextFrameInset.NineSlice)
+    end
 end
 
 function Theme:LFG()
@@ -922,6 +1284,8 @@ function Theme:LFG()
     mUI:Skin(LFGListFrame.ApplicationViewer.NameColumnHeader)
     mUI:Skin(LFGListFrame.ApplicationViewer.RoleColumnHeader)
     mUI:Skin(LFGListFrame.ApplicationViewer.ItemLevelColumnHeader)
+    mUI:Skin(ScenarioFinderFrameInset)
+    mUI:Skin(ScenarioFinderFrameInset.NineSlice)
     mUI:Skin(LFGApplicationViewerRatingColumnHeader)
     mUI:Skin(LFDRoleCheckPopup)
     mUI:Skin(LFDRoleCheckPopup.Border)
@@ -938,16 +1302,38 @@ function Theme:LFG()
         PVEFrameBottomFiligree,
         PVEFrameBlueBg,
     }, true)
+
+    if mUI:IsClassic() then
+        LFGListFrame.CategorySelection.StartGroupButton.RightSeparator:Hide()
+        LFGListFrame.CategorySelection.FindGroupButton.LeftSeparator:Hide()
+        LFGListFrame.SearchPanel.BackButton.RightSeparator:Hide()
+        LFGListFrame.SearchPanel.SignUpButton.LeftSeparator:Hide()
+        ScenarioQueueFrameFindGroupButton_LeftSeparator:Hide()
+        ScenarioQueueFrameFindGroupButton_RightSeparator:Hide()
+        LFDQueueFrameFindGroupButton_LeftSeparator:Hide()
+        LFDQueueFrameFindGroupButton_RightSeparator:Hide()
+        LFGListFrame.EntryCreation.CancelButton.RightSeparator:Hide()
+        LFGListFrame.EntryCreation.ListGroupButton.LeftSeparator:Hide()
+        LFGListFrame.SearchPanel.BackToGroupButton.RightSeparator:Hide()
+    end
 end
 
 function Theme:Loot()
     -- Loot
     mUI:Skin(LootFrame)
     mUI:Skin(LootFrame.NineSlice)
-    mUI:Skin(GroupLootHistoryFrame)
-    mUI:Skin(GroupLootHistoryFrameBg)
-    mUI:Skin(GroupLootHistoryFrame.TitleContainer)
-    mUI:Skin(GroupLootHistoryFrame.NineSlice)
+
+    if mUI:IsClassic() then
+        mUI:Skin(LootFrameInset)
+        mUI:Skin(LootFrameInset.NineSlice)
+    end
+
+    if not mUI:IsClassic() then
+        mUI:Skin(GroupLootHistoryFrame)
+        mUI:Skin(GroupLootHistoryFrameBg)
+        mUI:Skin(GroupLootHistoryFrame.TitleContainer)
+        mUI:Skin(GroupLootHistoryFrame.NineSlice)
+    end
 end
 
 function Theme:Mail()
@@ -958,6 +1344,10 @@ function Theme:Mail()
     mUI:Skin(OpenMailFrame.NineSlice)
     mUI:Skin(MailFrameInset)
     mUI:Skin(MailFrameInset.NineSlice)
+    if mUI:IsClassic() then
+        mUI:Skin(MailEditBoxScrollBar.Background)
+        mUI:Skin(OpenMailScrollFrame)
+    end
     mUI:Skin(OpenMailFrameInset)
     mUI:Skin(OpenMailFrameInset.NineSlice)
     mUI:Skin(SendMailMoneyInset)
@@ -978,12 +1368,14 @@ function Theme:Merchant()
     mUI:Skin(MerchantMoneyBg)
     mUI:Skin(MerchantMoneyInset)
     mUI:Skin(MerchantMoneyInset.NineSlice)
-    mUI:Skin(MerchantExtraCurrencyBg)
-    mUI:Skin(MerchantExtraCurrencyInset.NineSlice)
+    if not mUI:IsClassic() then
+        mUI:Skin(MerchantExtraCurrencyBg)
+        mUI:Skin(MerchantExtraCurrencyInset.NineSlice)
+        mUI:Skin(MerchantRepairItemButton)
+        mUI:Skin(MerchantRepairAllButton)
+    end
     mUI:Skin(MerchantFrameTab1)
     mUI:Skin(MerchantFrameTab2)
-    mUI:Skin(MerchantRepairItemButton)
-    mUI:Skin(MerchantRepairAllButton)
     mUI:Skin(MerchantGuildBankRepairButton)
     mUI:Skin(MerchantSellAllJunkButton)
     mUI:Skin({
@@ -993,21 +1385,48 @@ end
 
 function Theme:Map()
     -- Map
-    mUI:Skin(WorldMapFrame)
-    mUI:Skin(WorldMapFrame.BorderFrame)
-    mUI:Skin(WorldMapFrame.BorderFrame.NineSlice)
-    mUI:Skin(WorldMapFrame.NavBar)
-    mUI:Skin(WorldMapFrame.NavBar.overlay)
-    mUI:Skin({
-        QuestMapFrame.QuestsTab.Background,
-        QuestMapFrame.EventsTab.Background,
-        QuestMapFrame.MapLegendTab.Background
-    }, true)
+    if mUI:IsClassic() then
+        mUI:Skin(WorldMapFrame)
+        mUI:Skin(WorldMapFrame.MiniBorderFrame)
+        mUI:Skin(MinimapZoomIn)
+        mUI:Skin(MinimapZoomOut)
 
-    -- Minimap
-    mUI:Skin({
-        MinimapCompassTexture
-    }, true)
+        -- Minimap
+        mUI:Skin({
+            MinimapBorder,
+            MiniMapTrackingButtonBorder,
+            MiniMapMailBorder,
+            MiniMapLFGFrameBorder
+        }, true)
+    else
+        mUI:Skin(WorldMapFrame)
+        mUI:Skin(WorldMapFrame.BorderFrame)
+        mUI:Skin(WorldMapFrame.BorderFrame.NineSlice)
+        mUI:Skin(WorldMapFrame.NavBar)
+        mUI:Skin(WorldMapFrame.NavBar.overlay)
+        mUI:Skin({
+            QuestMapFrame.QuestsTab.Background,
+            QuestMapFrame.EventsTab.Background,
+            QuestMapFrame.MapLegendTab.Background
+        }, true)
+
+        -- Minimap
+        mUI:Skin({
+            MinimapCompassTexture
+        }, true)
+    end
+end
+
+function Theme:Reforging()
+    -- Reforging
+    if ReforgingFrame then
+        mUI:Skin(ReforgingFrame)
+        mUI:Skin(ReforgingFrame.NineSlice)
+        mUI:Skin(ReforgingFrameButtonFrame)
+
+        ReforgingFrameRestoreButton_LeftSeparator:Hide()
+        ReforgingFrameRestoreButton_RightSeparator:Hide()
+    end
 end
 
 function Theme:ItemUpgrade()
@@ -1031,17 +1450,30 @@ function Theme:Petition()
     mUI:Skin(PetitionFrameInset)
     mUI:Skin(PetitionFrameInset.NineSlice)
 
-    select(5, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
-    select(6, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
-    select(7, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
-    select(8, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
-    select(9, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
-    select(9, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
-    select(10, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
-    select(11, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
-    select(12, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
-    select(13, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
-    select(19, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+    if mUI:IsClassic() then
+        PetitionFrameCharterTitle:SetTextColor(0.9, 0.9, 0.9)
+        PetitionFrameCharterName:SetTextColor(0.9, 0.9, 0.9)
+        PetitionFrameMasterTitle:SetTextColor(0.9, 0.9, 0.9)
+        PetitionFrameMasterName:SetTextColor(0.9, 0.9, 0.9)
+        PetitionFrameMemberTitle:SetTextColor(0.9, 0.9, 0.9)
+        PetitionFrameMemberName1:SetTextColor(0.9, 0.9, 0.9)
+        PetitionFrameMemberName2:SetTextColor(0.9, 0.9, 0.9)
+        PetitionFrameMemberName3:SetTextColor(0.9, 0.9, 0.9)
+        PetitionFrameMemberName4:SetTextColor(0.9, 0.9, 0.9)
+        PetitionFrameInstructions:SetTextColor(0.9, 0.9, 0.9)
+    else
+        select(5, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+        select(6, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+        select(7, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+        select(8, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+        select(9, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+        select(9, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+        select(10, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+        select(11, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+        select(12, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+        select(13, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+        select(19, PetitionFrame:GetRegions()):SetTextColor(0.9, 0.9, 0.9)
+    end
 end
 
 function Theme:Quest()
@@ -1050,19 +1482,35 @@ function Theme:Quest()
     mUI:Skin(QuestFrame.NineSlice)
     mUI:Skin(QuestFrameInset)
     mUI:Skin(QuestFrameInset.NineSlice)
-    mUI:Skin(QuestLogPopupDetailFrame)
-    mUI:Skin(QuestLogPopupDetailFrame.NineSlice)
-    mUI:Skin(ObjectiveTrackerFrame)
-    mUI:Skin(ObjectiveTrackerFrame.Header)
-    mUI:Skin(AchievementObjectiveTracker.Header)
-    mUI:Skin(CampaignQuestObjectiveTracker)
-    mUI:Skin(CampaignQuestObjectiveTracker.Header)
-    mUI:Skin(QuestObjectiveTracker)
-    mUI:Skin(QuestObjectiveTracker.Header)
-    mUI:Skin(ProfessionsRecipeTracker)
-    mUI:Skin(ProfessionsRecipeTracker.Header)
-    mUI:Skin(ScenarioObjectiveTracker)
-    mUI:Skin(ScenarioObjectiveTracker.Header)
+    if mUI:IsClassic() then
+        mUI:Skin(QuestLogFrame)
+        mUI:Skin(QuestLogFrame.NineSlice)
+        mUI:Skin(QuestLogFrameInset)
+        mUI:Skin(QuestLogFrameInset.NineSlice)
+        mUI:Skin(QuestLogDetailFrame)
+        mUI:Skin(QuestLogDetailFrame.NineSlice)
+        mUI:Skin(QuestLogDetailFrameInset)
+        mUI:Skin(QuestLogDetailFrameInset.NineSlice)
+        mUI:Skin(QuestLogListScrollFrame)
+        mUI:Skin(QuestLogDetailScrollFrame)
+        mUI:Skin(QuestRewardScrollFrame)
+        mUI:Skin(QuestDetailScrollFrame)
+        mUI:Skin(QuestModelScene)
+    else
+        mUI:Skin(QuestLogPopupDetailFrame)
+        mUI:Skin(QuestLogPopupDetailFrame.NineSlice)
+        mUI:Skin(ObjectiveTrackerFrame)
+        mUI:Skin(ObjectiveTrackerFrame.Header)
+        mUI:Skin(AchievementObjectiveTracker.Header)
+        mUI:Skin(CampaignQuestObjectiveTracker)
+        mUI:Skin(CampaignQuestObjectiveTracker.Header)
+        mUI:Skin(QuestObjectiveTracker)
+        mUI:Skin(QuestObjectiveTracker.Header)
+        mUI:Skin(ProfessionsRecipeTracker)
+        mUI:Skin(ProfessionsRecipeTracker.Header)
+        mUI:Skin(ScenarioObjectiveTracker)
+        mUI:Skin(ScenarioObjectiveTracker.Header)
+    end
     mUI:Skin({
         QuestNPCModelTopBorder,
         QuestNPCModelRightBorder,
@@ -1094,6 +1542,17 @@ function Theme:Raidframe()
     -- Raidframe
     mUI:Skin(CompactRaidFrameManager)
     mUI:Skin(CompactPartyFrameBorderFrame)
+
+    if mUI:IsClassic() then
+        mUI:Skin(CompactRaidFrameContainerBorderFrame)
+
+        for i = 1, 40 do
+            mUI:Skin({
+                _G["CompactRaidFrame" .. i .. "HorizDivider"],
+                _G["CompactPartyFrameMember" .. i .. "HorizDivider"]
+            }, true)
+        end
+    end
 end
 
 function Theme:Trade()
@@ -1123,55 +1582,67 @@ end
 function Theme:ClassBars()
     -- Class Bars
     if (playerClass == "ROGUE") then
-        if not Theme:IsHooked(RogueComboPointBarFrame, "OnUpdate") then
-            Theme:HookScript(RogueComboPointBarFrame, "OnUpdate", Theme.ClassBar)
+        if (not Theme:IsHooked(RogueComboPointBarFrame, "OnUpdate")) and (not mUI:IsClassic()) then
+            Theme:SecureHookScript(RogueComboPointBarFrame, "OnUpdate", Theme.ClassBar)
         end
 
         Theme:ClassBar()
     elseif (playerClass == "MAGE") then
-        if not Theme:IsHooked(MageArcaneChargesFrame, "OnUpdate") then
-            Theme:HookScript(MageArcaneChargesFrame, "OnUpdate", Theme.ClassBar)
+        if (not Theme:IsHooked(MageArcaneChargesFrame, "OnUpdate")) and (not mUI:IsClassic()) then
+            Theme:SecureHookScript(MageArcaneChargesFrame, "OnUpdate", Theme.ClassBar)
         end
 
         Theme:ClassBar()
     elseif (playerClass == "WARLOCK") then
-        if not Theme:IsHooked(WarlockPowerFrame, "OnUpdate") then
-            Theme:HookScript(WarlockPowerFrame, "OnUpdate", Theme.ClassBar)
+        if (not Theme:IsHooked(WarlockPowerFrame, "OnUpdate")) and (not mUI:IsClassic()) then
+            Theme:SecureHookScript(WarlockPowerFrame, "OnUpdate", Theme.ClassBar)
         end
 
         Theme:ClassBar()
     elseif (playerClass == "DRUID") then
-        if not Theme:IsHooked(DruidComboPointBarFrame, "OnUpdate") then
-            Theme:HookScript(DruidComboPointBarFrame, "OnUpdate", Theme.ClassBar)
+        if (not Theme:IsHooked(DruidComboPointBarFrame, "OnUpdate")) and (not mUI:IsClassic()) then
+            Theme:SecureHookScript(DruidComboPointBarFrame, "OnUpdate", Theme.ClassBar)
         end
 
         Theme:ClassBar()
     elseif (playerClass == "MONK") then
-        if not Theme:IsHooked(MonkHarmonyBarFrame, "OnUpdate") then
-            Theme:HookScript(MonkHarmonyBarFrame, "OnUpdate", Theme.ClassBar)
+        if (not Theme:IsHooked(MonkHarmonyBarFrame, "OnUpdate")) and (not mUI:IsClassic()) then
+            Theme:SecureHookScript(MonkHarmonyBarFrame, "OnUpdate", Theme.ClassBar)
         end
 
         Theme:ClassBar()
     elseif (playerClass == "DEATHKNIGHT") then
-        if not Theme:IsHooked(RuneFrame, "OnUpdate") then
-            Theme:HookScript(RuneFrame, "OnUpdate", Theme.ClassBar)
+        if (not Theme:IsHooked(RuneFrame, "OnUpdate")) then
+            Theme:SecureHookScript(RuneFrame, "OnUpdate", Theme.ClassBar)
         end
     elseif (playerClass == "EVOKER") then
-        if not Theme:IsHooked(EssencePlayerFrame, "OnUpdate") then
-            Theme:HookScript(EssencePlayerFrame, "OnUpdate", Theme.ClassBar)
+        if (not Theme:IsHooked(EssencePlayerFrame, "OnUpdate")) and (not mUI:IsClassic()) then
+            Theme:SecureHookScript(EssencePlayerFrame, "OnUpdate", Theme.ClassBar)
         end
 
         Theme:ClassBar()
     elseif (playerClass == "PALADIN") then
         Theme:ClassBar()
+    elseif (playerClass == "PRIEST" and mUI:IsClassic()) then
+        Theme:ClassBar()
     end
 
-    if (playerClass == "SHAMAN" or playerClass == "PALADIN" or playerClass == "PRIEST" or playerClass == "DRUID") then
+    if (playerClass == "SHAMAN" or playerClass == "PALADIN" or (playerClass == "PRIEST" and not mUI:IsClassic()) or playerClass == "DRUID") then
         -- Totem Bar
-        if not Theme:IsHooked(TotemFrame, "OnUpdate") then
-            Theme:HookScript(TotemFrame, "OnUpdate", function(frame)
-                for totem, _ in frame.totemPool:EnumerateActive() do
-                    mUI:Skin({ totem.Border }, true)
+        if (not Theme:IsHooked(TotemFrame, "OnUpdate")) then
+            Theme:SecureHookScript(TotemFrame, "OnUpdate", function(frame)
+                if mUI:IsClassic() then
+                    local borderFrame1 = select(2, TotemFrameTotem1:GetChildren())
+                    local borderFrame2 = select(2, TotemFrameTotem2:GetChildren())
+                    local borderFrame3 = select(2, TotemFrameTotem3:GetChildren())
+
+                    mUI:Skin(borderFrame1)
+                    mUI:Skin(borderFrame2)
+                    mUI:Skin(borderFrame3)
+                else
+                    for totem, _ in frame.totemPool:EnumerateActive() do
+                        mUI:Skin({ totem.Border }, true)
+                    end
                 end
             end)
         end
@@ -1182,41 +1653,79 @@ end
 
 function Theme:Unitframes()
     -- Unitframes
-    mUI:Skin(PlayerFrame.PlayerFrameContainer)
-    mUI:Skin(TargetFrame.TargetFrameContainer)
-    mUI:Skin(FocusFrame.TargetFrameContainer)
-    mUI:Skin(Boss1TargetFrame.TargetFrameContainer)
-    mUI:Skin(Boss2TargetFrame.TargetFrameContainer)
-    mUI:Skin(Boss3TargetFrame.TargetFrameContainer)
-    mUI:Skin(Boss4TargetFrame.TargetFrameContainer)
-    mUI:Skin(Boss5TargetFrame.TargetFrameContainer)
-    mUI:Skin({
-        PetFrameTexture,
-        TargetFrameToT.FrameTexture,
-        FocusFrameToT.FrameTexture,
-        PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PlayerPortraitCornerIcon
-    }, true)
+    if mUI:IsClassic() then
+        mUI:Skin({
+            PlayerFrameTexture,
+            PlayerFrameVehicleTexture,
+            PetFrameTexture,
+            TargetFrameTextureFrameTexture,
+            FocusFrameTextureFrameTexture,
+            Boss1TargetFrameTextureFrameTexture,
+            Boss2TargetFrameTextureFrameTexture,
+            Boss3TargetFrameTextureFrameTexture,
+            Boss4TargetFrameTextureFrameTexture,
+            Boss5TargetFrameTextureFrameTexture,
+            TargetFrameToTTextureFrameTexture,
+            FocusFrameToTTextureFrameTexture,
+        }, true)
+        mUI:Skin(PlayerFrameAlternateManaBar)
+    else
+        mUI:Skin(PlayerFrame.PlayerFrameContainer)
+        mUI:Skin(TargetFrame.TargetFrameContainer)
+        mUI:Skin(FocusFrame.TargetFrameContainer)
+        mUI:Skin(Boss1TargetFrame.TargetFrameContainer)
+        mUI:Skin(Boss2TargetFrame.TargetFrameContainer)
+        mUI:Skin(Boss3TargetFrame.TargetFrameContainer)
+        mUI:Skin(Boss4TargetFrame.TargetFrameContainer)
+        mUI:Skin(Boss5TargetFrame.TargetFrameContainer)
+        mUI:Skin({
+            PetFrameTexture,
+            TargetFrameToT.FrameTexture,
+            FocusFrameToT.FrameTexture,
+            PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PlayerPortraitCornerIcon
+        }, true)
+    end
 end
 
 function Theme:Castbars()
     -- Castbars
-    mUI:Skin({
-        PlayerCastingBarFrame.Background,
-        TargetFrameSpellBar.Background,
-        TargetFrameSpellBar.Border,
-        FocusFrameSpellBar.Background,
-        FocusFrameSpellBar.Border,
-        Boss1TargetFrameSpellBar.Background,
-        Boss1TargetFrameSpellBar.Border,
-        Boss2TargetFrameSpellBar.Background,
-        Boss2TargetFrameSpellBar.Border,
-        Boss3TargetFrameSpellBar.Background,
-        Boss3TargetFrameSpellBar.Border,
-        Boss4TargetFrameSpellBar.Background,
-        Boss4TargetFrameSpellBar.Border,
-        Boss5TargetFrameSpellBar.Background,
-        Boss5TargetFrameSpellBar.Border
-    }, true)
+    if mUI:IsClassic() then
+        mUI:Skin({
+            CastingBarFrame.Border,
+            TargetFrameSpellBar.Border,
+            TargetFrameSpellBar.BorderShield,
+            FocusFrameSpellBar.Border,
+            FocusFrameSpellBar.BorderShield,
+            Boss1TargetFrameSpellBar.Border,
+            Boss1TargetFrameSpellBar.BorderShield,
+            Boss2TargetFrameSpellBar.Border,
+            Boss2TargetFrameSpellBar.BorderShield,
+            Boss3TargetFrameSpellBar.Border,
+            Boss3TargetFrameSpellBar.BorderShield,
+            Boss4TargetFrameSpellBar.Border,
+            Boss4TargetFrameSpellBar.BorderShield,
+            Boss5TargetFrameSpellBar.Border,
+            Boss5TargetFrameSpellBar.BorderShield
+        }, true)
+    else
+        mUI:Skin({
+            PlayerCastingBarFrame.Background,
+            TargetFrameSpellBar.Background,
+            TargetFrameSpellBar.Border,
+            FocusFrameSpellBar.Background,
+            FocusFrameSpellBar.Border,
+            Boss1TargetFrameSpellBar.Background,
+            Boss1TargetFrameSpellBar.Border,
+            Boss2TargetFrameSpellBar.Background,
+            Boss2TargetFrameSpellBar.Border,
+            Boss3TargetFrameSpellBar.Background,
+            Boss3TargetFrameSpellBar.Border,
+            Boss4TargetFrameSpellBar.Background,
+            Boss4TargetFrameSpellBar.Border,
+            Boss5TargetFrameSpellBar.Background,
+            Boss5TargetFrameSpellBar.Border
+        }, true)
+    end
 
     -- Castbar Icon Skinning
     for castbar in pairs(Theme.castbarIcons) do
@@ -1225,8 +1734,10 @@ function Theme:Castbars()
 end
 
 function Theme:Auras()
-    -- BuffFrame Expand/Collapse Button
-    mUI:Skin(BuffFrame.CollapseAndExpandButton)
+    if not mUI:IsClassic() then
+        -- BuffFrame Expand/Collapse Button
+        mUI:Skin(BuffFrame.CollapseAndExpandButton)
+    end
 
     -- Aura Skinning
     for button, type in pairs(Theme.aurabuttons) do
@@ -1237,6 +1748,10 @@ function Theme:Auras()
 end
 
 function Theme:Frames()
+    -- Bnet Toast
+    Theme.blacklist[BNToastFrameIconTexture] = true
+    mUI:Skin(BNToastFrame)
+
     -- Game Menu
     mUI:Skin(GameMenuFrame)
     mUI:Skin(GameMenuFrame.Header)
@@ -1244,11 +1759,13 @@ function Theme:Frames()
 
     -- StaticPopups
     mUI:Skin(StaticPopup1)
-    mUI:Skin(StaticPopup1.Border)
     mUI:Skin(StaticPopup2)
-    mUI:Skin(StaticPopup2.Border)
     mUI:Skin(StaticPopup3)
-    mUI:Skin(StaticPopup3.Border)
+    if not mUI:IsClassic() then
+        mUI:Skin(StaticPopup1.Border)
+        mUI:Skin(StaticPopup2.Border)
+        mUI:Skin(StaticPopup3.Border)
+    end
     mUI:Skin({
         StaticPopup1EditBoxLeft,
         StaticPopup1EditBoxMid,
@@ -1261,9 +1778,11 @@ function Theme:Frames()
         StaticPopup3EditBoxRight,
     }, true)
 
-    -- EditMode
-    mUI:Skin(EditModeManagerFrame)
-    mUI:Skin(EditModeManagerFrame.Border)
+    if not mUI:IsClassic() then
+        -- EditMode
+        mUI:Skin(EditModeManagerFrame)
+        mUI:Skin(EditModeManagerFrame.Border)
+    end
 
     -- Vehicle Seat
     mUI:Skin(VehicleSeatIndicator)
@@ -1273,7 +1792,9 @@ function Theme:Frames()
     mUI:Skin(ReportFrame.Border)
 
     -- LFG Ready/Invite Dialogs
-    mUI:Skin(ReadyStatus.Border)
+    if not mUI:IsClassic() then
+        mUI:Skin(ReadyStatus.Border)
+    end
     mUI:Skin(LFGDungeonReadyStatus.Border)
     mUI:Skin(LFGDungeonReadyDialog)
     mUI:Skin(LFGDungeonReadyDialog.Border)
@@ -1287,10 +1808,12 @@ function Theme:Frames()
     mUI:Skin(LFGInvitePopup.Border)
 
     -- PVP Scoreboard
-    mUI:Skin(PVPMatchScoreboard.Content)
-    mUI:Skin(PVPScoreboardTab1)
-    mUI:Skin(PVPScoreboardTab2)
-    mUI:Skin(PVPScoreboardTab3)
+    if not mUI:IsClassic() then
+        mUI:Skin(PVPMatchScoreboard.Content)
+        mUI:Skin(PVPScoreboardTab1)
+        mUI:Skin(PVPScoreboardTab2)
+        mUI:Skin(PVPScoreboardTab3)
+    end
 
     -- ReadyCheck
     mUI:Skin(ReadyCheckListenerFrame)
@@ -1299,7 +1822,6 @@ end
 
 function Theme:Update()
     Theme:Achievements()
-    Theme:CraftingOrders()
     Theme:AuctionHouse()
     Theme:AlliedRaces()
     Theme:Archaeology()
@@ -1318,6 +1840,7 @@ function Theme:Update()
     Theme:PVP()
     Theme:Macros()
     Theme:Scrapping()
+    Theme:Spellbook()
     Theme:ProfessionsBook()
     Theme:PlayerSpells()
     Theme:TimeManager()
@@ -1338,6 +1861,7 @@ function Theme:Update()
     Theme:Mail()
     Theme:Merchant()
     Theme:Map()
+    Theme:Reforging()
     Theme:ItemUpgrade()
     Theme:Petition()
     Theme:Quest()

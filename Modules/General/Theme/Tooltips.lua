@@ -40,11 +40,17 @@ function Theme:StyleTooltip(frame)
         end
         if frame.NineSlice then
             if Theme.db.theme == "Dark" then
-                frame.NineSlice:SetBorderColor(unpack(Theme.backdrop.borderColor))
+                if frame.NineSlice.SetBorderColor then
+                    frame.NineSlice:SetBorderColor(unpack(Theme.backdrop.borderColor))
+                end
             elseif Theme.db.theme == "Disabled" then
-                frame.NineSlice:SetBorderColor(1, 1, 1, 1)
+                if frame.NineSlice.SetBorderColor then
+                    frame.NineSlice:SetBorderColor(1, 1, 1, 1)
+                end
             else
-                frame.NineSlice:SetBorderColor(unpack(mUI:Color(0.35, 1)))
+                if frame.NineSlice.SetBorderColor then
+                    frame.NineSlice:SetBorderColor(unpack(mUI:Color(0.35, 1)))
+                end
             end
         end
     end
