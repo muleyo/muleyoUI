@@ -1,6 +1,7 @@
 local Reputationcolor = mUI:NewModule("mUI.Modules.Unitframes.Reputationcolor")
 
 function Reputationcolor:OnInitialize()
+    if mUI:IsClassic() then return end
     -- Load Database
     Reputationcolor.db = mUI.db.profile.unitframes
     Reputationcolor.frame = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain
@@ -62,6 +63,7 @@ function Reputationcolor:OnInitialize()
 end
 
 function Reputationcolor:OnEnable()
+    if mUI:IsClassic() then return end
     if Reputationcolor.db.reputationcolor then
         Reputationcolor:Update("hide", true)
     elseif Reputationcolor.db.playerrepcolor then
@@ -70,6 +72,7 @@ function Reputationcolor:OnEnable()
 end
 
 function Reputationcolor:OnDisable()
+    if mUI:IsClassic() then return end
     if not (Reputationcolor.db.reputationcolor and Reputationcolor.db.playerrepcolor) then
         Reputationcolor:Update("all", "disabled")
     elseif not Reputationcolor.db.reputationcolor then
