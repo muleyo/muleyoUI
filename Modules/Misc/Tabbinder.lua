@@ -84,7 +84,7 @@ function Tabbinder:OnEnable()
     Tabbinder.frame:RegisterEvent("DUEL_REQUESTED")
     Tabbinder.frame:RegisterEvent("DUEL_FINISHED")
     Tabbinder.frame:RegisterEvent("CHAT_MSG_SYSTEM")
-    Tabbinder:HookScript(Tabbinder.frame, "OnEvent", Tabbinder.Update)
+    Tabbinder:SecureHookScript(Tabbinder.frame, "OnEvent", Tabbinder.Update)
 end
 
 function Tabbinder:OnDisable()
