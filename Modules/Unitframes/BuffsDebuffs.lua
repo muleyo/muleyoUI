@@ -27,13 +27,25 @@ function BuffsDebuffs:OnInitialize()
 end
 
 function BuffsDebuffs:OnEnable()
-    BuffsDebuffs:SecureHook("TargetFrame_UpdateBuffAnchor", function(_, aura)
-        self:UpdateSize(aura, "buff")
-    end)
+    if mUI:IsClassic() then
+        BuffsDebuffs:SecureHook("TargetFrame_UpdateAuraPositions", function(_, type, numAuras)
+            for i = 1, numAuras do
+                if type == "TargetFrameBuff" or type == "FocusFrameBuff" then
+                    BuffsDebuffs:UpdateSize(_G[type .. i], "buff")
+                elseif type == "TargetFrameDebuff" or type == "FocusFrameDebuff" then
+                    BuffsDebuffs:UpdateSize(_G[type .. i], "debuff")
+                end
+            end
+        end)
+    else
+        BuffsDebuffs:SecureHook("TargetFrame_UpdateBuffAnchor", function(_, aura)
+            self:UpdateSize(aura, "buff")
+        end)
 
-    BuffsDebuffs:SecureHook("TargetFrame_UpdateDebuffAnchor", function(_, aura)
-        BuffsDebuffs:UpdateSize(aura, "debuff")
-    end)
+        BuffsDebuffs:SecureHook("TargetFrame_UpdateDebuffAnchor", function(_, aura)
+            BuffsDebuffs:UpdateSize(aura, "debuff")
+        end)
+    end
 end
 
 function BuffsDebuffs:OnDisable()
