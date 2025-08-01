@@ -7,34 +7,67 @@ function Names:OnInitialize()
     function Names:SetNames(nameplate)
         if not nameplate or nameplate:IsForbidden() then return end
         if nameplate.unit:find('nameplate%d') then
-            if ShouldShowName(nameplate) and nameplate.optionTable.colorNameBySelection then
-                -- Classcolor Player Names
-                if Names.db.classcolor then
-                    if UnitIsPlayer(nameplate.unit) then
-                        local _, class = UnitClass(nameplate.unit)
-                        local color = RAID_CLASS_COLORS[class]
-                        if not Names.color then Names.color = nameplate.name:GetVertexColor() end
-                        nameplate.name:SetVertexColor(color.r, color.g, color.b)
+            if mUI:IsClassic() then
+                if ShouldShowName(nameplate) then
+                    -- Classcolor Player Names
+                    if Names.db.classcolor then
+                        if UnitIsPlayer(nameplate.unit) then
+                            local _, class = UnitClass(nameplate.unit)
+                            local color = RAID_CLASS_COLORS[class]
+                            nameplate.name:SetVertexColor(color.r, color.g, color.b)
+                        else
+                            nameplate.name:SetVertexColor(1, 1, 1)
+                        end
                     else
                         nameplate.name:SetVertexColor(1, 1, 1)
                     end
-                else
-                    nameplate.name:SetVertexColor(1, 1, 1)
-                end
 
-                -- Hide Servername
-                if Names.db.servername then
-                    if UnitIsPlayer(nameplate.unit) then
-                        local name = UnitName(nameplate.unit)
-                        nameplate.name:SetText(name)
+                    -- Hide Servername
+                    if Names.db.servername then
+                        if UnitIsPlayer(nameplate.unit) then
+                            local name = UnitName(nameplate.unit)
+                            nameplate.name:SetText(name)
+                        end
+                    end
+
+                    if Names.db.arena and IsActiveBattlefieldArena() then
+                        for i = 1, 3 do
+                            if UnitIsUnit(nameplate.unit, "arena" .. i) then
+                                nameplate.name:SetText("arena" .. i)
+                                break
+                            end
+                        end
                     end
                 end
+            else
+                if ShouldShowName(nameplate) and nameplate.optionTable.colorNameBySelection then
+                    -- Classcolor Player Names
+                    if Names.db.classcolor then
+                        if UnitIsPlayer(nameplate.unit) then
+                            local _, class = UnitClass(nameplate.unit)
+                            local color = RAID_CLASS_COLORS[class]
+                            nameplate.name:SetVertexColor(color.r, color.g, color.b)
+                        else
+                            nameplate.name:SetVertexColor(1, 1, 1)
+                        end
+                    else
+                        nameplate.name:SetVertexColor(1, 1, 1)
+                    end
 
-                if Names.db.arena and IsActiveBattlefieldArena() then
-                    for i = 1, 3 do
-                        if UnitIsUnit(nameplate.unit, "arena" .. i) then
-                            nameplate.name:SetText("arena" .. i)
-                            break
+                    -- Hide Servername
+                    if Names.db.servername then
+                        if UnitIsPlayer(nameplate.unit) then
+                            local name = UnitName(nameplate.unit)
+                            nameplate.name:SetText(name)
+                        end
+                    end
+
+                    if Names.db.arena and IsActiveBattlefieldArena() then
+                        for i = 1, 3 do
+                            if UnitIsUnit(nameplate.unit, "arena" .. i) then
+                                nameplate.name:SetText("arena" .. i)
+                                break
+                            end
                         end
                     end
                 end
