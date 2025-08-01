@@ -72,6 +72,41 @@ function Font:OnInitialize()
 
         -- Set Font Size for Community Chat
         CommunitiesFrame.Chat.MessageFrame:SetFont(Font.db.fontpath, 14, "OUTLINE")
+
+        if mUI:IsClassic() then
+            -- Player Status Texts
+            PlayerFrameHealthBarText:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+            PlayerFrameHealthBarTextLeft:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+            PlayerFrameHealthBarTextRight:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+            PlayerFrameManaBarText:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+            PlayerFrameManaBarTextLeft:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+            PlayerFrameManaBarTextRight:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+            PlayerFrameAlternateManaBarText:SetFont(Font.db.fontpath, 10, "THINOUTLINE")
+
+            -- Target Status Texts
+            TargetFrameTextureFrame.HealthBarTextLeft:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+            TargetFrameTextureFrame.HealthBarTextRight:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+            TargetFrameTextureFrame.HealthBarText:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+            TargetFrameTextureFrame.ManaBarTextLeft:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+            TargetFrameTextureFrame.ManaBarTextRight:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+            TargetFrameTextureFrame.ManaBarText:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+
+            -- Focus Status Texts
+            FocusFrameTextureFrame.HealthBarTextLeft:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+            FocusFrameTextureFrame.HealthBarTextRight:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+            FocusFrameTextureFrame.HealthBarText:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+            FocusFrameTextureFrame.ManaBarTextLeft:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+            FocusFrameTextureFrame.ManaBarTextRight:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+            FocusFrameTextureFrame.ManaBarText:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+
+            -- Pet Status Texts
+            PetFrameHealthBarText:SetFont(Font.db.fontpath, 9, "THINOUTLINE")
+            PetFrameHealthBarTextLeft:SetFont(Font.db.fontpath, 9, "THINOUTLINE")
+            PetFrameHealthBarTextRight:SetFont(Font.db.fontpath, 9, "THINOUTLINE")
+            PetFrameManaBarText:SetFont(Font.db.fontpath, 9, "THINOUTLINE")
+            PetFrameManaBarTextLeft:SetFont(Font.db.fontpath, 9, "THINOUTLINE")
+            PetFrameManaBarTextRight:SetFont(Font.db.fontpath, 9, "THINOUTLINE")
+        end
     end
 
     if Font.db.font ~= "None" then
