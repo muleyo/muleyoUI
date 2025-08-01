@@ -19,13 +19,15 @@ function RF_Solo:OnInitialize()
 end
 
 function RF_Solo:OnEnable()
+    if mUI:IsClassic() then return end
     RF_Solo:SecureHook(CompactPartyFrame, "UpdateVisibility", RF_Solo.Update)
-    RF_Solo:HookScript(RF_Solo.frame, "OnEvent", RF_Solo.Update)
+    RF_Solo:SecureHookScript(RF_Solo.frame, "OnEvent", RF_Solo.Update)
     RF_Solo:Update()
     PartyFrame:UpdatePaddingAndLayout()
 end
 
 function RF_Solo:OnDisable()
+    if mUI:IsClassic() then return end
     if IsInGroup() then return end
     RF_Solo.frame:UnregisterAllEvents()
     RF_Solo:UnhookAll()
