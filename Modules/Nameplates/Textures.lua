@@ -27,16 +27,23 @@ function Textures:OnInitialize()
 
         -- Target Arrows
         if UnitExists("target") and UnitIsUnit(nameplate.unit, "target") then
-            Textures.arrows.left:SetPoint("LEFT", nameplate.healthBar, "LEFT", -16, 0)
-            Textures.arrows.right:SetPoint("RIGHT", nameplate.healthBar, "RIGHT", 16, 0)
+            if mUI:IsClassic() then
+                Textures.arrows.left:SetPoint("LEFT", nameplate.healthBar, "LEFT", -16, 0)
+                Textures.arrows.right:SetPoint("RIGHT", nameplate.healthBar, "RIGHT", 32, 0)
+            else
+                Textures.arrows.left:SetPoint("LEFT", nameplate.healthBar, "LEFT", -16, 0)
+                Textures.arrows.right:SetPoint("RIGHT", nameplate.healthBar, "RIGHT", 16, 0)
+            end
 
             Textures.arrows:Show()
         elseif not UnitExists("target") then
             Textures.arrows:Hide()
         end
 
-        -- Hide Classification
-        nameplate.ClassificationFrame:SetAlpha(0)
+        if not mUI:IsClassic() then
+            -- Hide Classification
+            nameplate.ClassificationFrame:SetAlpha(0)
+        end
 
         if nameplate.unit then
             if Textures.db.texture == "None" then
@@ -86,13 +93,15 @@ function Textures:OnInitialize()
                 end
             end
 
-            -- Move Debuff Anchor
-            if nameplate.BuffFrame and C_CVar.GetCVar("UnitNameNPC") == "1" then
-                nameplate.BuffFrame:ClearAllPoints()
-                nameplate.BuffFrame:SetPoint("TOPLEFT", nameplate.healthBar, "TOPLEFT", 0, -5)
-            elseif nameplate.BuffFrame and C_CVar.GetCVar("UnitNameNPC") == "0" then
-                nameplate.BuffFrame:ClearAllPoints()
-                nameplate.BuffFrame:SetPoint("TOPLEFT", nameplate.healthBar, "TOPLEFT", 0, 17.5)
+            if not mUI:IsClassic() then
+                -- Move Debuff Anchor
+                if nameplate.BuffFrame and C_CVar.GetCVar("UnitNameNPC") == "1" then
+                    nameplate.BuffFrame:ClearAllPoints()
+                    nameplate.BuffFrame:SetPoint("TOPLEFT", nameplate.healthBar, "TOPLEFT", 0, -5)
+                elseif nameplate.BuffFrame and C_CVar.GetCVar("UnitNameNPC") == "0" then
+                    nameplate.BuffFrame:ClearAllPoints()
+                    nameplate.BuffFrame:SetPoint("TOPLEFT", nameplate.healthBar, "TOPLEFT", 0, 17.5)
+                end
             end
         end
     end
@@ -116,7 +125,7 @@ function Textures:OnEnable()
     Textures.textures:RegisterEvent("NAME_PLATE_UNIT_ADDED")
     --Textures.textures:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
 
-    Textures:HookScript(Textures.textures, "OnEvent", function(_, event)
+    Textures:SecureHookScript(Textures.textures, "OnEvent", function(_, event)
         Textures:RefreshNameplates()
     end)
 end
