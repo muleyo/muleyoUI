@@ -116,7 +116,7 @@ function Friendlist:OnInitialize()
             local class = friendWrapper.data.class
             local color = RAID_CLASS_COLORS[Friendlist.classes[class]]:GenerateHexColorNoAlpha()
 
-            if level == GetMaxLevelForLatestExpansion() then
+            if level == GetMaxLevelForExpansionLevel(GetExpansionLevel()) then
                 frame:SetText("|cff" .. color .. accountName .. " [" .. characterName .. "]|r")
             else
                 frame:SetText("|cff" .. color .. accountName .. " [" .. characterName .. " - " .. level .. "]|r")
@@ -138,21 +138,38 @@ function Friendlist:OnInitialize()
     end
 
     function Friendlist:Update()
-        local view = FriendsListFrame.ScrollBox:GetView()
-
-        view:RegisterCallback(ScrollBoxListMixin.Event.OnAcquiredFrame, function(_, button, created)
-            if created then
-                if Friendlist.disabled then return end
-                Friendlist:HookButtons({ button })
+        if mUI:IsClassic() then
+            local view = FriendsFrameFriendsScrollFrame
+            local buttons = view.buttons
+            for i = 1, #buttons do
+                local button = buttons[i]
+                if button:IsShown() then
+                    Friendlist:HookButtons({ button })
+                end
             end
-        end)
+        else
+            local view = FriendsListFrame.ScrollBox:GetView()
+
+            view:RegisterCallback(ScrollBoxListMixin.Event.OnAcquiredFrame, function(_, button, created)
+                if created then
+                    if Friendlist.disabled then return end
+                    Friendlist:HookButtons({ button })
+                end
+            end)
+        end
     end
 end
 
 function Friendlist:OnEnable()
-    Friendlist:Update()
     Friendlist.buttons = {}
     Friendlist.disabled = false
+
+    if mUI:IsClassic() then
+        Friendlist:SecureHook("FriendsFrame_UpdateFriends", Friendlist.Update)
+        Friendlist:SecureHook(FriendsFrameFriendsScrollFrame, "update", Friendlist.Update)
+    else
+        Friendlist:Update()
+    end
 end
 
 function Friendlist:OnDisable()
