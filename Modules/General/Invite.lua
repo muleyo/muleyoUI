@@ -29,7 +29,7 @@ end
 function Invite:OnEnable()
     Invite.invite:RegisterEvent("PARTY_INVITE_REQUEST")
     Invite.invite:RegisterEvent("GROUP_ROSTER_UPDATE")
-    Invite:HookScript(Invite.invite, "OnEvent", function(_, event, _, _, _, _, _, _, guid)
+    Invite:SecureHookScript(Invite.invite, "OnEvent", function(_, event, _, _, _, _, _, _, guid)
         Invite:Invite(_, event, _, _, _, _, _, _, guid)
     end)
 end
