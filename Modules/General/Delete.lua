@@ -16,7 +16,7 @@ end
 
 function Delete:OnEnable()
     Delete.delete:RegisterEvent("DELETE_ITEM_CONFIRM")
-    Delete:HookScript(Delete.delete, "OnEvent", function(_, event)
+    Delete:SecureHookScript(Delete.delete, "OnEvent", function(_, event)
         Delete:Update(event)
     end)
 end
