@@ -5,15 +5,23 @@ function Dampening:OnInitialize()
     Dampening.frame = CreateFrame("Frame", "mUIDampeningDisplay", UIParent, "UIWidgetTemplateIconAndText")
 
     -- Variables
-    Dampening.widgetInfo = C_UIWidgetManager.GetWidgetSetInfo(C_UIWidgetManager.GetTopCenterWidgetSetID())
+    if mUI:IsClassic() then
+        Dampening.widgetInfo = C_UIWidgetManager.GetTopCenterWidgetSetID()
+    else
+        Dampening.widgetInfo = C_UIWidgetManager.GetWidgetSetInfo(C_UIWidgetManager.GetTopCenterWidgetSetID())
+    end
     Dampening.spellInfo = C_Spell.GetSpellInfo(110310)
 
-    Dampening.frame:SetPoint(
-        UIWidgetTopCenterContainerFrame.verticalAnchorPoint,
-        UIWidgetTopCenterContainerFrame,
-        UIWidgetTopCenterContainerFrame.verticalRelativePoint,
-        0,
-        Dampening.widgetInfo.verticalPadding)
+    if mUI:IsClassic() then
+        Dampening.frame:SetPoint("CENTER", UIWidgetTopCenterContainerFrame, "CENTER", 0, -5)
+    else
+        Dampening.frame:SetPoint(
+            UIWidgetTopCenterContainerFrame.verticalAnchorPoint,
+            UIWidgetTopCenterContainerFrame,
+            UIWidgetTopCenterContainerFrame.verticalRelativePoint,
+            0,
+            Dampening.widgetInfo.verticalPadding)
+    end
     Dampening.frame.Text:SetParent(Dampening.frame)
     Dampening.frame:SetWidth(200)
     Dampening.frame.Text:SetAllPoints()
@@ -49,7 +57,7 @@ end
 
 function Dampening:OnEnable()
     Dampening.frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-    Dampening:HookScript(Dampening.frame, "OnEvent", Dampening.Update)
+    Dampening:SecureHookScript(Dampening.frame, "OnEvent", Dampening.Update)
 end
 
 function Dampening:OnDisable()
