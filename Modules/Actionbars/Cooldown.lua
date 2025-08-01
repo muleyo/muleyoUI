@@ -12,9 +12,15 @@ function Cooldown:OnInitialize()
 end
 
 function Cooldown:OnEnable()
-    Cooldown:SecureHook("ActionButton_UpdateCooldown", function(button)
-        Cooldown:Update(button)
-    end)
+    if mUI:IsClassic() then
+        Cooldown:SecureHook("ActionButton_OnUpdate", function(button)
+            Cooldown:Update(button)
+        end)
+    else
+        Cooldown:SecureHook("ActionButton_UpdateCooldown", function(button)
+            Cooldown:Update(button)
+        end)
+    end
 end
 
 function Cooldown:OnCooldownDone()
