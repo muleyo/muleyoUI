@@ -9,11 +9,20 @@ function Coords:OnInitialize()
 
     -- Set Framelevel
     Coords.coords:SetFrameLevel(WorldMapFrame.BorderFrame:GetFrameLevel() + 2)
-    Coords.coords:SetFrameStrata(WorldMapFrame.BorderFrame:GetFrameStrata())
+    if mUI:IsClassic() then
+        Coords.coords:SetFrameStrata("HIGH")
+    else
+        Coords.coords:SetFrameStrata(WorldMapFrame.BorderFrame:GetFrameStrata())
+    end
 
     -- Create Fontstrings
     Coords.coords.PlayerText = Coords.coords:CreateFontString(nil, "ARTWORK", "GameFontNormal")
     Coords.coords.MouseText = Coords.coords:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+
+    if mUI:IsClassic() then
+        Coords.coords.PlayerText:SetFont(STANDARD_TEXT_FONT, 8, "OUTLINE")
+        Coords.coords.MouseText:SetFont(STANDARD_TEXT_FONT, 8, "OUTLINE")
+    end
 
     -- Set Points
     Coords.coords.PlayerText:SetPoint("BOTTOM", WorldMapFrame.ScrollContainer, "BOTTOM", 5, 20)
@@ -61,6 +70,7 @@ function Coords:OnInitialize()
             else
                 Coords.coords.MouseText:SetText("|cffff0000" .. "|r")
             end
+
             Coords.int = 0
         end
     end
@@ -68,7 +78,7 @@ end
 
 function Coords:OnEnable()
     Coords.coords:Show()
-    Coords:HookScript(WorldMapFrame, "OnUpdate", function()
+    Coords:SecureHookScript(WorldMapFrame, "OnUpdate", function()
         Coords:Update()
     end)
 end
