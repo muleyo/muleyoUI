@@ -24,6 +24,21 @@ function Functions:OnInitialize()
         print("|cff009cffm|r|cffffd100UI|r:", msg)
     end
 
+    function mUI:IsClassic()
+        return WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
+    end
+
+    -- Update both bars in the OnEvent handler
+    function mUI:abbrNum(num)
+        if num >= 1e6 then
+            return string.format("%.1fM", num / 1e6)
+        elseif num >= 1e3 then
+            return string.format("%.1fK", num / 1e3)
+        else
+            return tostring(num)
+        end
+    end
+
     -- Version check
     local currentVersion = C_AddOns.GetAddOnMetadata("mUI", "version")
 
