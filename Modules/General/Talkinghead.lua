@@ -10,13 +10,17 @@ function TalkingHead:OnInitialize()
 end
 
 function TalkingHead:OnEnable()
-    TalkingHead.talkinghead:RegisterEvent("TALKINGHEAD_REQUESTED")
-    TalkingHead:HookScript(TalkingHead.talkinghead, "OnEvent", function(_, event)
-        TalkingHead:Update(event)
-    end)
+    if not mUI:IsClassic() then
+        TalkingHead.talkinghead:RegisterEvent("TALKINGHEAD_REQUESTED")
+        TalkingHead:SecureHookScript(TalkingHead.talkinghead, "OnEvent", function(_, event)
+            TalkingHead:Update(event)
+        end)
+    end
 end
 
 function TalkingHead:OnDisable()
-    TalkingHead.talkinghead:UnregisterEvent("TALKINGHEAD_REQUESTED")
-    TalkingHead:UnhookAll()
+    if not mUI:IsClassic() then
+        TalkingHead.talkinghead:UnregisterEvent("TALKINGHEAD_REQUESTED")
+        TalkingHead:UnhookAll()
+    end
 end
