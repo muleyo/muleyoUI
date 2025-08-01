@@ -4,88 +4,1390 @@ function EditMode:OnInitialize()
     -- Load Database
     EditMode.db = mUI.db.profile.edit
 
-    -- Load Libraries
-    EditMode.LEM = LibStub('LibEditMode')
-
-    -- Create Holder Frame
-    EditMode.QueueStatus = CreateFrame("Frame", "mUI QueueStatusButton", UIParent)
-    EditMode.QueueStatus:SetSize(QueueStatusButton:GetWidth(), QueueStatusButton:GetHeight())
-    EditMode.QueueStatus:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
-
-    -- Set QueueStatusButton to Holder Frame
-    QueueStatusButton:SetParent(EditMode.QueueStatus)
-    QueueStatusButton:ClearAllPoints()
-    QueueStatusButton:SetPoint("CENTER", EditMode.QueueStatus)
-    EditMode:SecureHook(QueueStatusButton, "SetPoint", function()
-        QueueStatusButton:SetAllPoints(EditMode.QueueStatus)
-    end)
-
-    -- Stats Frame
-    function EditMode:StatsFrame(layout, point, x, y)
-        EditMode.db[layout].statsframe.point = point
-        EditMode.db[layout].statsframe.x = x
-        EditMode.db[layout].statsframe.y = y
-    end
-
-    -- QueueStatusButton
-    function EditMode:QueueIcon(layout, point, x, y)
-        EditMode.db[layout].queueicon.point = point
-        EditMode.db[layout].queueicon.x = x
-        EditMode.db[layout].queueicon.y = y
-    end
-
-    EditMode.LEM:AddFrame(mUI.statsFrame, EditMode.StatsFrame)
-    EditMode.LEM:AddFrame(EditMode.QueueStatus, EditMode.QueueIcon)
-
-    EditMode.LEM:RegisterCallback('layout', function(layout)
-        if not EditMode.db[layout] then
-            EditMode.db[layout] = {
-                ["statsframe"] = {
-                    ["point"] = "BOTTOMLEFT",
-                    ["x"] = 0,
-                    ["y"] = 0
-                },
-                ["queueicon"] = {
-                    ["point"] = "TOPRIGHT",
-                    ["x"] = -166.668701171875,
-                    ["y"] = -164.1666259765625
-                }
+    if mUI:IsClassic() then
+        -- Initialize grid database settings if they don't exist
+        if not EditMode.db.grid then
+            EditMode.db.grid = {
+                enabled = false,
+                size = 32,
+                alpha = 0.3,
+                color = { 1, 1, 1 } -- White color
             }
         end
 
-        mUI.statsFrame:ClearAllPoints()
-        mUI.statsFrame:SetPoint(
-            EditMode.db[layout].statsframe.point,
-            EditMode.db[layout].statsframe.x,
-            EditMode.db[layout].statsframe.y)
+        -- Initialize frame positions and scales database
+        if not EditMode.db.frames then
+            EditMode.db.frames = {}
+        end
 
-        EditMode.QueueStatus:ClearAllPoints()
-        EditMode.QueueStatus:SetPoint(
-            EditMode.db[layout].queueicon.point,
-            EditMode.db[layout].queueicon.x,
-            EditMode.db[layout].queueicon.y)
-
-        QueueStatusButton:SetScale(EditMode.db[layout].queueicon.scale or 0.8)
-    end)
-
-    EditMode.LEM:AddFrameSettings(EditMode.QueueStatus, {
-        {
-            name = 'Button Size',
-            kind = EditMode.LEM.SettingType.Slider,
-            default = 1,
-            get = function(layout)
-                return EditMode.db[layout].queueicon.scale
-            end,
-            set = function(layout, value)
-                EditMode.db[layout].queueicon.scale = value
-                QueueStatusButton:SetScale(value)
-            end,
-            minValue = 0.1,
-            maxValue = 5,
-            valueStep = 0.1,
-            formatter = function(value)
-                return FormatPercentage(value, true)
-            end,
+        EditMode.defaults = {
+            ["mUIStatsFrame"] = {
+                point = "BOTTOMLEFT",
+                relativeTo = "UIParent",
+                relativePoint = "BOTTOMLEFT",
+                xOffset = 0,
+                yOffset = 0,
+                scale = 1
+            },
+            ["mUIBuffFrame"] = {
+                point = "TOPRIGHT",
+                relativeTo = "UIParent",
+                relativePoint = "TOPRIGHT",
+                xOffset = -350,
+                yOffset = -30,
+                scale = 1
+            },
+            ["mUIDebuffFrame"] = {
+                point = "TOPRIGHT",
+                relativeTo = "UIParent",
+                relativePoint = "TOPRIGHT",
+                xOffset = -350,
+                yOffset = -175,
+                scale = 1
+            },
+            ["mUIActionBar1"] = {
+                point = "BOTTOM",
+                relativeTo = "UIParent",
+                relativePoint = "BOTTOM",
+                xOffset = 0,
+                yOffset = 100,
+                scale = 1
+            },
+            ["mUIActionBar2"] = {
+                point = "BOTTOM",
+                relativeTo = "UIParent",
+                relativePoint = "BOTTOM",
+                xOffset = 0,
+                yOffset = 140,
+                scale = 1
+            },
+            ["mUIActionBar3"] = {
+                point = "BOTTOM",
+                relativeTo = "UIParent",
+                relativePoint = "BOTTOM",
+                xOffset = 0,
+                yOffset = 180,
+                scale = 1
+            },
+            ["mUIMicroMenu"] = {
+                point = "BOTTOMRIGHT",
+                relativeTo = "UIParent",
+                relativePoint = "BOTTOMRIGHT",
+                xOffset = 0,
+                yOffset = 0,
+                scale = 1
+            },
+            ["mUIBagBar"] = {
+                point = "BOTTOMRIGHT",
+                relativeTo = "UIParent",
+                relativePoint = "BOTTOMRIGHT",
+                xOffset = -5,
+                yOffset = 40,
+                scale = 1
+            },
+            ["mUIPetActionBar"] = {
+                point = "BOTTOM",
+                relativeTo = "UIParent",
+                relativePoint = "BOTTOM",
+                xOffset = 61,
+                yOffset = 221,
+                scale = 1
+            },
+            ["mUIStanceBar"] = {
+                point = "BOTTOM",
+                relativeTo = "UIParent",
+                relativePoint = "BOTTOM",
+                xOffset = -128.5,
+                yOffset = 221,
+                scale = 1
+            },
+            ["mUIExpBar"] = {
+                point = "BOTTOM",
+                relativeTo = "UIParent",
+                relativePoint = "BOTTOM",
+                xOffset = 0,
+                yOffset = 85,
+                scale = 1
+            },
+            ["mUITooltipFrame"] = {
+                point = "BOTTOMRIGHT",
+                relativeTo = "UIParent",
+                relativePoint = "BOTTOMRIGHT",
+                xOffset = -50,
+                yOffset = 120,
+                scale = 1
+            },
+            ["MainMenuBarVehicleLeaveButton"] = {
+                point = "BOTTOM",
+                relativeTo = "UIParent",
+                relativePoint = "BOTTOM",
+                xOffset = 260,
+                yOffset = 100,
+                scale = 1
+            },
+            ["ExtraActionBarFrame"] = {
+                point = "BOTTOM",
+                relativeTo = "UIParent",
+                relativePoint = "BOTTOM",
+                xOffset = 250,
+                yOffset = 150,
+                scale = 1
+            },
+            ["PlayerPowerBarAlt"] = {
+                point = "TOP",
+                relativeTo = "UIParent",
+                relativePoint = "TOP",
+                xOffset = 0,
+                yOffset = -50,
+                scale = 1
+            },
+            ["CastingBarFrame"] = {
+                point = "CENTER",
+                relativeTo = "UIParent",
+                relativePoint = "CENTER",
+                xOffset = 0,
+                yOffset = -150,
+                scale = 1
+            }
         }
-    })
+
+        -- Common draggable frames for Classic
+        if mUI.db.profile.actionbars.style == "mUI" then
+            EditMode.availableFrames = {
+                -- Unit Frames
+                { frame = "PlayerFrame",                   name = "Player Frame" },
+                { frame = "TargetFrame",                   name = "Target Frame" },
+                { frame = "FocusFrame",                    name = "Focus Frame" },
+
+                -- Cast Bars
+                { frame = "CastingBarFrame",               name = "Player CastBar" },
+
+                -- Custom Buff/Debuff Anchors
+                { frame = "mUIBuffFrame",                  name = "Buffs" },
+                { frame = "mUIDebuffFrame",                name = "Debuffs" },
+
+                -- Custom mUI frames
+                { frame = "mUIActionBar1",                 name = "ActionBar 1" },
+                { frame = "mUIActionBar2",                 name = "ActionBar 2" },
+                { frame = "mUIActionBar3",                 name = "ActionBar 3" },
+                { frame = "mUIMicroMenu",                  name = "Micro Menu" },
+                { frame = "mUIBagBar",                     name = "Bags Bar" },
+                { frame = "mUIPetActionBar",               name = "Pet ActionBar" },
+                { frame = "mUIStanceBar",                  name = "Stance Bar" },
+                { frame = "mUIExpBar",                     name = "Experience Bar" },
+                { frame = "mUIStatsFrame",                 name = "Stats Frame" },
+                { frame = "mUITooltipFrame",               name = "Tooltip" },
+                { frame = "MainMenuBarVehicleLeaveButton", name = "Vehicle Leave Button" },
+                { frame = "ExtraActionBarFrame",           name = "Extra Action Button" },
+            }
+
+            -- ExtraActionButton Frame
+            UIPARENT_MANAGED_FRAME_POSITIONS["ExtraActionBarFrame"] = nil
+            UIPARENT_MANAGED_FRAME_POSITIONS["PlayerPowerBarAlt"] = nil
+            ExtraActionBarFrame:SetParent(UIParent)
+            ExtraActionBarFrame:SetMovable(true)
+        else
+            EditMode.availableFrames = {
+                -- Unit Frames
+                { frame = "PlayerFrame",     name = "Player Frame" },
+                { frame = "TargetFrame",     name = "Target Frame" },
+                { frame = "FocusFrame",      name = "Focus Frame" },
+
+                -- Cast Bars
+                { frame = "CastingBarFrame", name = "Player CastBar" },
+
+                -- Custom Buff/Debuff Anchors
+                { frame = "mUIBuffFrame",    name = "Buffs" },
+                { frame = "mUIDebuffFrame",  name = "Debuffs" },
+
+                -- Custom mUI frames
+                { frame = "mUIStatsFrame",   name = "Stats Frame" },
+
+                -- Tooltip
+                { frame = "mUITooltipFrame", name = "Tooltip" },
+            }
+        end
+
+        -- Tooltip Frame
+        EditMode.tooltip = CreateFrame("Frame", "mUITooltipFrame", UIParent)
+        EditMode.tooltip:SetSize(150, 25)
+        EditMode.tooltip:SetMovable(true)
+        EditMode:SecureHook("GameTooltip_SetDefaultAnchor", function(tooltip, parent)
+            tooltip:SetOwner(parent, "ANCHOR_NONE")
+            tooltip:ClearAllPoints()
+            tooltip:SetPoint("BOTTOMRIGHT", EditMode.tooltip, "BOTTOMRIGHT")
+        end)
+
+        -- Create Buff & Debuff Anchors
+        EditMode.buffFrame = CreateFrame("Frame", "mUIBuffFrame", UIParent)
+        EditMode.debuffFrame = CreateFrame("Frame", "mUIDebuffFrame", UIParent)
+
+        EditMode.buffFrame:SetSize(32, 32)
+        EditMode.debuffFrame:SetSize(32, 32)
+
+        EditMode.buffFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -350, -30)
+        EditMode.debuffFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -350, -175)
+
+        EditMode.buffFrame:SetMovable(true)
+        EditMode.debuffFrame:SetMovable(true)
+
+        -- Only set UserPlaced if frames are movable
+        if EditMode.buffFrame:IsMovable() then
+            EditMode.buffFrame:SetUserPlaced(true)
+        end
+        if EditMode.debuffFrame:IsMovable() then
+            EditMode.debuffFrame:SetUserPlaced(true)
+        end
+
+        -- Create main grid frame
+        EditMode.grid = CreateFrame("Frame", "mUIEditMode", UIParent)
+        EditMode.grid:SetAllPoints(UIParent)
+        EditMode.grid:SetFrameLevel(0)
+        EditMode.grid:Hide()
+
+        -- Table to store grid line textures
+        EditMode.gridLines = {}
+
+        -- Function to create grid lines
+        function EditMode:CreateGridLines()
+            self:ClearGridLines()
+
+            local screenWidth = GetScreenWidth()
+            local screenHeight = GetScreenHeight()
+            local gridSize = self.db.grid.size
+            local alpha = self.db.grid.alpha
+            local color = self.db.grid.color
+
+            -- Calculate center positions
+            local centerX = screenWidth / 2
+            local centerY = screenHeight / 2
+
+            -- Calculate number of lines needed
+            local numVerticalLines = math.ceil(screenWidth / gridSize) + 1
+            local numHorizontalLines = math.ceil(screenHeight / gridSize) + 1
+
+            -- Create vertical lines
+            for i = 0, numVerticalLines do
+                local x = i * gridSize
+                if x <= screenWidth then
+                    local line = self.grid:CreateTexture(nil, "BACKGROUND")
+
+                    -- Check if this is close to the center vertical line
+                    local isCenterLine = math.abs(x - centerX) < (gridSize / 2)
+
+                    if isCenterLine then
+                        -- Center line: brighter, slightly thicker, different color
+                        line:SetColorTexture(1, 0.8, 0, alpha * 2) -- Golden color
+                        line:SetSize(2, screenHeight)              -- 2 pixels thick
+                    else
+                        -- Regular grid line
+                        line:SetColorTexture(color[1], color[2], color[3], alpha)
+                        line:SetSize(1, screenHeight)
+                    end
+
+                    line:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", x, 0)
+                    table.insert(self.gridLines, line)
+                end
+            end
+
+            -- Create horizontal lines
+            for i = 0, numHorizontalLines do
+                local y = i * gridSize
+                if y <= screenHeight then
+                    local line = self.grid:CreateTexture(nil, "BACKGROUND")
+
+                    -- Check if this is close to the center horizontal line
+                    local isCenterLine = math.abs(y - centerY) < (gridSize / 2)
+
+                    if isCenterLine then
+                        -- Center line: brighter, slightly thicker, different color
+                        line:SetColorTexture(1, 0.8, 0, alpha * 2) -- Golden color
+                        line:SetSize(screenWidth, 2)               -- 2 pixels thick
+                    else
+                        -- Regular grid line
+                        line:SetColorTexture(color[1], color[2], color[3], alpha)
+                        line:SetSize(screenWidth, 1)
+                    end
+
+                    line:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, y)
+                    table.insert(self.gridLines, line)
+                end
+            end
+
+            -- Add exact center lines for perfect centering (only if not already created)
+            local hasExactCenterV = false
+            local hasExactCenterH = false
+
+            -- Check if we already have lines close to exact center (same logic as golden lines)
+            for i = 0, numVerticalLines do
+                local x = i * gridSize
+                if math.abs(x - centerX) < (gridSize / 2) then
+                    hasExactCenterV = true
+                    break
+                end
+            end
+
+            for i = 0, numHorizontalLines do
+                local y = i * gridSize
+                if math.abs(y - centerY) < (gridSize / 2) then
+                    hasExactCenterH = true
+                    break
+                end
+            end
+
+            -- Only add exact center lines if they don't already exist
+            if not hasExactCenterV then
+                local exactCenterV = self.grid:CreateTexture(nil, "ARTWORK")
+                exactCenterV:SetColorTexture(1, 1, 0, alpha * 1.5) -- Bright yellow
+                exactCenterV:SetSize(2, screenHeight)
+                exactCenterV:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
+                table.insert(self.gridLines, exactCenterV)
+            end
+
+            if not hasExactCenterH then
+                local exactCenterH = self.grid:CreateTexture(nil, "ARTWORK")
+                exactCenterH:SetColorTexture(1, 1, 0, alpha * 1.5) -- Bright yellow
+                exactCenterH:SetSize(screenWidth, 2)
+                exactCenterH:SetPoint("LEFT", UIParent, "LEFT", 0, 0)
+                table.insert(self.gridLines, exactCenterH)
+            end
+        end
+
+        -- Function to clear existing grid lines
+        function EditMode:ClearGridLines()
+            for _, line in pairs(self.gridLines) do
+                line:SetTexture(nil)
+            end
+            wipe(self.gridLines)
+        end
+
+        -- Function to update grid appearance
+        function EditMode:UpdateGrid()
+            if self.db.grid.enabled then
+                self:CreateGridLines()
+                self.grid:Show()
+            else
+                self.grid:Hide()
+            end
+        end
+
+        -- Function to toggle grid
+        function EditMode:ToggleGrid()
+            self.db.grid.enabled = not self.db.grid.enabled
+            self:UpdateGrid()
+
+            if self.db.grid.enabled then
+                -- Auto-enable drag mode when grid is enabled
+                if not self.isDragModeEnabled and not InCombatLockdown() then
+                    EditMode:EnableDragMode()
+                end
+            else
+                -- Auto-disable drag mode when grid is disabled
+                if self.isDragModeEnabled and not InCombatLockdown() then
+                    EditMode:DisableDragMode()
+                end
+            end
+        end
+
+        -- Register simple slash command for grid control
+        SLASH_MUIEDIT1 = "/muiedit"
+        SlashCmdList["MUIEDIT"] = function(msg)
+            EditMode:ToggleGrid()
+        end
+
+        -- Handle UI scale changes and edit mode state
+        EditMode.grid:RegisterEvent("UI_SCALE_CHANGED")
+        EditMode.grid:RegisterEvent("PLAYER_REGEN_DISABLED")
+        EditMode.grid:RegisterEvent("PLAYER_REGEN_ENABLED")
+        EditMode.grid:SetScript("OnEvent", function(self, event, ...)
+            if event == "UI_SCALE_CHANGED" then
+                if EditMode.db.grid.enabled then
+                    C_Timer.After(0.1, function()
+                        EditMode:UpdateGrid()
+                    end)
+                end
+            elseif event == "PLAYER_REGEN_DISABLED" then
+                -- Disable drag mode when entering combat
+                if EditMode.isDragModeEnabled then
+                    mUI:Debug("Combat started - temporarily disabling EditMode")
+                    EditMode.wasDragModeActive = true
+                    EditMode:DisableDragMode()
+                end
+            elseif event == "PLAYER_REGEN_ENABLED" then
+                -- Re-enable drag mode when leaving combat if it was active or if grid is enabled
+                if EditMode.wasDragModeActive or EditMode.db.grid.enabled then
+                    mUI:Debug("Combat ended - re-enabling drag mode")
+                    EditMode.wasDragModeActive = false
+                    EditMode:EnableDragMode()
+                end
+            end
+        end)
+
+        -- Draggable frames system
+        EditMode.draggableFrames = {}
+        EditMode.isDragModeEnabled = false
+        EditMode.wasDragModeActive = false
+
+        -- Function to save frame position and scale
+        function EditMode:SaveFramePosition(frameName, frame)
+            if not EditMode.db or not EditMode.db.frames then
+                return -- Exit safely if database is not available
+            end
+
+            if not EditMode.db.frames[frameName] then
+                EditMode.db.frames[frameName] = {}
+            end
+
+            local point, relativeTo, relativePoint, x, y = frame:GetPoint()
+            EditMode.db.frames[frameName].position = {
+                point = point,
+                relativeTo = UIParent,
+                relativePoint = relativePoint,
+                x = x,
+                y = y
+            }
+            EditMode.db.frames[frameName].scale = frame:GetScale()
+        end
+
+        -- Function to restore a single frame to its default position and scale
+        function EditMode:RestoreFrameToDefault(frameName, frame)
+            if not frame then
+                frame = _G[frameName]
+                if not frame then
+                    return
+                end
+            end
+
+            -- Clear saved position data from database
+            if EditMode.db and EditMode.db.frames and EditMode.db.frames[frameName] then
+                EditMode.db.frames[frameName] = nil
+            end
+
+            -- Use defaults table if available, otherwise use original position
+            local defaultData = EditMode.defaults[frameName]
+            if defaultData then
+                local relativeTo = _G[defaultData.relativeTo] or UIParent
+                frame:ClearAllPoints()
+                frame:SetPoint(defaultData.point, relativeTo, defaultData.relativePoint, defaultData.xOffset,
+                    defaultData.yOffset)
+                frame:SetScale(defaultData.scale or 1.0)
+            else
+                -- Fallback to original position if no defaults defined
+                if frame.originalPosition then
+                    frame:ClearAllPoints()
+                    frame:SetPoint(unpack(frame.originalPosition))
+                end
+                frame:SetScale(1.0)
+            end
+
+            -- Clear UserPlaced to allow the default UI to control positioning
+            if frame:IsMovable() then
+                frame:SetUserPlaced(false)
+            end
+        end
+
+        -- Function to restore all frames to their default positions and scales
+        function EditMode:RestoreAllFramesToDefault()
+            -- Clear all saved frame data
+            if EditMode.db and EditMode.db.frames then
+                wipe(EditMode.db.frames)
+            end
+
+            -- Restore each draggable frame to default
+            for _, frameData in ipairs(EditMode.availableFrames) do
+                local frame = _G[frameData.frame]
+                if frame then
+                    -- Use defaults table if available, otherwise use original position
+                    local defaultData = EditMode.defaults[frameData.frame]
+                    if defaultData then
+                        local relativeTo = _G[defaultData.relativeTo] or UIParent
+                        frame:ClearAllPoints()
+                        frame:SetPoint(defaultData.point, relativeTo, defaultData.relativePoint, defaultData.xOffset,
+                            defaultData.yOffset)
+                        frame:SetScale(defaultData.scale or 1.0)
+                    else
+                        -- Fallback to original position if no defaults defined
+                        if frame.originalPosition then
+                            frame:ClearAllPoints()
+                            frame:SetPoint(unpack(frame.originalPosition))
+                        end
+                        frame:SetScale(1.0)
+                    end
+
+                    -- Clear UserPlaced to allow the default UI to control positioning
+                    if frame:IsMovable() then
+                        frame:SetUserPlaced(false)
+                    end
+                end
+            end
+        end
+
+        -- Function to restore all frames to their saved positions
+        function EditMode:RestoreAllSavedPositions()
+            if not EditMode.db or not EditMode.db.frames then
+                return
+            end
+
+            local restoredCount = 0
+
+            -- Create a lookup table for available frames for faster validation
+            local availableFrames = {}
+            for _, frameData in ipairs(EditMode.availableFrames) do
+                availableFrames[frameData.frame] = true
+            end
+
+            -- Restore each frame that has saved data
+            for frameName, frameData in pairs(EditMode.db.frames) do
+                -- Check if frame exists in available frames list
+                if availableFrames[frameName] then
+                    local frame = _G[frameName]
+                    if frame and frameData.position then
+                        local pos = frameData.position
+                        local relativeTo = UIParent
+
+                        frame:ClearAllPoints()
+                        frame:SetPoint(pos.point, relativeTo, pos.relativePoint, pos.x, pos.y)
+
+                        if frameData.scale then
+                            frame:SetScale(frameData.scale)
+                        end
+
+                        -- Ensure UserPlaced is true to protect the position, but only if frame is movable
+                        if frame:IsMovable() then
+                            frame:SetUserPlaced(true)
+                        end
+
+                        restoredCount = restoredCount + 1
+                    end
+                end
+            end
+        end
+
+        -- Function to apply defaults to frames that don't have saved positions
+        function EditMode:ApplyDefaultPositions()
+            if not EditMode.defaults then
+                return
+            end
+
+            local appliedCount = 0
+
+            local availableFrames = {}
+            for _, frameData in ipairs(EditMode.availableFrames) do
+                availableFrames[frameData.frame] = true
+            end
+
+            -- Apply defaults to frames that don't have saved positions
+            for frameName, defaultData in pairs(EditMode.defaults) do
+                if availableFrames[frameName] then
+                    local frame = _G[frameName]
+                    if frame then
+                        -- Only apply defaults if frame doesn't have saved position
+                        if not EditMode.db.frames[frameName] or not EditMode.db.frames[frameName].position then
+                            local relativeTo = UIParent
+                            frame:ClearAllPoints()
+                            frame:SetPoint(defaultData.point, relativeTo, defaultData.relativePoint, defaultData.xOffset,
+                                defaultData.yOffset)
+                            frame:SetScale(defaultData.scale or 1.0)
+                            -- Only set UserPlaced if frame is movable
+                            if frame:IsMovable() then
+                                frame:SetUserPlaced(true) -- Protect the default position
+                            end
+                            appliedCount = appliedCount + 1
+                        end
+                    end
+                end
+            end
+        end
+
+        -- Create frame scaling window
+        function EditMode:CreateScalingWindow()
+            if EditMode.scalingWindow then
+                return -- Already created
+            end
+
+            -- Main window frame
+            EditMode.scalingWindow = CreateFrame("Frame", "mUIFrameScalingWindow", UIParent,
+                "BasicFrameTemplateWithInset")
+            EditMode.scalingWindow:SetSize(300, 230)
+            EditMode.scalingWindow:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+            EditMode.scalingWindow:Hide()
+            EditMode.scalingWindow:SetFrameLevel(1000) -- High level to be on top
+
+            -- Title
+            EditMode.scalingWindow.title = EditMode.scalingWindow:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+            EditMode.scalingWindow.title:SetPoint("TOP", EditMode.scalingWindow, "TOP", 0, -5)
+            EditMode.scalingWindow.title:SetText("Frame Scaling")
+
+            -- Frame name label
+            EditMode.scalingWindow.frameLabel = EditMode.scalingWindow:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            EditMode.scalingWindow.frameLabel:SetPoint("TOP", EditMode.scalingWindow.title, "BOTTOM", 0, -10)
+            EditMode.scalingWindow.frameLabel:SetText("Frame: None")
+
+            -- Scale label
+            EditMode.scalingWindow.scaleLabel = EditMode.scalingWindow:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            EditMode.scalingWindow.scaleLabel:SetPoint("TOP", EditMode.scalingWindow.frameLabel, "BOTTOM", 0, -25)
+            EditMode.scalingWindow.scaleLabel:SetText("Scale: 1.00")
+
+            -- Scale slider
+            EditMode.scalingWindow.scaleSlider = CreateFrame("Slider", "mUIScaleSlider", EditMode.scalingWindow,
+                "OptionsSliderTemplate")
+            EditMode.scalingWindow.scaleSlider:SetPoint("TOP", EditMode.scalingWindow.scaleLabel, "BOTTOM", 0, -20)
+            EditMode.scalingWindow.scaleSlider:SetMinMaxValues(0.5, 2.0)
+            EditMode.scalingWindow.scaleSlider:SetValue(1.0)
+            EditMode.scalingWindow.scaleSlider:SetValueStep(0.05)
+            EditMode.scalingWindow.scaleSlider:SetObeyStepOnDrag(true)
+            EditMode.scalingWindow.scaleSlider:SetWidth(200)
+
+            -- Slider text labels
+            EditMode.scalingWindow.scaleSlider.Low:SetText("0.5")
+            EditMode.scalingWindow.scaleSlider.High:SetText("2.0")
+            EditMode.scalingWindow.scaleSlider.Text:SetText("Scale")
+
+            -- Apply button
+            EditMode.scalingWindow.applyButton = CreateFrame("Button", "mUIApplyScaleButton", EditMode.scalingWindow,
+                "GameMenuButtonTemplate")
+            EditMode.scalingWindow.applyButton:SetSize(70, 22)
+            EditMode.scalingWindow.applyButton:SetPoint("BOTTOM", EditMode.scalingWindow, "BOTTOM", -100, 40)
+            EditMode.scalingWindow.applyButton:SetText("Apply")
+
+            -- Reset button
+            EditMode.scalingWindow.resetButton = CreateFrame("Button", "mUIResetScaleButton", EditMode.scalingWindow,
+                "GameMenuButtonTemplate")
+            EditMode.scalingWindow.resetButton:SetSize(90, 22)
+            EditMode.scalingWindow.resetButton:SetPoint("BOTTOM", EditMode.scalingWindow, "BOTTOM", -15, 40)
+            EditMode.scalingWindow.resetButton:SetText("Reset Scale")
+
+            -- Restore Default button
+            EditMode.scalingWindow.restoreDefaultButton = CreateFrame("Button", "mUIRestoreDefaultButton",
+                EditMode.scalingWindow,
+                "GameMenuButtonTemplate")
+            EditMode.scalingWindow.restoreDefaultButton:SetSize(100, 22)
+            EditMode.scalingWindow.restoreDefaultButton:SetPoint("BOTTOM", EditMode.scalingWindow, "BOTTOM", 85, 40)
+            EditMode.scalingWindow.restoreDefaultButton:SetText("Reset Position")
+
+            -- Reset All button (for all frames)
+            EditMode.scalingWindow.resetAllButton = CreateFrame("Button", "mUIResetAllButton", EditMode.scalingWindow,
+                "GameMenuButtonTemplate")
+            EditMode.scalingWindow.resetAllButton:SetSize(140, 22)
+            EditMode.scalingWindow.resetAllButton:SetPoint("BOTTOM", EditMode.scalingWindow, "BOTTOM", 0, 15)
+            EditMode.scalingWindow.resetAllButton:SetText("Reset All Frames")
+
+            -- Current frame being scaled
+            EditMode.scalingWindow.currentFrame = nil
+            EditMode.scalingWindow.currentFrameName = nil
+
+            -- Slider events
+            EditMode.scalingWindow.scaleSlider:SetScript("OnValueChanged", function(self, value)
+                EditMode.scalingWindow.scaleLabel:SetText(string.format("Scale: %.2f", value))
+                if EditMode.scalingWindow.currentFrame then
+                    EditMode.scalingWindow.currentFrame:SetScale(value)
+                end
+            end)
+
+            -- Apply button events
+            EditMode.scalingWindow.applyButton:SetScript("OnClick", function()
+                if EditMode.scalingWindow.currentFrame then
+                    local scale = EditMode.scalingWindow.scaleSlider:GetValue()
+                    EditMode.scalingWindow.currentFrame:SetScale(scale)
+
+                    -- Save the new scale
+                    EditMode:SaveFramePosition(EditMode.scalingWindow.currentFrameName,
+                        EditMode.scalingWindow.currentFrame)
+                end
+                EditMode.scalingWindow:Hide()
+            end)
+
+            -- Reset button events
+            EditMode.scalingWindow.resetButton:SetScript("OnClick", function()
+                if EditMode.scalingWindow.currentFrame then
+                    EditMode.scalingWindow.currentFrame:SetScale(1.0)
+                    EditMode.scalingWindow.scaleSlider:SetValue(1.0)
+
+                    -- Save the reset scale
+                    EditMode:SaveFramePosition(EditMode.scalingWindow.currentFrameName,
+                        EditMode.scalingWindow.currentFrame)
+                end
+                EditMode.scalingWindow:Hide()
+            end)
+
+            -- Restore Default button events
+            EditMode.scalingWindow.restoreDefaultButton:SetScript("OnClick", function()
+                if EditMode.scalingWindow.currentFrame then
+                    EditMode:RestoreFrameToDefault(EditMode.scalingWindow.currentFrameName,
+                        EditMode.scalingWindow.currentFrame)
+
+                    -- Get proper frame name for message
+                    local properName = EditMode.scalingWindow.currentFrameName
+                    for _, frameData in ipairs(EditMode.availableFrames) do
+                        if frameData.frame == EditMode.scalingWindow.currentFrameName then
+                            properName = frameData.name
+                            break
+                        end
+                    end
+                    mUI:Debug(properName .. " restored to default position and scale.")
+                end
+                EditMode.scalingWindow:Hide()
+            end)
+
+            -- Reset All button events
+            EditMode.scalingWindow.resetAllButton:SetScript("OnClick", function()
+                EditMode:RestoreAllFramesToDefault()
+                mUI:Debug("All frames restored to default positions and scales.")
+                EditMode.scalingWindow:Hide()
+            end)
+
+            -- Make window movable
+            EditMode.scalingWindow:SetMovable(true)
+            EditMode.scalingWindow:EnableMouse(true)
+            EditMode.scalingWindow:RegisterForDrag("LeftButton")
+            EditMode.scalingWindow:SetScript("OnDragStart", function(self)
+                self:StartMoving()
+            end)
+            EditMode.scalingWindow:SetScript("OnDragStop", function(self)
+                self:StopMovingOrSizing()
+            end)
+
+            -- Close on Escape
+            EditMode.scalingWindow:SetScript("OnKeyDown", function(self, key)
+                if key == "ESCAPE" then
+                    self:Hide()
+                end
+            end)
+        end
+
+        -- Show scaling window for a specific frame
+        function EditMode:ShowScalingWindow(frame, frameName)
+            if not EditMode.scalingWindow then
+                EditMode:CreateScalingWindow()
+            end
+
+            EditMode.scalingWindow.currentFrame = frame
+            EditMode.scalingWindow.currentFrameName = frameName
+
+            -- Get proper frame name
+            local properName = frameName
+            for _, frameData in ipairs(EditMode.availableFrames) do
+                if frameData.frame == frameName then
+                    properName = frameData.name
+                    break
+                end
+            end
+
+            EditMode.scalingWindow.frameLabel:SetText("Frame: " .. properName)
+
+            -- Set current scale
+            local currentScale = frame:GetScale()
+            EditMode.scalingWindow.scaleSlider:SetValue(currentScale)
+            EditMode.scalingWindow.scaleLabel:SetText(string.format("Scale: %.2f", currentScale))
+
+            EditMode.scalingWindow:Show()
+        end
+
+        -- Function to make a frame draggable
+        function EditMode:MakeFrameDraggable(frameName)
+            local frame = _G[frameName]
+            if not frame then
+                return false
+            end
+
+            -- Skip if frame is restricted during combat, but allow protected frames when not in combat
+            if InCombatLockdown() and frame:IsProtected() then
+                return false
+            end
+
+            -- Store original position
+            local point, _, relativePoint, x, y = frame:GetPoint()
+            frame.originalPosition = { point, UIParent, relativePoint, x, y }
+
+            -- Store original settings
+            frame.originalMovable = frame:IsMovable()
+            frame.originalMouseEnabled = frame:IsMouseEnabled()
+            frame.originalShown = frame:IsShown()
+
+            -- Make frame movable - SetMovable must be called before SetUserPlaced
+            frame:SetMovable(true)
+            frame:EnableMouse(true)
+            frame:RegisterForDrag("LeftButton")
+
+            -- Only set UserPlaced if the frame is actually movable
+            if frame:IsMovable() then
+                frame:SetUserPlaced(true)
+            end
+
+            -- Store original user placed state
+            frame.originalUserPlaced = frame:IsUserPlaced()
+
+            -- Create draggable border first (needed for hidden frame overlays)
+            if not frame.draggableBorder then
+                frame.draggableBorder = CreateFrame("Frame", nil, UIParent) -- Parent to UIParent instead of frame
+                frame.draggableBorder:SetAllPoints(frame)
+                -- Ensure border is always visible and on top with very high frame level
+                local targetFrameLevel = math.max(frame:GetFrameLevel(), 2)
+                frame.draggableBorder:SetFrameLevel(targetFrameLevel + 200) -- Much higher to ensure visibility above all child frames
+                frame.draggableBorder:Show()                                -- Explicitly show the border frame
+
+                -- Create border textures
+                local borderSize = 2
+                frame.draggableBorder.top = frame.draggableBorder:CreateTexture(nil, "OVERLAY")
+                frame.draggableBorder.top:SetPoint("TOPLEFT", frame.draggableBorder, "TOPLEFT", 0, 0)
+                frame.draggableBorder.top:SetPoint("TOPRIGHT", frame.draggableBorder, "TOPRIGHT", 0, 0)
+                frame.draggableBorder.top:SetHeight(borderSize)
+                frame.draggableBorder.top:SetDrawLayer("OVERLAY", 7) -- Very high draw layer
+
+                frame.draggableBorder.bottom = frame.draggableBorder:CreateTexture(nil, "OVERLAY")
+                frame.draggableBorder.bottom:SetPoint("BOTTOMLEFT", frame.draggableBorder, "BOTTOMLEFT", 0, 0)
+                frame.draggableBorder.bottom:SetPoint("BOTTOMRIGHT", frame.draggableBorder, "BOTTOMRIGHT", 0, 0)
+                frame.draggableBorder.bottom:SetHeight(borderSize)
+                frame.draggableBorder.bottom:SetDrawLayer("OVERLAY", 7) -- Very high draw layer
+
+                frame.draggableBorder.left = frame.draggableBorder:CreateTexture(nil, "OVERLAY")
+                frame.draggableBorder.left:SetPoint("TOPLEFT", frame.draggableBorder, "TOPLEFT", 0, 0)
+                frame.draggableBorder.left:SetPoint("BOTTOMLEFT", frame.draggableBorder, "BOTTOMLEFT", 0, 0)
+                frame.draggableBorder.left:SetWidth(borderSize)
+                frame.draggableBorder.left:SetDrawLayer("OVERLAY", 7) -- Very high draw layer
+
+                frame.draggableBorder.right = frame.draggableBorder:CreateTexture(nil, "OVERLAY")
+                frame.draggableBorder.right:SetPoint("TOPRIGHT", frame.draggableBorder, "TOPRIGHT", 0, 0)
+                frame.draggableBorder.right:SetPoint("BOTTOMRIGHT", frame.draggableBorder, "BOTTOMRIGHT", 0, 0)
+                frame.draggableBorder.right:SetWidth(borderSize)
+                frame.draggableBorder.right:SetDrawLayer("OVERLAY", 7) -- Very high draw layer
+
+                frame.draggableBorder:EnableMouse(true)
+                frame.draggableBorder:SetMovable(true)
+                frame.draggableBorder:RegisterForDrag("LeftButton")
+            end
+
+            -- Border frame handles all mouse interactions
+            -- Always ensure mouse interaction is properly set up (even on re-enable)
+            frame.draggableBorder:EnableMouse(true)
+            frame.draggableBorder:SetMovable(true)
+            frame.draggableBorder:RegisterForDrag("LeftButton")
+
+            -- Set up drag handlers for border frame (for all frames)
+            frame.draggableBorder:SetScript("OnDragStart", function(self)
+                if EditMode.isDragModeEnabled and not InCombatLockdown() then
+                    frame:StartMoving()
+                    frame.dragActiveOverlay:Show()
+                    self.top:SetColorTexture(0, 0.5, 1, 1) -- Change border to blue while dragging
+                    self.bottom:SetColorTexture(0, 0.5, 1, 1)
+                    self.left:SetColorTexture(0, 0.5, 1, 1)
+                    self.right:SetColorTexture(0, 0.5, 1, 1)
+                end
+            end)
+
+            frame.draggableBorder:SetScript("OnDragStop", function(self)
+                if EditMode.isDragModeEnabled and not (frame:IsProtected() and InCombatLockdown()) then
+                    frame:StopMovingOrSizing()
+                    frame.dragActiveOverlay:Hide()
+
+                    -- Save new position
+                    EditMode:SaveFramePosition(frameName, frame)
+
+                    -- Restore frame visibility based style
+                    EditMode:UpdateFrameOverlayStyle(frame, frameName)
+                end
+            end)
+
+            frame.draggableBorder:SetScript("OnEnter", function(self)
+                if EditMode.isDragModeEnabled then
+                    frame.draggableOverlay:SetAlpha(0.6) -- Brighten on hover
+                end
+            end)
+
+            frame.draggableBorder:SetScript("OnLeave", function(self)
+                if EditMode.isDragModeEnabled then
+                    frame.draggableOverlay:SetAlpha(1) -- Return to normal
+                end
+            end)
+
+            frame.draggableBorder:SetScript("OnMouseUp", function(self, button)
+                if EditMode.isDragModeEnabled and button == "RightButton" and not InCombatLockdown() and not (frame:IsProtected() and InCombatLockdown()) then
+                    EditMode:ShowScalingWindow(frame, frameName)
+                end
+            end)
+
+            -- Create draggable overlay (persistent visual indicator)
+            if not frame.draggableOverlay then
+                -- Always create overlay on border frame (UIParent child) so it's always visible above child frames
+                frame.draggableOverlay = frame.draggableBorder:CreateTexture(nil, "OVERLAY")
+                frame.draggableOverlay:SetAllPoints(frame.draggableBorder)
+                frame.draggableOverlay:SetDrawLayer("OVERLAY", 7) -- High draw layer to ensure visibility
+            end
+
+            -- Create drag active overlay (shown only while dragging)
+            if not frame.dragActiveOverlay then
+                -- Always create drag overlay on border frame for consistency
+                frame.dragActiveOverlay = frame.draggableBorder:CreateTexture(nil, "OVERLAY")
+                frame.dragActiveOverlay:SetAllPoints(frame.draggableBorder)
+                frame.dragActiveOverlay:SetColorTexture(0.2, 0.8, 1, 0.4) -- Blue overlay while dragging
+                frame.dragActiveOverlay:SetDrawLayer("OVERLAY", 6)        -- Very high draw layer for visibility
+                frame.dragActiveOverlay:Hide()
+            end
+
+            -- Create text label for the frame
+            if not frame.draggableLabel then
+                frame.draggableLabel = frame.draggableBorder:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+                frame.draggableLabel:SetPoint("CENTER", frame.draggableBorder, "CENTER", 0, 0)
+                frame.draggableLabel:SetTextColor(1, 1, 1, 1) -- White text
+                frame.draggableLabel:SetShadowColor(0, 0, 0, 1)
+                frame.draggableLabel:SetShadowOffset(2, -2)
+
+                -- Make font size scale with frame size
+                local frameWidth = frame:GetWidth() or 100
+                local frameHeight = frame:GetHeight() or 50
+                local minDimension = math.min(frameWidth, frameHeight)
+                local fontSize = math.max(10, math.min(18, minDimension * 0.15)) -- Scale font between 10-18 based on frame size
+                frame.draggableLabel:SetFont("Fonts\\FRIZQT__.TTF", fontSize, "OUTLINE")
+
+                -- Find the proper name for this frame
+                local properName = frameName -- Default fallback
+                for _, frameData in ipairs(EditMode.availableFrames) do
+                    if frameData.frame == frameName then
+                        properName = frameData.name
+                        break
+                    end
+                end
+                frame.draggableLabel:SetText(properName)
+            end
+
+            -- Set overlay colors based on frame visibility
+            EditMode:UpdateFrameOverlayStyle(frame, frameName)
+
+            -- Show draggable indicators (always visible, regardless of frame state)
+            frame.draggableOverlay:Show()
+            frame.draggableBorder:Show()
+            frame.draggableLabel:Show()
+
+            -- For hidden frames, ensure overlays are visible by forcing the frame visible temporarily
+            -- and keeping overlays independent
+            if not frame.originalShown then
+                frame:Show()
+
+                -- Force overlay visibility for hidden frames - make sure overlay is explicitly shown
+                frame.draggableOverlay:Show()
+                frame.draggableOverlay:SetAlpha(1)
+                frame.draggableBorder:SetAlpha(1)
+                frame.draggableLabel:SetAlpha(1)
+            end
+
+            -- Ensure overlay elements are always on top and visible
+            frame.draggableBorder:SetFrameLevel(math.max(UIParent:GetFrameLevel() + 200, 500)) -- Very high frame level
+            frame.draggableLabel:SetDrawLayer("OVERLAY", 8)                                    -- Highest draw layer for text
+
+            -- Update border position to track the frame
+            frame.draggableBorder:SetScript("OnUpdate", function(self)
+                if frame:IsVisible() then
+                    self:SetAllPoints(frame)
+                    -- For hidden frames, also update the overlay position since it's parented to border
+                    if not frame.originalShown and frame.draggableOverlay then
+                        frame.draggableOverlay:SetAllPoints(self)
+                    end
+                end
+            end)
+
+            -- For hidden frames, make the border frame handle dragging
+            if not frame.originalShown then
+                -- Make border frame draggable for hidden frames
+                frame.draggableBorder:SetMovable(true)
+                frame.draggableBorder:EnableMouse(true)
+                frame.draggableBorder:RegisterForDrag("LeftButton")
+
+                -- Border drag handlers for hidden frames
+                frame.draggableBorder:SetScript("OnDragStart", function(self)
+                    if EditMode.isDragModeEnabled and not InCombatLockdown() then
+                        frame:StartMoving()                    -- Move the actual frame
+                        frame.dragActiveOverlay:Show()
+                        self.top:SetColorTexture(0, 0.5, 1, 1) -- Change border to blue while dragging
+                        self.bottom:SetColorTexture(0, 0.5, 1, 1)
+                        self.left:SetColorTexture(0, 0.5, 1, 1)
+                        self.right:SetColorTexture(0, 0.5, 1, 1)
+                    end
+                end)
+
+                frame.draggableBorder:SetScript("OnDragStop", function(self)
+                    if EditMode.isDragModeEnabled and not (frame:IsProtected() and InCombatLockdown()) then
+                        frame:StopMovingOrSizing() -- Stop moving the actual frame
+                        frame.dragActiveOverlay:Hide()
+
+                        -- Save new position
+                        EditMode:SaveFramePosition(frameName, frame)
+
+                        -- Restore frame visibility based style
+                        EditMode:UpdateFrameOverlayStyle(frame, frameName)
+                    end
+                end)
+
+                -- Mouse enter/leave effects for border frame
+                frame.draggableBorder:SetScript("OnEnter", function(self)
+                    if EditMode.isDragModeEnabled then
+                        frame.draggableOverlay:SetAlpha(0.6) -- Brighten on hover
+                    end
+                end)
+
+                frame.draggableBorder:SetScript("OnLeave", function(self)
+                    if EditMode.isDragModeEnabled then
+                        frame.draggableOverlay:SetAlpha(1) -- Return to normal
+                    end
+                end)
+
+                -- Right-click to open scaling window for border frame
+                frame.draggableBorder:SetScript("OnMouseUp", function(self, button)
+                    if EditMode.isDragModeEnabled and button == "RightButton" and not InCombatLockdown() and not (frame:IsProtected() and InCombatLockdown()) then
+                        EditMode:ShowScalingWindow(frame, frameName)
+                    end
+                end)
+            end
+
+            -- Mouse enter/leave effects
+            frame:SetScript("OnEnter", function(self)
+                if EditMode.isDragModeEnabled then
+                    self.draggableOverlay:SetAlpha(0.6) -- Brighten on hover
+                end
+            end)
+
+            frame:SetScript("OnLeave", function(self)
+                if EditMode.isDragModeEnabled then
+                    self.draggableOverlay:SetAlpha(1) -- Return to normal
+                end
+            end)
+
+            -- Right-click to open scaling window
+            frame:SetScript("OnMouseUp", function(self, button)
+                if EditMode.isDragModeEnabled and button == "RightButton" and not InCombatLockdown() and not (self:IsProtected() and InCombatLockdown()) then
+                    EditMode:ShowScalingWindow(self, frameName)
+                end
+            end)
+
+            -- Drag start
+            frame:SetScript("OnDragStart", function(self)
+                if EditMode.isDragModeEnabled and not InCombatLockdown() and not (self:IsProtected() and InCombatLockdown()) then
+                    self:StartMoving()
+                    self.dragActiveOverlay:Show()
+                    self.draggableBorder.top:SetColorTexture(0, 0.5, 1, 1) -- Change border to blue while dragging
+                    self.draggableBorder.bottom:SetColorTexture(0, 0.5, 1, 1)
+                    self.draggableBorder.left:SetColorTexture(0, 0.5, 1, 1)
+                    self.draggableBorder.right:SetColorTexture(0, 0.5, 1, 1)
+                end
+            end)
+
+            -- Drag stop
+            frame:SetScript("OnDragStop", function(self)
+                if EditMode.isDragModeEnabled and not (self:IsProtected() and InCombatLockdown()) then
+                    self:StopMovingOrSizing()
+                    self.dragActiveOverlay:Hide()
+
+                    -- Save new position
+                    EditMode:SaveFramePosition(frameName, self)
+
+                    -- Restore frame visibility based style
+                    EditMode:UpdateFrameOverlayStyle(self, frameName)
+                end
+            end)
+
+            -- Add to draggable frames list
+            EditMode.draggableFrames[frameName] = frame
+
+            return true
+        end
+
+        -- Function to update frame overlay style based on visibility
+        function EditMode:UpdateFrameOverlayStyle(frame, frameName)
+            if not frame or not frame.draggableOverlay or not frame.draggableBorder then
+                return
+            end
+
+            local isVisible = frame.originalShown
+
+            -- Visible frames: Green tint and border
+            frame.draggableOverlay:SetColorTexture(0.1, 0.9, 0.1, 0.6) -- Green tint (increased from 0.4 to 0.6)
+            frame.draggableBorder.top:SetColorTexture(0, 1, 0, 1.0)    -- Green border (increased from 0.9 to 1.0)
+            frame.draggableBorder.bottom:SetColorTexture(0, 1, 0, 1.0)
+            frame.draggableBorder.left:SetColorTexture(0, 1, 0, 1.0)
+            frame.draggableBorder.right:SetColorTexture(0, 1, 0, 1.0)
+        end
+
+        -- Function to remove draggable functionality
+        function EditMode:RemoveFrameDraggable(frameName)
+            local frame = _G[frameName]
+            if not frame then
+                return false
+            end
+
+            -- Restore original settings
+            if frame.originalMovable then
+                frame:SetMovable(frame.originalMovable)
+            else
+                frame:SetMovable(false)
+            end
+
+            if frame.originalMouseEnabled then
+                frame:EnableMouse(frame.originalMouseEnabled)
+            else
+                frame:EnableMouse(false)
+            end
+
+            -- Handle UserPlaced state - keep it true if we have a saved position
+            if EditMode.db and EditMode.db.frames and EditMode.db.frames[frameName] and EditMode.db.frames[frameName].position then
+                -- Only set UserPlaced if frame is movable
+                if frame:IsMovable() then
+                    frame:SetUserPlaced(true) -- Keep UserPlaced true to prevent repositioning
+                end
+            elseif frame.originalUserPlaced then
+                -- Only set UserPlaced if frame is movable
+                if frame:IsMovable() then
+                    frame:SetUserPlaced(frame.originalUserPlaced)
+                end
+            else
+                -- Only set UserPlaced if frame is movable
+                if frame:IsMovable() then
+                    frame:SetUserPlaced(false)
+                end
+            end
+
+            -- Restore original visibility
+            if frame.originalShown ~= nil then
+                if frame.originalShown then
+                    frame:Show()
+                else
+                    frame:Hide()
+                end
+            end
+
+            frame:RegisterForDrag()
+            frame:SetScript("OnDragStart", nil)
+            frame:SetScript("OnDragStop", nil)
+            frame:SetScript("OnEnter", nil)
+            frame:SetScript("OnLeave", nil)
+
+            -- Hide and clean up all overlay elements
+            if frame.draggableOverlay then
+                frame.draggableOverlay:Hide()
+            end
+
+            if frame.dragActiveOverlay then
+                frame.dragActiveOverlay:Hide()
+            end
+
+            if frame.draggableBorder then
+                frame.draggableBorder:SetScript("OnUpdate", nil)    -- Remove update script
+                frame.draggableBorder:SetScript("OnDragStart", nil) -- Remove border drag handlers
+                frame.draggableBorder:SetScript("OnDragStop", nil)
+                frame.draggableBorder:SetScript("OnEnter", nil)
+                frame.draggableBorder:SetScript("OnLeave", nil)
+                frame.draggableBorder:EnableMouse(false)
+                frame.draggableBorder:SetMovable(false)
+                frame.draggableBorder:RegisterForDrag()
+                frame.draggableBorder:Hide()
+            end
+
+            if frame.draggableLabel then
+                frame.draggableLabel:Hide()
+            end
+
+            -- Restore original position only if we don't have a saved position
+            if frame.originalPosition and (not EditMode.db or not EditMode.db.frames or not EditMode.db.frames[frameName]) then
+                frame:ClearAllPoints()
+                frame:SetPoint(unpack(frame.originalPosition))
+            end
+
+            -- Clean up stored values
+            frame.originalPosition = nil
+            frame.originalMovable = nil
+            frame.originalMouseEnabled = nil
+            frame.originalShown = nil
+            frame.originalAnchor = nil
+            frame.originalUserPlaced = nil
+
+            EditMode.draggableFrames[frameName] = nil
+            return true
+        end
+
+        -- Function to enable drag mode
+        function EditMode:EnableDragMode()
+            if InCombatLockdown() then
+                return
+            end
+
+            EditMode.isDragModeEnabled = true
+            local count = 0
+            local failed = 0
+
+            for _, frameData in ipairs(EditMode.availableFrames) do
+                if EditMode:MakeFrameDraggable(frameData.frame) then
+                    count = count + 1
+                else
+                    failed = failed + 1
+                end
+            end
+        end
+
+        -- Function to disable drag mode
+        function EditMode:DisableDragMode()
+            if InCombatLockdown() then
+                return
+            end
+
+            EditMode.isDragModeEnabled = false
+
+            for frameName, _ in pairs(EditMode.draggableFrames) do
+                EditMode:RemoveFrameDraggable(frameName)
+            end
+        end
+
+        -- Function to toggle overlay visibility
+        function EditMode:ToggleOverlayVisibility(show)
+            for frameName, frame in pairs(EditMode.draggableFrames) do
+                if frame.draggableOverlay then
+                    if show then
+                        frame.draggableOverlay:Show()
+                    else
+                        frame.draggableOverlay:Hide()
+                    end
+                end
+
+                if frame.draggableBorder then
+                    if show then
+                        frame.draggableBorder:Show()
+                    else
+                        frame.draggableBorder:Hide()
+                    end
+                end
+
+                if frame.draggableLabel then
+                    if show then
+                        frame.draggableLabel:Show()
+                    else
+                        frame.draggableLabel:Hide()
+                    end
+                end
+            end
+        end
+
+        -- Function to reset frame positions
+        function EditMode:ResetFramePositions()
+            for frameName, frame in pairs(EditMode.draggableFrames) do
+                if frame.originalPosition then
+                    frame:ClearAllPoints()
+                    frame:SetPoint(unpack(frame.originalPosition))
+                end
+            end
+        end
+
+        -- Initialize grid on startup
+        EditMode:UpdateGrid()
+
+        -- Check if grid is enabled on startup and enable drag mode if so
+        -- Also restore all saved frame positions on addon load
+        C_Timer.After(0.1, function()
+            if EditMode.db.grid.enabled and not InCombatLockdown() then
+                EditMode:EnableDragMode()
+            end
+
+            -- Apply default positions to frames without saved positions first
+            EditMode:ApplyDefaultPositions()
+
+            -- Then restore all saved frame positions on addon load (this will override defaults for saved frames)
+            EditMode:RestoreAllSavedPositions()
+        end)
+
+        -- Create Menu Button
+        EditMode.menuButton = CreateFrame("Button", "mUI_EditModeButton", GameMenuFrame, "UIPanelButtonTemplate")
+        EditMode.menuButton:SetHeight(20)
+        EditMode.menuButton:SetWidth(145)
+        EditMode.menuButton:SetText("Edit Mode")
+        EditMode.menuButton:SetPoint("CENTER", GameMenuButtonContinue, "CENTER", 0, -30)
+        EditMode:SecureHookScript(EditMode.menuButton, "OnClick", function()
+            EditMode:ToggleGrid()
+            ToggleGameMenu()
+        end)
+
+        EditMode:SecureHookScript(GameMenuFrame, "OnShow", function()
+            GameMenuFrame:SetHeight(GameMenuFrame:GetHeight() + 45)
+        end)
+    else
+        -- Load Libraries
+        EditMode.LEM = LibStub('LibEditMode')
+
+        -- Create Holder Frame
+        EditMode.QueueStatus = CreateFrame("Frame", "mUI QueueStatusButton", UIParent)
+        EditMode.QueueStatus:SetSize(QueueStatusButton:GetWidth(), QueueStatusButton:GetHeight())
+        EditMode.QueueStatus:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+
+        -- Set QueueStatusButton to Holder Frame
+        QueueStatusButton:SetParent(EditMode.QueueStatus)
+        QueueStatusButton:ClearAllPoints()
+        QueueStatusButton:SetPoint("CENTER", EditMode.QueueStatus)
+        EditMode:SecureHook(QueueStatusButton, "SetPoint", function()
+            QueueStatusButton:SetAllPoints(EditMode.QueueStatus)
+        end)
+
+        -- Stats Frame
+        function EditMode:StatsFrame(layout, point, x, y)
+            EditMode.db[layout].statsframe.point = point
+            EditMode.db[layout].statsframe.x = x
+            EditMode.db[layout].statsframe.y = y
+        end
+
+        -- QueueStatusButton
+        function EditMode:QueueIcon(layout, point, x, y)
+            EditMode.db[layout].queueicon.point = point
+            EditMode.db[layout].queueicon.x = x
+            EditMode.db[layout].queueicon.y = y
+        end
+
+        EditMode.LEM:AddFrame(mUI.statsFrame, EditMode.StatsFrame)
+        EditMode.LEM:AddFrame(EditMode.QueueStatus, EditMode.QueueIcon)
+
+        EditMode.LEM:RegisterCallback('layout', function(layout)
+            if not EditMode.db[layout] then
+                EditMode.db[layout] = {
+                    ["statsframe"] = {
+                        ["point"] = "BOTTOMLEFT",
+                        ["x"] = 0,
+                        ["y"] = 0
+                    },
+                    ["queueicon"] = {
+                        ["point"] = "TOPRIGHT",
+                        ["x"] = -166.668701171875,
+                        ["y"] = -164.1666259765625
+                    }
+                }
+            end
+
+            mUI.statsFrame:ClearAllPoints()
+            mUI.statsFrame:SetPoint(
+                EditMode.db[layout].statsframe.point,
+                EditMode.db[layout].statsframe.x,
+                EditMode.db[layout].statsframe.y)
+
+            EditMode.QueueStatus:ClearAllPoints()
+            EditMode.QueueStatus:SetPoint(
+                EditMode.db[layout].queueicon.point,
+                EditMode.db[layout].queueicon.x,
+                EditMode.db[layout].queueicon.y)
+
+            QueueStatusButton:SetScale(EditMode.db[layout].queueicon.scale or 0.8)
+        end)
+
+        EditMode.LEM:AddFrameSettings(EditMode.QueueStatus, {
+            {
+                name = 'Button Size',
+                kind = EditMode.LEM.SettingType.Slider,
+                default = 1,
+                get = function(layout)
+                    return EditMode.db[layout].queueicon.scale
+                end,
+                set = function(layout, value)
+                    EditMode.db[layout].queueicon.scale = value
+                    QueueStatusButton:SetScale(value)
+                end,
+                minValue = 0.1,
+                maxValue = 5,
+                valueStep = 0.1,
+                formatter = function(value)
+                    return FormatPercentage(value, true)
+                end,
+            }
+        })
+    end
 end
