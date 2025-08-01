@@ -9,6 +9,8 @@ function ItemInfo:OnInitialize()
     -- Variables & Tables
     ItemInfo.iteminfo = CreateFrame("Frame")
     ItemInfo.frame = CreateFrame("Frame")
+    ItemInfo.scanningTooltip = CreateFrame("GameTooltip", "mUIScanningTooltip", nil, "GameTooltipTemplate")
+    ItemInfo.scanningTooltip:SetOwner(UIParent, "ANCHOR_NONE")
     ItemInfo.buttons = {}
     ItemInfo.LEGENDARY_ITEM_LEVEL = 483
     ItemInfo.STEP_ITEM_LEVEL = 17
@@ -49,6 +51,18 @@ function ItemInfo:OnInitialize()
             [INVSLOT_FINGER1] = true,
             [INVSLOT_FINGER2] = true,
         },
+    }
+
+    ItemInfo.slotsThatHaveEnchants = {
+        [INVSLOT_SHOULDER] = true,
+        [INVSLOT_BACK] = true,
+        [INVSLOT_CHEST] = true,
+        [INVSLOT_WRIST] = true,
+        [INVSLOT_LEGS] = true,
+        [INVSLOT_HAND] = true,
+        [INVSLOT_FEET] = true,
+        [INVSLOT_MAINHAND] = true,
+        [INVSLOT_OFFHAND] = true,
     }
 
     ItemInfo.buttonLayout = {
@@ -123,122 +137,220 @@ function ItemInfo:OnInitialize()
         192976, -- Increased Stamina and Mastery
     }
 
-    ItemInfo.enchantReplacementTable = {
-        ["Stamina"] = "Stam",
-        ["Intellect"] = "Int",
-        ["Agility"] = "Agi",
-        ["Strength"] = "Str",
+    if mUI:IsClassic() then
+        ItemInfo.enchantReplacementTable = {
+            ["Stamina"] = "Stam",
+            ["Intellect"] = "Int",
+            ["Agility"] = "Agi",
+            ["Strength"] = "Str",
 
-        ["Mastery"] = "Mast",
-        ["Versatility"] = "Vers",
-        ["Critical Strike"] = "Crit",
-        ["Haste"] = "Haste",
-        ["Avoidance"] = "Avoid",
+            ["Mastery"] = "Mast",
+            ["Versatility"] = "Vers",
+            ["Critical Strike"] = "Crit",
+            ["Haste"] = "Haste",
+            ["Avoidance"] = "Avoid",
 
-        ["Minor Speed Increase"] = "Speed",
-        ["Homebound Speed"] = "Speed & HS Red.",
-        ["Plainsrunner's Breeze"] = "Speed",
-        ["Graceful Avoid"] = "Avoid",
-        ["Regenerative Leech"] = "Leech",
-        ["Watcher's Loam"] = "Stam",
-        ["Rider's Reassurance"] = "Mount Speed",
-        ["Accelerated Agility"] = "Speed & Agi",
-        ["Reserve of Int"] = "Mana & Int",
-        ["Sustained Str"] = "Stam & Str",
-        ["Waking Stats"] = "Primary Stat",
+            ["Rating"] = "",
+            ["rating"] = "",
 
-        ["Cavalry's March"] = "Mount Speed",
-        ["Scout's March"] = "Speed",
+            ["Minor"] = "Min",
+            ["Movement"] = "Move",
 
-        ["Defender's March"] = "Stam",
-        ["Stormrider's Agi"] = "Agi & Speed",
-        ["Council's Intellect"] = "Int & Mana",
-        ["Crystalline Radiance"] = "Primary Stat",
-        ["Oathsworn's Strength"] = "Str & Stam",
+            [" and "] = " ",
+        }
+    else
+        ItemInfo.enchantReplacementTable = {
+            ["Stamina"] = "Stam",
+            ["Intellect"] = "Int",
+            ["Agility"] = "Agi",
+            ["Strength"] = "Str",
 
-        ["Chant of Armored Avoid"] = "Avoid",
-        ["Chant of Armored Leech"] = "Leech",
-        ["Chant of Armored Speed"] = "Speed",
-        ["Chant of Winged Grace"] = "Avoid & FallDmg",
-        ["Chant of Leeching Fangs"] = "Leech & Recup",
-        ["Chant of Burrowing Rapidity"] = "Speed & HScd",
+            ["Mastery"] = "Mast",
+            ["Versatility"] = "Vers",
+            ["Critical Strike"] = "Crit",
+            ["Haste"] = "Haste",
+            ["Avoidance"] = "Avoid",
 
-        ["Cursed Haste"] = "Haste & \124cffcc0000-Vers\124r",
-        ["Cursed Crit"] = "Crit & \124cffcc0000-Haste\124r",
-        ["Cursed Mastery"] = "Mast & \124cffcc0000-Crit\124r",
-        ["Cursed Versatility"] = "Vers & \124cffcc0000-Mast\124r",
+            ["Minor Speed Increase"] = "Speed",
+            ["Homebound Speed"] = "Speed & HS Red.",
+            ["Plainsrunner's Breeze"] = "Speed",
+            ["Graceful Avoid"] = "Avoid",
+            ["Regenerative Leech"] = "Leech",
+            ["Watcher's Loam"] = "Stam",
+            ["Rider's Reassurance"] = "Mount Speed",
+            ["Accelerated Agility"] = "Speed & Agi",
+            ["Reserve of Int"] = "Mana & Int",
+            ["Sustained Str"] = "Stam & Str",
+            ["Waking Stats"] = "Primary Stat",
 
-        ["Shadowed Belt Clasp"] = "Stamina",
+            ["Cavalry's March"] = "Mount Speed",
+            ["Scout's March"] = "Speed",
 
-        ["Incandescent Essence"] = "Essence",
-        -- strip all +, we are starved for space
-        ["+"] = "",
-    }
+            ["Defender's March"] = "Stam",
+            ["Stormrider's Agi"] = "Agi & Speed",
+            ["Council's Intellect"] = "Int & Mana",
+            ["Crystalline Radiance"] = "Primary Stat",
+            ["Oathsworn's Strength"] = "Str & Stam",
+
+            ["Chant of Armored Avoid"] = "Avoid",
+            ["Chant of Armored Leech"] = "Leech",
+            ["Chant of Armored Speed"] = "Speed",
+            ["Chant of Winged Grace"] = "Avoid & FallDmg",
+            ["Chant of Leeching Fangs"] = "Leech & Recup",
+            ["Chant of Burrowing Rapidity"] = "Speed & HScd",
+
+            ["Cursed Haste"] = "Haste & \124cffcc0000-Vers\124r",
+            ["Cursed Crit"] = "Crit & \124cffcc0000-Haste\124r",
+            ["Cursed Mastery"] = "Mast & \124cffcc0000-Crit\124r",
+            ["Cursed Versatility"] = "Vers & \124cffcc0000-Mast\124r",
+
+            ["Shadowed Belt Clasp"] = "Stamina",
+
+            ["Incandescent Essence"] = "Essence",
+            -- strip all +, we are starved for space
+            ["+"] = "",
+        }
+    end
 
     ItemInfo.enchantPattern = ENCHANTED_TOOLTIP_LINE:gsub('%%s', '(.*)')
     ItemInfo.enchantAtlasPattern = "(.*)%s*|A:(.*):20:20|a"
     ItemInfo.enchatColoredPatten = "|cn(.*):(.*)|r"
 
-    -- Functions
-    function ItemInfo:GetItemEnchantAsText(unit, slot)
-        local data = C_TooltipInfo.GetInventoryItem(unit, slot)
-        for _, line in ipairs(data.lines) do
-            local text = line.leftText
-            local enchantText = string.match(text, ItemInfo.enchantPattern)
-            if (enchantText) then
-                local maybeEnchantText, atlas
-                local maybeEnchantColor, maybeEnchantTextColored = enchantText:match(ItemInfo.enchatColoredPatten)
-                if (maybeEnchantColor) then
-                    enchantText = maybeEnchantTextColored
-                else
-                    maybeEnchantText, atlas = enchantText:match(ItemInfo.enchantAtlasPattern)
-                    enchantText = maybeEnchantText or enchantText
-                end
-
-                return atlas, ItemInfo:ProcessEnchantText(enchantText)
-            end
-        end
-
-        return nil, nil
-    end
-
-    function ItemInfo:GetSocketTextures(unit, slot)
-        local data = C_TooltipInfo.GetInventoryItem(unit, slot)
-        local textures = {}
-        for i, line in ipairs(data.lines) do
-            if line.type == 3 then
-                if (line.gemIcon) then
-                    table.insert(textures, line.gemIcon)
-                else
-                    table.insert(textures,
-                        string.format("Interface\\ItemSocketingFrame\\UI-EmptySocket-%s", line.socketType))
-                end
-            end
-        end
-
-        return textures
-    end
-
-    function ItemInfo:CanEnchantSlot(unit, slot)
-        local expansion = GetExpansionForLevel(UnitLevel(unit))
-        local slotsThatHaveEnchants = expansion and ItemInfo.expansionEnchantableSlots[expansion] or {}
-
-        -- all classes have something that increases power or survivability on chest/cloak/weapons/rings/wrist/boots/legs
-        if (slotsThatHaveEnchants[slot]) then
-            return true
-        end
-
-        -- Offhand filtering smile :)
-        if (slot == INVSLOT_OFFHAND) then
-            local offHandItemLink = GetInventoryItemLink(unit, slot)
-            if (offHandItemLink) then
-                local itemEquipLoc = select(4, GetItemInfoInstant(offHandItemLink))
-                return itemEquipLoc ~= "INVTYPE_HOLDABLE" and itemEquipLoc ~= "INVTYPE_SHIELD"
-            end
+    function ItemInfo:HasEnchant(itemLink)
+        if (not itemLink) then
             return false
         end
 
-        return false
+        local itemString = itemLink:match("item[%-?%d:]+")
+        if (not itemString) then
+            return false
+        end
+
+        local _, _, enchantId = strsplit(":", itemString)
+
+        return enchantId and enchantId ~= ""
+    end
+
+    -- Functions
+    function ItemInfo:GetItemEnchantAsText(unit, slot)
+        if mUI:IsClassic() then
+            ItemInfo.scanningTooltip:ClearLines()
+            ItemInfo.scanningTooltip:SetInventoryItem(unit, slot)
+
+            local itemLink = GetInventoryItemLink(unit, slot)
+            if (not ItemInfo:HasEnchant(itemLink)) then
+                return nil, nil
+            end
+
+            for i = ItemInfo.scanningTooltip:NumLines(), 3, -1 do
+                local fontString = _G["mUIScanningTooltipTextLeft" .. i]
+                if (fontString and fontString:GetObjectType() == "FontString") then
+                    local text = fontString:GetText() -- string or nil
+                    if (text) then
+                        local startsWithPlus = string.find(text, "^%+")
+                        local r, g, b, a = fontString:GetTextColor()
+                        -- nice red blizzard
+                        if (r == 1 and (string.format("%.3f", g) == "0.125" and string.format("%.3f", b) == "0.125" and a == 1)) then
+                            if (startsWithPlus) then
+                                return nil, ItemInfo:ProcessEnchantText(text)
+                            end
+                        elseif (r == 0 and g == 1 and b == 0 and a == 1) then
+                            if (not string.find(text, "<") and not string.find(text, "Equip: ") and not string.find(text, "Socket Bonus:") and not string.find(text, "Use: ")) then
+                                if (startsWithPlus) then
+                                    return nil, ItemInfo:ProcessEnchantText(text)
+                                elseif ((slot == INVSLOT_MAINHAND or slot == INVSLOT_OFFHAND or slot == INVSLOT_BACK)) then
+                                    return nil, ItemInfo:ProcessEnchantText(text)
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        else
+            local data = C_TooltipInfo.GetInventoryItem(unit, slot)
+            for _, line in ipairs(data.lines) do
+                local text = line.leftText
+                local enchantText = string.match(text, ItemInfo.enchantPattern)
+                if (enchantText) then
+                    local maybeEnchantText, atlas
+                    local maybeEnchantColor, maybeEnchantTextColored = enchantText:match(ItemInfo.enchatColoredPatten)
+                    if (maybeEnchantColor) then
+                        enchantText = maybeEnchantTextColored
+                    else
+                        maybeEnchantText, atlas = enchantText:match(ItemInfo.enchantAtlasPattern)
+                        enchantText = maybeEnchantText or enchantText
+                    end
+
+                    return atlas, ItemInfo:ProcessEnchantText(enchantText)
+                end
+            end
+
+            return nil, nil
+        end
+    end
+
+    function ItemInfo:GetSocketTextures(unit, slot)
+        if mUI:IsClassic() then
+            ItemInfo.scanningTooltip:ClearLines()
+            ItemInfo.scanningTooltip:SetInventoryItem(unit, slot)
+
+            local textures = {}
+
+            for i = 1, 10 do
+                local texture = _G["mUIScanningTooltipTexture" .. i]
+                if (texture and texture:IsShown()) then
+                    table.insert(textures, texture:GetTexture())
+                end
+            end
+
+            return textures
+        else
+            local data = C_TooltipInfo.GetInventoryItem(unit, slot)
+            local textures = {}
+            for i, line in ipairs(data.lines) do
+                if line.type == 3 then
+                    if (line.gemIcon) then
+                        table.insert(textures, line.gemIcon)
+                    else
+                        table.insert(textures,
+                            string.format("Interface\\ItemSocketingFrame\\UI-EmptySocket-%s", line.socketType))
+                    end
+                end
+            end
+
+            return textures
+        end
+    end
+
+    function ItemInfo:CanEnchantSlot(unit, slot)
+        if mUI:IsClassic() then
+            local class = select(2, UnitClass(unit))
+            if (class == "HUNTER" and slot == INVSLOT_RANGED) then
+                return true
+            end
+
+            return ItemInfo.slotsThatHaveEnchants[slot]
+        else
+            local expansion = GetExpansionForLevel(UnitLevel(unit))
+            local slotsThatHaveEnchants = expansion and ItemInfo.expansionEnchantableSlots[expansion] or {}
+
+            -- all classes have something that increases power or survivability on chest/cloak/weapons/rings/wrist/boots/legs
+            if (slotsThatHaveEnchants[slot]) then
+                return true
+            end
+
+            -- Offhand filtering smile :)
+            if (slot == INVSLOT_OFFHAND) then
+                local offHandItemLink = GetInventoryItemLink(unit, slot)
+                if (offHandItemLink) then
+                    local itemEquipLoc = select(4, GetItemInfoInstant(offHandItemLink))
+                    return itemEquipLoc ~= "INVTYPE_HOLDABLE" and itemEquipLoc ~= "INVTYPE_SHIELD"
+                end
+                return false
+            end
+
+            return false
+        end
     end
 
     function ItemInfo:pairsByKeys(t, f)
@@ -330,7 +442,7 @@ function ItemInfo:OnInitialize()
     end
 
     function ItemInfo:positonLeft(button)
-        local additionalFrame = button.BCPDisplay
+        local additionalFrame = button.mUIDisplay
 
         additionalFrame:SetPoint("TOPLEFT", button, "TOPRIGHT")
         additionalFrame:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT")
@@ -345,7 +457,7 @@ function ItemInfo:OnInitialize()
     end
 
     function ItemInfo:positonRight(button)
-        local additionalFrame = button.BCPDisplay
+        local additionalFrame = button.mUIDisplay
 
         additionalFrame:SetPoint("TOPRIGHT", button, "TOPLEFT")
         additionalFrame:SetPoint("BOTTOMRIGHT", button, "BOTTOMLEFT")
@@ -361,7 +473,7 @@ function ItemInfo:OnInitialize()
     end
 
     function ItemInfo:positonCenter(button)
-        local additionalFrame = button.BCPDisplay
+        local additionalFrame = button.mUIDisplay
 
         additionalFrame:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", -100, 0)
         additionalFrame:SetPoint("TOPRIGHT", button, "TOPRIGHT", 0, -100)
@@ -374,12 +486,35 @@ function ItemInfo:OnInitialize()
 
         additionalFrame.ilvlDisplay:SetPoint("BOTTOM", button, "TOP", 0, 7)
 
-        if (button:GetID() == INVSLOT_MAINHAND) then
-            additionalFrame.enchantDisplay:SetPoint("BOTTOMRIGHT", button, "BOTTOMLEFT", -5, 0)
-            ItemInfo:AnchorTextureLeftOfParent(additionalFrame.ilvlDisplay, additionalFrame.socketDisplay)
+        local buttonId = button:GetID()
+        if mUI:IsClassic() then
+            if (buttonId == INVSLOT_MAINHAND) then
+                additionalFrame.enchantDisplay:SetPoint("BOTTOMRIGHT", button, "BOTTOMLEFT", -5, 0);
+
+                additionalFrame.socketDisplay[1]:SetPoint("RIGHT", button, "LEFT", -5, 0);
+                for i = 2, ItemInfo.NUM_SOCKET_TEXTURES do
+                    additionalFrame.socketDisplay[i]:SetPoint("RIGHT", additionalFrame.socketDisplay[i - 1], "LEFT", -2,
+                        0);
+                end
+            elseif (buttonId == INVSLOT_RANGED) then
+                additionalFrame.enchantDisplay:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT", 5, 0);
+
+                additionalFrame.socketDisplay[1]:SetPoint("LEFT", button, "RIGHT", 5, 0);
+                for i = 2, ItemInfo.NUM_SOCKET_TEXTURES do
+                    additionalFrame.socketDisplay[i]:SetPoint("LEFT", additionalFrame.socketDisplay[i - 1], "RIGHT", 2, 0);
+                end
+            else
+                additionalFrame.enchantDisplay:SetPoint("BOTTOM", button, "TOP", 0, 20);
+                ItemInfo:AnchorTextureLeftOfParent(additionalFrame.ilvlDisplay, additionalFrame.socketDisplay);
+            end
         else
-            additionalFrame.enchantDisplay:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT", 5, 0)
-            ItemInfo:AnchorTextureRightOfParent(additionalFrame.ilvlDisplay, additionalFrame.socketDisplay)
+            if (button:GetID() == INVSLOT_MAINHAND) then
+                additionalFrame.enchantDisplay:SetPoint("BOTTOMRIGHT", button, "BOTTOMLEFT", -5, 0)
+                ItemInfo:AnchorTextureLeftOfParent(additionalFrame.ilvlDisplay, additionalFrame.socketDisplay)
+            else
+                additionalFrame.enchantDisplay:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT", 5, 0)
+                ItemInfo:AnchorTextureRightOfParent(additionalFrame.ilvlDisplay, additionalFrame.socketDisplay)
+            end
         end
     end
 
@@ -395,7 +530,7 @@ function ItemInfo:OnInitialize()
     end
 
     function ItemInfo:UpdateAdditionalDisplay(button, unit)
-        local additionalFrame = button.BCPDisplay
+        local additionalFrame = button.mUIDisplay
         local slot = button:GetID()
         local itemLink = GetInventoryItemLink(unit, slot)
 
@@ -492,7 +627,8 @@ function ItemInfo:OnInitialize()
     function ItemInfo:CreateInspectIlvlDisplay()
         local parent = InspectPaperDollItemsFrame
         if (not parent.ilvlDisplay) then
-            parent.ilvlDisplay = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlightOutline22")
+            parent.ilvlDisplay = parent:CreateFontString(nil, "OVERLAY",
+                mUI:IsClassic() and "GameFontHighlightOutline" or "GameFontHighlightOutline22")
             parent.ilvlDisplay:SetPoint("TOPRIGHT", parent, "TOPRIGHT", 0, -20)
             parent.ilvlDisplay:SetPoint("BOTTOMLEFT", parent, "TOPRIGHT", -80, -67)
 
@@ -526,13 +662,19 @@ function ItemInfo:OnInitialize()
     function ItemInfo:updateButton(button, unit)
         if (not ItemInfo.buttonLayout[button:GetID()]) then return end
 
-        if (not button.BCPDisplay) then
-            button.BCPDisplay = ItemInfo:CreateAdditionalDisplayForButton(button)
+        if (not button.mUIDisplay) then
+            button.mUIDisplay = ItemInfo:CreateAdditionalDisplayForButton(button)
             ItemInfo:AnchorAdditionalDisplay(button)
-            ItemInfo.buttons[button.BCPDisplay] = true
+            ItemInfo.buttons[button.mUIDisplay] = true
         end
 
-        ItemInfo:UpdateAdditionalDisplay(button, unit)
+        if mUI:IsClassic() then
+            C_Timer.After(0.1, function()
+                ItemInfo:UpdateAdditionalDisplay(button, unit)
+            end)
+        else
+            ItemInfo:UpdateAdditionalDisplay(button, unit)
+        end
     end
 
     function ItemInfo:MoveTalentButton(talentButton)
@@ -643,16 +785,18 @@ function ItemInfo:OnInitialize()
         end
     end
 
-    ItemInfo:HookScript(CharacterFrame, "OnUpdate", function()
-        local _, equippedItemLevel = GetAverageItemLevel()
-        local itemLevelText
-        if equippedItemLevel == math.floor(equippedItemLevel) then
-            itemLevelText = string.format("%d", equippedItemLevel)
-        else
-            itemLevelText = string.format("%.2f", equippedItemLevel)
-        end
-        CharacterStatsPane.ItemLevelFrame.Value:SetText(itemLevelText)
-    end)
+    if not mUI:IsClassic() then
+        ItemInfo:SecureHookScript(CharacterFrame, "OnUpdate", function()
+            local _, equippedItemLevel = GetAverageItemLevel()
+            local itemLevelText
+            if equippedItemLevel == math.floor(equippedItemLevel) then
+                itemLevelText = string.format("%d", equippedItemLevel)
+            else
+                itemLevelText = string.format("%.2f", equippedItemLevel)
+            end
+            CharacterStatsPane.ItemLevelFrame.Value:SetText(itemLevelText)
+        end)
+    end
 
     -- Bag/Bank/Merchant Equipment ItemLevel
     -- Variables
@@ -727,8 +871,15 @@ function ItemInfo:OnInitialize()
     end
 
     function ItemInfo:Update(frame)
-        for _, itemButton in frame:EnumerateValidItems() do
-            ItemInfo:UpdateContainerButton(itemButton, itemButton:GetBagID(), itemButton:GetID())
+        if mUI:IsClassic() then
+            for i = 1, frame.size do
+                local button = _G[frame:GetName() .. "Item" .. i]
+                ItemInfo:UpdateContainerButton(button, frame:GetID(), button:GetID())
+            end
+        else
+            for _, itemButton in frame:EnumerateValidItems() do
+                ItemInfo:UpdateContainerButton(itemButton, itemButton:GetBagID(), itemButton:GetID())
+            end
         end
     end
 end
@@ -752,16 +903,20 @@ function ItemInfo:OnEnable()
             ItemInfo:SecureHook("InspectPaperDollFrame_SetLevel", function()
                 if not InspectFrame.unit then return end
                 ItemInfo:CreateInspectIlvlDisplay()
-                ItemInfo:UpdateInspectIlvlDisplay(InspectFrame.unit)
+                if not mUI:IsClassic() then
+                    ItemInfo:UpdateInspectIlvlDisplay(InspectFrame.unit)
+                end
             end)
         end
 
         local talentButton = InspectPaperDollItemsFrame.InspectTalents
-        ItemInfo:MoveTalentButton(talentButton)
+        if not mUI:IsClassic() then
+            ItemInfo:MoveTalentButton(talentButton)
+        end
         mUI:Skin(talentButton)
     else
         ItemInfo.frame:RegisterEvent("ADDON_LOADED")
-        ItemInfo:HookScript(ItemInfo.frame, "OnEvent", function(_, _, addon)
+        ItemInfo:SecureHookScript(ItemInfo.frame, "OnEvent", function(_, _, addon)
             if addon == "Blizzard_InspectUI" then
                 if not ItemInfo:IsHooked("InspectPaperDollItemSlotButton_Update") then
                     ItemInfo:SecureHook("InspectPaperDollItemSlotButton_Update", function(button)
@@ -773,12 +928,16 @@ function ItemInfo:OnEnable()
                     ItemInfo:SecureHook("InspectPaperDollFrame_SetLevel", function()
                         if not InspectFrame.unit then return end
                         ItemInfo:CreateInspectIlvlDisplay()
-                        ItemInfo:UpdateInspectIlvlDisplay(InspectFrame.unit)
+                        if not mUI:IsClassic() then
+                            ItemInfo:UpdateInspectIlvlDisplay(InspectFrame.unit)
+                        end
                     end)
                 end
 
                 local talentButton = InspectPaperDollItemsFrame.InspectTalents
-                ItemInfo:MoveTalentButton(talentButton)
+                if not mUI:IsClassic() then
+                    ItemInfo:MoveTalentButton(talentButton)
+                end
                 mUI:Skin(talentButton)
             end
         end)
@@ -798,14 +957,24 @@ function ItemInfo:OnEnable()
     end
 
     -- Bag/Bank/Merchant Equipment ItemLevel
-    ItemInfo:SecureHook(ContainerFrameCombinedBags, "UpdateItems", function(frame)
-        ItemInfo:Update(frame)
-    end)
+    if mUI:IsClassic() then
+        ItemInfo:SecureHook("MerchantFrame_UpdateMerchantInfo", function()
+            ItemInfo:MerchantItemlevel()
+        end)
 
-    for _, container in ipairs(ContainerFrameContainer.ContainerFrames) do
-        ItemInfo:SecureHook(container, "UpdateItems", function(frame)
+        ItemInfo:SecureHook("ContainerFrame_Update", function(frame)
             ItemInfo:Update(frame)
         end)
+    else
+        ItemInfo:SecureHook(ContainerFrameCombinedBags, "UpdateItems", function(frame)
+            ItemInfo:Update(frame)
+        end)
+
+        for _, container in ipairs(ContainerFrameContainer.ContainerFrames) do
+            ItemInfo:SecureHook(container, "UpdateItems", function(frame)
+                ItemInfo:Update(frame)
+            end)
+        end
     end
 end
 
