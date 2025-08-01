@@ -6,5 +6,6 @@
     <Include file="Focusscale.lua" />
     <Include file="Targetpos.lua" />
     <Include file="Focuspos.lua" />
+    <Include file="Texture.lua" />
     <Include file="Modules.lua" />
 </Ui>
