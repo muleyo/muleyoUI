@@ -5,7 +5,13 @@ function Targetpos:OnInitialize()
 
     function Targetpos:Update()
         TargetFrameSpellBar:ClearAllPoints()
-        TargetFrameSpellBar:SetPoint("TOPLEFT", TargetFrame, "TOPLEFT", 47.5, 10)
+
+        if mUI:IsClassic() then
+            TargetFrameSpellBar:SetPoint("TOPLEFT", TargetFrame, "TOPLEFT", 27.5, 10)
+        else
+            TargetFrameSpellBar:SetPoint("TOPLEFT", TargetFrame, "TOPLEFT", 47.5, 10)
+        end
+
         TargetFrameSpellBar.SetPoint = function() end
     end
 end

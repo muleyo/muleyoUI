@@ -5,7 +5,13 @@ function Focuspos:OnInitialize()
 
     function Focuspos:Update()
         FocusFrameSpellBar:ClearAllPoints()
-        FocusFrameSpellBar:SetPoint("TOPLEFT", FocusFrame, "TOPLEFT", 47.5, 10)
+
+        if mUI:IsClassic() then
+            FocusFrameSpellBar:SetPoint("TOPLEFT", FocusFrame, "TOPLEFT", 27.5, 10)
+        else
+            FocusFrameSpellBar:SetPoint("TOPLEFT", FocusFrame, "TOPLEFT", 47.5, 10)
+        end
+
         FocusFrameSpellBar.SetPoint = function() end
     end
 end
