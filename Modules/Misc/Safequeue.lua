@@ -30,7 +30,11 @@ function Safequeue:OnInitialize()
         end
 
         if PVPReadyDialog then
-            PVPReadyDialog.label:SetText(text)
+            if mUI:IsClassic() then
+                PVPReadyDialog.text:SetText(text)
+            else
+                PVPReadyDialog.label:SetText(text)
+            end
         end
     end
 
@@ -81,9 +85,11 @@ function Safequeue:OnInitialize()
 end
 
 function Safequeue:OnEnable()
-    PVPReadyDialog.label:SetWidth(250)
+    if not mUI:IsClassic() then
+        PVPReadyDialog.label:SetWidth(250)
+    end
 
-    Safequeue:HookScript(Safequeue.frame, "OnUpdate", function(_, elapsed)
+    Safequeue:SecureHookScript(Safequeue.frame, "OnUpdate", function(_, elapsed)
         Safequeue:SetExpiresText(_, elapsed)
     end)
 
@@ -92,13 +98,15 @@ function Safequeue:OnEnable()
     end)
 
     Safequeue.frame:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
-    Safequeue:HookScript(Safequeue.frame, "OnEvent", function()
+    Safequeue:SecureHookScript(Safequeue.frame, "OnEvent", function()
         Safequeue:Popped()
     end)
 end
 
 function Safequeue:OnDisable()
-    PVPReadyDialog.label:SetWidth(200)
+    if not mUI:IsClassic() then
+        PVPReadyDialog.label:SetWidth(200)
+    end
 
     Safequeue:UnhookAll()
 end

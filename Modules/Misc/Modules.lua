@@ -14,6 +14,7 @@ function Modules:OnInitialize()
     Modules.Buffcollapse = mUI:GetModule("mUI.Modules.Misc.Buffcollapse")
     Modules.Achievements = mUI:GetModule("mUI.Modules.Misc.Achievements")
     Modules.Fastloot = mUI:GetModule("mUI.Modules.Misc.Fastloot")
+    Modules.Gryphons = mUI:GetModule("mUI.Modules.Misc.Gryphons")
 end
 
 function Modules:OnEnable()
@@ -55,6 +56,9 @@ function Modules:OnEnable()
     if Modules.db.fastloot then
         Modules.Fastloot:Enable()
     end
+    if Modules.db.gryphons then
+        Modules.Gryphons:Enable()
+    end
 end
 
 function Modules:OnDisable()
@@ -71,4 +75,5 @@ function Modules:OnDisable()
     Modules.Buffcollapse:Disable()
     Modules.Achievements:Disable()
     Modules.Fastloot:Disable()
+    Modules.Gryphons:Disable()
 end
