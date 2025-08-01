@@ -9,8 +9,13 @@ function Combatindicator:OnInitialize()
     Combatindicator.focus = focus
     Combatindicator.combatindicator = CreateFrame("Frame")
 
-    target:SetPoint("CENTER", TargetFrame, "RIGHT", 10, 0)
-    focus:SetPoint("CENTER", FocusFrame, "RIGHT", 10, 0)
+    if mUI:IsClassic() then
+        target:SetPoint("CENTER", TargetFrame, "RIGHT", -10, 0)
+        focus:SetPoint("CENTER", FocusFrame, "RIGHT", -10, 0)
+    else
+        target:SetPoint("CENTER", TargetFrame, "RIGHT", 10, 0)
+        focus:SetPoint("CENTER", FocusFrame, "RIGHT", 10, 0)
+    end
 
     target:SetSize(25, 25)
     focus:SetSize(25, 25)
@@ -44,7 +49,7 @@ end
 
 function Combatindicator:OnEnable()
     -- Hook
-    Combatindicator:HookScript(Combatindicator.combatindicator, "OnUpdate", Combatindicator.Update)
+    Combatindicator:SecureHookScript(Combatindicator.combatindicator, "OnUpdate", Combatindicator.Update)
 end
 
 function Combatindicator:OnDisable()
