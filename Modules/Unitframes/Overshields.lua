@@ -2,6 +2,11 @@ local Overshields = mUI:NewModule("mUI.Modules.Unitframes.Overshields", "AceHook
 
 function Overshields:OnInitialize()
     function Overshields:Update(frame)
+        -- Skip Target of Target frames to avoid protected function calls
+        if frame == TargetFrameToT or frame == FocusFrameToT then
+            return
+        end
+
         local absorbBar = frame.totalAbsorbBar
         if not absorbBar or absorbBar:IsForbidden() then
             return
@@ -53,6 +58,11 @@ function Overshields:OnInitialize()
     end
 
     function Overshields:UpdateHealPrediction(frame)
+        -- Skip Target of Target frames to avoid protected function calls
+        if frame == TargetFrameToT or frame == FocusFrameToT then
+            return
+        end
+
         local absorbBar = frame.totalAbsorb
         if not absorbBar or absorbBar:IsForbidden() then
             return
