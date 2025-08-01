@@ -5,74 +5,78 @@ function Classbar:OnInitialize()
     Classbar.db = mUI.db.profile.unitframes
 
     -- Backup functions
-    Classbar.Paladin = PaladinPowerBarFrame.Show
-    Classbar.Monk = MonkHarmonyBarFrame.Show
-    Classbar.Druid = DruidComboPointBarFrame.Show
-    Classbar.Evoker = EssencePlayerFrame.Show
-    Classbar.DK = RuneFrame.Show
-    Classbar.Warlock = WarlockPowerFrame.Show
-    Classbar.Mage = MageArcaneChargesFrame.Show
-    Classbar.Rogue = RogueComboPointBarFrame.Show
+    if mUI:IsClassic() then
+        Classbar.Paladin = PaladinPowerBar.Show
+        Classbar.Monk = MonkHarmonyBar.Show
+        Classbar.DK = RuneFrame.Show
+        Classbar.Warlock = WarlockPowerFrame.Show
+    else
+        Classbar.Paladin = PaladinPowerBarFrame.Show
+        Classbar.Monk = MonkHarmonyBarFrame.Show
+        Classbar.Druid = DruidComboPointBarFrame.Show
+        Classbar.Evoker = EssencePlayerFrame.Show
+        Classbar.DK = RuneFrame.Show
+        Classbar.Warlock = WarlockPowerFrame.Show
+        Classbar.Mage = MageArcaneChargesFrame.Show
+        Classbar.Rogue = RogueComboPointBarFrame.Show
+    end
 
     function Classbar:Update(isEnabled)
         local _, class = UnitClass("player")
 
         if class == "PALADIN" then
             if isEnabled then
-                PaladinPowerBarFrame:Hide()
-                Classbar:HookScript(PaladinPowerBarFrame, "OnShow", function()
+                if mUI:IsClassic() then
+                    PaladinPowerBar:Hide()
+                    Classbar:SecureHookScript(PaladinPowerBar, "OnShow", function()
+                        PaladinPowerBar:Hide()
+                        PaladinPowerBar.Show = function() end
+                    end)
+                else
                     PaladinPowerBarFrame:Hide()
-                    PaladinPowerBarFrame.Show = function() end
-                end)
+                    Classbar:SecureHookScript(PaladinPowerBarFrame, "OnShow", function()
+                        PaladinPowerBarFrame:Hide()
+                        PaladinPowerBarFrame.Show = function() end
+                    end)
+                end
             else
-                PaladinPowerBarFrame.Show = Classbar.Paladin
-                PaladinPowerBarFrame:Show()
+                if mUI:IsClassic() then
+                    PaladinPowerBar.Show = Classbar.Paladin
+                    PaladinPowerBar:Show()
+                else
+                    PaladinPowerBarFrame.Show = Classbar.Paladin
+                    PaladinPowerBarFrame:Show()
+                end
             end
         end
 
         if class == "MONK" then
             if isEnabled then
-                MonkHarmonyBarFrame:Hide()
-                Classbar:HookScript(MonkHarmonyBarFrame, "OnShow", function()
+                if mUI:IsClassic() then
+                    MonkHarmonyBar:Hide()
+                    MonkHarmonyBar.Show = function() end
+                else
                     MonkHarmonyBarFrame:Hide()
-                    MonkHarmonyBarFrame.Show = function() end
-                end)
+                    Classbar:SecureHookScript(MonkHarmonyBarFrame, "OnShow", function()
+                        MonkHarmonyBarFrame:Hide()
+                        MonkHarmonyBarFrame.Show = function() end
+                    end)
+                end
             else
-                MonkHarmonyBarFrame.Show = Classbar.Monk
-                MonkHarmonyBarFrame:Show()
-            end
-        end
-
-        if class == "DRUID" then
-            if isEnabled then
-                DruidComboPointBarFrame:Hide()
-                Classbar:HookScript(DruidComboPointBarFrame, "OnShow", function()
-                    DruidComboPointBarFrame:Hide()
-                    DruidComboPointBarFrame.Show = function() end
-                end)
-            else
-                DruidComboPointBarFrame.Show = Classbar.Druid
-                DruidComboPointBarFrame:Show()
-            end
-        end
-
-        if class == "EVOKER" then
-            if isEnabled then
-                EssencePlayerFrame:Hide()
-                Classbar:HookScript(EssencePlayerFrame, "OnShow", function()
-                    EssencePlayerFrame:Hide()
-                    EssencePlayerFrame.Show = function() end
-                end)
-            else
-                EssencePlayerFrame.Show = Classbar.Evoker
-                EssencePlayerFrame:Show()
+                if mUI:IsClassic() then
+                    MonkHarmonyBar.Show = Classbar.Monk
+                    MonkHarmonyBar:Show()
+                else
+                    MonkHarmonyBarFrame.Show = Classbar.Monk
+                    MonkHarmonyBarFrame:Show()
+                end
             end
         end
 
         if class == "DEATHKNIGHT" then
             if isEnabled then
                 RuneFrame:Hide()
-                Classbar:HookScript(RuneFrame, "OnShow", function()
+                Classbar:SecureHookScript(RuneFrame, "OnShow", function()
                     RuneFrame:Hide()
                     RuneFrame.Show = function() end
                 end)
@@ -84,11 +88,16 @@ function Classbar:OnInitialize()
 
         if class == "WARLOCK" then
             if isEnabled then
-                WarlockPowerFrame:Hide()
-                Classbar:HookScript(WarlockPowerFrame, "OnShow", function()
+                if mUI:IsClassic() then
                     WarlockPowerFrame:Hide()
                     WarlockPowerFrame.Show = function() end
-                end)
+                else
+                    WarlockPowerFrame:Hide()
+                    Classbar:SecureHookScript(WarlockPowerFrame, "OnShow", function()
+                        WarlockPowerFrame:Hide()
+                        WarlockPowerFrame.Show = function() end
+                    end)
+                end
             else
                 WarlockPowerFrame.Show = Classbar.Warlock
                 WarlockPowerFrame:Show()
@@ -96,29 +105,57 @@ function Classbar:OnInitialize()
             WarlockPowerFrame:Hide()
         end
 
-        if class == "MAGE" then
-            if isEnabled then
-                MageArcaneChargesFrame:Hide()
-                Classbar:HookScript(MageArcaneChargesFrame, "OnShow", function()
+        if not mUI:IsClassic() then
+            if class == "MAGE" then
+                if isEnabled then
                     MageArcaneChargesFrame:Hide()
-                    MageArcaneChargesFrame.Show = function() end
-                end)
-            else
-                MageArcaneChargesFrame.Show = Classbar.Mage
-                MageArcaneChargesFrame:Show()
+                    Classbar:SecureHookScript(MageArcaneChargesFrame, "OnShow", function()
+                        MageArcaneChargesFrame:Hide()
+                        MageArcaneChargesFrame.Show = function() end
+                    end)
+                else
+                    MageArcaneChargesFrame.Show = Classbar.Mage
+                    MageArcaneChargesFrame:Show()
+                end
             end
-        end
 
-        if class == "ROGUE" then
-            if isEnabled then
-                RogueComboPointBarFrame:Hide()
-                Classbar:HookScript(RogueComboPointBarFrame, "OnShow", function()
+            if class == "DRUID" then
+                if isEnabled then
+                    DruidComboPointBarFrame:Hide()
+                    Classbar:SecureHookScript(DruidComboPointBarFrame, "OnShow", function()
+                        DruidComboPointBarFrame:Hide()
+                        DruidComboPointBarFrame.Show = function() end
+                    end)
+                else
+                    DruidComboPointBarFrame.Show = Classbar.Druid
+                    DruidComboPointBarFrame:Show()
+                end
+            end
+
+            if class == "EVOKER" then
+                if isEnabled then
+                    EssencePlayerFrame:Hide()
+                    Classbar:SecureHookScript(EssencePlayerFrame, "OnShow", function()
+                        EssencePlayerFrame:Hide()
+                        EssencePlayerFrame.Show = function() end
+                    end)
+                else
+                    EssencePlayerFrame.Show = Classbar.Evoker
+                    EssencePlayerFrame:Show()
+                end
+            end
+
+            if class == "ROGUE" then
+                if isEnabled then
                     RogueComboPointBarFrame:Hide()
-                    RogueComboPointBarFrame.Show = function() end
-                end)
-            else
-                RogueComboPointBarFrame.Show = Classbar.Rogue
-                RogueComboPointBarFrame:Show()
+                    Classbar:SecureHookScript(RogueComboPointBarFrame, "OnShow", function()
+                        RogueComboPointBarFrame:Hide()
+                        RogueComboPointBarFrame.Show = function() end
+                    end)
+                else
+                    RogueComboPointBarFrame.Show = Classbar.Rogue
+                    RogueComboPointBarFrame:Show()
+                end
             end
         end
     end
