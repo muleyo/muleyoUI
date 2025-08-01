@@ -18,7 +18,7 @@ local defaults = {
                 sell = true,
                 delete = true,
                 duel = true,
-                release = true,
+                release = false,
                 resurrect = false,
                 invite = false,
                 cinematic = true,
@@ -34,6 +34,7 @@ local defaults = {
         },
         actionbars = {
             enabled = true,
+            style = "mUI",
             hotkey = false,
             macro = false,
             flash = true,
@@ -104,7 +105,8 @@ local defaults = {
             targetscale = 100,
             focusscale = 100,
             targetpos = false,
-            focuspos = false
+            focuspos = false,
+            texture = "Dragonflight",
         },
         nameplates = {
             enabled = true,
@@ -343,11 +345,18 @@ local defaults = {
             surrender = true,
             safequeue = true,
             losecontrol = true,
-            buffcollapse = false,
             achievements = false,
-            fastloot = false
+            fastloot = false,
+            gryphons = false
         },
-        edit = {},
+        edit = {
+            grid = {
+                enabled = false,
+                size = 16,
+                alpha = 0.3,
+                color = { 1, 1, 1 }
+            }
+        },
     }
 }
 
