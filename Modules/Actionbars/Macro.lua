@@ -19,7 +19,12 @@ function Macro:OnInitialize()
         local macro
         for name, bar in pairs(Macro.bars) do
             if bar then
-                numButtons = bar.numButtonsShowable
+                if mUI:IsClassic() then
+                    numButtons = 12
+                else
+                    numButtons = bar.numButtonsShowable
+                end
+
                 for i = 1, numButtons do
                     if name == "MainMenuBar" then
                         macro = _G["ActionButton" .. i .. "Name"]
