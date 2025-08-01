@@ -5,16 +5,29 @@ function Casttime:OnInitialize()
     Casttime.db = mUI.db.profile.general
 
     -- Tables
-    Casttime.castbars = {
-        player = "PlayerCastingBarFrame",
-        target = "TargetFrameSpellBar",
-        focus = "FocusFrameSpellBar",
-        boss1 = "Boss1TargetFrameSpellBar",
-        boss2 = "Boss2TargetFrameSpellBar",
-        boss3 = "Boss3TargetFrameSpellBar",
-        boss4 = "Boss4TargetFrameSpellBar",
-        boss5 = "Boss5TargetFrameSpellBar"
-    }
+    if mUI:IsClassic() then
+        Casttime.castbars = {
+            player = "CastingBarFrame",
+            target = "TargetFrameSpellBar",
+            focus = "FocusFrameSpellBar",
+            boss1 = "Boss1TargetFrameSpellBar",
+            boss2 = "Boss2TargetFrameSpellBar",
+            boss3 = "Boss3TargetFrameSpellBar",
+            boss4 = "Boss4TargetFrameSpellBar",
+            boss5 = "Boss5TargetFrameSpellBar"
+        }
+    else
+        Casttime.castbars = {
+            player = "PlayerCastingBarFrame",
+            target = "TargetFrameSpellBar",
+            focus = "FocusFrameSpellBar",
+            boss1 = "Boss1TargetFrameSpellBar",
+            boss2 = "Boss2TargetFrameSpellBar",
+            boss3 = "Boss3TargetFrameSpellBar",
+            boss4 = "Boss4TargetFrameSpellBar",
+            boss5 = "Boss5TargetFrameSpellBar"
+        }
+    end
 
     Casttime.LSM = LibStub("LibSharedMedia-3.0")
     Casttime.font = Casttime.LSM:Fetch('font', Casttime.db.font)
@@ -50,37 +63,42 @@ function Casttime:OnInitialize()
 end
 
 function Casttime:OnEnable()
-    PlayerCastingBarFrame.CastTimeText:Hide()
-    Casttime:HookScript(PlayerCastingBarFrame, "OnUpdate", function(frame, elapsed)
-        Casttime:Update(frame, elapsed)
-        frame.CastTimeText:Hide()
-    end)
+    if mUI:IsClassic() then
+        Casttime:SecureHookScript(CastingBarFrame, "OnUpdate", function(frame, elapsed)
+            Casttime:Update(frame, elapsed)
+        end)
+    else
+        PlayerCastingBarFrame.CastTimeText:Hide()
+        Casttime:SecureHookScript(PlayerCastingBarFrame, "OnUpdate", function(frame, elapsed)
+            Casttime:Update(frame, elapsed)
+        end)
+    end
 
-    Casttime:HookScript(TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
-        Casttime:Update(frame, elapsed)
-    end)
-
-    Casttime:HookScript(FocusFrameSpellBar, "OnUpdate", function(frame, elapsed)
-        Casttime:Update(frame, elapsed)
-    end)
-
-    Casttime:HookScript(Boss1TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
+    Casttime:SecureHookScript(TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
         Casttime:Update(frame, elapsed)
     end)
 
-    Casttime:HookScript(Boss2TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
+    Casttime:SecureHookScript(FocusFrameSpellBar, "OnUpdate", function(frame, elapsed)
         Casttime:Update(frame, elapsed)
     end)
 
-    Casttime:HookScript(Boss3TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
+    Casttime:SecureHookScript(Boss1TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
         Casttime:Update(frame, elapsed)
     end)
 
-    Casttime:HookScript(Boss4TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
+    Casttime:SecureHookScript(Boss2TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
         Casttime:Update(frame, elapsed)
     end)
 
-    Casttime:HookScript(Boss5TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
+    Casttime:SecureHookScript(Boss3TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
+        Casttime:Update(frame, elapsed)
+    end)
+
+    Casttime:SecureHookScript(Boss4TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
+        Casttime:Update(frame, elapsed)
+    end)
+
+    Casttime:SecureHookScript(Boss5TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
         Casttime:Update(frame, elapsed)
     end)
 end
