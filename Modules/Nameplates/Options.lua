@@ -14,16 +14,18 @@ function Options:OnInitialize()
             SetCVar("nameplateMinScale", 1)    -- Set Nameplate Stacking Distance Vertical
         end
 
-        SetCVar("NamePlateVerticalScale", Options.db.height)  -- Set Nameplate Height
-        SetCVar("NamePlateHorizontalScale", Options.db.width) -- Set Nameplate Width
+        if not mUI:IsClassic() then
+            SetCVar("NamePlateVerticalScale", Options.db.height)  -- Set Nameplate Height
+            SetCVar("NamePlateHorizontalScale", Options.db.width) -- Set Nameplate Width
 
-        -- Update Nameplate Size
-        C_NamePlate.SetNamePlateEnemySize(110 * Options.db.width, 45 * Lerp(1.0, 1.25, Options.db.height))
+            -- Update Nameplate Size
+            C_NamePlate.SetNamePlateEnemySize(110 * Options.db.width, 45 * Lerp(1.0, 1.25, Options.db.height))
 
-        if not Options.db.smallerfriends then
-            C_NamePlate.SetNamePlateFriendlySize(110 * Options.db.width, 45 * Lerp(1.0, 1.25, Options.db.height))
-        else
-            C_NamePlate.SetNamePlateFriendlySize(60, 40)
+            if not Options.db.smallerfriends then
+                C_NamePlate.SetNamePlateFriendlySize(110 * Options.db.width, 45 * Lerp(1.0, 1.25, Options.db.height))
+            else
+                C_NamePlate.SetNamePlateFriendlySize(60, 40)
+            end
         end
     end
 end
@@ -31,7 +33,7 @@ end
 function Options:OnEnable()
     Options.options:RegisterEvent("PLAYER_ENTERING_WORLD")
     Options.options:RegisterEvent("VARIABLES_LOADED")
-    Options:HookScript(Options.options, "OnEvent", function()
+    Options:SecureHookScript(Options.options, "OnEvent", function()
         Options:Update()
     end)
 end
