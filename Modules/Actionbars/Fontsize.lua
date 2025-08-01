@@ -8,16 +8,24 @@ function Fontsize:OnInitialize()
     }
 
     -- Tables
-    Fontsize.Bars = {
-        _G["MultiBarBottomLeft"],
-        _G["MultiBarBottomRight"],
-        _G["MultiBarRight"],
-        _G["MultiBarLeft"],
-        _G["MultiBarRight"],
-        _G["MultiBar5"],
-        _G["MultiBar6"],
-        _G["MultiBar7"],
-    }
+    if mUI:IsClassic() then
+        Fontsize.Bars = {
+            _G["MultiBarBottomLeft"],
+            _G["MultiBarBottomRight"],
+            _G["MultiBarRight"],
+            _G["MultiBarLeft"],
+        }
+    else
+        Fontsize.Bars = {
+            _G["MultiBarBottomLeft"],
+            _G["MultiBarBottomRight"],
+            _G["MultiBarRight"],
+            _G["MultiBarLeft"],
+            _G["MultiBar5"],
+            _G["MultiBar6"],
+            _G["MultiBar7"],
+        }
+    end
 
     -- Functions
     function Fontsize:Update()
