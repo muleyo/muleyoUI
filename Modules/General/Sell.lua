@@ -20,7 +20,7 @@ end
 
 function Sell:OnEnable()
     Sell.sell:RegisterEvent("MERCHANT_SHOW")
-    Sell:HookScript(Sell.sell, "OnEvent", function(_, event)
+    Sell:SecureHookScript(Sell.sell, "OnEvent", function(_, event)
         Sell:Update(event)
     end)
 end
