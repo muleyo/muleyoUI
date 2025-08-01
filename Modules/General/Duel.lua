@@ -16,7 +16,7 @@ end
 function Duel:OnEnable()
     Duel.duel:RegisterEvent("DUEL_REQUESTED")
     Duel.duel:RegisterEvent("PET_BATTLE_PVP_DUEL_REQUESTED")
-    Duel:HookScript(Duel.duel, "OnEvent", function(_, event)
+    Duel:SecureHookScript(Duel.duel, "OnEvent", function(_, event)
         Duel:Update(event)
     end)
 end
