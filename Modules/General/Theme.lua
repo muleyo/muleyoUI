@@ -19,36 +19,58 @@ function Theme:OnEnable()
 
     -- Buffs & Debuffs
     if not C_AddOns.IsAddOnLoaded("BlizzBuffsFacade") then
-        Theme:SecureHook(AuraFrameMixin, "Update", Theme.AuraPositions)
-        --Theme:HookDurationUpdates(BuffFrame.auraFrames)
-        --Theme:HookDurationUpdates(DebuffFrame.auraFrames)
+        if mUI:IsClassic() then
+            Theme:SecureHook("BuffFrame_UpdateAllBuffAnchors", function()
+                Theme:UpdatePlayerBuffs()
+            end)
 
-        Theme.auras:RegisterEvent("PLAYER_ENTERING_WORLD")
-        Theme.auras:RegisterEvent("PLAYER_TARGET_CHANGED")
-        Theme.auras:RegisterEvent("PLAYER_FOCUS_CHANGED")
-        Theme.auras:RegisterEvent("WEAPON_ENCHANT_CHANGED")
-        Theme.auras:RegisterUnitEvent("UNIT_AURA", "player", "target", "focus")
-        Theme:HookScript(Theme.auras, "OnEvent", function()
-            -- Player Auras
-            Theme:UpdatePlayerBuffs()
-            Theme:UpdatePlayerDebuffs()
+            Theme:SecureHook("DebuffButton_UpdateAnchors", function(button, index)
+                Theme:UpdatePlayerDebuffs(button, index)
+            end)
 
-            -- Target Auras
-            for aura in TargetFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
-                Theme:UpdateUnitframeAuras(aura)
-            end
-            for aura in TargetFrame.auraPools:GetPool("TargetDebuffFrameTemplate"):EnumerateActive() do
-                Theme:UpdateUnitframeAuras(aura, true, "target")
-            end
+            Theme:SecureHook("TargetFrame_UpdateAuras", function(frame)
+                Theme:UpdateUnitframeAuras(frame)
+            end)
 
-            -- Focus Auras
-            for aura in FocusFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
-                Theme:UpdateUnitframeAuras(aura)
-            end
-            for aura in FocusFrame.auraPools:GetPool("TargetDebuffFrameTemplate"):EnumerateActive() do
-                Theme:UpdateUnitframeAuras(aura, true, "focus")
-            end
-        end)
+            Theme:SecureHook("TargetFrame_UpdateAuraPositions", function(
+                aura, auraName, numAuras, numOppositeAuras, largeAuraList, updateFunc, maxRowWidth, offsetX,
+                mirrorAurasVertically)
+                Theme:UpdateUnitframeAuraPositions(
+                    aura, auraName, numAuras, numOppositeAuras, largeAuraList, updateFunc, maxRowWidth, offsetX,
+                    mirrorAurasVertically)
+            end)
+        else
+            Theme:SecureHook(AuraFrameMixin, "Update", Theme.AuraPositions)
+            Theme:HookDurationUpdates(BuffFrame.auraFrames)
+            Theme:HookDurationUpdates(DebuffFrame.auraFrames)
+
+            Theme.auras:RegisterEvent("PLAYER_ENTERING_WORLD")
+            Theme.auras:RegisterEvent("PLAYER_TARGET_CHANGED")
+            Theme.auras:RegisterEvent("PLAYER_FOCUS_CHANGED")
+            Theme.auras:RegisterEvent("WEAPON_ENCHANT_CHANGED")
+            Theme.auras:RegisterUnitEvent("UNIT_AURA", "player", "target", "focus")
+            Theme:SecureHookScript(Theme.auras, "OnEvent", function()
+                -- Player Auras
+                Theme:UpdatePlayerBuffs()
+                Theme:UpdatePlayerDebuffs()
+
+                -- Target Auras
+                for aura in TargetFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
+                    Theme:UpdateUnitframeAuras(aura)
+                end
+                for aura in TargetFrame.auraPools:GetPool("TargetDebuffFrameTemplate"):EnumerateActive() do
+                    Theme:UpdateUnitframeAuras(aura, true, "target")
+                end
+
+                -- Focus Auras
+                for aura in FocusFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
+                    Theme:UpdateUnitframeAuras(aura)
+                end
+                for aura in FocusFrame.auraPools:GetPool("TargetDebuffFrameTemplate"):EnumerateActive() do
+                    Theme:UpdateUnitframeAuras(aura, true, "focus")
+                end
+            end)
+        end
     end
 
     -- Castbar Icon Skins
@@ -59,21 +81,36 @@ function Theme:OnEnable()
         Theme:StyleTooltip(frame)
     end)
 
+    if mUI:IsClassic() then
+        Theme:SecureHookScript(ActionButton1, "OnUpdate", function()
+            Theme:Actionbars()
+        end)
+
+        -- Mirror Timer
+        Theme:SecureHookScript(MirrorTimer1, "OnEvent", function(frame)
+            mUI:Skin(frame)
+        end)
+
+        -- Remove Buff Blinking Animation
+        BUFF_MIN_ALPHA = 1
+    end
+
     -- Dragonriding
-    Theme:StyleDragonriding()
-    Theme.dragonriding:RegisterEvent("UPDATE_UI_WIDGET")
-    Theme:HookScript(Theme.dragonriding, "OnEvent", Theme.StyleDragonriding)
+    if not mUI:IsClassic() then
+        Theme:StyleDragonriding()
+        Theme.dragonriding:RegisterEvent("UPDATE_UI_WIDGET")
+        Theme:SecureHookScript(Theme.dragonriding, "OnEvent", Theme.StyleDragonriding)
+    end
 
-
-    -- TImer Tracker
-    TimerTracker:HookScript("OnEvent", function(self)
-        for i = 1, #self.timerList do
+    -- Timer Tracker
+    Theme:SecureHookScript(TimerTracker, "OnEvent", function(frame)
+        for i = 1, #frame.timerList do
             _G['TimerTrackerTimer' .. i .. 'StatusBarBorder']:SetVertexColor(unpack(mUI:Color(0.15)))
         end
     end)
 
     Theme.addons:RegisterEvent("ADDON_LOADED")
-    Theme:HookScript(Theme.addons, "OnEvent", function(_, _, addon)
+    Theme:SecureHookScript(Theme.addons, "OnEvent", function(_, _, addon)
         if (addon == "Blizzard_InspectUI") then
             Theme:Inspect()
         elseif (addon == "Blizzard_AchievementUI") then
@@ -118,14 +155,22 @@ function Theme:OnEnable()
             Theme:ProfessionsBook()
         elseif (addon == "Blizzard_PlayerSpells") then
             Theme:PlayerSpells()
+        elseif (addon == "Blizzard_TalentUI" or addon == "Blizzard_GlyphUI") then
+            Theme:Talents()
         elseif (addon == "Blizzard_TimeManager") then
             Theme:TimeManager()
         elseif (addon == "Blizzard_TradeSkillUI") then
-            Theme:TradeSkill()
+            if mUI:IsClassic() then
+                Theme:Professions()
+            else
+                Theme:TradeSkill()
+            end
         elseif (addon == "Blizzard_WeeklyRewards") then
             Theme:Rewards()
         elseif (addon == "Blizzard_ItemUpgradeUI") then
             Theme:ItemUpgrade()
+        elseif (addon == "Blizzard_ReforgingUI") then
+            Theme:Reforging()
         end
     end)
 end
