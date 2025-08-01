@@ -12,109 +12,207 @@ function NPCColors:OnInitialize()
     local npcInfo = LibStub('LibNPCInfo')
 
     -- Initialize Layout
-    NPCColors.layout = {
-        type = "group",
-        name = "NPC Colors",
-        args = {
-            header = {
-                type = "header",
-                name = "NPC Colors",
-                order = 0
+    if mUI:IsClassic() then
+        NPCColors.layout = {
+            type = "group",
+            name = "NPC Colors",
+            args = {
+                header = {
+                    type = "header",
+                    name = "NPC Colors",
+                    order = 0
+                },
+                back = {
+                    type = "execute",
+                    name = "Nameplate Options",
+                    desc = "Go back to Nameplates Options",
+                    func = function()
+                        mUI:SwitchSettings("mUIOptions_Nameplates_Tab")
+                    end,
+                    width = 1,
+                    order = 1
+                },
+                loadpreset = {
+                    type = "description",
+                    name = " ",
+                    width = 1,
+                    order = 2
+                },
+                spacer1 = {
+                    type = "description",
+                    name = "",
+                    width = 0.05,
+                    order = 3,
+                },
+                addnpc = {
+                    type = "input",
+                    name = "Add NPC by ID",
+                    desc = "Add a new NPC to the list",
+                    set = function(_, value)
+                        NPCColors:AddNPC(value)
+                    end,
+                    width = 0.75,
+                    order = 4
+                },
+                spacer2 = {
+                    type = "description",
+                    name = "",
+                    width = 0.7,
+                    order = 5,
+                },
+                search = {
+                    type = "input",
+                    name = "Search",
+                    desc = "Search for an NPC by name or ID",
+                    get = function() return NPCColors.searchQuery or "" end,
+                    set = function(_, value)
+                        NPCColors.searchQuery = value
+                        NPCColors:UpdateNPCList()
+                    end,
+                    width = 0.75,
+                    order = 6
+                },
+                spacer3 = {
+                    type = "description",
+                    name = "",
+                    width = "full",
+                    order = 7
+                },
+                spacer4 = {
+                    type = "description",
+                    name = "",
+                    width = 0.75,
+                    order = 8
+                },
+                nameHeader = {
+                    type = "description",
+                    name = "NPC Name",
+                    fontSize = "large",
+                    width = 1.5,
+                    order = 9
+                },
+                npcID = {
+                    type = "description",
+                    name = "NPC ID",
+                    fontSize = "large",
+                    width = "quarter",
+                    order = 10
+                },
+                colorHeader = {
+                    type = "description",
+                    name = "Color",
+                    fontSize = "large",
+                    width = "quarter",
+                    order = 11
+                },
             },
-            back = {
-                type = "execute",
-                name = "Nameplate Options",
-                desc = "Go back to Nameplates Options",
-                func = function()
-                    mUI:SwitchSettings("mUIOptions_Nameplates_Tab")
-                end,
-                width = 1,
-                order = 1
-            },
-            loadpreset = {
-                type = "execute",
-                name = "Load Preset",
-                desc = "Load a preset of NPCs",
-                func = function()
-                    for npcID, npcData in pairs(NPCColors.db.preset_npccolors) do
-                        if not NPCColors.db.npccolors[npcID] then
-                            NPCColors.db.npccolors[npcID] = { name = npcData.name, color = { r = npcData.color.r, g = npcData.color.g, b = npcData.color.b } }
+        }
+    else
+        NPCColors.layout = {
+            type = "group",
+            name = "NPC Colors",
+            args = {
+                header = {
+                    type = "header",
+                    name = "NPC Colors",
+                    order = 0
+                },
+                back = {
+                    type = "execute",
+                    name = "Nameplate Options",
+                    desc = "Go back to Nameplates Options",
+                    func = function()
+                        mUI:SwitchSettings("mUIOptions_Nameplates_Tab")
+                    end,
+                    width = 1,
+                    order = 1
+                },
+                loadpreset = {
+                    type = "execute",
+                    name = "Load Preset",
+                    desc = "Load a preset of NPCs",
+                    func = function()
+                        for npcID, npcData in pairs(NPCColors.db.preset_npccolors) do
+                            if not NPCColors.db.npccolors[npcID] then
+                                NPCColors.db.npccolors[npcID] = { name = npcData.name, color = { r = npcData.color.r, g = npcData.color.g, b = npcData.color.b } }
+                            end
                         end
-                    end
-                    NPCColors:UpdateNPCList()
-                end,
-                width = 1,
-                order = 2
+                        NPCColors:UpdateNPCList()
+                    end,
+                    width = 1,
+                    order = 2
+                },
+                spacer1 = {
+                    type = "description",
+                    name = "",
+                    width = 0.05,
+                    order = 3,
+                },
+                addnpc = {
+                    type = "input",
+                    name = "Add NPC by ID",
+                    desc = "Add a new NPC to the list",
+                    set = function(_, value)
+                        NPCColors:AddNPC(value)
+                    end,
+                    width = 0.75,
+                    order = 4
+                },
+                spacer2 = {
+                    type = "description",
+                    name = "",
+                    width = 0.7,
+                    order = 5,
+                },
+                search = {
+                    type = "input",
+                    name = "Search",
+                    desc = "Search for an NPC by name or ID",
+                    get = function() return NPCColors.searchQuery or "" end,
+                    set = function(_, value)
+                        NPCColors.searchQuery = value
+                        NPCColors:UpdateNPCList()
+                    end,
+                    width = 0.75,
+                    order = 6
+                },
+                spacer3 = {
+                    type = "description",
+                    name = "",
+                    width = "full",
+                    order = 7
+                },
+                spacer4 = {
+                    type = "description",
+                    name = "",
+                    width = 0.75,
+                    order = 8
+                },
+                nameHeader = {
+                    type = "description",
+                    name = "NPC Name",
+                    fontSize = "large",
+                    width = 1.5,
+                    order = 9
+                },
+                npcID = {
+                    type = "description",
+                    name = "NPC ID",
+                    fontSize = "large",
+                    width = "quarter",
+                    order = 10
+                },
+                colorHeader = {
+                    type = "description",
+                    name = "Color",
+                    fontSize = "large",
+                    width = "quarter",
+                    order = 11
+                },
             },
-            spacer1 = {
-                type = "description",
-                name = "",
-                width = 0.05,
-                order = 3,
-            },
-            addnpc = {
-                type = "input",
-                name = "Add NPC by ID",
-                desc = "Add a new NPC to the list",
-                set = function(_, value)
-                    NPCColors:AddNPC(value)
-                end,
-                width = 0.75,
-                order = 4
-            },
-            spacer2 = {
-                type = "description",
-                name = "",
-                width = 0.7,
-                order = 5,
-            },
-            search = {
-                type = "input",
-                name = "Search",
-                desc = "Search for an NPC by name or ID",
-                get = function() return NPCColors.searchQuery or "" end,
-                set = function(_, value)
-                    NPCColors.searchQuery = value
-                    NPCColors:UpdateNPCList()
-                end,
-                width = 0.75,
-                order = 6
-            },
-            spacer3 = {
-                type = "description",
-                name = "",
-                width = "full",
-                order = 7
-            },
-            spacer4 = {
-                type = "description",
-                name = "",
-                width = 0.75,
-                order = 8
-            },
-            nameHeader = {
-                type = "description",
-                name = "NPC Name",
-                fontSize = "large",
-                width = 1.5,
-                order = 9
-            },
-            npcID = {
-                type = "description",
-                name = "NPC ID",
-                fontSize = "large",
-                width = "quarter",
-                order = 10
-            },
-            colorHeader = {
-                type = "description",
-                name = "Color",
-                fontSize = "large",
-                width = "quarter",
-                order = 11
-            },
-        },
-    }
+        }
+    end
+
 
     function NPCColors:UpdateNPCList()
         for npcID, npcData in pairs(NPCColors.db.npccolors) do
