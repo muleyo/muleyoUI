@@ -14,7 +14,7 @@ end
 
 function Resurrection:OnEnable()
     Resurrection.resurrection:RegisterEvent("RESURRECT_REQUEST")
-    Resurrection:HookScript(Resurrection.resurrection, "OnEvent", function(_, event, name)
+    Resurrection:SecureHookScript(Resurrection.resurrection, "OnEvent", function(_, event, name)
         Resurrection:Update(event, name)
     end)
 end
