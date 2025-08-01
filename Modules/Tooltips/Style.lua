@@ -277,7 +277,6 @@ function Style:OnEnable()
         end)
 
         Style:SecureHook(GameTooltip, "SetUnitBuff", function(tooltip, unit, index)
-            print(unit)
             local _, _, _, _, _, _, _, _, _, spellID = UnitBuff(unit, index)
             Style:OnTooltipSetSpell(tooltip, spellID)
         end)
