@@ -36,7 +36,7 @@ function Flash:OnInitialize()
     end
 
     function Flash:AnimateButton(button)
-        if not button:IsVisible() then return true end
+        if not (button and button:IsVisible()) then return true end
         local animation = Flash.animations[Flash.animationNum]
         local frame = animation.frame
         local animationGroup = animation.animationGroup
@@ -52,20 +52,39 @@ end
 
 function Flash:OnEnable()
     Flash:SecureHook("MultiActionButtonDown", function(bname, id)
-        if _G[bname]:GetEffectiveAlpha() == 1 then
-            Flash:AnimateButton(_G[bname .. 'Button' .. id])
+        if mUI:IsClassic() then
+            if _G[bname .. "Button" .. id] and _G[bname .. "Button" .. id]:GetEffectiveAlpha() == 1 then
+                Flash:AnimateButton(_G[bname .. "Button" .. id])
+            end
+        else
+            if _G[bname]:GetEffectiveAlpha() == 1 then
+                Flash:AnimateButton(_G[bname .. "Button" .. id])
+            end
         end
     end)
 
-    Flash:SecureHook(PetActionBar, "PetActionButtonDown", function(_, id)
-        local button
-        if PetActionBar then
-            if id > NUM_PET_ACTION_SLOTS then return end
-            button = _G["PetActionButton" .. id]
-            if not button then return end
-        end
-        return Flash:AnimateButton(button)
-    end)
+    if mUI:IsClassic() then
+        Flash:SecureHook("PetActionButtonDown", function(id)
+            local button
+            if PetActionBarFrame then
+                if id > NUM_PET_ACTION_SLOTS then return end
+                button = _G["PetActionButton" .. id]
+                if not button then return end
+                if not button:IsVisible() then return end
+            end
+            return Flash:AnimateButton(button)
+        end)
+    else
+        Flash:SecureHook(PetActionBar, "PetActionButtonDown", function(_, id)
+            local button
+            if PetActionBar then
+                if id > NUM_PET_ACTION_SLOTS then return end
+                button = _G["PetActionButton" .. id]
+                if not button then return end
+            end
+            return Flash:AnimateButton(button)
+        end)
+    end
 
     Flash:SecureHook("ActionButtonDown", function(id)
         local button
