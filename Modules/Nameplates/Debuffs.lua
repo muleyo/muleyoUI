@@ -39,7 +39,7 @@ function Debuffs:OnEnable()
     Debuffs.debuffs:RegisterEvent("NAME_PLATE_CREATED")
     Debuffs.debuffs:RegisterEvent("NAME_PLATE_UNIT_ADDED")
 
-    Debuffs:HookScript(Debuffs.debuffs, "OnEvent", function()
+    Debuffs:SecureHookScript(Debuffs.debuffs, "OnEvent", function()
         Debuffs:RefreshNameplates()
     end)
 end
