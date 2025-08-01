@@ -150,7 +150,7 @@ function Totemicons:OnEnable()
     Totemicons.frame:RegisterEvent("NAME_PLATE_UNIT_ADDED")
     Totemicons.frame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
     Totemicons.frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-    Totemicons:HookScript(Totemicons.frame, "OnEvent", function(_, event, ...)
+    Totemicons:SecureHookScript(Totemicons.frame, "OnEvent", function(_, event, ...)
         return Totemicons[event](self, event, ...)
     end)
 end
