@@ -81,7 +81,7 @@ function Range:OnInitialize()
     end
 
     function Range:HookButtons(button)
-        if button.Update then
+        if button and button.Update then
             if not (Range:IsHooked(button, "Update") and Range:IsHooked(button, "UpdateUsable")) then
                 Range:SecureHook(button, "Update", function(button)
                     Range:UpdateButtonStatus(button)
@@ -104,18 +104,28 @@ function Range:OnInitialize()
 end
 
 function Range:OnEnable()
-    for i = 1, NUM_ACTIONBAR_BUTTONS do
-        Range:HookButtons(_G["ActionButton" .. i])
-        Range:HookButtons(_G["MultiBarBottomLeftButton" .. i])
-        Range:HookButtons(_G["MultiBarBottomRightButton" .. i])
-        Range:HookButtons(_G["MultiBarRightButton" .. i])
-        Range:HookButtons(_G["MultiBarLeftButton" .. i])
-        Range:HookButtons(_G["MultiBar5Button" .. i])
-        Range:HookButtons(_G["MultiBar6Button" .. i])
-        Range:HookButtons(_G["MultiBar7Button" .. i])
+    if not mUI:IsClassic() then
+        for i = 1, NUM_ACTIONBAR_BUTTONS do
+            Range:HookButtons(_G["ActionButton" .. i])
+            Range:HookButtons(_G["MultiBarBottomLeftButton" .. i])
+            Range:HookButtons(_G["MultiBarBottomRightButton" .. i])
+            Range:HookButtons(_G["MultiBarRightButton" .. i])
+            Range:HookButtons(_G["MultiBarLeftButton" .. i])
+            Range:HookButtons(_G["MultiBar5Button" .. i])
+            Range:HookButtons(_G["MultiBar6Button" .. i])
+            Range:HookButtons(_G["MultiBar7Button" .. i])
+        end
+    else
+        Range:SecureHook("ActionButton_UpdateUsable", function(button)
+            Range:UpdateButtonUsable(button, true)
+        end)
+
+        Range:SecureHook("ActionButton_Update", function(button)
+            Range:UpdateButtonStatus(button)
+        end)
     end
 
-    Range:HookScript(Range.updater, "OnUpdate", function(_, elapsed)
+    Range:SecureHookScript(Range.updater, "OnUpdate", function(_, elapsed)
         Range:OnUpdateRange(elapsed)
     end)
 end
