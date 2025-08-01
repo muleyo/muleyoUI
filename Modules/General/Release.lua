@@ -10,7 +10,7 @@ end
 
 function Release:OnEnable()
     Release.release:RegisterEvent("PLAYER_DEAD")
-    Release:HookScript(Release.release, "OnEvent", function(_, event)
+    Release:SecureHookScript(Release.release, "OnEvent", function(_, event)
         Release:Update(event)
     end)
 end
