@@ -7,8 +7,10 @@ function RF_Textures:OnInitialize()
     -- Load Database
     RF_Textures.db = mUI.db.profile.unitframes.textures
 
-    -- Hide Partyframe Title
-    CompactPartyFrameTitle:Hide()
+    if not mUI:IsClassic() then
+        -- Hide Partyframe Title
+        CompactPartyFrameTitle:Hide()
+    end
 
     -- Tables
     RF_Textures.frames = {
