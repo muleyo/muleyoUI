@@ -17,16 +17,18 @@ end
 
 function Mouseover:OnEnable()
     Mouseover.frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-    Mouseover:HookScript(Mouseover.frame, "OnEvent", Mouseover.RegisterButtons)
+    Mouseover:SecureHookScript(Mouseover.frame, "OnEvent", Mouseover.RegisterButtons)
 
-    ExpansionLandingPageMinimapButton:SetAlpha(0)
-    Mouseover:HookScript(ExpansionLandingPageMinimapButton, "OnEnter", function()
-        ExpansionLandingPageMinimapButton:SetAlpha(1)
-    end)
-
-    Mouseover:HookScript(ExpansionLandingPageMinimapButton, "OnLeave", function(Mouseover)
+    if not mUI:IsClassic() then
         ExpansionLandingPageMinimapButton:SetAlpha(0)
-    end)
+        Mouseover:SecureHookScript(ExpansionLandingPageMinimapButton, "OnEnter", function()
+            ExpansionLandingPageMinimapButton:SetAlpha(1)
+        end)
+
+        Mouseover:SecureHookScript(ExpansionLandingPageMinimapButton, "OnLeave", function(Mouseover)
+            ExpansionLandingPageMinimapButton:SetAlpha(0)
+        end)
+    end
 end
 
 function Mouseover:OnDisable()
@@ -35,7 +37,5 @@ function Mouseover:OnDisable()
     end
 
     Mouseover.frame:UnregisterAllEvents()
-
-    ExpansionLandingPageMinimapButton:SetAlpha(1)
     Mouseover:UnhookAll()
 end

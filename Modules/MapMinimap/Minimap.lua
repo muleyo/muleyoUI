@@ -1,7 +1,15 @@
 local Minimap = mUI:NewModule("mUI.MapMinimap.Minimap")
 
 function Minimap:OnInitialize()
-    MinimapCluster.BorderTop:Hide()
+    if mUI:IsClassic() then
+        MinimapBorderTop:Hide()
+        C_Timer.After(0, function()
+            MiniMapWorldMapButton.Show = function() end
+            MiniMapWorldMapButton:Hide()
+        end)
+    else
+        MinimapCluster.BorderTop:Hide()
+    end
 end
 
 function Minimap:OnEnable()
