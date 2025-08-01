@@ -77,23 +77,111 @@ function Gui:OnInitialize()
     gui.container.frame:SetClipsChildren(true)
     gui.container.frame:Show()
 
-    -- Create Tabs (credits to Slothpala)
-    local function createTabs(frame, ...)
-        local tab_system = CreateFrame("Frame", mUIOptionsTabs, frame, "TabSystemTemplate")
-        local tabs = {}
-        tab_system:SetTabSelectedCallback(function() end)
-        tab_system:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 15, 2)
-        for k, v in pairs({ ... }) do
-            tab_system:AddTab(v)
-            local tab = tab_system:GetTabButton(k)
-            local min_width = tab.Left:GetWidth() + tab.Middle:GetWidth() + tab.Right:GetWidth()
-            local text_width = tab.Text:GetWidth() + 20
-            tab:SetWidth(math.max(min_width, text_width))
-            tabs[v] = tab
+    -- Create Tabs (Classic-compatible implementation)
+    local createTabs
+    if mUI:IsClassic() then
+        createTabs = function(frame, ...)
+            local tab_system = CreateFrame("Frame", "mUIOptionsTabs", frame)
+            local tabs = {}
+            local tab_buttons = {}
+
+            tab_system:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 15, 2)
+            tab_system:SetSize(1, 32)
+            tab_system:SetFrameStrata("DIALOG")
+
+            -- Custom tab selection callback
+            local tab_selected_callback = function() end
+            tab_system.SetTabSelectedCallback = function(self, callback)
+                tab_selected_callback = callback or function() end
+            end
+
+            -- SetTab function
+            tab_system.SetTab = function(self, index)
+                for i, tab_button in pairs(tab_buttons) do
+                    if i == index then
+                        -- Selected tab state
+                        tab_button:Disable()
+                        tab_button:SetHeight(36) -- Make selected tab taller
+                        -- Set active tab textures
+                        PanelTemplates_SelectTab(tab_button)
+                        tab_button:SetPoint("LEFT", (i == 1) and tab_system or tab_buttons[i - 1],
+                            (i == 1) and "LEFT" or "RIGHT", (i == 1) and 0 or -15, -2) -- Move up slightly
+                    else
+                        -- Unselected tab state
+                        tab_button:Enable()
+                        tab_button:SetHeight(32) -- Normal height for unselected tabs
+                        -- Set inactive tab textures
+                        PanelTemplates_DeselectTab(tab_button)
+                        tab_button:SetPoint("LEFT", (i == 1) and tab_system or tab_buttons[i - 1],
+                            (i == 1) and "LEFT" or "RIGHT", (i == 1) and 0 or -15, 0)
+                    end
+                end
+            end
+
+            -- AddTab function for compatibility
+            tab_system.AddTab = function(self, text)
+                local k = #tab_buttons + 1 -- Get next tab index
+                local tab = CreateFrame("Button", "mUIOptionsTab" .. k, tab_system, "CharacterFrameTabButtonTemplate")
+                tab:SetPoint("LEFT", (k == 1) and tab_system or tab_buttons[k - 1], (k == 1) and "LEFT" or "RIGHT",
+                    (k == 1) and 0 or -15, 0)
+                tab:SetID(k)
+                tab:SetText(text)
+
+                -- Size the tab appropriately
+                local text_width = tab:GetFontString():GetStringWidth() + 20
+                local min_width = 60
+                tab:SetWidth(math.max(min_width, text_width))
+
+                -- Tab click handler
+                tab:SetScript("OnClick", function(self)
+                    tab_system:SetTab(k)
+                    tab_selected_callback()
+                end)
+
+                -- Add to arrays
+                tab_buttons[k] = tab
+                tabs[text] = tab
+
+                -- If this is the first tab, select it
+                if k == 1 then
+                    tab_system:SetTab(1)
+                end
+
+                return tab
+            end
+
+            -- Create tab buttons using AddTab function
+            local tab_names = { ... }
+            for k, v in pairs(tab_names) do
+                tab_system:AddTab(v)
+            end
+
+            -- GetTabButton function for compatibility
+            tab_system.GetTabButton = function(self, index)
+                return tab_buttons[index]
+            end
+
+            tab_system:SetTab(1)
+            return tab_system, tabs
         end
-        tab_system:SetTab(1)
-        tab_system:SetFrameStrata("DIALOG")
-        return tab_system, tabs
+    else
+        createTabs = function(frame, ...)
+            local tab_system = CreateFrame("Frame", mUIOptionsTabs, frame, "TabSystemTemplate")
+            local tabs = {}
+            tab_system:SetTabSelectedCallback(function() end)
+            tab_system:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 15, 2)
+            for k, v in pairs({ ... }) do
+                tab_system:AddTab(v)
+                local tab = tab_system:GetTabButton(k)
+                local min_width = tab.Left:GetWidth() + tab.Middle:GetWidth() + tab.Right:GetWidth()
+                local text_width = tab.Text:GetWidth() + 20
+                tab:SetWidth(math.max(min_width, text_width))
+                tabs[v] = tab
+            end
+            tab_system:SetTab(1)
+            tab_system:SetFrameStrata("DIALOG")
+            return tab_system, tabs
+        end
     end
 
     gui.tab_system, gui.tabs = createTabs(
@@ -199,18 +287,24 @@ function Gui:OnInitialize()
     end)
 
     -- Theme gui Frame
-    mUI:Skin(gui.NineSlice, false, true)
-    mUI:Skin(gui.tabs["General"], false, true)
-    mUI:Skin(gui.tabs["Actionbars"], false, true)
-    mUI:Skin(gui.tabs["Unitframes"], false, true)
-    mUI:Skin(gui.tabs["Castbars"], false, true)
-    mUI:Skin(gui.tabs["Nameplates"], false, true)
-    mUI:Skin(gui.tabs["Tooltips"], false, true)
-    mUI:Skin(gui.tabs["Map & Minimap"], false, true)
-    mUI:Skin(gui.tabs["Chat"], false, true)
-    mUI:Skin(gui.tabs["Misc"], false, true)
-    mUI:Skin(gui.tabs["Profiles"], false, true)
-    mUI:Skin(gui.tabs["About"], false, true)
+    C_Timer.After(0.1, function()
+        if mUI:IsClassic() then
+            mUI:Skin(gui, false, true)
+        else
+            mUI:Skin(gui.NineSlice, false, true)
+        end
+        mUI:Skin(gui.tabs["General"], false, true)
+        mUI:Skin(gui.tabs["Actionbars"], false, true)
+        mUI:Skin(gui.tabs["Unitframes"], false, true)
+        mUI:Skin(gui.tabs["Castbars"], false, true)
+        mUI:Skin(gui.tabs["Nameplates"], false, true)
+        mUI:Skin(gui.tabs["Tooltips"], false, true)
+        mUI:Skin(gui.tabs["Map & Minimap"], false, true)
+        mUI:Skin(gui.tabs["Chat"], false, true)
+        mUI:Skin(gui.tabs["Misc"], false, true)
+        mUI:Skin(gui.tabs["Profiles"], false, true)
+        mUI:Skin(gui.tabs["About"], false, true)
+    end)
 
     -- Hide the frame by default
     gui:Hide()
