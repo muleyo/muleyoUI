@@ -21,7 +21,7 @@ end
 
 function Interrupt:OnEnable()
     Interrupt.frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-    Interrupt:HookScript(Interrupt.frame, "OnEvent", Interrupt.Announce)
+    Interrupt:SecureHookScript(Interrupt.frame, "OnEvent", Interrupt.Announce)
 end
 
 function Interrupt:OnDisable()
