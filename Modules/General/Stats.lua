@@ -16,17 +16,27 @@ function Stats:OnInitialize()
     local _, class = UnitClass("player")
     Stats.color = RAID_CLASS_COLORS[class]
 
-    mUI.statsFrame = CreateFrame("Frame", "mUI StatsFrame", UIParent)
+    mUI.statsFrame = CreateFrame("Frame", "mUIStatsFrame", UIParent)
     mUI.statsFrame:ClearAllPoints()
-    mUI.statsFrame:SetPoint("BOTTOM", 0, 0)
+
+    if mUI:IsClassic() then
+        mUI.statsFrame:SetMovable(true)
+        mUI.statsFrame:SetUserPlaced(true)
+        mUI.statsFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 0)
+    else
+        mUI.statsFrame:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
+    end
+
     mUI.statsFrame:SetSize(75, 20)
     mUI.statsFrame.text = mUI.statsFrame:CreateFontString(nil, "BACKGROUND")
     mUI.statsFrame.text:SetPoint("CENTER", mUI.statsFrame)
+
     if Stats.db.general.font ~= "None" then
         mUI.statsFrame.text:SetFont(Stats.db.general.fontpath, 13, "OUTLINE")
     else
         mUI.statsFrame.text:SetFont(STANDARD_TEXT_FONT, 13, "OUTLINE")
     end
+
     mUI.statsFrame.text:SetShadowOffset(1, -1)
     mUI.statsFrame.text:SetShadowColor(0, 0, 0)
     mUI.statsFrame.text:SetTextColor(Stats.color.r, Stats.color.g, Stats.color.b)
@@ -40,13 +50,18 @@ function Stats:OnInitialize()
     end
 
     function Stats:GetSpeed()
-        local isGliding, canGlide, forwardSpeed = C_PlayerInfo.GetGlidingInfo()
-        if isGliding then
-            return "|c00ffffff" ..
-                string.format("%d", forwardSpeed and (forwardSpeed / BASE_MOVEMENT_SPEED * 100)) .. "%|r speed"
-        else
+        if mUI:IsClassic() then
             return "|c00ffffff" ..
                 string.format("%d", (GetUnitSpeed("player") / BASE_MOVEMENT_SPEED * 100)) .. "%|r speed"
+        else
+            local isGliding, canGlide, forwardSpeed = C_PlayerInfo.GetGlidingInfo()
+            if isGliding then
+                return "|c00ffffff" ..
+                    string.format("%d", forwardSpeed and (forwardSpeed / BASE_MOVEMENT_SPEED * 100)) .. "%|r speed"
+            else
+                return "|c00ffffff" ..
+                    string.format("%d", (GetUnitSpeed("player") / BASE_MOVEMENT_SPEED * 100)) .. "%|r speed"
+            end
         end
     end
 
@@ -75,7 +90,7 @@ end
 
 function Stats:OnEnable()
     mUI.statsFrame:Show()
-    Stats:HookScript(mUI.statsFrame, "OnUpdate", function(frame, elapsed)
+    Stats:SecureHookScript(mUI.statsFrame, "OnUpdate", function(frame, elapsed)
         Stats:Update(frame, elapsed)
     end)
 end
