@@ -976,9 +976,12 @@ function object_proto:NewIncomingMessage()
 	if self:IsShown() then
 		if self:IsScrolling() or not self:CanProcessIncoming() then
 			self.numIncomingMessagesWhileScrolling = self.numIncomingMessagesWhileScrolling + 1
-			-- If at bottom, queue for auto-scroll after scrolling stops
-			if self:IsAtBottom() and self.numIncomingMessagesWhileScrolling > 0 then
-				self.pendingAutoScroll = true
+
+			if mUI:IsClassic() then
+				-- If at bottom, queue for auto-scroll after scrolling stops
+				if self:IsAtBottom() and self.numIncomingMessagesWhileScrolling > 0 then
+					self.pendingAutoScroll = true
+				end
 			end
 		end
 
@@ -1004,25 +1007,36 @@ function object_proto:IsMouseOverHyperlink()
 end
 
 function object_proto:OnFrame()
-	if not self:IsShown() or self.ScrollChild:GetHeight() == 0 then return end
+	if mUI:IsClassic() then
+		if not self:IsShown() or self.ScrollChild:GetHeight() == 0 then return end
 
-	-- Don't process while actively scrolling
-	if self:IsScrolling() then return end
+		-- Don't process while actively scrolling
+		if self:IsScrolling() then return end
 
-	-- Handle pending auto-scroll after scrolling completes
-	if self.pendingAutoScroll and self:IsAtBottom() and self.numIncomingMessagesWhileScrolling > 0 then
-		self.pendingAutoScroll = false
-		local pendingMessages = self.numIncomingMessagesWhileScrolling
-		self.numIncomingMessagesWhileScrolling = 0
-		self:ProcessIncoming(pendingMessages)
-		return
-	end
+		-- Handle pending auto-scroll after scrolling completes
+		if self.pendingAutoScroll and self:IsAtBottom() and self.numIncomingMessagesWhileScrolling > 0 then
+			self.pendingAutoScroll = false
+			local pendingMessages = self.numIncomingMessagesWhileScrolling
+			self.numIncomingMessagesWhileScrolling = 0
+			self:ProcessIncoming(pendingMessages)
+			return
+		end
 
-	-- Process regular incoming messages
-	if self:HasIncomingMessages() and self:CanProcessIncoming() then
-		local numMessages = self.numIncomingMessages
-		self.numIncomingMessages = 0
-		self:ProcessIncoming(numMessages)
+		-- Process regular incoming messages
+		if self:HasIncomingMessages() and self:CanProcessIncoming() then
+			local numMessages = self.numIncomingMessages
+			self.numIncomingMessages = 0
+			self:ProcessIncoming(numMessages)
+		end
+	else
+		if not self:IsShown() or self.ScrollChild:GetHeight() == 0 or self:IsScrolling() then return end
+
+		if self:HasIncomingMessages() and self:CanProcessIncoming() then
+			self:ProcessIncoming(self.numIncomingMessages)
+			self.numIncomingMessages = 0
+		end
+
+		self:UpdateChatWidgetFading()
 	end
 
 	self:UpdateChatWidgetFading()
@@ -1127,27 +1141,33 @@ function object_proto:UpdateChatWidgetFading()
 end
 
 function object_proto:ProcessIncoming(num)
-	if not self:IsShown() or self.ScrollChild:GetHeight() == 0 then return end
+	if mUI:IsClassic() then
+		if not self:IsShown() or self.ScrollChild:GetHeight() == 0 then return end
 
-	-- Only auto-scroll if we're at bottom
-	if not self:IsAtBottom() then
-		-- Just refresh to show new messages are available but don't auto-scroll
-		self:RefreshActive(self:GetFirstActiveMessageID())
-		return
-	end
+		-- Only auto-scroll if we're at bottom
+		if not self:IsAtBottom() then
+			-- Just refresh to show new messages are available but don't auto-scroll
+			self:RefreshActive(self:GetFirstActiveMessageID())
+			return
+		end
 
-	-- We're at bottom, so we want to auto-scroll to show new messages
-	-- Use the backfill approach to add new messages
-	self:RefreshBackfill(num, num, nil, true)
+		-- We're at bottom, so we want to auto-scroll to show new messages
+		-- Use the backfill approach to add new messages
+		self:RefreshBackfill(num, num, nil, true)
 
-	-- Get the scroll offset needed and perform smooth scroll
-	local offset = self:GetLastBackfillMessageOffset()
-	if offset > 0 then
-		self:SetSmoothScroll(self.funcCache.baseScroll, offset, self.funcCache.baseScrollCallback)
+		-- Get the scroll offset needed and perform smooth scroll
+		local offset = self:GetLastBackfillMessageOffset()
+		if offset > 0 then
+			self:SetSmoothScroll(self.funcCache.baseScroll, offset, self.funcCache.baseScrollCallback)
+		else
+			-- No scrolling needed, just refresh the display
+			self:RefreshActive(self:GetFirstActiveMessageID())
+			self:UpdateFading()
+		end
 	else
-		-- No scrolling needed, just refresh the display
-		self:RefreshActive(self:GetFirstActiveMessageID())
-		self:UpdateFading()
+		self:RefreshBackfill(num, num, nil, true)
+		self:SetSmoothScroll(self.funcCache.baseScroll, self:GetLastBackfillMessageOffset(),
+			self.funcCache.baseScrollCallback)
 	end
 end
 
