@@ -2,11 +2,13 @@ local Cooldown = mUI:NewModule("mUI.Modules.Actionbars.Cooldown", "AceHook-3.0")
 
 function Cooldown:OnInitialize()
     function Cooldown:Update(button)
-        local start, duration, enable, modRate = GetActionCooldown(button.action)
-        if (duration and duration >= 1.5) then
-            button.icon:SetDesaturated(true)
-        else
-            button.icon:SetDesaturated(false)
+        if button.action then
+            local start, duration, enable, modRate = GetActionCooldown(button.action)
+            if (duration and duration >= 1.5) then
+                button.icon:SetDesaturated(true)
+            else
+                button.icon:SetDesaturated(false)
+            end
         end
     end
 end
