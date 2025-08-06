@@ -103,6 +103,8 @@ function Style:CreateActionbars()
     Style.bar1 = CreateFrame("Frame", "mUIActionBar1", UIParent, "SecureHandlerStateTemplate")
     Style.bar2 = CreateFrame("Frame", "mUIActionBar2", UIParent)
     Style.bar3 = CreateFrame("Frame", "mUIActionBar3", UIParent)
+    Style.bar4 = CreateFrame("Frame", "mUIActionBar4", UIParent)
+    Style.bar5 = CreateFrame("Frame", "mUIActionBar5", UIParent)
     Style.micromenu = CreateFrame("Frame", "mUIMicroMenu", UIParent)
     Style.bagbar = CreateFrame("Frame", "mUIBagBar", UIParent)
     Style.petbar = CreateFrame("Frame", "mUIPetActionBar", UIParent)
@@ -113,6 +115,8 @@ function Style:CreateActionbars()
     Style.bar1:SetSize(462, 38)
     Style.bar2:SetSize(462, 38)
     Style.bar3:SetSize(462, 38)
+    Style.bar4:SetSize(38, 462)
+    Style.bar5:SetSize(38, 462)
     Style.micromenu:SetSize(305, 38)
     Style.bagbar:SetSize(155, 32)
     Style.petbar:SetSize(340, 32)
@@ -123,6 +127,8 @@ function Style:CreateActionbars()
     Style.bar1:SetMovable(true)
     Style.bar2:SetMovable(true)
     Style.bar3:SetMovable(true)
+    Style.bar4:SetMovable(true)
+    Style.bar5:SetMovable(true)
     Style.micromenu:SetMovable(true)
     Style.bagbar:SetMovable(true)
     Style.petbar:SetMovable(true)
@@ -159,6 +165,10 @@ function Style:CreateActionbars()
     Style.bar2:SetAttribute("type", "action")
     Style.bar3:SetAttribute("actionpage", 5)
     Style.bar3:SetAttribute("type", "action")
+    Style.bar4:SetAttribute("actionpage", 3)
+    Style.bar4:SetAttribute("type", "action")
+    Style.bar5:SetAttribute("actionpage", 4)
+    Style.bar5:SetAttribute("type", "action")
 
     -- Use State Driver
     RegisterStateDriver(Style.bar1, "page",
@@ -515,6 +525,38 @@ function Style:SetPositions()
                 button:SetPoint("BOTTOMLEFT", Style.bar3, "BOTTOMLEFT", 0, 0)
             else
                 button:SetPoint("LEFT", prevButton, "RIGHT", 2.5, 0)
+            end
+        end
+    end
+
+    for i = 1, NUM_ACTIONBAR_BUTTONS do
+        local button = _G["MultiBarRightButton" .. i]
+        local prevButton = _G["MultiBarRightButton" .. i - 1]
+
+        if button then
+            button:SetParent(Style.bar4)
+            button:ClearAllPoints()
+
+            if i == 1 then
+                button:SetPoint("TOPLEFT", Style.bar4, "TOPLEFT", 0, 0)
+            else
+                button:SetPoint("TOP", prevButton, "BOTTOM", 0, -2.5)
+            end
+        end
+    end
+
+    for i = 1, NUM_ACTIONBAR_BUTTONS do
+        local button = _G["MultiBarLeftButton" .. i]
+        local prevButton = _G["MultiBarLeftButton" .. i - 1]
+
+        if button then
+            button:SetParent(Style.bar5)
+            button:ClearAllPoints()
+
+            if i == 1 then
+                button:SetPoint("TOPLEFT", Style.bar5, "TOPLEFT", 0, 0)
+            else
+                button:SetPoint("TOP", prevButton, "BOTTOM", 0, -2.5)
             end
         end
     end

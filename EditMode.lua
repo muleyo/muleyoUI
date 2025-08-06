@@ -20,6 +20,32 @@ function EditMode:OnInitialize()
             EditMode.db.frames = {}
         end
 
+        -- Initialize action bar layout database if it doesn't exist
+        if not mUI.db.profile.actionbars.layout then
+            mUI.db.profile.actionbars.layout = {
+                bar1 = {
+                    buttonsPerRow = 12,
+                    visibleButtons = 12
+                },
+                bar2 = {
+                    buttonsPerRow = 12,
+                    visibleButtons = 12
+                },
+                bar3 = {
+                    buttonsPerRow = 12,
+                    visibleButtons = 12
+                },
+                bar4 = {
+                    buttonsPerRow = 1,
+                    visibleButtons = 12
+                },
+                bar5 = {
+                    buttonsPerRow = 1,
+                    visibleButtons = 12
+                }
+            }
+        end
+
         EditMode.defaults = {
             ["mUIStatsFrame"] = {
                 point = "BOTTOMLEFT",
@@ -67,6 +93,22 @@ function EditMode:OnInitialize()
                 relativePoint = "BOTTOM",
                 xOffset = 0,
                 yOffset = 180,
+                scale = 1
+            },
+            ["mUIActionBar4"] = {
+                point = "RIGHT",
+                relativeTo = "UIParent",
+                relativePoint = "RIGHT",
+                xOffset = 0,
+                yOffset = 0,
+                scale = 1
+            },
+            ["mUIActionBar5"] = {
+                point = "RIGHT",
+                relativeTo = "UIParent",
+                relativePoint = "RIGHT",
+                xOffset = -40,
+                yOffset = 0,
                 scale = 1
             },
             ["mUIMicroMenu"] = {
@@ -170,6 +212,8 @@ function EditMode:OnInitialize()
                 { frame = "mUIActionBar1",                 name = "ActionBar 1" },
                 { frame = "mUIActionBar2",                 name = "ActionBar 2" },
                 { frame = "mUIActionBar3",                 name = "ActionBar 3" },
+                { frame = "mUIActionBar4",                 name = "ActionBar 4" },
+                { frame = "mUIActionBar5",                 name = "ActionBar 5" },
                 { frame = "mUIMicroMenu",                  name = "Micro Menu" },
                 { frame = "mUIBagBar",                     name = "Bags Bar" },
                 { frame = "mUIPetActionBar",               name = "Pet ActionBar" },
@@ -389,12 +433,6 @@ function EditMode:OnInitialize()
             end
         end
 
-        -- Register simple slash command for grid control
-        SLASH_MUIEDIT1 = "/muiedit"
-        SlashCmdList["MUIEDIT"] = function(msg)
-            EditMode:ToggleGrid()
-        end
-
         -- Handle UI scale changes and edit mode state
         EditMode.grid:RegisterEvent("UI_SCALE_CHANGED")
         EditMode.grid:RegisterEvent("PLAYER_REGEN_DISABLED")
@@ -608,7 +646,7 @@ function EditMode:OnInitialize()
             -- Main window frame
             EditMode.scalingWindow = CreateFrame("Frame", "mUIFrameScalingWindow", UIParent,
                 "BasicFrameTemplateWithInset")
-            EditMode.scalingWindow:SetSize(300, 230)
+            EditMode.scalingWindow:SetSize(350, 350)
             EditMode.scalingWindow:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
             EditMode.scalingWindow:Hide()
             EditMode.scalingWindow:SetFrameLevel(1000) -- High level to be on top
@@ -620,6 +658,490 @@ function EditMode:OnInitialize()
 
             -- Frame name label
             EditMode.scalingWindow.frameLabel = EditMode.scalingWindow:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            EditMode.scalingWindow.frameLabel:SetPoint("TOP", EditMode.scalingWindow.title, "BOTTOM", 0, -10)
+            EditMode.scalingWindow.frameLabel:SetText("Frame: None")
+
+            -- Scale label
+            EditMode.scalingWindow.scaleLabel = EditMode.scalingWindow:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            EditMode.scalingWindow.scaleLabel:SetPoint("TOP", EditMode.scalingWindow.frameLabel, "BOTTOM", 0, -25)
+            EditMode.scalingWindow.scaleLabel:SetText("Scale: 1.00")
+
+            -- Scale slider
+            EditMode.scalingWindow.scaleSlider = CreateFrame("Slider", "mUIScaleSlider", EditMode.scalingWindow,
+                "OptionsSliderTemplate")
+            EditMode.scalingWindow.scaleSlider:SetPoint("TOP", EditMode.scalingWindow.scaleLabel, "BOTTOM", 0, -20)
+            EditMode.scalingWindow.scaleSlider:SetMinMaxValues(0.5, 2.0)
+            EditMode.scalingWindow.scaleSlider:SetValue(1.0)
+            EditMode.scalingWindow.scaleSlider:SetValueStep(0.05)
+            EditMode.scalingWindow.scaleSlider:SetObeyStepOnDrag(true)
+            EditMode.scalingWindow.scaleSlider:SetWidth(200)
+
+            -- Slider text labels
+            EditMode.scalingWindow.scaleSlider.Low:SetText("0.5")
+            EditMode.scalingWindow.scaleSlider.High:SetText("2.0")
+            EditMode.scalingWindow.scaleSlider.Text:SetText("Scale")
+
+            -- Action Bar Layout Controls (hidden by default)
+            -- Buttons per row
+            EditMode.scalingWindow.buttonsPerRowLabel = EditMode.scalingWindow:CreateFontString(nil,
+                "OVERLAY", "GameFontNormal")
+            EditMode.scalingWindow.buttonsPerRowLabel:SetPoint("TOP", EditMode.scalingWindow.scaleSlider,
+                "BOTTOM", 0, -25)
+            EditMode.scalingWindow.buttonsPerRowLabel:SetText("Buttons per Row: 12")
+            EditMode.scalingWindow.buttonsPerRowLabel:Hide()
+
+            EditMode.scalingWindow.buttonsPerRowSlider = CreateFrame("Slider", "mUIButtonsPerRowSlider",
+                EditMode.scalingWindow, "OptionsSliderTemplate")
+            EditMode.scalingWindow.buttonsPerRowSlider:SetPoint("TOP",
+                EditMode.scalingWindow.buttonsPerRowLabel, "BOTTOM", 0, -15)
+            EditMode.scalingWindow.buttonsPerRowSlider:SetMinMaxValues(1, 12)
+            EditMode.scalingWindow.buttonsPerRowSlider:SetValue(12)
+            EditMode.scalingWindow.buttonsPerRowSlider:SetValueStep(1)
+            EditMode.scalingWindow.buttonsPerRowSlider:SetObeyStepOnDrag(true)
+            EditMode.scalingWindow.buttonsPerRowSlider:SetWidth(200)
+            EditMode.scalingWindow.buttonsPerRowSlider.Low:SetText("1")
+            EditMode.scalingWindow.buttonsPerRowSlider.High:SetText("12")
+            EditMode.scalingWindow.buttonsPerRowSlider.Text:SetText("Buttons per Row")
+            EditMode.scalingWindow.buttonsPerRowSlider:Hide()
+
+            -- Visible buttons
+            EditMode.scalingWindow.visibleButtonsLabel = EditMode.scalingWindow:CreateFontString(nil,
+                "OVERLAY", "GameFontNormal")
+            EditMode.scalingWindow.visibleButtonsLabel:SetPoint("TOP",
+                EditMode.scalingWindow.buttonsPerRowSlider, "BOTTOM", 0, -25)
+            EditMode.scalingWindow.visibleButtonsLabel:SetText("Visible Buttons: 12")
+            EditMode.scalingWindow.visibleButtonsLabel:Hide()
+
+            EditMode.scalingWindow.visibleButtonsSlider = CreateFrame("Slider", "mUIVisibleButtonsSlider",
+                EditMode.scalingWindow, "OptionsSliderTemplate")
+            EditMode.scalingWindow.visibleButtonsSlider:SetPoint("TOP",
+                EditMode.scalingWindow.visibleButtonsLabel, "BOTTOM", 0, -15)
+            EditMode.scalingWindow.visibleButtonsSlider:SetMinMaxValues(1, 12)
+            EditMode.scalingWindow.visibleButtonsSlider:SetValue(12)
+            EditMode.scalingWindow.visibleButtonsSlider:SetValueStep(1)
+            EditMode.scalingWindow.visibleButtonsSlider:SetObeyStepOnDrag(true)
+            EditMode.scalingWindow.visibleButtonsSlider:SetWidth(200)
+            EditMode.scalingWindow.visibleButtonsSlider.Low:SetText("1")
+            EditMode.scalingWindow.visibleButtonsSlider.High:SetText("12")
+            EditMode.scalingWindow.visibleButtonsSlider.Text:SetText("Visible Buttons")
+            EditMode.scalingWindow.visibleButtonsSlider:Hide()
+
+            -- Action bar slider events
+            EditMode.scalingWindow.buttonsPerRowSlider:SetScript("OnValueChanged", function(self, value)
+                local intValue = math.floor(value + 0.5)
+                EditMode.scalingWindow.buttonsPerRowLabel:SetText("Buttons per Row: " .. intValue)
+
+                -- Apply changes immediately for preview
+                if EditMode.scalingWindow.currentFrameName and EditMode.scalingWindow.currentFrameName:match("^mUIActionBar[1-5]$") then
+                    EditMode:ApplyActionBarLayout(EditMode.scalingWindow.currentFrameName, intValue,
+                        EditMode.scalingWindow.visibleButtonsSlider:GetValue())
+                end
+            end)
+
+            EditMode.scalingWindow.visibleButtonsSlider:SetScript("OnValueChanged", function(self, value)
+                local intValue = math.floor(value + 0.5)
+                EditMode.scalingWindow.visibleButtonsLabel:SetText("Visible Buttons: " .. intValue)
+
+                -- Apply changes immediately for preview
+                if EditMode.scalingWindow.currentFrameName and EditMode.scalingWindow.currentFrameName:match("^mUIActionBar[1-5]$") then
+                    EditMode:ApplyActionBarLayout(EditMode.scalingWindow.currentFrameName,
+                        EditMode.scalingWindow.buttonsPerRowSlider:GetValue(), intValue)
+                end
+            end)
+
+            -- Apply button
+            EditMode.scalingWindow.applyButton = CreateFrame("Button", "mUIApplyScaleButton", EditMode.scalingWindow,
+                "GameMenuButtonTemplate")
+            EditMode.scalingWindow.applyButton:SetSize(70, 22)
+            EditMode.scalingWindow.applyButton:SetPoint("BOTTOM", EditMode.scalingWindow, "BOTTOM", -100, 40)
+            EditMode.scalingWindow.applyButton:SetText("Apply")
+
+            -- Reset button
+            EditMode.scalingWindow.resetButton = CreateFrame("Button", "mUIResetScaleButton", EditMode.scalingWindow,
+                "GameMenuButtonTemplate")
+            EditMode.scalingWindow.resetButton:SetSize(90, 22)
+            EditMode.scalingWindow.resetButton:SetPoint("BOTTOM", EditMode.scalingWindow, "BOTTOM", -15, 40)
+            EditMode.scalingWindow.resetButton:SetText("Reset Scale")
+
+            -- Restore Default button
+            EditMode.scalingWindow.restoreDefaultButton = CreateFrame("Button", "mUIRestoreDefaultButton",
+                EditMode.scalingWindow,
+                "GameMenuButtonTemplate")
+            EditMode.scalingWindow.restoreDefaultButton:SetSize(100, 22)
+            EditMode.scalingWindow.restoreDefaultButton:SetPoint("BOTTOM", EditMode.scalingWindow, "BOTTOM", 85, 40)
+            EditMode.scalingWindow.restoreDefaultButton:SetText("Reset Position")
+
+            -- Reset All button (for all frames)
+            EditMode.scalingWindow.resetAllButton = CreateFrame("Button", "mUIResetAllButton", EditMode.scalingWindow,
+                "GameMenuButtonTemplate")
+            EditMode.scalingWindow.resetAllButton:SetSize(140, 22)
+            EditMode.scalingWindow.resetAllButton:SetPoint("BOTTOM", EditMode.scalingWindow, "BOTTOM", 0, 15)
+            EditMode.scalingWindow.resetAllButton:SetText("Reset All Frames")
+
+            -- Current frame being scaled
+            EditMode.scalingWindow.currentFrame = nil
+            EditMode.scalingWindow.currentFrameName = nil
+
+            -- Slider events
+            EditMode.scalingWindow.scaleSlider:SetScript("OnValueChanged", function(self, value)
+                EditMode.scalingWindow.scaleLabel:SetText(string.format("Scale: %.2f", value))
+                if EditMode.scalingWindow.currentFrame then
+                    EditMode.scalingWindow.currentFrame:SetScale(value)
+                end
+            end)
+
+            -- Apply button events
+            EditMode.scalingWindow.applyButton:SetScript("OnClick", function()
+                if EditMode.scalingWindow.currentFrame then
+                    local scale = EditMode.scalingWindow.scaleSlider:GetValue()
+                    EditMode.scalingWindow.currentFrame:SetScale(scale)
+
+                    -- Save the new scale
+                    EditMode:SaveFramePosition(EditMode.scalingWindow.currentFrameName,
+                        EditMode.scalingWindow.currentFrame)
+
+                    -- Handle action bar layout if this is an action bar frame
+                    if EditMode.scalingWindow.currentFrameName:match("^mUIActionBar[1-5]$") then
+                        local buttonsPerRow = math.floor(EditMode.scalingWindow.buttonsPerRowSlider:GetValue() + 0.5)
+                        local visibleButtons = math.floor(EditMode.scalingWindow.visibleButtonsSlider:GetValue() + 0.5)
+
+                        -- Save action bar layout
+                        EditMode:SaveActionBarLayout(EditMode.scalingWindow.currentFrameName, buttonsPerRow,
+                            visibleButtons)
+
+                        -- Apply action bar layout
+                        EditMode:ApplyActionBarLayout(EditMode.scalingWindow.currentFrameName, buttonsPerRow,
+                            visibleButtons)
+
+                        mUI:Debug("Applied layout to " .. EditMode.scalingWindow.currentFrameName ..
+                            ": " .. buttonsPerRow .. " per row, " .. visibleButtons .. " visible")
+                    end
+                end
+                EditMode.scalingWindow:Hide()
+            end)
+
+            -- Reset button events
+            EditMode.scalingWindow.resetButton:SetScript("OnClick", function()
+                if EditMode.scalingWindow.currentFrame then
+                    EditMode.scalingWindow.currentFrame:SetScale(1.0)
+                    EditMode.scalingWindow.scaleSlider:SetValue(1.0)
+
+                    -- Handle action bar layout reset if this is an action bar frame
+                    if EditMode.scalingWindow.currentFrameName:match("^mUIActionBar[1-5]$") then
+                        -- Reset to defaults (12 buttons per row, 12 visible)
+                        EditMode.scalingWindow.buttonsPerRowSlider:SetValue(12)
+                        EditMode.scalingWindow.visibleButtonsSlider:SetValue(12)
+
+                        -- Save to database
+                        EditMode:SaveActionBarLayout(EditMode.scalingWindow.currentFrameName, 12, 12)
+
+                        -- Apply layout
+                        EditMode:ApplyActionBarLayout(EditMode.scalingWindow.currentFrameName, 12, 12)
+
+                        mUI:Debug("Reset layout for " .. EditMode.scalingWindow.currentFrameName .. " to default")
+                    end
+
+                    -- Save the reset scale
+                    EditMode:SaveFramePosition(EditMode.scalingWindow.currentFrameName,
+                        EditMode.scalingWindow.currentFrame)
+                end
+                EditMode.scalingWindow:Hide()
+            end)
+
+            -- Restore Default button events
+            EditMode.scalingWindow.restoreDefaultButton:SetScript("OnClick", function()
+                if EditMode.scalingWindow.currentFrame then
+                    EditMode:RestoreFrameToDefault(EditMode.scalingWindow.currentFrameName,
+                        EditMode.scalingWindow.currentFrame)
+
+                    -- Get proper frame name for message
+                    local properName = EditMode.scalingWindow.currentFrameName
+                    for _, frameData in ipairs(EditMode.availableFrames) do
+                        if frameData.frame == EditMode.scalingWindow.currentFrameName then
+                            properName = frameData.name
+                            break
+                        end
+                    end
+                    mUI:Debug(properName .. " restored to default position and scale.")
+                end
+                EditMode.scalingWindow:Hide()
+            end)
+
+            -- Reset All button events
+            EditMode.scalingWindow.resetAllButton:SetScript("OnClick", function()
+                EditMode:RestoreAllFramesToDefault()
+                mUI:Debug("All frames restored to default positions and scales.")
+                EditMode.scalingWindow:Hide()
+            end)
+
+            -- Make window movable
+            EditMode.scalingWindow:SetMovable(true)
+            EditMode.scalingWindow:EnableMouse(true)
+            EditMode.scalingWindow:RegisterForDrag("LeftButton")
+            EditMode.scalingWindow:SetScript("OnDragStart", function(self)
+                self:StartMoving()
+            end)
+            EditMode.scalingWindow:SetScript("OnDragStop", function(self)
+                self:StopMovingOrSizing()
+            end)
+
+            -- Close on Escape
+            EditMode.scalingWindow:SetScript("OnKeyDown", function(self, key)
+                if key == "ESCAPE" then
+                    self:Hide()
+                end
+            end)
+        end
+
+        -- Action Bar Layout Controls (hidden by default) - Add to scaling window
+        -- These controls are added to the scaling window and shown/hidden as needed
+        if EditMode.scalingWindow then
+            -- Buttons per row
+            EditMode.scalingWindow.buttonsPerRowLabel = EditMode.scalingWindow:CreateFontString(nil,
+                "OVERLAY", "GameFontNormal")
+            EditMode.scalingWindow.buttonsPerRowLabel:SetPoint("TOP", EditMode.scalingWindow.scaleSlider,
+                "BOTTOM", 0, -25)
+            EditMode.scalingWindow.buttonsPerRowLabel:SetText("Buttons per Row: 12")
+            EditMode.scalingWindow.buttonsPerRowLabel:Hide()
+
+            EditMode.scalingWindow.buttonsPerRowSlider = CreateFrame("Slider", "mUIButtonsPerRowSlider",
+                EditMode.scalingWindow, "OptionsSliderTemplate")
+            EditMode.scalingWindow.buttonsPerRowSlider:SetPoint("TOP",
+                EditMode.scalingWindow.buttonsPerRowLabel, "BOTTOM", 0, -15)
+            EditMode.scalingWindow.buttonsPerRowSlider:SetMinMaxValues(1, 12)
+            EditMode.scalingWindow.buttonsPerRowSlider:SetValue(12)
+            EditMode.scalingWindow.buttonsPerRowSlider:SetValueStep(1)
+            EditMode.scalingWindow.buttonsPerRowSlider:SetObeyStepOnDrag(true)
+            EditMode.scalingWindow.buttonsPerRowSlider:SetWidth(200)
+            EditMode.scalingWindow.buttonsPerRowSlider.Low:SetText("1")
+            EditMode.scalingWindow.buttonsPerRowSlider.High:SetText("12")
+            EditMode.scalingWindow.buttonsPerRowSlider.Text:SetText("Buttons per Row")
+            EditMode.scalingWindow.buttonsPerRowSlider:Hide()
+
+            -- Visible buttons
+            EditMode.scalingWindow.visibleButtonsLabel = EditMode.scalingWindow:CreateFontString(nil,
+                "OVERLAY", "GameFontNormal")
+            EditMode.scalingWindow.visibleButtonsLabel:SetPoint("TOP",
+                EditMode.scalingWindow.buttonsPerRowSlider, "BOTTOM", 0, -25)
+            EditMode.scalingWindow.visibleButtonsLabel:SetText("Visible Buttons: 12")
+            EditMode.scalingWindow.visibleButtonsLabel:Hide()
+
+            EditMode.scalingWindow.visibleButtonsSlider = CreateFrame("Slider", "mUIVisibleButtonsSlider",
+                EditMode.scalingWindow, "OptionsSliderTemplate")
+            EditMode.scalingWindow.visibleButtonsSlider:SetPoint("TOP",
+                EditMode.scalingWindow.visibleButtonsLabel, "BOTTOM", 0, -15)
+            EditMode.scalingWindow.visibleButtonsSlider:SetMinMaxValues(1, 12)
+            EditMode.scalingWindow.visibleButtonsSlider:SetValue(12)
+            EditMode.scalingWindow.visibleButtonsSlider:SetValueStep(1)
+            EditMode.scalingWindow.visibleButtonsSlider:SetObeyStepOnDrag(true)
+            EditMode.scalingWindow.visibleButtonsSlider:SetWidth(200)
+            EditMode.scalingWindow.visibleButtonsSlider.Low:SetText("1")
+            EditMode.scalingWindow.visibleButtonsSlider.High:SetText("12")
+            EditMode.scalingWindow.visibleButtonsSlider.Text:SetText("Visible Buttons")
+            EditMode.scalingWindow.visibleButtonsSlider:Hide()
+
+            -- Action bar slider events
+            EditMode.scalingWindow.buttonsPerRowSlider:SetScript("OnValueChanged", function(self, value)
+                local intValue = math.floor(value + 0.5)
+                EditMode.scalingWindow.buttonsPerRowLabel:SetText("Buttons per Row: " .. intValue)
+
+                -- Apply changes immediately for preview
+                if EditMode.scalingWindow.currentFrameName and EditMode.scalingWindow.currentFrameName:match("^mUIActionBar[1-5]$") then
+                    EditMode:ApplyActionBarLayout(EditMode.scalingWindow.currentFrameName, intValue,
+                        EditMode.scalingWindow.visibleButtonsSlider:GetValue())
+                end
+            end)
+
+            EditMode.scalingWindow.visibleButtonsSlider:SetScript("OnValueChanged", function(self, value)
+                local intValue = math.floor(value + 0.5)
+                EditMode.scalingWindow.visibleButtonsLabel:SetText("Visible Buttons: " .. intValue)
+
+                -- Apply changes immediately for preview
+                if EditMode.scalingWindow.currentFrameName and EditMode.scalingWindow.currentFrameName:match("^mUIActionBar[1-5]$") then
+                    EditMode:ApplyActionBarLayout(EditMode.scalingWindow.currentFrameName,
+                        EditMode.scalingWindow.buttonsPerRowSlider:GetValue(), intValue)
+                end
+            end)
+        end
+
+        -- Create action bar layout configuration window
+        function EditMode:CreateActionBarLayoutWindow()
+            if EditMode.actionBarLayoutWindow then
+                return -- Already created
+            end
+
+            -- Main window frame
+            EditMode.actionBarLayoutWindow = CreateFrame("Frame", "mUIActionBarLayoutWindow", UIParent,
+                "BasicFrameTemplateWithInset")
+            EditMode.actionBarLayoutWindow:SetSize(400, 350)
+            EditMode.actionBarLayoutWindow:SetPoint("CENTER", UIParent, "CENTER", 200, 0)
+            EditMode.actionBarLayoutWindow:Hide()
+            EditMode.actionBarLayoutWindow:SetFrameLevel(1000)
+
+            -- Title
+            EditMode.actionBarLayoutWindow.title = EditMode.actionBarLayoutWindow:CreateFontString(nil, "OVERLAY",
+                "GameFontNormalLarge")
+            EditMode.actionBarLayoutWindow.title:SetPoint("TOP", EditMode.actionBarLayoutWindow, "TOP", 0, -5)
+            EditMode.actionBarLayoutWindow.title:SetText("Action Bar Layout")
+
+            -- Current action bar label
+            EditMode.actionBarLayoutWindow.barLabel = EditMode.actionBarLayoutWindow:CreateFontString(nil, "OVERLAY",
+                "GameFontNormal")
+            EditMode.actionBarLayoutWindow.barLabel:SetPoint("TOP", EditMode.actionBarLayoutWindow.title, "BOTTOM", 0,
+                -15)
+            EditMode.actionBarLayoutWindow.barLabel:SetText("Action Bar: None")
+
+            -- Buttons per row
+            EditMode.actionBarLayoutWindow.buttonsPerRowLabel = EditMode.actionBarLayoutWindow:CreateFontString(nil,
+                "OVERLAY", "GameFontNormal")
+            EditMode.actionBarLayoutWindow.buttonsPerRowLabel:SetPoint("TOP", EditMode.actionBarLayoutWindow.barLabel,
+                "BOTTOM", 0, -25)
+            EditMode.actionBarLayoutWindow.buttonsPerRowLabel:SetText("Buttons per Row: 12")
+
+            EditMode.actionBarLayoutWindow.buttonsPerRowSlider = CreateFrame("Slider", "mUIButtonsPerRowSlider",
+                EditMode.actionBarLayoutWindow, "OptionsSliderTemplate")
+            EditMode.actionBarLayoutWindow.buttonsPerRowSlider:SetPoint("TOP",
+                EditMode.actionBarLayoutWindow.buttonsPerRowLabel, "BOTTOM", 0, -15)
+            EditMode.actionBarLayoutWindow.buttonsPerRowSlider:SetMinMaxValues(1, 12)
+            EditMode.actionBarLayoutWindow.buttonsPerRowSlider:SetValue(12)
+            EditMode.actionBarLayoutWindow.buttonsPerRowSlider:SetValueStep(1)
+            EditMode.actionBarLayoutWindow.buttonsPerRowSlider:SetObeyStepOnDrag(true)
+            EditMode.actionBarLayoutWindow.buttonsPerRowSlider:SetWidth(250)
+            EditMode.actionBarLayoutWindow.buttonsPerRowSlider.Low:SetText("1")
+            EditMode.actionBarLayoutWindow.buttonsPerRowSlider.High:SetText("12")
+            EditMode.actionBarLayoutWindow.buttonsPerRowSlider.Text:SetText("Buttons per Row")
+
+            -- Visible buttons
+            EditMode.actionBarLayoutWindow.visibleButtonsLabel = EditMode.actionBarLayoutWindow:CreateFontString(nil,
+                "OVERLAY", "GameFontNormal")
+            EditMode.actionBarLayoutWindow.visibleButtonsLabel:SetPoint("TOP",
+                EditMode.actionBarLayoutWindow.buttonsPerRowSlider, "BOTTOM", 0, -25)
+            EditMode.actionBarLayoutWindow.visibleButtonsLabel:SetText("Visible Buttons: 12")
+
+            EditMode.actionBarLayoutWindow.visibleButtonsSlider = CreateFrame("Slider", "mUIVisibleButtonsSlider",
+                EditMode.actionBarLayoutWindow, "OptionsSliderTemplate")
+            EditMode.actionBarLayoutWindow.visibleButtonsSlider:SetPoint("TOP",
+                EditMode.actionBarLayoutWindow.visibleButtonsLabel, "BOTTOM", 0, -15)
+            EditMode.actionBarLayoutWindow.visibleButtonsSlider:SetMinMaxValues(1, 12)
+            EditMode.actionBarLayoutWindow.visibleButtonsSlider:SetValue(12)
+            EditMode.actionBarLayoutWindow.visibleButtonsSlider:SetValueStep(1)
+            EditMode.actionBarLayoutWindow.visibleButtonsSlider:SetObeyStepOnDrag(true)
+            EditMode.actionBarLayoutWindow.visibleButtonsSlider:SetWidth(250)
+            EditMode.actionBarLayoutWindow.visibleButtonsSlider.Low:SetText("1")
+            EditMode.actionBarLayoutWindow.visibleButtonsSlider.High:SetText("12")
+            EditMode.actionBarLayoutWindow.visibleButtonsSlider.Text:SetText("Visible Buttons")
+
+            -- Current frame being configured
+            EditMode.actionBarLayoutWindow.currentBarName = nil
+
+            -- Slider events
+            EditMode.actionBarLayoutWindow.buttonsPerRowSlider:SetScript("OnValueChanged", function(self, value)
+                local intValue = math.floor(value + 0.5)
+                EditMode.actionBarLayoutWindow.buttonsPerRowLabel:SetText("Buttons per Row: " .. intValue)
+
+                -- Apply changes immediately for preview
+                if EditMode.actionBarLayoutWindow.currentBarName then
+                    EditMode:ApplyActionBarLayout(EditMode.actionBarLayoutWindow.currentBarName, intValue,
+                        EditMode.actionBarLayoutWindow.visibleButtonsSlider:GetValue())
+                end
+            end)
+
+            EditMode.actionBarLayoutWindow.visibleButtonsSlider:SetScript("OnValueChanged", function(self, value)
+                local intValue = math.floor(value + 0.5)
+                EditMode.actionBarLayoutWindow.visibleButtonsLabel:SetText("Visible Buttons: " .. intValue)
+
+                -- Apply changes immediately for preview
+                if EditMode.actionBarLayoutWindow.currentBarName then
+                    EditMode:ApplyActionBarLayout(EditMode.actionBarLayoutWindow.currentBarName,
+                        EditMode.actionBarLayoutWindow.buttonsPerRowSlider:GetValue(), intValue)
+                end
+            end)
+
+            -- Apply button
+            EditMode.actionBarLayoutWindow.applyButton = CreateFrame("Button", "mUIApplyLayoutButton",
+                EditMode.actionBarLayoutWindow, "GameMenuButtonTemplate")
+            EditMode.actionBarLayoutWindow.applyButton:SetSize(70, 22)
+            EditMode.actionBarLayoutWindow.applyButton:SetPoint("BOTTOM", EditMode.actionBarLayoutWindow, "BOTTOM", -100,
+                40)
+            EditMode.actionBarLayoutWindow.applyButton:SetText("Apply")
+
+            -- Reset button
+            EditMode.actionBarLayoutWindow.resetButton = CreateFrame("Button", "mUIResetLayoutButton",
+                EditMode.actionBarLayoutWindow, "GameMenuButtonTemplate")
+            EditMode.actionBarLayoutWindow.resetButton:SetSize(70, 22)
+            EditMode.actionBarLayoutWindow.resetButton:SetPoint("BOTTOM", EditMode.actionBarLayoutWindow, "BOTTOM", -25,
+                40)
+            EditMode.actionBarLayoutWindow.resetButton:SetText("Reset")
+
+            -- Close button
+            EditMode.actionBarLayoutWindow.closeButton = CreateFrame("Button", "mUICloseLayoutButton",
+                EditMode.actionBarLayoutWindow, "GameMenuButtonTemplate")
+            EditMode.actionBarLayoutWindow.closeButton:SetSize(70, 22)
+            EditMode.actionBarLayoutWindow.closeButton:SetPoint("BOTTOM", EditMode.actionBarLayoutWindow, "BOTTOM", 50,
+                40)
+            EditMode.actionBarLayoutWindow.closeButton:SetText("Close")
+
+            -- Apply button events
+            EditMode.actionBarLayoutWindow.applyButton:SetScript("OnClick", function()
+                if EditMode.actionBarLayoutWindow.currentBarName then
+                    local buttonsPerRow = math.floor(EditMode.actionBarLayoutWindow.buttonsPerRowSlider:GetValue() + 0.5)
+                    local visibleButtons = math.floor(EditMode.actionBarLayoutWindow.visibleButtonsSlider:GetValue() +
+                        0.5)
+
+                    -- Save to database
+                    EditMode:SaveActionBarLayout(EditMode.actionBarLayoutWindow.currentBarName, buttonsPerRow,
+                        visibleButtons)
+
+                    -- Apply layout
+                    EditMode:ApplyActionBarLayout(EditMode.actionBarLayoutWindow.currentBarName, buttonsPerRow,
+                        visibleButtons)
+
+                    mUI:Debug("Applied layout to " .. EditMode.actionBarLayoutWindow.currentBarName ..
+                        ": " .. buttonsPerRow .. " per row, " .. visibleButtons .. " visible")
+                end
+                EditMode.actionBarLayoutWindow:Hide()
+            end)
+
+            -- Reset button events
+            EditMode.actionBarLayoutWindow.resetButton:SetScript("OnClick", function()
+                if EditMode.actionBarLayoutWindow.currentBarName then
+                    -- Reset to defaults (12 buttons per row, 12 visible)
+                    EditMode.actionBarLayoutWindow.buttonsPerRowSlider:SetValue(12)
+                    EditMode.actionBarLayoutWindow.visibleButtonsSlider:SetValue(12)
+
+                    -- Save to database
+                    EditMode:SaveActionBarLayout(EditMode.actionBarLayoutWindow.currentBarName, 12, 12)
+
+                    -- Apply layout
+                    EditMode:ApplyActionBarLayout(EditMode.actionBarLayoutWindow.currentBarName, 12, 12)
+
+                    mUI:Debug("Reset layout for " .. EditMode.actionBarLayoutWindow.currentBarName .. " to default")
+                end
+            end)
+
+            -- Close button events
+            EditMode.actionBarLayoutWindow.closeButton:SetScript("OnClick", function()
+                EditMode.actionBarLayoutWindow:Hide()
+            end)
+
+            -- Make window movable
+            EditMode.actionBarLayoutWindow:SetMovable(true)
+            EditMode.actionBarLayoutWindow:EnableMouse(true)
+            EditMode.actionBarLayoutWindow:RegisterForDrag("LeftButton")
+            EditMode.actionBarLayoutWindow:SetScript("OnDragStart", function(self)
+                self:StartMoving()
+            end)
+            EditMode.actionBarLayoutWindow:SetScript("OnDragStop", function(self)
+                self:StopMovingOrSizing()
+            end)
+
+            -- Close on Escape
+            EditMode.actionBarLayoutWindow:SetScript("OnKeyDown", function(self, key)
+                if key == "ESCAPE" then
+                    self:Hide()
+                end
+            end)
+
             EditMode.scalingWindow.frameLabel:SetPoint("TOP", EditMode.scalingWindow.title, "BOTTOM", 0, -10)
             EditMode.scalingWindow.frameLabel:SetText("Frame: None")
 
@@ -780,7 +1302,170 @@ function EditMode:OnInitialize()
             EditMode.scalingWindow.scaleSlider:SetValue(currentScale)
             EditMode.scalingWindow.scaleLabel:SetText(string.format("Scale: %.2f", currentScale))
 
+            -- Check if this is an action bar frame and show/hide action bar controls
+            local isActionBar = frameName:match("^mUIActionBar[1-5]$")
+            if isActionBar then
+                -- Show action bar controls
+                EditMode.scalingWindow.buttonsPerRowLabel:Show()
+                EditMode.scalingWindow.buttonsPerRowSlider:Show()
+                EditMode.scalingWindow.visibleButtonsLabel:Show()
+                EditMode.scalingWindow.visibleButtonsSlider:Show()
+
+                -- Get current layout settings
+                local barNumber = frameName:match("mUIActionBar([1-5])")
+                local barKey = "bar" .. barNumber
+                local layout = mUI.db.profile.actionbars.layout[barKey] or { buttonsPerRow = 12, visibleButtons = 12 }
+
+                -- Set slider values
+                EditMode.scalingWindow.buttonsPerRowSlider:SetValue(layout.buttonsPerRow)
+                EditMode.scalingWindow.visibleButtonsSlider:SetValue(layout.visibleButtons)
+
+                -- Update labels
+                EditMode.scalingWindow.buttonsPerRowLabel:SetText("Buttons per Row: " .. layout.buttonsPerRow)
+                EditMode.scalingWindow.visibleButtonsLabel:SetText("Visible Buttons: " .. layout.visibleButtons)
+
+                -- Increase window size for action bar controls
+                EditMode.scalingWindow:SetSize(350, 450)
+            else
+                -- Hide action bar controls
+                EditMode.scalingWindow.buttonsPerRowLabel:Hide()
+                EditMode.scalingWindow.buttonsPerRowSlider:Hide()
+                EditMode.scalingWindow.visibleButtonsLabel:Hide()
+                EditMode.scalingWindow.visibleButtonsSlider:Hide()
+
+                -- Reset window size for regular frames
+                EditMode.scalingWindow:SetSize(350, 350)
+            end
+
             EditMode.scalingWindow:Show()
+        end
+
+        -- Show action bar layout window for specific action bar
+        -- Save action bar layout to database
+        function EditMode:SaveActionBarLayout(frameName, buttonsPerRow, visibleButtons)
+            local barNumber = frameName:match("mUIActionBar([1-5])")
+            if not barNumber then return end
+
+            local barKey = "bar" .. barNumber
+            if not mUI.db.profile.actionbars.layout[barKey] then
+                mUI.db.profile.actionbars.layout[barKey] = {}
+            end
+
+            mUI.db.profile.actionbars.layout[barKey].buttonsPerRow = buttonsPerRow
+            mUI.db.profile.actionbars.layout[barKey].visibleButtons = visibleButtons
+        end
+
+        -- Apply action bar layout
+        function EditMode:ApplyActionBarLayout(frameName, buttonsPerRow, visibleButtons)
+            if InCombatLockdown() then
+                mUI:Debug("Cannot apply action bar layout during combat")
+                return
+            end
+
+            local barNumber = frameName:match("mUIActionBar([1-5])")
+            if not barNumber then return end
+
+            local barFrame = _G[frameName]
+            if not barFrame then return end
+
+            -- Get the appropriate button prefix based on bar number
+            local buttonPrefix
+            if barNumber == "1" then
+                buttonPrefix = "ActionButton"
+            elseif barNumber == "2" then
+                buttonPrefix = "MultiBarBottomLeftButton"
+            elseif barNumber == "3" then
+                buttonPrefix = "MultiBarBottomRightButton"
+            elseif barNumber == "4" then
+                buttonPrefix = "MultiBarRightButton"
+            elseif barNumber == "5" then
+                buttonPrefix = "MultiBarLeftButton"
+            else
+                return
+            end
+
+            -- Calculate new bar size based on layout
+            local buttonSize = 38 -- Standard button size
+            local buttonSpacing = 2.5
+
+            local newWidth, newHeight
+            if barNumber == "4" or barNumber == "5" then
+                -- Vertical bars (bar 4 and 5)
+                local rows = math.ceil(visibleButtons / buttonsPerRow)
+                newWidth = buttonsPerRow * buttonSize + (buttonsPerRow - 1) * buttonSpacing
+                newHeight = rows * buttonSize + (rows - 1) * buttonSpacing
+            else
+                -- Horizontal bars (bar 1, 2, 3)
+                local rows = math.ceil(visibleButtons / buttonsPerRow)
+                newWidth = buttonsPerRow * buttonSize + (buttonsPerRow - 1) * buttonSpacing
+                newHeight = rows * buttonSize + (rows - 1) * buttonSpacing
+            end
+
+            -- Resize the bar frame
+            barFrame:SetSize(newWidth, newHeight)
+
+            -- Reposition buttons
+            for i = 1, 12 do
+                local button = _G[buttonPrefix .. i]
+                if button then
+                    button:ClearAllPoints()
+
+                    if i <= visibleButtons then
+                        button:Show()
+
+                        -- Calculate row and column
+                        local row = math.ceil(i / buttonsPerRow) - 1
+                        local col = ((i - 1) % buttonsPerRow)
+
+                        if barNumber == "4" or barNumber == "5" then
+                            -- Vertical layout
+                            if i == 1 then
+                                button:SetPoint("TOPLEFT", barFrame, "TOPLEFT", 0, 0)
+                            else
+                                if col == 0 then
+                                    -- New row
+                                    button:SetPoint("TOP", _G[buttonPrefix .. (i - buttonsPerRow)], "BOTTOM", 0,
+                                        -buttonSpacing)
+                                else
+                                    -- Same row
+                                    button:SetPoint("LEFT", _G[buttonPrefix .. (i - 1)], "RIGHT", buttonSpacing, 0)
+                                end
+                            end
+                        else
+                            -- Horizontal layout
+                            if i == 1 then
+                                button:SetPoint("BOTTOMLEFT", barFrame, "BOTTOMLEFT", 0, 0)
+                            else
+                                if col == 0 then
+                                    -- New row
+                                    button:SetPoint("BOTTOM", _G[buttonPrefix .. (i - buttonsPerRow)], "TOP", 0,
+                                        buttonSpacing)
+                                else
+                                    -- Same row
+                                    button:SetPoint("LEFT", _G[buttonPrefix .. (i - 1)], "RIGHT", buttonSpacing, 0)
+                                end
+                            end
+                        end
+                    else
+                        button:Hide()
+                    end
+                end
+            end
+        end
+
+        -- Apply all action bar layouts from database
+        function EditMode:ApplyAllActionBarLayouts()
+            if InCombatLockdown() then
+                return
+            end
+
+            for barKey, layout in pairs(mUI.db.profile.actionbars.layout) do
+                local barNumber = barKey:match("bar([1-5])")
+                if barNumber then
+                    local frameName = "mUIActionBar" .. barNumber
+                    EditMode:ApplyActionBarLayout(frameName, layout.buttonsPerRow or 12, layout.visibleButtons or 12)
+                end
+            end
         end
 
         -- Function to make a frame draggable
@@ -1288,6 +1973,24 @@ function EditMode:OnInitialize()
 
             -- Then restore all saved frame positions on addon load (this will override defaults for saved frames)
             EditMode:RestoreAllSavedPositions()
+        end)
+
+        -- Hook into the Style module to apply action bar layouts after action bars are created
+        C_Timer.After(2, function()
+            -- Apply action bar layouts if mUI action bars are enabled
+            if mUI.db.profile.actionbars.style == "mUI" then
+                local StyleModule = mUI:GetModule("mUI.Modules.Actionbars.Style", true)
+                if StyleModule and StyleModule.loaded then
+                    EditMode:ApplyAllActionBarLayouts()
+                else
+                    -- If Style module isn't loaded yet, wait a bit more and try again
+                    C_Timer.After(3, function()
+                        if mUI.db.profile.actionbars.style == "mUI" then
+                            EditMode:ApplyAllActionBarLayouts()
+                        end
+                    end)
+                end
+            end
         end)
 
         -- Create Menu Button

@@ -41,6 +41,28 @@ local defaults = {
             range = true,
             fontsize = 12,
             cooldown = false,
+            layout = {
+                bar1 = {
+                    buttonsPerRow = 12,
+                    visibleButtons = 12
+                },
+                bar2 = {
+                    buttonsPerRow = 12,
+                    visibleButtons = 12
+                },
+                bar3 = {
+                    buttonsPerRow = 12,
+                    visibleButtons = 12
+                },
+                bar4 = {
+                    buttonsPerRow = 1,
+                    visibleButtons = 12
+                },
+                bar5 = {
+                    buttonsPerRow = 1,
+                    visibleButtons = 12
+                }
+            },
             mouseover = {
                 enabled = false,
                 bar1 = false,
