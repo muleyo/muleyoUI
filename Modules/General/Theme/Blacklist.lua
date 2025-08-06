@@ -95,7 +95,7 @@ function Theme:Blacklist()
             [select(2, ContainerFrame5.Bg:GetRegions())] = true,
             [select(1, ContainerFrame6.Bg:GetRegions())] = true,
             [select(2, ContainerFrame6.Bg:GetRegions())] = true,
-            [select(1, ContainerFrame7.Bg:GetRegions())] = true,
+            --[[[select(1, ContainerFrame7.Bg:GetRegions())] = true,
             [select(2, ContainerFrame7.Bg:GetRegions())] = true,
             [select(1, ContainerFrame8.Bg:GetRegions())] = true,
             [select(2, ContainerFrame8.Bg:GetRegions())] = true,
@@ -108,7 +108,7 @@ function Theme:Blacklist()
             [select(1, ContainerFrame12.Bg:GetRegions())] = true,
             [select(2, ContainerFrame12.Bg:GetRegions())] = true,
             [select(1, ContainerFrame13.Bg:GetRegions())] = true,
-            [select(2, ContainerFrame13.Bg:GetRegions())] = true,
+            [select(2, ContainerFrame13.Bg:GetRegions())] = true,]]
             [select(1, ContainerFrameCombinedBags.Bg:GetRegions())] = true,
             [select(2, ContainerFrameCombinedBags.Bg:GetRegions())] = true,
             [select(9, ChatConfigCategoryFrame.NineSlice:GetRegions())] = true,
