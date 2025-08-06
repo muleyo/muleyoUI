@@ -452,6 +452,7 @@ function Style:UpdateBorders(bar, button)
         button.cooldown:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
         button.cooldown:SetSwipeTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]])
         button.cooldown:SetFrameLevel(2)
+        button.cooldown:SetSwipeColor(0.2, 0.2, 0.2, 0.75)
     end
 
     -- Set Highlight Texture
