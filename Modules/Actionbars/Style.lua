@@ -636,6 +636,14 @@ function Style:HideDefaultFrames()
     MultiBarBottomRight:UnregisterAllEvents()
     MultiBarBottomRight:SetParent(Style.hide)
 
+    MultiBarLeft:Hide()
+    MultiBarLeft:UnregisterAllEvents()
+    MultiBarLeft:SetParent(Style.hide)
+
+    MultiBarRight:Hide()
+    MultiBarRight:UnregisterAllEvents()
+    MultiBarRight:SetParent(Style.hide)
+
     StanceBarFrame:Hide()
     StanceBarFrame:UnregisterAllEvents()
     StanceBarFrame:SetParent(Style.hide)
