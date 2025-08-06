@@ -532,6 +532,7 @@ function Theme:PVP()
         if mUI:IsClassic() then
             mUI:Skin(HonorFrame)
             mUI:Skin(WorldStateScoreFrame)
+            mUI:Skin(WorldStateScoreScrollFrame)
             mUI:Skin(WorldStateScoreFrameTab1)
             mUI:Skin(WorldStateScoreFrameTab2)
             mUI:Skin(WorldStateScoreFrameTab3)
@@ -578,6 +579,14 @@ function Theme:PVP()
             HonorQueueFrameSoloQueueButton_RightSeparator:Hide()
             WarGameStartButton_LeftSeparator:Hide()
             WarGameStartButton_RightSeparator:Hide()
+        end
+
+        if ConquestQueueFrame then
+            mUI:Skin(ConquestQueueFrame)
+            mUI:Skin(ConquestQueueFrame.Inset)
+            mUI:Skin(ConquestQueueFrame.Inset.NineSlice)
+            ConquestJoinButton_LeftSeparator:Hide()
+            ConquestJoinButton_RightSeparator:Hide()
         end
     end
 end

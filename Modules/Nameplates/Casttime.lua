@@ -48,7 +48,7 @@ function Casttime:OnInitialize()
         if not frame or frame:IsForbidden() then return end
         if frame.unit and frame.unit:find('nameplate%d') then
             local _, _, _, _, _, _, _, castInterrupt = UnitCastingInfo(frame.unit)
-            local _, _, _, _, _, _, channelInterrupt, _, _, _ = UnitChannelInfo(frame.unit)
+            local _, _, _, _, _, _, channelInterrupt = UnitChannelInfo(frame.unit)
 
             if frame and frame.Icon then
                 if not mUI:IsClassic() then
@@ -73,7 +73,22 @@ function Casttime:OnInitialize()
                 frame.Text:SetFont(Casttime.font, 10, "OUTLINE")
                 Casttime:IconSkin(frame.Icon, frame)
 
-                if not mUI:IsClassic() then
+                if mUI:IsClassic() then
+                    if castInterrupt or channelInterrupt then
+                        frame:SetStatusBarColor(0.7, 0.7, 0.7)
+                    else
+                        local color
+                        local isChannel = UnitChannelInfo(frame.unit)
+
+                        if isChannel then
+                            color = frame.startChannelColor
+                        else
+                            color = frame.startCastColor
+                        end
+
+                        frame:SetStatusBarColor(color.r, color.g, color.b)
+                    end
+                else
                     if castInterrupt or channelInterrupt then
                         frame.Icon:Hide()
                         frame.mUIBorder:Hide()

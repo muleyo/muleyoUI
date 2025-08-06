@@ -220,8 +220,6 @@ function Style:OnEnable()
                 self:SetStatusBarColor(color.r, color.g, color.b)
             end
         end)
-
-        --Style:SecureHookScript()
     else
         Style.frame:RegisterEvent("PLAYER_ENTERING_WORLD")
         Style.frame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "player")
