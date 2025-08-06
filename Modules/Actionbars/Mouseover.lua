@@ -26,7 +26,7 @@ function Mouseover:OnInitialize()
                 bar2 = "mUIActionBar2",
                 bar3 = "mUIActionBar3",
                 bar4 = "mUIActionBar4",
-                bar5 = "mUIActionbar5",
+                bar5 = "mUIActionBar5",
                 petbar = "mUIPetActionBar",
                 stancebar = "mUIStanceBar",
                 micromenu = "mUIMicroMenu",
