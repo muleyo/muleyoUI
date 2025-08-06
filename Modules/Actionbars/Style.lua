@@ -67,7 +67,7 @@ function Style:FetchActiveBar()
 end
 
 function Style:UpdateActionBarVisibility()
-    local AB1, AB2 = GetActionBarToggles()
+    local AB1, AB2, AB3, AB4 = GetActionBarToggles()
     if AB1 then
         RegisterStateDriver(Style.bar2, "visibility", "[vehicleui] hide; show")
     else
@@ -78,6 +78,18 @@ function Style:UpdateActionBarVisibility()
         RegisterStateDriver(Style.bar3, "visibility", "[vehicleui] hide; show")
     else
         RegisterStateDriver(Style.bar3, "visibility", "hide")
+    end
+
+    if AB3 then
+        RegisterStateDriver(Style.bar4, "visibility", "[vehicleui] hide; show")
+    else
+        RegisterStateDriver(Style.bar4, "visibility", "hide")
+    end
+
+    if AB3 and AB4 then
+        RegisterStateDriver(Style.bar5, "visibility", "[vehicleui] hide; show")
+    else
+        RegisterStateDriver(Style.bar5, "visibility", "hide")
     end
 end
 
