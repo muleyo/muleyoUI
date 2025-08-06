@@ -15,6 +15,18 @@ function EditMode:OnInitialize()
             }
         end
 
+        -- Initialize snapping database settings if they don't exist
+        if not EditMode.db.snapping then
+            EditMode.db.snapping = {
+                enabled = true,
+                snapToFrames = true,
+                snapToCenter = true,
+                snapToGrid = false,
+                snapDistance = 15,
+                showSnapLines = true
+            }
+        end
+
         -- Initialize frame positions and scales database
         if not EditMode.db.frames then
             EditMode.db.frames = {}
@@ -384,7 +396,26 @@ function EditMode:OnInitialize()
                 local exactCenterV = self.grid:CreateTexture(nil, "ARTWORK")
                 exactCenterV:SetColorTexture(1, 1, 0, alpha * 1.5) -- Bright yellow
                 exactCenterV:SetSize(2, screenHeight)
-                exactCenterV:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
+
+                -- Calculate the center between ActionButtons 6 and 7
+                -- ActionBar1 is centered on screen, so we calculate from screen center
+                local actionBarCenter = screenWidth / 2
+                local buttonSize = 36
+                local buttonSpacing = 2.5
+
+                -- The ActionBar has 12 buttons centered on screen
+                -- Total bar width: (12 * buttonSize) + (11 * buttonSpacing) = 432 + 27.5 = 459.5
+                local totalBarWidth = (12 * buttonSize) + (11 * buttonSpacing)
+                local barStartX = actionBarCenter - (totalBarWidth / 2)
+
+                -- Calculate position between button 6 and 7 from bar start
+                -- Button 6 ends at: barStartX + (6 * buttonSize) + (5 * buttonSpacing)
+                -- Button 7 starts at: barStartX + (6 * buttonSize) + (6 * buttonSpacing)
+                local button6End = barStartX + (6 * buttonSize) + (5 * buttonSpacing)
+                local button7Start = barStartX + (6 * buttonSize) + (6 * buttonSpacing)
+                local centerBetweenButtons = (button6End + button7Start) / 2
+
+                exactCenterV:SetPoint("LEFT", UIParent, "BOTTOMLEFT", centerBetweenButtons, screenHeight / 2)
                 table.insert(self.gridLines, exactCenterV)
             end
 
@@ -392,7 +423,7 @@ function EditMode:OnInitialize()
                 local exactCenterH = self.grid:CreateTexture(nil, "ARTWORK")
                 exactCenterH:SetColorTexture(1, 1, 0, alpha * 1.5) -- Bright yellow
                 exactCenterH:SetSize(screenWidth, 2)
-                exactCenterH:SetPoint("LEFT", UIParent, "LEFT", 0, 0)
+                exactCenterH:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
                 table.insert(self.gridLines, exactCenterH)
             end
         end
@@ -425,10 +456,21 @@ function EditMode:OnInitialize()
                 if not self.isDragModeEnabled and not InCombatLockdown() then
                     EditMode:EnableDragMode()
                 end
+
+                -- Show snapping panel when edit mode is enabled
+                if not self.snappingPanel then
+                    self:CreateSnappingPanel()
+                end
+                self.snappingPanel:Show()
             else
                 -- Auto-disable drag mode when grid is disabled
                 if self.isDragModeEnabled and not InCombatLockdown() then
                     EditMode:DisableDragMode()
+                end
+
+                -- Hide snapping panel when edit mode is disabled
+                if self.snappingPanel then
+                    self.snappingPanel:Hide()
                 end
             end
         end
@@ -465,6 +507,10 @@ function EditMode:OnInitialize()
         EditMode.draggableFrames = {}
         EditMode.isDragModeEnabled = false
         EditMode.wasDragModeActive = false
+
+        -- Snapping system
+        EditMode.snapLines = {}
+        EditMode.currentSnapLines = {}
 
         -- Function to save frame position and scale
         function EditMode:SaveFramePosition(frameName, frame)
@@ -1357,11 +1403,6 @@ function EditMode:OnInitialize()
 
         -- Apply action bar layout
         function EditMode:ApplyActionBarLayout(frameName, buttonsPerRow, visibleButtons)
-            if InCombatLockdown() then
-                mUI:Debug("Cannot apply action bar layout during combat")
-                return
-            end
-
             local barNumber = frameName:match("mUIActionBar([1-5])")
             if not barNumber then return end
 
@@ -1385,7 +1426,7 @@ function EditMode:OnInitialize()
             end
 
             -- Calculate new bar size based on layout
-            local buttonSize = 38 -- Standard button size
+            local buttonSize = 36 -- Standard button size
             local buttonSpacing = 2.5
 
             local newWidth, newHeight
@@ -1455,10 +1496,6 @@ function EditMode:OnInitialize()
 
         -- Apply all action bar layouts from database
         function EditMode:ApplyAllActionBarLayouts()
-            if InCombatLockdown() then
-                return
-            end
-
             for barKey, layout in pairs(mUI.db.profile.actionbars.layout) do
                 local barNumber = barKey:match("bar([1-5])")
                 if barNumber then
@@ -1466,6 +1503,190 @@ function EditMode:OnInitialize()
                     EditMode:ApplyActionBarLayout(frameName, layout.buttonsPerRow or 12, layout.visibleButtons or 12)
                 end
             end
+        end
+
+        -- Snapping system functions
+        function EditMode:CreateSnapLines()
+            -- Create snap line textures for showing snap guides
+            if not self.snapLines.vertical then
+                self.snapLines.vertical = UIParent:CreateTexture(nil, "OVERLAY")
+                self.snapLines.vertical:SetColorTexture(1, 0.5, 0, 0.8) -- Orange color
+                self.snapLines.vertical:SetSize(2, GetScreenHeight())
+                self.snapLines.vertical:Hide()
+            end
+
+            if not self.snapLines.horizontal then
+                self.snapLines.horizontal = UIParent:CreateTexture(nil, "OVERLAY")
+                self.snapLines.horizontal:SetColorTexture(1, 0.5, 0, 0.8) -- Orange color
+                self.snapLines.horizontal:SetSize(GetScreenWidth(), 2)
+                self.snapLines.horizontal:Hide()
+            end
+        end
+
+        function EditMode:HideSnapLines()
+            if self.snapLines.vertical then
+                self.snapLines.vertical:Hide()
+            end
+            if self.snapLines.horizontal then
+                self.snapLines.horizontal:Hide()
+            end
+        end
+
+        function EditMode:ShowSnapLine(orientation, position)
+            if not self.db.snapping.showSnapLines then
+                return
+            end
+
+            self:CreateSnapLines()
+
+            if orientation == "vertical" then
+                self.snapLines.vertical:SetPoint("CENTER", UIParent, "BOTTOMLEFT", position, GetScreenHeight() / 2)
+                self.snapLines.vertical:Show()
+            elseif orientation == "horizontal" then
+                self.snapLines.horizontal:SetPoint("CENTER", UIParent, "BOTTOMLEFT", GetScreenWidth() / 2, position)
+                self.snapLines.horizontal:Show()
+            end
+        end
+
+        function EditMode:GetSnapPosition(frame, currentX, currentY)
+            if not self.db.snapping.enabled then
+                return currentX, currentY
+            end
+
+            local snapX, snapY = currentX, currentY
+            local snappedX, snappedY = false, false
+            local snapDistance = self.db.snapping.snapDistance
+
+            local frameWidth = frame:GetWidth()
+            local frameHeight = frame:GetHeight()
+
+            -- Center coordinates
+            local screenCenterX = GetScreenWidth() / 2
+            local screenCenterY = GetScreenHeight() / 2
+
+            -- Frame edges for snapping calculations
+            local frameLeft = currentX
+            local frameRight = currentX + frameWidth
+            local frameCenterX = currentX + frameWidth / 2
+            local frameBottom = currentY
+            local frameTop = currentY + frameHeight
+            local frameCenterY = currentY + frameHeight / 2
+
+            -- Snap to screen center
+            if self.db.snapping.snapToCenter then
+                -- Snap frame center to screen center
+                if math.abs(frameCenterX - screenCenterX) <= snapDistance then
+                    snapX = screenCenterX - frameWidth / 2
+                    snappedX = true
+                    self:ShowSnapLine("vertical", screenCenterX)
+                end
+
+                if math.abs(frameCenterY - screenCenterY) <= snapDistance then
+                    snapY = screenCenterY - frameHeight / 2
+                    snappedY = true
+                    self:ShowSnapLine("horizontal", screenCenterY)
+                end
+            end
+
+            -- Snap to other frames
+            if self.db.snapping.snapToFrames and not (snappedX and snappedY) then
+                for _, frameData in ipairs(self.availableFrames) do
+                    local targetFrame = _G[frameData.frame]
+                    if targetFrame and targetFrame ~= frame and targetFrame:IsVisible() then
+                        local targetLeft = targetFrame:GetLeft() or 0
+                        local targetRight = targetFrame:GetRight() or 0
+                        local targetBottom = targetFrame:GetBottom() or 0
+                        local targetTop = targetFrame:GetTop() or 0
+                        local targetCenterX = (targetLeft + targetRight) / 2
+                        local targetCenterY = (targetBottom + targetTop) / 2
+                        local targetWidth = targetFrame:GetWidth()
+                        local targetHeight = targetFrame:GetHeight()
+
+                        -- Horizontal snapping (align vertically)
+                        if not snappedX then
+                            -- Left edge to left edge
+                            if math.abs(frameLeft - targetLeft) <= snapDistance then
+                                snapX = targetLeft
+                                snappedX = true
+                                self:ShowSnapLine("vertical", targetLeft)
+                                -- Right edge to right edge
+                            elseif math.abs(frameRight - targetRight) <= snapDistance then
+                                snapX = targetRight - frameWidth
+                                snappedX = true
+                                self:ShowSnapLine("vertical", targetRight)
+                                -- Left edge to right edge (snap next to)
+                            elseif math.abs(frameLeft - targetRight) <= snapDistance then
+                                snapX = targetRight
+                                snappedX = true
+                                self:ShowSnapLine("vertical", targetRight)
+                                -- Right edge to left edge (snap next to)
+                            elseif math.abs(frameRight - targetLeft) <= snapDistance then
+                                snapX = targetLeft - frameWidth
+                                snappedX = true
+                                self:ShowSnapLine("vertical", targetLeft)
+                                -- Center to center
+                            elseif math.abs(frameCenterX - targetCenterX) <= snapDistance then
+                                snapX = targetCenterX - frameWidth / 2
+                                snappedX = true
+                                self:ShowSnapLine("vertical", targetCenterX)
+                            end
+                        end
+
+                        -- Vertical snapping (align horizontally)
+                        if not snappedY then
+                            -- Bottom edge to bottom edge
+                            if math.abs(frameBottom - targetBottom) <= snapDistance then
+                                snapY = targetBottom
+                                snappedY = true
+                                self:ShowSnapLine("horizontal", targetBottom)
+                                -- Top edge to top edge
+                            elseif math.abs(frameTop - targetTop) <= snapDistance then
+                                snapY = targetTop - frameHeight
+                                snappedY = true
+                                self:ShowSnapLine("horizontal", targetTop)
+                                -- Bottom edge to top edge (snap next to)
+                            elseif math.abs(frameBottom - targetTop) <= snapDistance then
+                                snapY = targetTop
+                                snappedY = true
+                                self:ShowSnapLine("horizontal", targetTop)
+                                -- Top edge to bottom edge (snap next to)
+                            elseif math.abs(frameTop - targetBottom) <= snapDistance then
+                                snapY = targetBottom - frameHeight
+                                snappedY = true
+                                self:ShowSnapLine("horizontal", targetBottom)
+                                -- Center to center
+                            elseif math.abs(frameCenterY - targetCenterY) <= snapDistance then
+                                snapY = targetCenterY - frameHeight / 2
+                                snappedY = true
+                                self:ShowSnapLine("horizontal", targetCenterY)
+                            end
+                        end
+                    end
+                end
+            end
+
+            -- Snap to grid
+            if self.db.snapping.snapToGrid and self.db.grid.enabled then
+                local gridSize = self.db.grid.size
+
+                if not snappedX then
+                    local gridSnapX = math.floor((frameCenterX + gridSize / 2) / gridSize) * gridSize - frameWidth / 2
+                    if math.abs(frameCenterX - (gridSnapX + frameWidth / 2)) <= snapDistance then
+                        snapX = gridSnapX
+                        snappedX = true
+                    end
+                end
+
+                if not snappedY then
+                    local gridSnapY = math.floor((frameCenterY + gridSize / 2) / gridSize) * gridSize - frameHeight / 2
+                    if math.abs(frameCenterY - (gridSnapY + frameHeight / 2)) <= snapDistance then
+                        snapY = gridSnapY
+                        snappedY = true
+                    end
+                end
+            end
+
+            return snapX, snapY
         end
 
         -- Function to make a frame draggable
@@ -1551,18 +1772,58 @@ function EditMode:OnInitialize()
             -- Set up drag handlers for border frame (for all frames)
             frame.draggableBorder:SetScript("OnDragStart", function(self)
                 if EditMode.isDragModeEnabled and not InCombatLockdown() then
-                    frame:StartMoving()
+                    -- Store initial drag position
+                    local cursorX, cursorY = GetCursorPosition()
+                    local uiScale = UIParent:GetEffectiveScale()
+                    cursorX = cursorX / uiScale
+                    cursorY = cursorY / uiScale
+
+                    local frameLeft = frame:GetLeft() or 0
+                    local frameBottom = frame:GetBottom() or 0
+
+                    frame.dragOffsetX = cursorX - frameLeft
+                    frame.dragOffsetY = cursorY - frameBottom
+                    frame.isDragging = true
+
                     frame.dragActiveOverlay:Show()
                     self.top:SetColorTexture(0, 0.5, 1, 1) -- Change border to blue while dragging
                     self.bottom:SetColorTexture(0, 0.5, 1, 1)
                     self.left:SetColorTexture(0, 0.5, 1, 1)
                     self.right:SetColorTexture(0, 0.5, 1, 1)
+
+                    -- Start update loop for smooth dragging with snapping
+                    if not frame.dragUpdateFrame then
+                        frame.dragUpdateFrame = CreateFrame("Frame")
+                    end
+
+                    frame.dragUpdateFrame:SetScript("OnUpdate", function()
+                        if frame.isDragging then
+                            local cursorX, cursorY = GetCursorPosition()
+                            local uiScale = UIParent:GetEffectiveScale()
+                            cursorX = cursorX / uiScale
+                            cursorY = cursorY / uiScale
+
+                            local newX = cursorX - frame.dragOffsetX
+                            local newY = cursorY - frame.dragOffsetY
+
+                            -- Apply snapping
+                            local snappedX, snappedY = EditMode:GetSnapPosition(frame, newX, newY)
+
+                            frame:ClearAllPoints()
+                            frame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", snappedX, snappedY)
+                        end
+                    end)
                 end
             end)
 
             frame.draggableBorder:SetScript("OnDragStop", function(self)
                 if EditMode.isDragModeEnabled and not (frame:IsProtected() and InCombatLockdown()) then
-                    frame:StopMovingOrSizing()
+                    frame.isDragging = false
+                    if frame.dragUpdateFrame then
+                        frame.dragUpdateFrame:SetScript("OnUpdate", nil)
+                    end
+
+                    EditMode:HideSnapLines()
                     frame.dragActiveOverlay:Hide()
 
                     -- Save new position
@@ -1963,7 +2224,7 @@ function EditMode:OnInitialize()
 
         -- Check if grid is enabled on startup and enable drag mode if so
         -- Also restore all saved frame positions on addon load
-        C_Timer.After(0.1, function()
+        C_Timer.After(0, function()
             if EditMode.db.grid.enabled and not InCombatLockdown() then
                 EditMode:EnableDragMode()
             end
@@ -1973,25 +2234,154 @@ function EditMode:OnInitialize()
 
             -- Then restore all saved frame positions on addon load (this will override defaults for saved frames)
             EditMode:RestoreAllSavedPositions()
-        end)
 
-        -- Hook into the Style module to apply action bar layouts after action bars are created
-        C_Timer.After(2, function()
             -- Apply action bar layouts if mUI action bars are enabled
             if mUI.db.profile.actionbars.style == "mUI" then
-                local StyleModule = mUI:GetModule("mUI.Modules.Actionbars.Style", true)
-                if StyleModule and StyleModule.loaded then
-                    EditMode:ApplyAllActionBarLayouts()
-                else
-                    -- If Style module isn't loaded yet, wait a bit more and try again
-                    C_Timer.After(3, function()
-                        if mUI.db.profile.actionbars.style == "mUI" then
-                            EditMode:ApplyAllActionBarLayouts()
-                        end
-                    end)
-                end
+                EditMode:ApplyAllActionBarLayouts()
             end
         end)
+
+        -- Create Snapping Settings Panel
+        function EditMode:CreateSnappingPanel()
+            if EditMode.snappingPanel then
+                return -- Already created
+            end
+
+            -- Main snapping panel frame
+            EditMode.snappingPanel = CreateFrame("Frame", "mUISnappingPanel", UIParent, "BackdropTemplate")
+            EditMode.snappingPanel:SetSize(200, 180)
+            EditMode.snappingPanel:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 10, -10)
+            EditMode.snappingPanel:SetBackdrop({
+                bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+                edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+                tile = true,
+                tileSize = 16,
+                edgeSize = 16,
+                insets = { left = 4, right = 4, top = 4, bottom = 4 }
+            })
+            EditMode.snappingPanel:SetBackdropColor(0, 0, 0, 0.8)
+            EditMode.snappingPanel:SetBackdropBorderColor(0.5, 0.5, 0.5, 1)
+            EditMode.snappingPanel:SetFrameLevel(1000)
+            EditMode.snappingPanel:Hide() -- Hidden by default
+
+            -- Title
+            EditMode.snappingPanel.title = EditMode.snappingPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+            EditMode.snappingPanel.title:SetPoint("TOP", EditMode.snappingPanel, "TOP", 0, -10)
+            EditMode.snappingPanel.title:SetText("Snapping")
+            EditMode.snappingPanel.title:SetTextColor(1, 1, 1, 1)
+
+            -- Enable Snapping checkbox
+            EditMode.snappingPanel.enableCheckbox = CreateFrame("CheckButton", "mUISnappingEnable",
+                EditMode.snappingPanel, "UICheckButtonTemplate")
+            EditMode.snappingPanel.enableCheckbox:SetPoint("TOPLEFT", EditMode.snappingPanel, "TOPLEFT", 15, -35)
+            EditMode.snappingPanel.enableCheckbox:SetSize(20, 20)
+            EditMode.snappingPanel.enableCheckbox:SetChecked(EditMode.db.snapping.enabled)
+
+            EditMode.snappingPanel.enableLabel = EditMode.snappingPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            EditMode.snappingPanel.enableLabel:SetPoint("LEFT", EditMode.snappingPanel.enableCheckbox, "RIGHT", 5, 0)
+            EditMode.snappingPanel.enableLabel:SetText("Enable Snapping")
+            EditMode.snappingPanel.enableLabel:SetTextColor(1, 1, 1, 1)
+
+            -- Snap to Center checkbox
+            EditMode.snappingPanel.centerCheckbox = CreateFrame("CheckButton", "mUISnapToCenter", EditMode.snappingPanel,
+                "UICheckButtonTemplate")
+            EditMode.snappingPanel.centerCheckbox:SetPoint("TOPLEFT", EditMode.snappingPanel.enableCheckbox, "BOTTOMLEFT",
+                0, -10)
+            EditMode.snappingPanel.centerCheckbox:SetSize(20, 20)
+            EditMode.snappingPanel.centerCheckbox:SetChecked(EditMode.db.snapping.snapToCenter)
+
+            EditMode.snappingPanel.centerLabel = EditMode.snappingPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            EditMode.snappingPanel.centerLabel:SetPoint("LEFT", EditMode.snappingPanel.centerCheckbox, "RIGHT", 5, 0)
+            EditMode.snappingPanel.centerLabel:SetText("Snap to Center")
+            EditMode.snappingPanel.centerLabel:SetTextColor(1, 1, 1, 1)
+
+            -- Snap to Frames checkbox
+            EditMode.snappingPanel.framesCheckbox = CreateFrame("CheckButton", "mUISnapToFrames", EditMode.snappingPanel,
+                "UICheckButtonTemplate")
+            EditMode.snappingPanel.framesCheckbox:SetPoint("TOPLEFT", EditMode.snappingPanel.centerCheckbox, "BOTTOMLEFT",
+                0, -10)
+            EditMode.snappingPanel.framesCheckbox:SetSize(20, 20)
+            EditMode.snappingPanel.framesCheckbox:SetChecked(EditMode.db.snapping.snapToFrames)
+
+            EditMode.snappingPanel.framesLabel = EditMode.snappingPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            EditMode.snappingPanel.framesLabel:SetPoint("LEFT", EditMode.snappingPanel.framesCheckbox, "RIGHT", 5, 0)
+            EditMode.snappingPanel.framesLabel:SetText("Snap to Frames")
+            EditMode.snappingPanel.framesLabel:SetTextColor(1, 1, 1, 1)
+
+            -- Snap to Grid checkbox
+            EditMode.snappingPanel.gridCheckbox = CreateFrame("CheckButton", "mUISnapToGrid", EditMode.snappingPanel,
+                "UICheckButtonTemplate")
+            EditMode.snappingPanel.gridCheckbox:SetPoint("TOPLEFT", EditMode.snappingPanel.framesCheckbox, "BOTTOMLEFT",
+                0, -10)
+            EditMode.snappingPanel.gridCheckbox:SetSize(20, 20)
+            EditMode.snappingPanel.gridCheckbox:SetChecked(EditMode.db.snapping.snapToGrid)
+
+            EditMode.snappingPanel.gridLabel = EditMode.snappingPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            EditMode.snappingPanel.gridLabel:SetPoint("LEFT", EditMode.snappingPanel.gridCheckbox, "RIGHT", 5, 0)
+            EditMode.snappingPanel.gridLabel:SetText("Snap to Grid")
+            EditMode.snappingPanel.gridLabel:SetTextColor(1, 1, 1, 1)
+
+            -- Show Snap Lines checkbox
+            EditMode.snappingPanel.linesCheckbox = CreateFrame("CheckButton", "mUIShowSnapLines", EditMode.snappingPanel,
+                "UICheckButtonTemplate")
+            EditMode.snappingPanel.linesCheckbox:SetPoint("TOPLEFT", EditMode.snappingPanel.gridCheckbox, "BOTTOMLEFT", 0,
+                -10)
+            EditMode.snappingPanel.linesCheckbox:SetSize(20, 20)
+            EditMode.snappingPanel.linesCheckbox:SetChecked(EditMode.db.snapping.showSnapLines)
+
+            EditMode.snappingPanel.linesLabel = EditMode.snappingPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            EditMode.snappingPanel.linesLabel:SetPoint("LEFT", EditMode.snappingPanel.linesCheckbox, "RIGHT", 5, 0)
+            EditMode.snappingPanel.linesLabel:SetText("Show Snap Lines")
+            EditMode.snappingPanel.linesLabel:SetTextColor(1, 1, 1, 1)
+
+            -- Close button
+            EditMode.snappingPanel.closeButton = CreateFrame("Button", "mUISnappingPanelClose", EditMode.snappingPanel,
+                "UIPanelCloseButton")
+            EditMode.snappingPanel.closeButton:SetPoint("TOPRIGHT", EditMode.snappingPanel, "TOPRIGHT", -5, -5)
+            EditMode.snappingPanel.closeButton:SetSize(20, 20)
+            EditMode.snappingPanel.closeButton:SetScript("OnClick", function()
+                EditMode.snappingPanel:Hide()
+            end)
+
+            -- Checkbox event handlers
+            EditMode.snappingPanel.enableCheckbox:SetScript("OnClick", function(self)
+                EditMode.db.snapping.enabled = self:GetChecked()
+            end)
+
+            EditMode.snappingPanel.centerCheckbox:SetScript("OnClick", function(self)
+                EditMode.db.snapping.snapToCenter = self:GetChecked()
+            end)
+
+            EditMode.snappingPanel.framesCheckbox:SetScript("OnClick", function(self)
+                EditMode.db.snapping.snapToFrames = self:GetChecked()
+            end)
+
+            EditMode.snappingPanel.gridCheckbox:SetScript("OnClick", function(self)
+                EditMode.db.snapping.snapToGrid = self:GetChecked()
+            end)
+
+            EditMode.snappingPanel.linesCheckbox:SetScript("OnClick", function(self)
+                EditMode.db.snapping.showSnapLines = self:GetChecked()
+            end)
+
+            -- Make panel movable
+            EditMode.snappingPanel:SetMovable(true)
+            EditMode.snappingPanel:EnableMouse(true)
+            EditMode.snappingPanel:RegisterForDrag("LeftButton")
+            EditMode.snappingPanel:SetScript("OnDragStart", function(self)
+                self:StartMoving()
+            end)
+            EditMode.snappingPanel:SetScript("OnDragStop", function(self)
+                self:StopMovingOrSizing()
+            end)
+
+            -- Close on Escape key
+            EditMode.snappingPanel:SetScript("OnKeyDown", function(self, key)
+                if key == "ESCAPE" then
+                    self:Hide()
+                end
+            end)
+        end
 
         -- Create Menu Button
         EditMode.menuButton = CreateFrame("Button", "mUI_EditModeButton", GameMenuFrame, "UIPanelButtonTemplate")
@@ -2002,6 +2392,28 @@ function EditMode:OnInitialize()
         EditMode:SecureHookScript(EditMode.menuButton, "OnClick", function()
             EditMode:ToggleGrid()
             ToggleGameMenu()
+        end)
+
+        -- Add keybinding for snapping panel toggle (Ctrl+S while in edit mode)
+        local snappingKeybind = CreateFrame("Frame")
+        snappingKeybind:RegisterEvent("ADDON_LOADED")
+        snappingKeybind:SetScript("OnEvent", function(self, event, addonName)
+            if addonName == "mUI" then
+                snappingKeybind:SetScript("OnKeyDown", function(self, key)
+                    if EditMode.isDragModeEnabled and IsControlKeyDown() and key == "S" then
+                        if not EditMode.snappingPanel then
+                            EditMode:CreateSnappingPanel()
+                        end
+
+                        if EditMode.snappingPanel:IsShown() then
+                            EditMode.snappingPanel:Hide()
+                        else
+                            EditMode.snappingPanel:Show()
+                        end
+                    end
+                end)
+                snappingKeybind:EnableKeyboard(true)
+            end
         end)
 
         EditMode:SecureHookScript(GameMenuFrame, "OnShow", function()

@@ -133,7 +133,7 @@ function Style:CreateActionbars()
     Style.bagbar:SetSize(155, 32)
     Style.petbar:SetSize(340, 32)
     Style.stancebar:SetSize(205, 32)
-    Style.expbar:SetSize(462, 12)
+    Style.expbar:SetSize(460, 12)
 
     -- Set Bars movable
     Style.bar1:SetMovable(true)
