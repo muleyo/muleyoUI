@@ -1316,6 +1316,22 @@ function Theme:Loot()
     if mUI:IsClassic() then
         mUI:Skin(LootFrameInset)
         mUI:Skin(LootFrameInset.NineSlice)
+        mUI:Skin(GroupLootFrame1)
+        mUI:Skin(GroupLootFrame2)
+        mUI:Skin(GroupLootFrame3)
+        mUI:Skin(GroupLootFrame4)
+
+        if not Theme:IsHooked("GroupLootFrame_OnUpdate") then
+            Theme:SecureHook("GroupLootFrame_OnUpdate", function(frame)
+                mUI:Skin(frame)
+            end)
+        end
+
+        if not Theme:IsHooked("BonusRollFrame_OnUpdate") then
+            Theme:SecureHook("BonusRollFrame_OnUpdate", function(frame)
+                mUI:Skin(frame)
+            end)
+        end
     end
 
     if not mUI:IsClassic() then
@@ -1485,6 +1501,7 @@ function Theme:Quest()
         mUI:Skin(QuestLogDetailScrollFrame)
         mUI:Skin(QuestRewardScrollFrame)
         mUI:Skin(QuestDetailScrollFrame)
+        mUI:Skin(QuestProgressScrollFrame)
         mUI:Skin(QuestModelScene)
     else
         mUI:Skin(QuestLogPopupDetailFrame)
