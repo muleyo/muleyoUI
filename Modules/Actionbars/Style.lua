@@ -324,7 +324,7 @@ function Style:CreateExpBar()
 
     -- Add rested XP indicator bar
     Style.expbar.rested = CreateFrame("StatusBar", nil, Style.expbar)
-    Style.expbar.rested:SetSize(462, 12)
+    Style.expbar.rested:SetSize(460, 12)
     Style.expbar.rested:SetPoint("BOTTOMLEFT", Style.expbar, 0, 0)
     Style.expbar.rested:SetMinMaxValues(0, 100)
     Style.expbar.rested:SetFrameLevel(Style.expbar:GetFrameLevel())
