@@ -30,6 +30,7 @@ function Theme:Blacklist()
             ["StaticPopup3AlertIcon"] = true,
             ["LFGDungeonReadyDialogBackground"] = true,
             ["QuestNPCModelBg"] = true,
+            ["ReadyCheckPortrait"] = true,
             [select(2, ChatFrame1EditBox:GetRegions())] = true,
             [select(2, ChatFrame2EditBox:GetRegions())] = true,
             [select(2, ChatFrame3EditBox:GetRegions())] = true,
