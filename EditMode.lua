@@ -1386,6 +1386,63 @@ function EditMode:OnInitialize()
             EditMode.scalingWindow:Show()
         end
 
+        -- Function to store original button visibility states
+        function EditMode:StoreActionButtonVisibility()
+            if not EditMode.originalButtonStates then
+                EditMode.originalButtonStates = {}
+            end
+
+            local buttonPrefixes = {
+                "ActionButton",
+                "MultiBarBottomLeftButton",
+                "MultiBarBottomRightButton",
+                "MultiBarLeftButton",
+                "MultiBarRightButton"
+            }
+
+            for _, prefix in ipairs(buttonPrefixes) do
+                if not EditMode.originalButtonStates[prefix] then
+                    EditMode.originalButtonStates[prefix] = {}
+                end
+
+                for i = 1, 12 do
+                    local button = _G[prefix .. i]
+                    if button then
+                        EditMode.originalButtonStates[prefix][i] = button:IsShown()
+                    end
+                end
+            end
+        end
+
+        -- Function to restore button visibility based on original state and settings
+        function EditMode:RestoreActionButtonVisibility()
+            if not EditMode.originalButtonStates then
+                return
+            end
+
+            local buttonPrefixes = {
+                "ActionButton",
+                "MultiBarBottomLeftButton",
+                "MultiBarBottomRightButton",
+                "MultiBarLeftButton",
+                "MultiBarRightButton"
+            }
+
+            for _, prefix in ipairs(buttonPrefixes) do
+                if EditMode.originalButtonStates[prefix] then
+                    for i = 1, 12 do
+                        local button = _G[prefix .. i]
+                        if button and EditMode.originalButtonStates[prefix][i] ~= nil then
+                            -- Only hide buttons that were originally hidden
+                            if not EditMode.originalButtonStates[prefix][i] then
+                                button:Hide()
+                            end
+                        end
+                    end
+                end
+            end
+        end
+
         -- Show action bar layout window for specific action bar
         -- Save action bar layout to database
         function EditMode:SaveActionBarLayout(frameName, buttonsPerRow, visibleButtons)
@@ -1452,7 +1509,15 @@ function EditMode:OnInitialize()
                     button:ClearAllPoints()
 
                     if i <= visibleButtons then
-                        button:Show()
+                        -- Only show if it was originally visible or if it's within visible range
+                        local wasOriginallyVisible = true
+                        if EditMode.originalButtonStates and EditMode.originalButtonStates[buttonPrefix] then
+                            wasOriginallyVisible = EditMode.originalButtonStates[buttonPrefix][i] or false
+                        end
+
+                        if wasOriginallyVisible then
+                            button:Show()
+                        end
 
                         -- Calculate row and column
                         local row = math.ceil(i / buttonsPerRow) - 1
@@ -2225,6 +2290,9 @@ function EditMode:OnInitialize()
         -- Check if grid is enabled on startup and enable drag mode if so
         -- Also restore all saved frame positions on addon load
         C_Timer.After(0, function()
+            -- Store original button visibility before any changes
+            EditMode:StoreActionButtonVisibility()
+
             if EditMode.db.grid.enabled and not InCombatLockdown() then
                 EditMode:EnableDragMode()
             end
@@ -2238,6 +2306,8 @@ function EditMode:OnInitialize()
             -- Apply action bar layouts if mUI action bars are enabled
             if mUI.db.profile.actionbars.style == "mUI" then
                 EditMode:ApplyAllActionBarLayouts()
+                -- Restore original visibility after layouts are applied
+                EditMode:RestoreActionButtonVisibility()
             end
         end)
 
