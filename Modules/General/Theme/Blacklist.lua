@@ -58,6 +58,7 @@ function Theme:Blacklist()
             [select(18, QuestLogFrame:GetRegions())] = true,
             [select(18, OpenMailFrame:GetRegions())] = true,
             [select(18, ItemTextFrame:GetRegions())] = true,
+            [select(4, LFGListInviteDialog:GetRegions())] = true,
         }
     else
         Theme.blacklist = {
