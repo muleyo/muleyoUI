@@ -152,27 +152,28 @@ function Style:CreateActionbars()
     Style.bar1:SetAttribute("type", "action")
     Style.bar1:SetAttribute("showgrid", 1)
     Style.bar1:SetAttribute("_onstate-page", [[
-            -- Get ActionPage
-            if HasVehicleActionBar() then
-                newstate = GetVehicleBarIndex()
-            elseif HasOverrideActionBar() then
-                newstate = GetOverrideBarIndex()
-            elseif HasTempShapeshiftActionBar() then
-                newstate = GetTempShapeshiftBarIndex()
-            elseif GetBonusBarOffset() > 0 then
-                newstate = GetBonusBarOffset() + 6
-            else
-                newstate = GetActionBarPage()
-            end
+        local newstate
 
-            -- Update ActionButtons
-            for id = 1, 12 do
-                local button = self:GetFrameRef("ActionButton"..id)
-                if button then
-                    button:SetAttribute("actionpage", newstate)
-                end
+        -- Get ActionPage
+        if HasVehicleActionBar() then
+            newstate = GetVehicleBarIndex()
+        elseif HasOverrideActionBar() then
+            newstate = GetOverrideBarIndex()
+        elseif HasTempShapeshiftActionBar() then
+            newstate = GetTempShapeshiftBarIndex()
+        elseif GetBonusBarOffset() > 0 then
+            newstate = GetBonusBarOffset() + 6
+        else
+            newstate = GetActionBarPage()
+        end
+
+        for id = 1, 12 do
+            local button = self:GetFrameRef("ActionButton"..id)
+            if button then
+                button:SetAttribute("actionpage", newstate)
             end
-        ]])
+        end
+    ]])
     Style.bar2:SetAttribute("actionpage", 6)
     Style.bar2:SetAttribute("type", "action")
     Style.bar3:SetAttribute("actionpage", 5)
@@ -184,7 +185,18 @@ function Style:CreateActionbars()
 
     -- Use State Driver
     RegisterStateDriver(Style.bar1, "page",
-        "[actionbar:2] 2; [actionbar:3] 3; [actionbar:4] 4; [form:1] 7; [form:2] 8; [form:3] 9; [form:4] 7; [form:5] 8; [form:16] 7; [form:27] 7; [form:28] 7; [form:30] 7; [form:31] 9; [form:35] 9; [bonusbar:1,stealth] 8; [bonusbar:1] 7; [bonusbar:2] 8; [bonusbar:3] 9; [bonusbar:4] 10; [stealth] 7; [possessbar] 11; 1")
+        "[vehicleui] v; " ..
+        "[overridebar] o; " ..
+        "[possessbar] p; " ..
+        "[bonusbar:1,stealth] 1s; " ..                            -- cat stealth
+        "[bonusbar:1] 1; " ..                                     -- cat
+        "[bonusbar:2] 2; " ..                                     -- bear
+        "[bonusbar:3] 3; " ..                                     -- moonkin/tree
+        "[bonusbar:4] 4; " ..                                     -- other bonus
+        "[form:1] f1; [form:2] f2; [form:3] f3; [form:4] f4; " .. -- any other forms
+        "[stealth] st; " ..
+        "base"
+    )
     RegisterStateDriver(Style.bar1, "visibility", "[vehicleui] hide; show")
     RegisterStateDriver(Style.petbar, "visibility", "[vehicleui] hide;[pet] show; hide")
     RegisterStateDriver(Style.stancebar, "visibility", "[vehicleui] hide; show")
