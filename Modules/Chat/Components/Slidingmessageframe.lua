@@ -35,9 +35,8 @@ end
 local setSmoothScroll
 
 do
-	local SCROLL_DURATION = 0.2
+	local SCROLL_DURATION = 0.15
 	local POST_SCROLL_DELAY = 0.1
-	local THRESHOLD = 1 / 120
 
 	local activeFrames = {}
 
@@ -59,33 +58,26 @@ do
 		return c * (t ^ 3 + 1) + b
 	end
 
-	local elapsed = 0
-	local function onUpdate(_, e)
-		elapsed = elapsed + e
-		if elapsed >= THRESHOLD then
-			for frame, data in next, activeFrames do
-				data[2] = data[2] + elapsed
-				data[1](smoothFunc(clamp(data[2]), data[3], data[4]))
+	local function onUpdate(_, elapsed)
+		for frame, data in next, activeFrames do
+			data[2] = data[2] + elapsed
+			data[1](smoothFunc(clamp(data[2]), data[3], data[4]))
 
-				if data[2] >= SCROLL_DURATION + POST_SCROLL_DELAY then
-					if data[5] then
-						data[5]()
-					end
-
-					activeFrames[frame] = nil
+			if data[2] >= SCROLL_DURATION + POST_SCROLL_DELAY then
+				if data[5] then
+					data[5]()
 				end
-			end
 
-			if not next(activeFrames) then
-				smoother:SetScript("OnUpdate", nil)
+				activeFrames[frame] = nil
 			end
+		end
 
-			elapsed = 0
+		if not next(activeFrames) then
+			smoother:SetScript("OnUpdate", nil)
 		end
 	end
 
 	function setSmoothScroll(frame, func, change, callback)
-		elapsed = THRESHOLD
 		-- func, time, start, change, callback
 		activeFrames[frame] = { func, 0, frame:GetVerticalScroll(), change, callback }
 
@@ -123,7 +115,7 @@ local function chatFrame_OnSizeChanged(self, width, height)
 end
 
 local function chatFrame_SetShownHook(self, isShown)
-	if mUI:IsClassic() then
+	if isShown then
 		self.FontStringContainer:Hide()
 
 		local slidingFrame = Style:GetSlidingFrameForChatFrame(self)
@@ -131,18 +123,6 @@ local function chatFrame_SetShownHook(self, isShown)
 			-- FCF indiscriminately calls :SetShown(true) when adding new tabs, I don't need to do anything when that happens
 			if not slidingFrame:IsShown() then
 				slidingFrame:Show()
-			end
-		end
-	else
-		if isShown then
-			self.FontStringContainer:Hide()
-
-			local slidingFrame = Style:GetSlidingFrameForChatFrame(self)
-			if slidingFrame then
-				-- FCF indiscriminately calls :SetShown(true) when adding new tabs, I don't need to do anything when that happens
-				if not slidingFrame:IsShown() then
-					slidingFrame:Show()
-				end
 			end
 		end
 	end
@@ -261,21 +241,6 @@ function object_proto:CaptureChatFrame(chatFrame)
 
 	Style:SetSlidingFrameForChatFrame(chatFrame, self)
 
-	-- ! Comment me out!
-	-- if not chatFrame.bg1 then
-	-- 	chatFrame.bg1 = chatFrame:CreateTexture(nil, "BACKGROUND")
-	-- 	chatFrame.bg1:SetColorTexture(0, 0.6, 0.3, 0.3)
-	-- 	chatFrame.bg1:SetPoint("TOPLEFT")
-	-- 	chatFrame.bg1:SetPoint("BOTTOMLEFT")
-	-- 	chatFrame.bg1:SetWidth(25)
-
-	-- 	chatFrame.bg2 = chatFrame:CreateTexture(nil, "BACKGROUND")
-	-- 	chatFrame.bg2:SetColorTexture(0, 0.6, 0.3, 0.3)
-	-- 	chatFrame.bg2:SetPoint("TOPRIGHT")
-	-- 	chatFrame.bg2:SetPoint("BOTTOMRIGHT")
-	-- 	chatFrame.bg2:SetWidth(25)
-	-- end
-
 	chatFrame:SetClampedToScreen(false)
 	chatFrame:SetClampRectInsets(0, 0, 0, 0)
 	chatFrame:SetResizeBounds(176, 64)
@@ -312,7 +277,9 @@ function object_proto:CaptureChatFrame(chatFrame)
 		Style:SecureHookScript(chatFrame, "OnSizeChanged", chatFrame_OnSizeChanged)
 
 		if mUI:IsClassic() then
-			Style:SecureHook(chatFrame, "Show", chatFrame_SetShownHook)
+			Style:SecureHook(chatFrame, "Show", function(self, ...)
+				chatFrame_SetShownHook(self, true)
+			end)
 		else
 			Style:SecureHook(chatFrame, "SetShown", chatFrame_SetShownHook)
 		end
@@ -375,6 +342,10 @@ function object_proto:OnHide()
 	self.numIncomingMessages = 0
 	self.mouseOverHyperlinkMessageLine = nil
 	-- self.numIncomingMessagesWhileScrolling = 0
+end
+
+function object_proto:CanShowMessages()
+	return self:GetBottom() and self:IsShown() and self.ScrollChild:GetHeight() ~= 0
 end
 
 function object_proto:UpdateLayout()
@@ -482,46 +453,16 @@ function object_proto:SetScrolling(state)
 end
 
 function object_proto:SetSmoothScroll(func, change, callback)
-	if mUI:IsClassic() then
-		if Style.db.smooth then
-			-- Enhanced smooth scrolling for auto-scroll scenarios
-			local isAutoScroll = self:IsAtBottom() and self:CanProcessIncoming()
+	if Style.db.smooth then
+		setSmoothScroll(self, func, change, callback)
 
-			setSmoothScroll(self, func, change, function()
-				-- Call original callback if provided
-				if callback then
-					callback()
-				end
-
-				-- Additional handling for auto-scroll scenarios
-				if isAutoScroll then
-					-- Ensure we stay at bottom after auto-scroll
-					self:SetAtBottom(true)
-					self:EnableIncomingProcessing(true)
-				end
-			end)
-
-			self.numIncomingMessagesWhileScrolling = 0
-			self:SetScrolling(true)
-		else
-			func(self:GetVerticalScroll() + change)
-
-			if callback then
-				callback()
-			end
-		end
+		self.numIncomingMessagesWhileScrolling = 0
+		self:SetScrolling(true)
 	else
-		if Style.db.smooth then
-			setSmoothScroll(self, func, change, callback)
+		func(self:GetVerticalScroll() + change)
 
-			self.numIncomingMessagesWhileScrolling = 0
-			self:SetScrolling(true)
-		else
-			func(self:GetVerticalScroll() + change)
-
-			if callback then
-				callback()
-			end
+		if callback then
+			callback()
 		end
 	end
 end
@@ -590,11 +531,6 @@ function object_proto:ResetState(doNotRefresh)
 	end
 
 	self:SetScrolling(false)
-
-	if mUI:IsClassic() then
-		-- Clear any pending auto-scroll when state is reset
-		self.pendingAutoScroll = false
-	end
 end
 
 function object_proto:EnableIncomingProcessing(state)
@@ -655,8 +591,8 @@ function object_proto:GetLastBackfillMessageOffset()
 	return self.lastBackfillMessageOffset or 0
 end
 
-function object_proto:RefreshBackfill(startIndex, maxLines, maxPixels, fadeIn)
-	if not self:IsShown() or self.ScrollChild:GetHeight() == 0 then return end
+function object_proto:RefreshBackfill(startIndex, maxLines, maxPixels)
+	if not self:CanShowMessages() then return end
 
 	local checkLines = maxLines ~= false
 	maxLines = maxLines or 6
@@ -693,22 +629,9 @@ function object_proto:RefreshBackfill(startIndex, maxLines, maxPixels, fadeIn)
 			end
 		end
 
-		-- Apply Battle.net friend class coloring if applicable
-		local coloredMessage = Style:getBNetFriendClassColor(messageInfo.message)
-		if coloredMessage then
-			messageLine:SetMessage(messageID, messageInfo.timestamp, coloredMessage, messageInfo.r, messageInfo.g,
-				messageInfo.b)
-		else
-			messageLine:SetMessage(messageID, messageInfo.timestamp, messageInfo.message, messageInfo.r, messageInfo.g,
-				messageInfo.b)
-		end
-
-		if fadeIn then
-			messageLine:SetAlpha(0)
-			messageLine:FadeIn()
-		else
-			messageLine:SetAlpha(1)
-		end
+		messageLine:SetMessage(messageID, messageInfo.timestamp, messageInfo.message, messageInfo.r, messageInfo.g,
+			messageInfo.b)
+		messageLine:StopFading(1)
 
 		if checkLines then
 			isFull = lineIndex == maxLines
@@ -976,13 +899,6 @@ function object_proto:NewIncomingMessage()
 	if self:IsShown() then
 		if self:IsScrolling() or not self:CanProcessIncoming() then
 			self.numIncomingMessagesWhileScrolling = self.numIncomingMessagesWhileScrolling + 1
-
-			if mUI:IsClassic() then
-				-- If at bottom, queue for auto-scroll after scrolling stops
-				if self:IsAtBottom() and self.numIncomingMessagesWhileScrolling > 0 then
-					self.pendingAutoScroll = true
-				end
-			end
 		end
 
 		-- Always count new messages for processing
@@ -1007,36 +923,11 @@ function object_proto:IsMouseOverHyperlink()
 end
 
 function object_proto:OnFrame()
-	if mUI:IsClassic() then
-		if not self:IsShown() or self.ScrollChild:GetHeight() == 0 then return end
+	if not self:IsShown() or self.ScrollChild:GetHeight() == 0 or self:IsScrolling() then return end
 
-		-- Don't process while actively scrolling
-		if self:IsScrolling() then return end
-
-		-- Handle pending auto-scroll after scrolling completes
-		if self.pendingAutoScroll and self:IsAtBottom() and self.numIncomingMessagesWhileScrolling > 0 then
-			self.pendingAutoScroll = false
-			local pendingMessages = self.numIncomingMessagesWhileScrolling
-			self.numIncomingMessagesWhileScrolling = 0
-			self:ProcessIncoming(pendingMessages)
-			return
-		end
-
-		-- Process regular incoming messages
-		if self:HasIncomingMessages() and self:CanProcessIncoming() then
-			local numMessages = self.numIncomingMessages
-			self.numIncomingMessages = 0
-			self:ProcessIncoming(numMessages)
-		end
-	else
-		if not self:IsShown() or self.ScrollChild:GetHeight() == 0 or self:IsScrolling() then return end
-
-		if self:HasIncomingMessages() and self:CanProcessIncoming() then
-			self:ProcessIncoming(self.numIncomingMessages)
-			self.numIncomingMessages = 0
-		end
-
-		self:UpdateChatWidgetFading()
+	if self:HasIncomingMessages() and self:CanProcessIncoming() then
+		self:ProcessIncoming(self.numIncomingMessages)
+		self.numIncomingMessages = 0
 	end
 
 	self:UpdateChatWidgetFading()
@@ -1141,34 +1032,9 @@ function object_proto:UpdateChatWidgetFading()
 end
 
 function object_proto:ProcessIncoming(num)
-	if mUI:IsClassic() then
-		if not self:IsShown() or self.ScrollChild:GetHeight() == 0 then return end
-
-		-- Only auto-scroll if we're at bottom
-		if not self:IsAtBottom() then
-			-- Just refresh to show new messages are available but don't auto-scroll
-			self:RefreshActive(self:GetFirstActiveMessageID())
-			return
-		end
-
-		-- We're at bottom, so we want to auto-scroll to show new messages
-		-- Use the backfill approach to add new messages
-		self:RefreshBackfill(num, num, nil, true)
-
-		-- Get the scroll offset needed and perform smooth scroll
-		local offset = self:GetLastBackfillMessageOffset()
-		if offset > 0 then
-			self:SetSmoothScroll(self.funcCache.baseScroll, offset, self.funcCache.baseScrollCallback)
-		else
-			-- No scrolling needed, just refresh the display
-			self:RefreshActive(self:GetFirstActiveMessageID())
-			self:UpdateFading()
-		end
-	else
-		self:RefreshBackfill(num, num, nil, true)
-		self:SetSmoothScroll(self.funcCache.baseScroll, self:GetLastBackfillMessageOffset(),
-			self.funcCache.baseScrollCallback)
-	end
+	self:RefreshBackfill(num, num)
+	self:SetSmoothScroll(self.funcCache.baseScroll, self:GetLastBackfillMessageOffset(),
+		self.funcCache.baseScrollCallback)
 end
 
 function object_proto:Release()
