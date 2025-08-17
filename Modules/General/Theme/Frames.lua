@@ -1323,13 +1323,14 @@ function Theme:Loot()
 
         if not Theme:IsHooked("GroupLootFrame_OnUpdate") then
             Theme:SecureHook("GroupLootFrame_OnUpdate", function(frame)
-                mUI:Skin(frame)
+                mUI:Skin(frame:SetBackdropColor(unpack(mUI:Color(0.15))))
+                mUI:Skin(frame:SetBackdropBorderColor(unpack(mUI:Color(0.15))))
             end)
         end
 
         if not Theme:IsHooked("BonusRollFrame_OnUpdate") then
             Theme:SecureHook("BonusRollFrame_OnUpdate", function(frame)
-                mUI:Skin(frame)
+                mUI:Skin({ frame.Background }, true)
             end)
         end
     end
@@ -1676,6 +1677,7 @@ function Theme:Unitframes()
             FocusFrameToTTextureFrameTexture,
         }, true)
         mUI:Skin(PlayerFrameAlternateManaBar)
+        mUI:Skin(PlayerFrameGroupIndicator)
     else
         mUI:Skin(PlayerFrame.PlayerFrameContainer)
         mUI:Skin(TargetFrame.TargetFrameContainer)
