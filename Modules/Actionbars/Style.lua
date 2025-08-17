@@ -188,6 +188,9 @@ function Style:CreateActionbars()
         "[vehicleui] v; " ..
         "[overridebar] o; " ..
         "[possessbar] p; " ..
+        "[actionbar:2] 2; " ..
+        "[actionbar:3] 3; " ..
+        "[actionbar:4] 4; " ..
         "[bonusbar:1,stealth] 1s; " ..                            -- cat stealth
         "[bonusbar:1] 1; " ..                                     -- cat
         "[bonusbar:2] 2; " ..                                     -- bear
