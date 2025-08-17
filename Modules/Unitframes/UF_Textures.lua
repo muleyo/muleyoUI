@@ -319,11 +319,21 @@ function UF_Textures:OnInitialize()
         if mUI:IsClassic() then
             if PlayerFrameAlternateManaBar then
                 if UF_Textures.db.textures.unitframes == "None" then
-                    PlayerFrameAlternateManaBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
-                    PlayerFrameAlternateManaBar:SetStatusBarColor(0, 0, 1)
+                    if PlayerFrameAlternateManaBar.texture ~= "None" then
+                        PlayerFrameAlternateManaBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+                        PlayerFrameAlternateManaBar:GetStatusBarTexture():SetDrawLayer("BORDER")
+                        PlayerFrameAlternateManaBar:SetStatusBarColor(0, 0, 1)
+
+                        PlayerFrameAlternateManaBar.texture = "None"
+                    end
                 else
-                    PlayerFrameAlternateManaBar:SetStatusBarTexture(texture)
-                    PlayerFrameAlternateManaBar:SetStatusBarColor(0, 0.5, 1)
+                    if PlayerFrameAlternateManaBar.texture ~= texture then
+                        PlayerFrameAlternateManaBar:SetStatusBarTexture(texture)
+                        PlayerFrameAlternateManaBar:GetStatusBarTexture():SetDrawLayer("BORDER")
+                        PlayerFrameAlternateManaBar:SetStatusBarColor(0, 0.5, 1)
+
+                        PlayerFrameAlternateManaBar.texture = texture
+                    end
                 end
             end
         else
