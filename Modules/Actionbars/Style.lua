@@ -155,14 +155,14 @@ function Style:CreateActionbars()
         local newstate
 
         -- Get ActionPage
-        if HasVehicleActionBar() then
+        if (HasVehicleActionBar()) then
             newstate = GetVehicleBarIndex()
-        elseif HasOverrideActionBar() then
+        elseif (HasOverrideActionBar()) then
             newstate = GetOverrideBarIndex()
-        elseif HasTempShapeshiftActionBar() then
+        elseif (HasTempShapeshiftActionBar()) then
             newstate = GetTempShapeshiftBarIndex()
-        elseif GetBonusBarOffset() > 0 then
-            newstate = GetBonusBarOffset() + 6
+        elseif (HasBonusActionBar() and GetActionBarPage() == 1) then
+            newstate = GetBonusBarIndex()
         else
             newstate = GetActionBarPage()
         end
