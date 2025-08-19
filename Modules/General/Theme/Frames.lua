@@ -1323,8 +1323,8 @@ function Theme:Loot()
 
         if not Theme:IsHooked("GroupLootFrame_OnUpdate") then
             Theme:SecureHook("GroupLootFrame_OnUpdate", function(frame)
-                mUI:Skin(frame:SetBackdropColor(unpack(mUI:Color(0.15))))
-                mUI:Skin(frame:SetBackdropBorderColor(unpack(mUI:Color(0.15))))
+                frame:SetBackdropColor(unpack(mUI:Color(0.15)))
+                frame:SetBackdropBorderColor(unpack(mUI:Color(0.15)))
             end)
         end
 
