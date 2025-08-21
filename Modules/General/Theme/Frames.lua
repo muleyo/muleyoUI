@@ -1321,16 +1321,19 @@ function Theme:Loot()
         mUI:Skin(GroupLootFrame3)
         mUI:Skin(GroupLootFrame4)
 
-        if not Theme:IsHooked("GroupLootFrame_OnUpdate") then
-            Theme:SecureHook("GroupLootFrame_OnUpdate", function(frame)
-                frame:SetBackdropColor(unpack(mUI:Color(0.15)))
-                frame:SetBackdropBorderColor(unpack(mUI:Color(0.15)))
-            end)
-        end
+        if not Theme:IsHooked("LootFrame_OnShow") then
+            Theme:SecureHook("LootFrame_OnShow", function(frame)
+                GroupLootFrame1:SetBackdropColor(unpack(mUI:Color(0.15)))
+                GroupLootFrame1:SetBackdropBorderColor(unpack(mUI:Color(0.15)))
 
-        if not Theme:IsHooked("BonusRollFrame_OnUpdate") then
-            Theme:SecureHook("BonusRollFrame_OnUpdate", function(frame)
-                mUI:Skin({ frame.Background }, true)
+                GroupLootFrame2:SetBackdropColor(unpack(mUI:Color(0.15)))
+                GroupLootFrame2:SetBackdropBorderColor(unpack(mUI:Color(0.15)))
+
+                GroupLootFrame3:SetBackdropColor(unpack(mUI:Color(0.15)))
+                GroupLootFrame3:SetBackdropBorderColor(unpack(mUI:Color(0.15)))
+
+                GroupLootFrame4:SetBackdropColor(unpack(mUI:Color(0.15)))
+                GroupLootFrame4:SetBackdropBorderColor(unpack(mUI:Color(0.15)))
             end)
         end
     end
