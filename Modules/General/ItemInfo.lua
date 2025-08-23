@@ -787,12 +787,20 @@ function ItemInfo:OnInitialize()
 
     if not mUI:IsClassic() then
         ItemInfo:SecureHookScript(CharacterFrame, "OnUpdate", function()
-            local _, equippedItemLevel = GetAverageItemLevel()
+            local _, iLvl, PVPiLvl = GetAverageItemLevel()
             local itemLevelText
-            if equippedItemLevel == math.floor(equippedItemLevel) then
-                itemLevelText = string.format("%d", equippedItemLevel)
+            if iLvl == math.floor(iLvl) then
+                if C_PvP.IsWarModeDesired() then
+                    itemLevelText = string.format("%d (%d PVP) ", iLvl, PVPiLvl)
+                else
+                    itemLevelText = string.format("%d", iLvl)
+                end
             else
-                itemLevelText = string.format("%.2f", equippedItemLevel)
+                if C_PvP.IsWarModeDesired() then
+                    itemLevelText = string.format("%.2f (%d PVP)", iLvl, PVPiLvl)
+                else
+                    itemLevelText = string.format("%.2f", iLvl)
+                end
             end
             CharacterStatsPane.ItemLevelFrame.Value:SetText(itemLevelText)
         end)
