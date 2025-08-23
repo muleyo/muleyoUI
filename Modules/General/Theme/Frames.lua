@@ -1771,9 +1771,9 @@ function Theme:Frames()
     mUI:Skin(StaticPopup2)
     mUI:Skin(StaticPopup3)
     if not mUI:IsClassic() then
-        mUI:Skin(StaticPopup1.Border)
-        mUI:Skin(StaticPopup2.Border)
-        mUI:Skin(StaticPopup3.Border)
+        mUI:Skin(StaticPopup1.BG)
+        mUI:Skin(StaticPopup2.BG)
+        mUI:Skin(StaticPopup3.BG)
     end
     mUI:Skin({
         StaticPopup1EditBoxLeft,
