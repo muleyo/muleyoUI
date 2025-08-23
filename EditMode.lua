@@ -275,7 +275,7 @@ function EditMode:OnInitialize()
         end)
 
         -- Create Buff & Debuff Anchors
-        EditMode.buffFrame = CreateFrame("Frame", "mUIBuffFrame", UIParent)
+        EditMode.buffFrame = CreateFrame("Frame", "mUIBuffFrame", UIParent, "SecureHandlerStateTemplate")
         EditMode.debuffFrame = CreateFrame("Frame", "mUIDebuffFrame", UIParent)
 
         EditMode.buffFrame:SetSize(32, 32)
