@@ -829,6 +829,21 @@ function Theme:Actionbars()
         mUI:Skin(StatusTrackingBarManager.BottomBarFrameTexture)
         mUI:Skin(StatusTrackingBarManager.MainStatusTrackingBarContainer)
         mUI:Skin(StatusTrackingBarManager.SecondaryStatusTrackingBarContainer)
+
+        if not Theme:IsHooked(SpellFlyout, "Toggle") then
+            Theme:SecureHook(SpellFlyout, "Toggle", function(_, _, id)
+                local _, _, numSlots = GetFlyoutInfo(id)
+
+                for i = 1, numSlots do
+                    local button = _G["SpellFlyoutPopupButton" .. i .. "NormalTexture"]
+                    if button then
+                        mUI:Skin({ button }, true)
+                    end
+                end
+
+                mUI:Skin(SpellFlyout.Background)
+            end)
+        end
     end
     mUI:Skin(OverrideActionBar)
     mUI:Skin({ OverrideActionBarLeaveFrameDivider3 }, true)
