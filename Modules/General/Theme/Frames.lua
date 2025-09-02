@@ -1043,6 +1043,8 @@ function Theme:Character()
     if mUI:IsClassic() then
         mUI:Skin(ReputationFrame)
         mUI:Skin(ReputationListScrollFrame)
+        mUI:Skin(ReputationDetailFrame)
+        mUI:Skin(ReputationDetailFrame.Border)
         mUI:Skin(CharacterFrameTab4)
         mUI:Skin(GearManagerPopupFrame.IconSelector.ScrollBar.Background)
         mUI:Skin({
