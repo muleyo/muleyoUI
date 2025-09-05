@@ -149,7 +149,7 @@ function Functions:OnInitialize()
         end
 
         if theme then
-            if theme[4] then alpha = theme[4] end
+            if theme[4] then alpha = alpha or theme[4] end
             if not alpha then alpha = 1 end
             local color = { 0, 0, 0, alpha }
             if sub then
