@@ -55,16 +55,14 @@ function RF_Health:OnInitialize()
                 frame.statusText:SetPoint("CENTER", frame, "CENTER")
 
                 if RF_Health.db.health then
-                    if cvar == "perc" then
-                        if connected then
-                            if UnitIsDead(frame.unit) then
-                                frame.statusText:SetText("Dead")
-                            else
-                                frame.statusText:SetText(value)
-                            end
+                    if connected then
+                        if UnitIsDead(frame.unit) then
+                            frame.statusText:SetText("Dead")
                         else
-                            frame.statusText:SetText("Offline")
+                            frame.statusText:SetText(value)
                         end
+                    else
+                        frame.statusText:SetText("Offline")
                     end
                 end
 

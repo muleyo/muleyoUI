@@ -203,8 +203,6 @@ function Style:CreateActionbars()
     RegisterStateDriver(Style.bar1, "visibility", "[vehicleui] hide; show")
     RegisterStateDriver(Style.petbar, "visibility", "[vehicleui] hide;[pet] show; hide")
     RegisterStateDriver(Style.stancebar, "visibility", "[vehicleui] hide; show")
-    RegisterStateDriver(Style.micromenu, "visibility", "show")
-    RegisterStateDriver(Style.bagbar, "visibility", "show")
 
     -- Set initial visibility for bar2 and bar3 based on CVars
     Style:UpdateActionBarVisibility() -- Check if player is at max level for current expansion
@@ -362,7 +360,7 @@ function Style:UpdateExpBar()
     Style.expbar.backdrop:SetBackdropBorderColor(unpack(mUI:Color(0.25)))
 
     -- Hide Experience Bar if player is at max level
-    if UnitLevel("player") >= GetMaxLevelForExpansionLevel(GetExpansionLevel()) then
+    if UnitLevel("player") >= GetMaxPlayerLevel() then
         Style.expbar:Hide()
         Style.expbar.bg:Hide()
         Style.expbar.rested:Hide()
