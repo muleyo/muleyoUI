@@ -1,6 +1,6 @@
 ## Interface: 50500
 ## Author: muleyo
-## Version: 2.0.21
+## Version: 2.0.22
 ## Title: |cff009cffmuleyo|r|cffffd100UI|r
 ## Notes: Unleash your real potential
 ## SavedVariables: mUIDB
