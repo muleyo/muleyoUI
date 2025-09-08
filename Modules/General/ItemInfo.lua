@@ -627,10 +627,9 @@ function ItemInfo:OnInitialize()
     function ItemInfo:CreateInspectIlvlDisplay()
         local parent = InspectPaperDollItemsFrame
         if (not parent.ilvlDisplay) then
-            parent.ilvlDisplay = parent:CreateFontString(nil, "OVERLAY",
-                mUI:IsClassic() and "GameFontHighlightOutline" or "GameFontHighlightOutline22")
-            parent.ilvlDisplay:SetPoint("TOPRIGHT", parent, "TOPRIGHT", 0, -20)
-            parent.ilvlDisplay:SetPoint("BOTTOMLEFT", parent, "TOPRIGHT", -80, -67)
+            parent.ilvlDisplay = parent:CreateFontString(nil, "OVERLAY")
+            parent.ilvlDisplay:SetFont(STANDARD_TEXT_FONT, 17, "THINOUTLINE")
+            parent.ilvlDisplay:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -5, -30)
 
             ItemInfo.buttons[parent.ilvlDisplay] = true
         end
@@ -640,23 +639,70 @@ function ItemInfo:OnInitialize()
         ItemInfo.levelThresholds[i] = ItemInfo.LEGENDARY_ITEM_LEVEL - (ItemInfo.STEP_ITEM_LEVEL * (i - 1))
     end
 
-    function ItemInfo:UpdateInspectIlvlDisplay(unit)
-        local ilvl = C_PaperDollInfo.GetInspectItemLevel(unit)
-        local color
-        if (ilvl < ItemInfo.levelThresholds[4]) then
-            color = "fafafa"
-        elseif (ilvl < ItemInfo.levelThresholds[3]) then
-            color = "1eff00"
-        elseif (ilvl < ItemInfo.levelThresholds[2]) then
-            color = "0070dd"
-        elseif (ilvl < ItemInfo.levelThresholds[1]) then
-            color = "a335ee"
+    function ItemInfo:CalculatePreciseInspectItemLevel(unit)
+        local totalItemLevel = 0
+        local itemCount = 0
+
+        -- Define the slots to check (same as character sheet)
+        local slotsToCheck = {
+            INVSLOT_HEAD,
+            INVSLOT_NECK,
+            INVSLOT_SHOULDER,
+            INVSLOT_CHEST,
+            INVSLOT_WAIST,
+            INVSLOT_LEGS,
+            INVSLOT_FEET,
+            INVSLOT_WRIST,
+            INVSLOT_HAND,
+            INVSLOT_FINGER1,
+            INVSLOT_FINGER2,
+            INVSLOT_TRINKET1,
+            INVSLOT_TRINKET2,
+            INVSLOT_BACK,
+            INVSLOT_MAINHAND,
+            INVSLOT_OFFHAND,
+        }
+
+        for _, slot in pairs(slotsToCheck) do
+            local itemLink = GetInventoryItemLink(unit, slot)
+            if itemLink then
+                local itemLevel = C_Item.GetDetailedItemLevelInfo(itemLink)
+                if itemLevel and itemLevel > 0 then
+                    totalItemLevel = totalItemLevel + itemLevel
+                    itemCount = itemCount + 1
+                end
+            end
+        end
+
+        if itemCount > 0 then
+            return totalItemLevel / itemCount
         else
-            color = "ff8000"
+            return 0
+        end
+    end
+
+    function ItemInfo:UpdateInspectIlvlDisplay(unit)
+        local ilvl = ItemInfo:CalculatePreciseInspectItemLevel(unit)
+        local r, g, b
+        if (ilvl < ItemInfo.levelThresholds[4]) then
+            r, g, b = 0.98, 0.98, 0.98 -- fafafa
+        elseif (ilvl < ItemInfo.levelThresholds[3]) then
+            r, g, b = 0.12, 1.0, 0.0   -- 1eff00
+        elseif (ilvl < ItemInfo.levelThresholds[2]) then
+            r, g, b = 0.0, 0.44, 0.87  -- 0070dd
+        elseif (ilvl < ItemInfo.levelThresholds[1]) then
+            r, g, b = 0.64, 0.21, 0.93 -- a335ee
+        else
+            r, g, b = 1.0, 0.5, 0.0    -- ff8000
         end
 
         local parent = InspectPaperDollItemsFrame
-        parent.ilvlDisplay:SetText(string.format("|cff%s%d|r", color, ilvl))
+        if ilvl == math.floor(ilvl) then
+            parent.ilvlDisplay:SetText(string.format("%d", ilvl))
+        else
+            parent.ilvlDisplay:SetText(string.format("%.2f", ilvl))
+        end
+        parent.ilvlDisplay:SetTextColor(r, g, b, 1)
     end
 
     function ItemInfo:updateButton(button, unit)
