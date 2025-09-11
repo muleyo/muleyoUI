@@ -1847,6 +1847,58 @@ function Theme:Frames()
     -- ReadyCheck
     mUI:Skin(ReadyCheckListenerFrame)
     mUI:Skin(ReadyCheckListenerFrame.NineSlice)
+
+    -- DropDowns
+    if mUI:IsClassic() then
+        function MenuStyle1Mixin:Generate()
+            local background = self:AttachTexture()
+            background:SetAtlas("common-dropdown-classic-bg")
+            background:SetPoint("TOPLEFT", -3, 3)
+            background:SetPoint("BOTTOMRIGHT", 3, -4)
+            background:SetVertexColor(unpack(mUI:Color(0.15)))
+
+            local background2 = self:AttachTexture()
+            background2:SetColorTexture(0, 0, 0, .8)
+            background2:SetPoint("TOPLEFT", background, "TOPLEFT", 6, -6)
+            background2:SetPoint("BOTTOMRIGHT", background, "BOTTOMRIGHT", -6, 6)
+            local layer, subLevel = background:GetDrawLayer()
+            background2:SetDrawLayer(layer, subLevel - 1)
+        end
+
+        function MenuStyle2Mixin:Generate()
+            local background = self:AttachTexture()
+            background:SetAtlas("common-dropdown-classic-b-bg")
+            background:SetPoint("TOPLEFT", -3, 1)
+            background:SetPoint("BOTTOMRIGHT", 3, -4)
+            background:SetVertexColor(unpack(mUI:Color(0.15)))
+
+            local background2 = self:AttachTexture()
+            background2:SetColorTexture(0, 0, 0, .8)
+            background2:SetPoint("TOPLEFT", background, "TOPLEFT", 7, -4)
+            background2:SetPoint("BOTTOMRIGHT", background, "BOTTOMRIGHT", -8, 8)
+            local layer, subLevel = background:GetDrawLayer()
+            background2:SetDrawLayer(layer, subLevel - 1)
+        end
+    else
+        function MenuStyle1Mixin:Generate()
+            local background = self:AttachTexture()
+            background:SetAtlas("common-dropdown-bg")
+            background:SetVertexColor(unpack(mUI:Color(0.15)))
+
+            local x, y = 10, 3
+            background:SetPoint("TOPLEFT", -x, y)
+            background:SetPoint("BOTTOMRIGHT", x, -y)
+            background:SetAlpha(.925)
+        end
+
+        function MenuStyle2Mixin:Generate()
+            local background = self:AttachTexture()
+            background:SetAtlas("common-dropdown-c-bg")
+            background:SetPoint("TOPLEFT", -17, 12)
+            background:SetPoint("BOTTOMRIGHT", 17, -22)
+            background:SetVertexColor(unpack(mUI:Color(0.15)))
+        end
+    end
 end
 
 function Theme:Update()
