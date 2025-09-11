@@ -4,6 +4,9 @@ function RF_Size:OnInitialize()
     -- Load Database
     RF_Size.db = mUI.db.profile.unitframes.raidframes.size
 
+    -- Backup original functions
+    RF_Size.functions = {}
+
     if mUI:IsClassic() then
         function RF_Size:Update(frame)
             if InCombatLockdown() then return end
@@ -50,16 +53,48 @@ function RF_Size:OnInitialize()
             end
         end
     else
-        -- Backup original function
-        RF_Size.backup = CompactPartyFrameMember1.SetSize
+        function RF_Size:UpdateFunctions()
+            for _, memberFrame in ipairs(CompactPartyFrame.memberUnitFrames) do
+                if memberFrame then
+                    -- Store original SetSize function
+                    memberFrame.originalSetSize = memberFrame.SetSize
+
+                    -- Replace SetSize
+                    memberFrame.SetSize = function(self, width, height)
+                        if InCombatLockdown() then return end
+                        -- Always use our custom size instead of whatever was requested
+                        if width ~= RF_Size.db.width or height ~= RF_Size.db.height then
+                            self.originalSetSize(self, RF_Size.db.width, RF_Size.db.height)
+                        else
+                            self.originalSetSize(self, width, height)
+                        end
+                    end
+                end
+            end
+
+            for _, petFrame in ipairs(CompactPartyFrame.petUnitFrames) do
+                if petFrame then
+                    -- Store original SetSize function
+                    petFrame.originalSetSize = petFrame.SetSize
+
+                    -- Replace SetSize
+                    petFrame.SetSize = function(self, width, height)
+                        if InCombatLockdown() then return end
+                        if width ~= RF_Size.db.width then
+                            self.originalSetSize(self, RF_Size.db.width, height)
+                        else
+                            self.originalSetSize(self, width, height)
+                        end
+                    end
+                end
+            end
+        end
 
         function RF_Size:Update(x, y)
             if InCombatLockdown() then return end
             for i = 1, 5 do
                 local member = _G["CompactPartyFrameMember" .. i]
                 local pet = _G["CompactPartyFramePet" .. i]
-                member.SetSize = RF_Size.backup
-                pet.SetSize = RF_Size.backup
 
                 if x and y then
                     member:SetSize(x, y)
@@ -67,9 +102,6 @@ function RF_Size:OnInitialize()
                 else
                     member:SetSize(RF_Size.db.width, RF_Size.db.height)
                     pet:SetWidth(RF_Size.db.width)
-                end
-                member.SetSize = function() end
-                pet.SetSize = function()
                 end
             end
         end
@@ -84,6 +116,7 @@ function RF_Size:OnEnable()
         RF_Size:Update()
     else
         RF_Size.x, RF_Size.y = CompactPartyFrameMember1:GetSize()
+        RF_Size:UpdateFunctions()
         RF_Size:Update()
     end
 end
@@ -93,13 +126,13 @@ function RF_Size:OnDisable()
         RF_Size:Update()
         RF_Size:UnhookAll()
     else
-        RF_Size:Update(RF_Size.x, RF_Size.y)
-
         for i = 1, 5 do
             local member = _G["CompactPartyFrameMember" .. i]
             local pet = _G["CompactPartyFramePet" .. i]
-            member.SetSize = RF_Size.backup
-            pet.SetSize = RF_Size.backup
+            member.SetSize = member.originalSetSize
+            pet.SetSize = pet.originalSetSize
         end
+
+        RF_Size:Update(RF_Size.x, RF_Size.y)
     end
 end
