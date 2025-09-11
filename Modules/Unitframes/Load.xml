@@ -24,5 +24,6 @@
     <Include file="Restingtextures.lua" />
     <Include file="Elitecolor.lua" />
     <Include file="Overshields.lua" />
+    <Include file="Smooth.lua" />
     <Include file="Modules.lua" />
 </Ui>

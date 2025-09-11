@@ -31,7 +31,6 @@ function RF_Health:OnInitialize()
 
     RF_Health.backup = {}
 
-
     function RF_Health:SetHealth(frame)
         if (not frame) or frame:IsForbidden() then return end
         if frame:GetName() and frame.unit then

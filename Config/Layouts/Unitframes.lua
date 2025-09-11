@@ -848,10 +848,29 @@ function Unitframes:OnInitialize()
                     get = function() return mUI.db.profile.unitframes.overshields end,
                     order = 20
                 },
+                smooth = {
+                    name = "Smooth Healthbars",
+                    desc = "Enable Smooth Healthbar Animation\n\n|cffffff00Info:|r Requires Reload",
+                    type = "toggle",
+                    set = function(_, val)
+                        mUI.db.profile.unitframes.smooth = val
+
+                        if not Unitframes.Module:IsEnabled() then return end
+
+                        if val then
+                            Unitframes.Module.Smooth:Enable()
+                        else
+                            Unitframes.Module.Smooth:Disable()
+                            mUI:Reload("Disable Smooth Healthbars")
+                        end
+                    end,
+                    get = function() return mUI.db.profile.unitframes.smooth end,
+                    order = 21
+                },
                 header3 = {
                     name = "Buffs & Debuffs",
                     type = "header",
-                    order = 21
+                    order = 22
                 },
                 enablebuffdebuff = {
                     name = function()
@@ -875,7 +894,7 @@ function Unitframes:OnInitialize()
                         end
                     end,
                     get = function() return mUI.db.profile.unitframes.buffsdebuffs.enabled end,
-                    order = 22
+                    order = 23
                 },
                 buffsize = {
                     name = "Buff Size",
@@ -886,7 +905,7 @@ function Unitframes:OnInitialize()
                     step = 1,
                     set = function(_, val) mUI.db.profile.unitframes.buffsdebuffs.buffsize = val end,
                     get = function() return mUI.db.profile.unitframes.buffsdebuffs.buffsize end,
-                    order = 23
+                    order = 24
                 },
                 debuffsize = {
                     name = "Debuff Size",
@@ -897,12 +916,12 @@ function Unitframes:OnInitialize()
                     step = 1,
                     set = function(_, val) mUI.db.profile.unitframes.buffsdebuffs.debuffsize = val end,
                     get = function() return mUI.db.profile.unitframes.buffsdebuffs.debuffsize end,
-                    order = 24
+                    order = 25
                 },
                 header4 = {
                     name = "Party / Raidframes Resize",
                     type = "header",
-                    order = 25
+                    order = 26
                 },
                 enablesizing = {
                     name = function()
@@ -926,7 +945,7 @@ function Unitframes:OnInitialize()
                         end
                     end,
                     get = function() return mUI.db.profile.unitframes.raidframes.size.enabled end,
-                    order = 26
+                    order = 27
                 },
                 width = {
                     name = "Width",
@@ -944,7 +963,7 @@ function Unitframes:OnInitialize()
                         Unitframes.Module.RF_Size:Update()
                     end,
                     get = function() return mUI.db.profile.unitframes.raidframes.size.width end,
-                    order = 27
+                    order = 28
                 },
                 height = {
                     name = "Height",
@@ -962,12 +981,12 @@ function Unitframes:OnInitialize()
                         Unitframes.Module.RF_Size:Update()
                     end,
                     get = function() return mUI.db.profile.unitframes.raidframes.size.height end,
-                    order = 28
+                    order = 29
                 },
                 header5 = {
                     name = "Raidframes",
                     type = "header",
-                    order = 29
+                    order = 30
                 },
                 darkmode = {
                     name = "Dark Mode",
@@ -985,7 +1004,7 @@ function Unitframes:OnInitialize()
                         end
                     end,
                     get = function() return mUI.db.profile.unitframes.raidframes.darkmode end,
-                    order = 30
+                    order = 31
                 },
                 roleicons = {
                     name = "Role Icons",
@@ -1003,7 +1022,7 @@ function Unitframes:OnInitialize()
                         end
                     end,
                     get = function() return mUI.db.profile.unitframes.raidframes.roleicons end,
-                    order = 31
+                    order = 32
                 },
                 health = {
                     name = "Accurate Health",
@@ -1029,7 +1048,7 @@ function Unitframes:OnInitialize()
                         end
                     end,
                     get = function() return mUI.db.profile.unitframes.raidframes.health end,
-                    order = 32
+                    order = 33
                 },
                 healthcolor = {
                     name = "Classcolor Health",
@@ -1055,7 +1074,7 @@ function Unitframes:OnInitialize()
                         end
                     end,
                     get = function() return mUI.db.profile.unitframes.raidframes.healthcolor end,
-                    order = 33
+                    order = 34
                 },
                 names = {
                     name = "Classcolor Names",
@@ -1073,7 +1092,7 @@ function Unitframes:OnInitialize()
                         end
                     end,
                     get = function() return mUI.db.profile.unitframes.raidframes.names end,
-                    order = 34
+                    order = 35
                 },
                 solo = {
                     name = "Solo Partyframes",
@@ -1091,7 +1110,7 @@ function Unitframes:OnInitialize()
                         end
                     end,
                     get = function() return mUI.db.profile.unitframes.raidframes.solo end,
-                    order = 35
+                    order = 36
                 }
             }
         }
