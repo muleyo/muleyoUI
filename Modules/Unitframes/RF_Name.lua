@@ -44,12 +44,13 @@ function RF_Name:OnInitialize()
                 if color then
                     frame.name:SetText(unitName)
                     frame.name:SetTextColor(color.r, color.g, color.b)
-                    frame.name:SetFont(STANDARD_TEXT_FONT, 13, "OUTLINE")
-                    if IsInRaid() then
-                        if strlen(frame.name:GetText()) > 10 then
-                            frame.name:SetText(string.sub(frame.name:GetText(), 1, 8) .. "...")
-                        end
-                    end
+
+                    -- Calculate font size based on frame size
+                    local frameWidth = frame:GetWidth()
+                    local frameHeight = frame:GetHeight()
+                    local scaleFactor = math.min(frameWidth / 100, frameHeight / 40)
+                    local fontSize = math.max(8, math.min(13, 13 * scaleFactor))
+                    frame.name:SetFont(STANDARD_TEXT_FONT, fontSize, "OUTLINE")
 
                     if RF_Name.db.roleicons then
                         frame.name:ClearAllPoints()

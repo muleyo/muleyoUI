@@ -43,7 +43,6 @@ function RF_Health:OnInitialize()
                 local maxHealth = UnitHealthMax(frame.unit)
                 local color = RAID_CLASS_COLORS[select(2, UnitClass(frame.unit))]
                 local value = math.floor((health + absorb - healAbsorb) / maxHealth * 100)
-                local cvar = C_CVar.GetCVar("raidFramesHealthText")
                 local connected = UnitIsConnected(frame.unit)
 
                 if not RF_Health.backup[1] then
@@ -66,12 +65,17 @@ function RF_Health:OnInitialize()
                     end
                 end
 
+                local frameWidth = frame:GetWidth()
+                local frameHeight = frame:GetHeight()
+                local scaleFactor = math.min(frameWidth / 100, frameHeight / 40)
+                local fontSize = math.max(12, math.min(16, 13 * scaleFactor))
+
                 if RF_Health.db.healthcolor and color then
                     frame.statusText:SetTextColor(color.r, color.g, color.b)
-                    frame.statusText:SetFont(STANDARD_TEXT_FONT, 16, "OUTLINE")
+                    frame.statusText:SetFont(STANDARD_TEXT_FONT, fontSize, "OUTLINE")
                 else
                     frame.statusText:SetTextColor(1, 0.82, 0)
-                    frame.statusText:SetFont(STANDARD_TEXT_FONT, 16, "OUTLINE")
+                    frame.statusText:SetFont(STANDARD_TEXT_FONT, fontSize, "OUTLINE")
                 end
             end
         end
