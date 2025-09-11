@@ -31,12 +31,10 @@ function Theme:StyleTooltip(frame)
         mUI:AddMixin(frame)
         frame:SetBackdrop(Theme.backdrop)
         frame:SetBackdropBorderColor(0.1, 0.1, 0.1, 0)
-        if Theme.db.theme == "Dark" then
-            frame:SetBackdropColor(unpack(Theme.backdrop.bgColor))
-        elseif Theme.db.theme == "Disabled" then
+        if Theme.db.theme == "Disabled" then
             frame:SetBackdrop(nil)
         else
-            frame:SetBackdropColor(unpack(mUI:Color(0.3, 0.3)))
+            frame:SetBackdropColor(unpack(Theme.backdrop.bgColor))
         end
         if frame.NineSlice then
             if Theme.db.theme == "Dark" then
