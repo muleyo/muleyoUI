@@ -185,12 +185,25 @@ end
 
 function SmoothHealth:OnEnable()
     if mUI:IsClassic() then return end
+
     SmoothHealth:SecureHook("CompactUnitFrame_UpdateHealth", function(frame)
-        SmoothHealth:UnitFrame(frame)
+        if not frame or frame:IsForbidden() then return end
+        local name = frame:GetName()
+
+        if name and name:match("^Compact") then
+            SmoothHealth:UnitFrame(frame)
+        end
     end)
+
     SmoothHealth:SecureHook("CompactUnitFrame_UpdateAll", function(frame)
-        SmoothHealth:UnitFrame(frame)
+        if not frame or frame:IsForbidden() then return end
+        local name = frame:GetName()
+
+        if name and name:match("^Compact") then
+            SmoothHealth:UnitFrame(frame)
+        end
     end)
+
     SmoothHealth:SecureHookScript(SmoothHealth.frame, "OnUpdate", function(_, elapsed)
         SmoothHealth:Update(elapsed)
     end)
