@@ -4,72 +4,65 @@ function SmoothHealth:OnInitialize()
     SmoothHealth.frame = CreateFrame("Frame")
     SmoothHealth.speed = 25
     SmoothHealth.bars = {}
-    SmoothHealth.unitframes = {
-        "PlayerFrame", "TargetFrame", "TargetFrameToT", "FocusFrame", "FocusFrameToT",
-        "Boss1TargetFrame", "Boss2TargetFrame", "Boss3TargetFrame", "Boss4TargetFrame", "Boss5TargetFrame"
-    }
+
     function SmoothHealth:Update(elapsed)
         for bar, data in pairs(SmoothHealth.bars) do
-            if bar and data then
-                -- Additional safety check - ensure bar is still valid
-                local success, isValid = pcall(function() return bar:GetParent() and not bar:IsForbidden() end)
-                if success and isValid then
-                    local cur = data.displayed
-                    local target = data.target
-                    local speed = data.speed or 5
+            if not (bar or data) then return end
 
-                    -- Validate values
-                    if cur and target and cur == cur and target == target then -- Check for valid numbers (not NaN)
-                        if cur < 0 then cur = 0 end
-                        if target < 0 then target = 0 end
+            local success, isValid = pcall(function() return bar:GetParent() and not bar:IsForbidden() end)
+            if success and isValid then
+                local cur = data.displayed
+                local target = data.target
+                local speed = data.speed or 5
 
-                        -- Get bar's min/max values for proper clamping
-                        local min, max = 0, 100
-                        success = pcall(function()
-                            local minVal, maxVal = bar:GetMinMaxValues()
-                            if minVal and maxVal then
-                                min, max = minVal, maxVal
-                            end
-                        end)
+                -- Validate values
+                if cur and target and cur == cur and target == target then -- Check for valid numbers (not NaN)
+                    if cur < 0 then cur = 0 end
+                    if target < 0 then target = 0 end
 
-                        if max and max > 0 then
-                            target = math.max(min or 0, math.min(max, target))
-                            cur = math.max(min or 0, math.min(max, cur))
+                    -- Get bar's min/max values for proper clamping
+                    local min, max = 0, 100
+                    success = pcall(function()
+                        local minVal, maxVal = bar:GetMinMaxValues()
+                        if minVal and maxVal then
+                            min, max = minVal, maxVal
                         end
+                    end)
 
-                        local diff = target - cur
-                        if math.abs(diff) > 0.1 then
-                            -- Use more responsive smoothing algorithm
-                            local smoothFactor = math.min(1, elapsed * speed)
-
-                            -- Prevent overshooting by checking direction changes
-                            local new = cur + diff * smoothFactor
-
-                            -- Additional safety: if we're very close to target, snap to it
-                            if math.abs(target - new) < 0.5 then
-                                new = target
-                            end
-
-                            data.displayed = new
-                            success = pcall(function() bar:origSetValue(new) end)
-                        else
-                            data.displayed = target
-                            success = pcall(function() bar:origSetValue(target) end)
-                        end
+                    if max and max > 0 then
+                        target = math.max(min or 0, math.min(max, target))
+                        cur = math.max(min or 0, math.min(max, cur))
                     end
-                else
-                    -- Bar is invalid, remove it from tracking
-                    SmoothHealth.bars[bar] = nil
+
+                    local diff = target - cur
+                    if math.abs(diff) > 0.1 then
+                        -- Use more responsive smoothing algorithm
+                        local smoothFactor = math.min(1, elapsed * speed)
+
+                        -- Prevent overshooting by checking direction changes
+                        local new = cur + diff * smoothFactor
+
+                        -- Additional safety: if we're very close to target, snap to it
+                        if math.abs(target - new) < 0.5 then
+                            new = target
+                        end
+
+                        data.displayed = new
+                        success = pcall(function() bar:origSetValue(new) end)
+                    else
+                        data.displayed = target
+                        success = pcall(function() bar:origSetValue(target) end)
+                    end
                 end
+            else
+                -- Bar is invalid, remove it from tracking
+                SmoothHealth.bars[bar] = nil
             end
         end
     end
 
     function SmoothHealth:StatusBar(bar, speed)
-        if not bar or bar.isSmooth then return end
-
-        -- Verify the bar is valid before proceeding
-        if bar:IsForbidden() then return end
+        if not bar or bar.isSmooth or bar:IsForbidden() then return end
 
         bar.isSmooth = true
         speed = speed or SmoothHealth.speed
@@ -201,15 +194,6 @@ function SmoothHealth:OnEnable()
     SmoothHealth:SecureHookScript(SmoothHealth.frame, "OnUpdate", function(_, elapsed)
         SmoothHealth:Update(elapsed)
     end)
-
-    -- Unit Frames
-    for _, frame in ipairs(SmoothHealth.unitframes) do
-        local frame = _G[frame]
-        if frame then
-            SmoothHealth:StatusBar(frame.healthbar, SmoothHealth.speed)
-            SmoothHealth:StatusBar(frame.manabar, SmoothHealth.speed)
-        end
-    end
 end
 
 function SmoothHealth:OnDisable()
