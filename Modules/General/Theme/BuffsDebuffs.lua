@@ -43,7 +43,7 @@ function Theme:ButtonDefault(button, isDebuff)
     button.mUIBorder:SetAtlas("UI-HUD-ActionBar-IconFrame")
     button.mUIBorder:SetPoint("TOPLEFT", button.Icon)
     button.mUIBorder:SetSize(button.Icon:GetWidth() + 2.25, button.Icon:GetHeight() + 2)
-    button.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
+    button.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
 
     button.mUIBorder.mask = button:CreateMaskTexture()
     button.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]],
@@ -174,10 +174,10 @@ if WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC then
                     Theme.aurabuttons[button] = "playerbuff"
                 end
 
-                button.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
-                TempEnchant1.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
-                TempEnchant2.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
-                TempEnchant3.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
+                button.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
+                TempEnchant1.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
+                TempEnchant2.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
+                TempEnchant3.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
 
                 prevButton = button
             end
@@ -238,7 +238,7 @@ if WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC then
                     _G["TargetFrameBuff" .. i]:GetHeight() + 1
                 )
 
-                _G["TargetFrameBuff" .. i].mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
+                _G["TargetFrameBuff" .. i].mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
             end
 
             if _G["FocusFrameBuff" .. i] and _G["FocusFrameBuff" .. i].mUIBorder then
@@ -247,7 +247,7 @@ if WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC then
                     _G["FocusFrameBuff" .. i]:GetHeight() + 1
                 )
 
-                _G["FocusFrameBuff" .. i].mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
+                _G["FocusFrameBuff" .. i].mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
             end
         end
         for i = 1, MAX_TARGET_DEBUFFS do
@@ -268,7 +268,7 @@ if WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC then
                 if mUI.db.profile.unitframes.buffsdebuffs.debuffcolors then
                     _G["TargetFrameDebuff" .. i].mUIBorder:SetVertexColor(color.r, color.g, color.b)
                 else
-                    _G["TargetFrameDebuff" .. i].mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
+                    _G["TargetFrameDebuff" .. i].mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
                 end
                 _G["TargetFrameDebuff" .. i].mUIBorder:SetSize(
                     _G["TargetFrameDebuff" .. i]:GetWidth() + 2,
@@ -281,7 +281,7 @@ if WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC then
                 if mUI.db.profile.unitframes.buffsdebuffs.debuffcolors then
                     _G["FocusFrameDebuff" .. i].mUIBorder:SetVertexColor(color.r, color.g, color.b)
                 else
-                    _G["FocusFrameDebuff" .. i].mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
+                    _G["FocusFrameDebuff" .. i].mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
                 end
                 _G["FocusFrameDebuff" .. i].mUIBorder:SetSize(
                     _G["FocusFrameDebuff" .. i]:GetWidth() + 2,
@@ -413,7 +413,7 @@ else
                 aura.mUIBorder:SetVertexColor(r, g, b, 1)
                 aura.border:SetAlpha(0)
             else
-                aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
+                aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
             end
 
             -- Mask
@@ -435,6 +435,8 @@ else
             if aura.border then
                 local r, g, b = aura.border:GetVertexColor()
                 aura.mUIBorder:SetVertexColor(r, g, b, 1)
+            else
+                aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
             end
         end
     end
