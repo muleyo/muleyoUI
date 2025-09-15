@@ -56,8 +56,8 @@ function Theme:CreateCastbarIcons(unit, castbar)
                 castbar.mUIBorder:SetSize(22, 21)
                 castbar.mUIBorder:SetPoint("TOPLEFT", castbar.Icon)
             else
-                castbar.mUIBorder:SetPoint("TOPLEFT", castbar.Icon, "TOPLEFT", 0, 0)
-                castbar.mUIBorder:SetPoint("BOTTOMRIGHT", castbar.Icon, "BOTTOMRIGHT", 1.5, -1.25)
+                castbar.mUIBorder:SetSize(21.5, 21)
+                castbar.mUIBorder:SetPoint("TOPLEFT", castbar.Icon)
             end
         else
             castbar.Icon:SetSize(16, 16)
@@ -68,8 +68,8 @@ function Theme:CreateCastbarIcons(unit, castbar)
                 castbar.mUIBorder:SetPoint("TOPLEFT", castbar.Icon, "TOPLEFT", 0, 0)
                 castbar.mUIBorder:SetPoint("BOTTOMRIGHT", castbar.Icon, "BOTTOMRIGHT", 1.25, -1.25)
             else
-                castbar.mUIBorder:SetPoint("TOPLEFT", castbar.Icon, "TOPLEFT", 0, 0)
-                castbar.mUIBorder:SetPoint("BOTTOMRIGHT", castbar.Icon, "BOTTOMRIGHT", 1.5, -1.25)
+                castbar.mUIBorder:SetPoint("TOPLEFT", castbar.Icon)
+                castbar.mUIBorder:SetSize(17.25, 17)
             end
         end
 

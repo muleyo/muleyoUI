@@ -41,8 +41,8 @@ function Theme:ButtonDefault(button, isDebuff)
     -- Create Border
     button.mUIBorder = button:CreateTexture()
     button.mUIBorder:SetAtlas("UI-HUD-ActionBar-IconFrame")
-    button.mUIBorder:SetPoint("TOPLEFT", button.Icon, "TOPLEFT", -0.5, 0.5)
-    button.mUIBorder:SetPoint("BOTTOMRIGHT", button.Icon, "BOTTOMRIGHT", 2.5, -1.5)
+    button.mUIBorder:SetPoint("TOPLEFT", button.Icon)
+    button.mUIBorder:SetSize(button.Icon:GetWidth() + 2.25, button.Icon:GetHeight() + 2)
     button.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
 
     button.mUIBorder.mask = button:CreateMaskTexture()
@@ -50,36 +50,6 @@ function Theme:ButtonDefault(button, isDebuff)
         "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     button.mUIBorder.mask:SetAllPoints(button.Icon)
     button.Icon:AddMaskTexture(button.mUIBorder.mask)
-
-    if not isDebuff then
-        if BuffFrame.AuraContainer.isHorizontal then
-            if BuffFrame.AuraContainer.addIconsToTop then
-                button.mUIBorder:SetPoint("CENTER", button, "CENTER", 0, -5)
-            else
-                button.mUIBorder:SetPoint("CENTER", button, "CENTER", 0, 5)
-            end
-        else
-            if not BuffFrame.AuraContainer.addIconsToRight then
-                button.mUIBorder:SetPoint("CENTER", button, "CENTER", 15, 0)
-            else
-                button.mUIBorder:SetPoint("CENTER", button, "CENTER", -15, 0)
-            end
-        end
-    else
-        if DebuffFrame.AuraContainer.isHorizontal then
-            if DebuffFrame.AuraContainer.addIconsToTop then
-                button.mUIBorder:SetPoint("CENTER", button, "CENTER", 0, -5)
-            else
-                button.mUIBorder:SetPoint("CENTER", button, "CENTER", 0, 5)
-            end
-        else
-            if not DebuffFrame.AuraContainer.addIconsToRight then
-                button.mUIBorder:SetPoint("CENTER", button, "CENTER", 15, 0)
-            else
-                button.mUIBorder:SetPoint("CENTER", button, "CENTER", -15, 0)
-            end
-        end
-    end
 
     if not isDebuff then
         Theme.aurabuttons[button] = "playerbuff"
@@ -368,8 +338,7 @@ else
 
         for index, child in pairs(Children) do
             local frame = select(index, BuffFrame.AuraContainer:GetChildren())
-
-            if frame.TempEnchantBorder then frame.TempEnchantBorder:Hide() end
+            frame.TempEnchantBorder:SetAlpha(0)
 
             if not frame.mUIBorder then
                 Theme:ButtonDefault(frame)
@@ -388,17 +357,7 @@ else
             end
 
             -- Set the color of the Debuff Border
-            local debuffType
-            if (child.buttonInfo) then
-                debuffType = child.buttonInfo.debuffType
-            end
-            local color
-            if debuffType then
-                color = DebuffTypeColor[debuffType]
-            else
-                color = DebuffTypeColor["none"]
-            end
-
+            local color = DebuffTypeColor[child.buttonInfo and child.buttonInfo.debuffType or "none"]
             frame.mUIBorder:SetVertexColor(color.r, color.g, color.b, 1)
         end
     end
@@ -410,9 +369,8 @@ else
             -- Create Border
             aura.mUIBorder = aura:CreateTexture()
             aura.mUIBorder:SetAtlas("UI-HUD-ActionBar-IconFrame")
-            aura.mUIBorder:SetPoint("TOPLEFT", aura.Icon, "TOPLEFT", -0.5, 0)
-            aura.mUIBorder:SetPoint("BOTTOMRIGHT", aura.Icon, "BOTTOMRIGHT", 2.25, -1.25)
-            aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
+            aura.mUIBorder:SetPoint("TOPLEFT", aura.Icon)
+            aura.mUIBorder:SetSize(aura.Icon:GetWidth() + 2.25, aura.Icon:GetHeight() + 1.25)
 
             -- Set Icon Mask
             aura.mUIBorder.mask = aura:CreateMaskTexture()
@@ -420,7 +378,10 @@ else
                 "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
             aura.mUIBorder.mask:SetAllPoints(aura.Icon)
             aura.Icon:AddMaskTexture(aura.mUIBorder.mask)
+
+            -- Cooldown Swipe
             aura.Cooldown:SetSwipeTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]])
+            aura.Cooldown:SetSwipeColor(0.2, 0.2, 0.2, 0.75)
 
             if not isDebuff then
                 Theme.aurabuttons[aura] = "unitframebuff"
@@ -429,21 +390,52 @@ else
             end
         end
 
-        if unit and aura.auraInstanceID then
-            local auraData = C_UnitAuras.GetAuraDataByAuraInstanceID(unit, aura.auraInstanceID)
-            local color = Theme.debuffColors[auraData and auraData.dispelName or "none"]
+        if aura.Border and mUI.db.profile.unitframes.buffsdebuffs.debuffcolors then
+            local r, g, b = aura.Border:GetVertexColor()
+            aura.mUIBorder:SetVertexColor(r, g, b, 1)
+            aura.Border:SetAlpha(0)
+        else
+            aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
+        end
+    end
 
-            if mUI.db.profile.unitframes.buffsdebuffs.debuffcolors then
-                aura.mUIBorder:SetVertexColor(color.r, color.g, color.b)
+    function Theme:UpdateRaidframeAuras(aura)
+        if not aura.mUIBorder then
+            aura.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+            aura.mUIBorder = aura:CreateTexture()
+            aura.mUIBorder:SetAtlas("UI-HUD-ActionBar-IconFrame")
+            aura.mUIBorder:SetPoint("TOPLEFT", aura.icon)
+            aura.mUIBorder:SetDrawLayer("OVERLAY", 0)
+            aura.mUIBorder:SetSize(aura.icon:GetWidth() + 2, aura.icon:GetHeight() + 1)
+            aura.sizeX, aura.sizeY = aura.icon:GetSize()
+            if aura.border then
+                local r, g, b = aura.border:GetVertexColor()
+                aura.mUIBorder:SetVertexColor(r, g, b, 1)
+                aura.border:SetAlpha(0)
             else
                 aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
             end
-        else
-            aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
-        end
 
-        if aura.Border then
-            aura.Border:SetAlpha(0)
+            -- Mask
+            aura.mask = aura:CreateMaskTexture()
+            aura.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]],
+                "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+            aura.mask:SetAllPoints(aura.icon)
+            aura.icon:AddMaskTexture(aura.mask)
+
+            -- Cooldown Swipe
+            aura.cooldown:SetSwipeTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]])
+            aura.cooldown:SetSwipeColor(0.2, 0.2, 0.2, 0.75)
+        else
+            if aura.sizeX ~= aura.icon:GetWidth() or aura.sizeY ~= aura.icon:GetHeight() then
+                aura.sizeX, aura.sizeY = aura.icon:GetSize()
+                aura.mUIBorder:SetSize(aura.icon:GetWidth() + 2, aura.icon:GetHeight() + 1)
+            end
+
+            if aura.border then
+                local r, g, b = aura.border:GetVertexColor()
+                aura.mUIBorder:SetVertexColor(r, g, b, 1)
+            end
         end
     end
 end
@@ -453,139 +445,79 @@ function Theme:AuraPositions()
     for i = 1, #BuffFrame.auraFrames do
         local duration = BuffFrame.auraFrames[i].Duration
         local count = BuffFrame.auraFrames[i].Count
-        local border = BuffFrame.auraFrames[i].mUIBorder
 
-        count:SetFont(STANDARD_TEXT_FONT, 11, "OUTLINE")
+        count:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
         duration:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
+        duration:ClearAllPoints()
         duration:SetDrawLayer("OVERLAY")
 
         if BuffFrame.AuraContainer.isHorizontal then
             if BuffFrame.AuraContainer.addIconsToTop then
-                count:SetPoint("TOPRIGHT", 0, 12)
-                duration:ClearAllPoints()
+                count:SetPoint("TOPRIGHT", 0, 0)
                 duration:SetPoint("CENTER", 0, -15)
-                if border then
-                    border:SetPoint("CENTER", BuffFrame.auraFrames[i], "CENTER", 0, -5)
-                end
             else
                 count:SetPoint("TOPRIGHT", 0, 12)
-                duration:ClearAllPoints()
                 duration:SetPoint("CENTER", 0, -5)
-                if border then
-                    border:SetPoint("CENTER", BuffFrame.auraFrames[i], "CENTER", 0, 5)
-                end
             end
         else
             if not BuffFrame.AuraContainer.addIconsToRight then
                 count:SetPoint("TOPRIGHT", 0, 12)
-                duration:ClearAllPoints()
                 duration:SetPoint("CENTER", 15, -10)
-                if border then
-                    border:SetPoint("CENTER", BuffFrame.auraFrames[i], "CENTER", 15, 0)
-                end
             else
                 count:SetPoint("TOPRIGHT", -30, 12)
-                duration:ClearAllPoints()
                 duration:SetPoint("CENTER", -13.5, -10)
-                if border then
-                    border:SetPoint("CENTER", BuffFrame.auraFrames[i], "CENTER", -15, 0)
-                end
             end
         end
     end
 
     -- Debuffs - Text Positioning
     for i = 1, #DebuffFrame.auraFrames do
+        local duration = DebuffFrame.auraFrames[i].Duration
+        local count = DebuffFrame.auraFrames[i].Count
+
+        if count and count.SetFont then
+            count:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
+        end
+
+        if duration and duration.SetFont then
+            duration:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
+            duration:ClearAllPoints()
+        end
+
         if DebuffFrame.AuraContainer.isHorizontal then
             if DebuffFrame.AuraContainer.addIconsToTop then
-                if DebuffFrame.auraFrames[i].Count then
-                    local count = DebuffFrame.auraFrames[i].Count
-
-                    count:SetPoint("TOPRIGHT", 0, 12)
-                    count:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
+                if count then
+                    count:SetPoint("TOPRIGHT", 0, 0)
                 end
 
-                if DebuffFrame.auraFrames[i].Duration then
-                    local duration = DebuffFrame.auraFrames[i].Duration
-                    if duration.SetFont then
-                        duration:SetFont(STANDARD_TEXT_FONT, 11, "OUTLINE")
-                    end
-
-                    duration:ClearAllPoints()
+                if duration then
                     duration:SetPoint("CENTER", 0, -15)
                 end
-
-                local border = DebuffFrame.auraFrames[i].mUIBorder
-                if border then
-                    border:SetPoint("CENTER", DebuffFrame.auraFrames[i], "CENTER", 0, -5)
-                end
             else
-                if DebuffFrame.auraFrames[i].Count then
-                    local count = DebuffFrame.auraFrames[i].Count
-
+                if count then
                     count:SetPoint("TOPRIGHT", 0, 12)
-                    count:SetFont(STANDARD_TEXT_FONT, 11, "OUTLINE")
                 end
 
-                if DebuffFrame.auraFrames[i].Duration then
-                    local duration = DebuffFrame.auraFrames[i].Duration
-                    if duration.SetFont then
-                        duration:SetFont(STANDARD_TEXT_FONT, 11, "OUTLINE")
-                    end
-
-                    duration:ClearAllPoints()
+                if duration then
                     duration:SetPoint("CENTER", 0, -5)
-                end
-
-                local border = DebuffFrame.auraFrames[i].mUIBorder
-                if border then
-                    border:SetPoint("CENTER", DebuffFrame.auraFrames[i], "CENTER", 0, 5)
                 end
             end
         else
             if not DebuffFrame.AuraContainer.addIconsToRight then
-                if DebuffFrame.auraFrames[i].Count then
-                    local count = DebuffFrame.auraFrames[i].Count
-
+                if count then
                     count:SetPoint("TOPRIGHT", 0, 12)
-                    count:SetFont(STANDARD_TEXT_FONT, 11, "OUTLINE")
                 end
 
-                if DebuffFrame.auraFrames[i].Duration then
-                    local duration = DebuffFrame.auraFrames[i].Duration
-                    if duration.SetFont then
-                        duration:SetFont(STANDARD_TEXT_FONT, 11, "OUTLINE")
-                    end
-
-                    duration:ClearAllPoints()
+                if duration then
                     duration:SetPoint("CENTER", 15, -10)
                 end
-
-                local border = DebuffFrame.auraFrames[i].mUIBorder
-                if border then
-                    border:SetPoint("CENTER", DebuffFrame.auraFrames[i], "CENTER", 15, 0)
-                end
             else
-                if DebuffFrame.auraFrames[i].Count then
-                    local count = DebuffFrame.auraFrames[i].Count
-
+                if count then
                     count:SetPoint("TOPRIGHT", -30, 12)
-                    count:SetFont(STANDARD_TEXT_FONT, 11, "OUTLINE")
                 end
 
-                if DebuffFrame.auraFrames[i].Duration then
-                    local duration = DebuffFrame.auraFrames[i].Duration
-                    if duration.SetFont then
-                        duration:SetFont(STANDARD_TEXT_FONT, 11, "OUTLINE")
-                    end
-
-                    duration:ClearAllPoints()
+                if duration then
                     duration:SetPoint("CENTER", -13.5, -10)
-                end
-
-                local border = DebuffFrame.auraFrames[i].mUIBorder
-                if border then
-                    border:SetPoint("CENTER", DebuffFrame.auraFrames[i], "CENTER", -15, 0)
                 end
             end
         end
