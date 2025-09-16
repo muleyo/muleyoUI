@@ -62,12 +62,7 @@ function RF_Size:OnInitialize()
                     -- Replace SetSize
                     memberFrame.SetSize = function(self, width, height)
                         if InCombatLockdown() then return end
-                        -- Always use our custom size instead of whatever was requested
-                        if width ~= RF_Size.db.width or height ~= RF_Size.db.height then
-                            self.originalSetSize(self, RF_Size.db.width, RF_Size.db.height)
-                        else
-                            self.originalSetSize(self, width, height)
-                        end
+                        self.originalSetSize(self, RF_Size.db.width, RF_Size.db.height)
                     end
                 end
             end
@@ -80,11 +75,7 @@ function RF_Size:OnInitialize()
                     -- Replace SetSize
                     petFrame.SetSize = function(self, width, height)
                         if InCombatLockdown() then return end
-                        if width ~= RF_Size.db.width then
-                            self.originalSetSize(self, RF_Size.db.width, height)
-                        else
-                            self.originalSetSize(self, width, height)
-                        end
+                        self.originalSetSize(self, RF_Size.db.width, height)
                     end
                 end
             end

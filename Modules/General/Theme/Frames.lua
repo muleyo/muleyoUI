@@ -112,6 +112,36 @@ function Theme:AuctionHouse()
                     mUI:Skin(_G["LibAHFrame-1.0-AuctionatorTabs_Selling"])
                     mUI:Skin(_G["LibAHFrame-1.0-AuctionatorTabs_Cancelling"])
                     mUI:Skin(_G["LibAHFrame-1.0-AuctionatorTabs_Auctionator"])
+
+                    -- Shopping
+                    mUI:Skin(AuctionatorShoppingFrame.ShoppingResultsInset)
+                    mUI:Skin(AuctionatorShoppingFrame.ListsContainer.Inset)
+                    mUI:Skin(AuctionatorShoppingFrame.ListsContainer.Inset.NineSlice)
+                    mUI:Skin(AuctionatorShoppingFrame.ShoppingResultsInset.NineSlice)
+                    mUI:Skin(AuctionatorShoppingFrame.ListsContainer.ScrollBar.Background)
+                    mUI:Skin(AuctionatorShoppingFrame.ResultsListing.ScrollArea.ScrollBar.Background)
+                    mUI:Skin(AuctionatorShoppingFrame.ContainerTabs.ListsTab)
+                    mUI:Skin(AuctionatorShoppingFrame.ContainerTabs.RecentsTab)
+
+                    -- Selling
+                    mUI:Skin(AuctionatorSellingFrame.HistoricalPriceInset)
+                    mUI:Skin(AuctionatorSellingFrame.HistoricalPriceInset.NineSlice)
+                    mUI:Skin(AuctionatorSellingFrame.BagInset)
+                    mUI:Skin(AuctionatorSellingFrame.BagInset.NineSlice)
+                    mUI:Skin(AuctionatorSellingFrame.BagListing.View.ScrollBar.Background)
+                    mUI:Skin(AuctionatorSellingFrame.CurrentPricesListing.ScrollArea.ScrollBar.Background)
+                    mUI:Skin(AuctionatorSellingFramePricesTab1)
+                    mUI:Skin(AuctionatorSellingFramePricesTab2)
+                    mUI:Skin(AuctionatorSellingFramePricesTab3)
+
+                    -- Cancelling
+                    mUI:Skin(AuctionatorCancellingFrame.HistoricalPriceInset)
+                    mUI:Skin(AuctionatorCancellingFrame.HistoricalPriceInset.NineSlice)
+                    mUI:Skin(AuctionatorCancellingFrame.ResultsListing.ScrollArea.ScrollBar.Background)
+
+                    -- Auctionator
+                    mUI:Skin(AuctionatorConfigFrame)
+                    mUI:Skin(AuctionatorConfigFrame.NineSlice)
                 end)
             end
         end
@@ -199,6 +229,10 @@ function Theme:Challenges()
     -- Challenges Frame
     if ChallengesFrame then
         mUI:Skin(ChallengesFrameInset.NineSlice)
+    end
+
+    if ChallengesKeystoneFrame then
+        mUI:Skin(ChallengesKeystoneFrame)
     end
 end
 
@@ -371,6 +405,7 @@ function Theme:EncounterJournal()
         mUI:Skin(EncounterJournalDungeonTab)
         mUI:Skin(EncounterJournalRaidTab)
         mUI:Skin(EncounterJournalLootJournalTab)
+        mUI:Skin(EncounterJournalMonthlyActivitiesFrame.ThemeContainer)
     end
 end
 
@@ -655,6 +690,17 @@ function Theme:ProfessionsBook()
         mUI:Skin(ProfessionsBookFrame.NineSlice)
         mUI:Skin(ProfessionsBookFrameInset)
         mUI:Skin(ProfessionsBookFrameInset.NineSlice)
+        mUI:Skin({
+            PrimaryProfession1SpellButtonBottomNameFrame,
+            PrimaryProfession2SpellButtonBottomNameFrame,
+            SecondaryProfession1SpellButtonLeftNameFrame,
+            SecondaryProfession1SpellButtonRightNameFrame,
+            SecondaryProfession2SpellButtonLeftNameFrame,
+            SecondaryProfession2SpellButtonRightNameFrame,
+            SecondaryProfession3SpellButtonLeftNameFrame,
+            SecondaryProfession3SpellButtonRightNameFrame
+        }, true)
+
         mUI:Skin({
             ProfessionsBookPage1,
             ProfessionsBookPage2
@@ -947,6 +993,7 @@ function Theme:AddonList()
     -- AddOn List
     mUI:Skin(AddonList.NineSlice)
     mUI:Skin(AddonList)
+    mUI:Skin(AddonListInset)
     mUI:Skin(AddonListInset.NineSlice)
     if mUI:IsClassic() then
         mUI:Skin(
@@ -1592,6 +1639,8 @@ function Theme:Settings()
     mUI:Skin(SettingsPanel)
     mUI:Skin(SettingsPanel.Bg)
     mUI:Skin(SettingsPanel.NineSlice)
+    mUI:Skin(SettingsPanel.GameTab)
+    mUI:Skin(SettingsPanel.AddOnsTab)
 end
 
 function Theme:Raidframe()
@@ -1875,6 +1924,24 @@ function Theme:Frames()
     -- ReadyCheck
     mUI:Skin(ReadyCheckListenerFrame)
     mUI:Skin(ReadyCheckListenerFrame.NineSlice)
+
+    -- Battletag Add Frame
+    mUI:Skin(BattleTagInviteFrame)
+    mUI:Skin(BattleTagInviteFrame.Border)
+
+    -- Currency Transfer
+    mUI:Skin(CurrencyTransferMenu)
+    mUI:Skin(CurrencyTransferMenu.NineSlice)
+    mUI:Skin(CurrencyTransferMenuInset)
+    mUI:Skin(CurrencyTransferMenuInset.NineSlice)
+
+    -- Renown Frame
+    mUI:Skin(ExpansionLandingPage.Overlay.WarWithinLandingOverlay.Border)
+    mUI:Skin(MajorFactionRenownFrame)
+
+    -- Delves
+    mUI:Skin(DelvesCompanionConfigurationFrame)
+    mUI:Skin(DelvesCompanionConfigurationFrame.Border)
 
     -- DropDowns
     if mUI:IsClassic() then
