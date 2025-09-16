@@ -93,7 +93,7 @@ function Style:OnInitialize()
             -- Get Class Color
             local _, unitClass = UnitClass(unit)
             local color = RAID_CLASS_COLORS[unitClass]
-            Style.cfg.barColor = color
+            Style.cfg.barColor = color or { r = 0, g = 0.8, b = 0 }
             GameTooltipStatusBar:SetStatusBarColor(color.r, color.g, color.b)
             GameTooltipTextLeft1:SetTextColor(color.r, color.g, color.b)
 
