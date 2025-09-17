@@ -1111,6 +1111,16 @@ function Unitframes:OnInitialize()
                     end,
                     get = function() return mUI.db.profile.unitframes.raidframes.solo end,
                     order = 36
+                },
+                skinicons = {
+                    name = "Skin Aura Icons",
+                    desc = "Apply mUI Skin to Aura Icons on Party/Raidframes\n\n|cffffff00Info:|r Requires Reload",
+                    type = "toggle",
+                    set = function(_, val)
+                        mUI.db.profile.unitframes.raidframes.skinicons = val
+                    end,
+                    get = function() return mUI.db.profile.unitframes.raidframes.skinicons end,
+                    order = 37
                 }
             }
         }

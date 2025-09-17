@@ -76,7 +76,7 @@ local defaults = {
                 petbar = false,
                 stancebar = false,
                 micromenu = "Default",
-                bagbuttons = "Default",
+                bagbuttons = "Default"
             }
         },
         unitframes = {
@@ -117,7 +117,8 @@ local defaults = {
                 healthcolor = false,
                 names = false,
                 roleicons = false,
-                solo = false
+                solo = false,
+                skinicons = true
             }
         },
         castbars = {
@@ -129,7 +130,7 @@ local defaults = {
             focusscale = 100,
             targetpos = false,
             focuspos = false,
-            texture = "Dragonflight",
+            texture = "Dragonflight"
         },
         nameplates = {
             enabled = true,
@@ -274,7 +275,7 @@ local defaults = {
                 [212739] = { name = "Radiating Voidstone", color = { r = 1, g = 0.55, b = 0 } },
                 [230740] = { name = "Shreddinator 3000", color = { r = 1, g = 0.55, b = 0 } },
                 [231325] = { name = "Darkfuse Jumpstarter", color = { r = 1, g = 0.55, b = 0 } },
-                [226396] = { name = "Swampface", color = { r = 1, g = 0.55, b = 0 } },
+                [226396] = { name = "Swampface", color = { r = 1, g = 0.55, b = 0 } }
             }
         },
         tooltips = {
@@ -337,7 +338,7 @@ local defaults = {
                         outline = true
                     }
                 }
-            },
+            }
         },
         misc = {
             enabled = true,

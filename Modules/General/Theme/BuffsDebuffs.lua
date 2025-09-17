@@ -440,6 +440,18 @@ else
             else
                 aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
             end
+
+            if not mUI.db.profile.unitframes.raidframes.skinicons then
+                aura.mUIBorder:SetAlpha(0)
+                if aura.border then
+                    aura.border:SetAlpha(1)
+                end
+            else
+                aura.mUIBorder:SetAlpha(1)
+                if aura.border then
+                    aura.border:SetAlpha(0)
+                end
+            end
         end
     end
 end
