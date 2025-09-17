@@ -1118,6 +1118,12 @@ function Unitframes:OnInitialize()
                     type = "toggle",
                     set = function(_, val)
                         mUI.db.profile.unitframes.raidframes.skinicons = val
+
+                        if val then
+                            mUI:Reload("Enable Skin Aura Icons")
+                        else
+                            mUI:Reload("Disable Skin Aura Icons")
+                        end
                     end,
                     get = function() return mUI.db.profile.unitframes.raidframes.skinicons end,
                     order = 37
