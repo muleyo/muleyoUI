@@ -2551,7 +2551,11 @@ function EditMode:OnInitialize()
                 EditMode.db[layout].queueicon.x,
                 EditMode.db[layout].queueicon.y)
 
-            QueueStatusButton:SetScale(EditMode.db[layout].queueicon.scale or 0.8)
+            if not EditMode:IsHooked(QueueStatusButton, "OnShow") then
+                EditMode:SecureHookScript(QueueStatusButton, "OnShow", function()
+                    QueueStatusButton:SetScale(EditMode.db[layout].queueicon.scale or 0.8)
+                end)
+            end
         end)
 
         EditMode.LEM:AddFrameSettings(EditMode.QueueStatus, {
