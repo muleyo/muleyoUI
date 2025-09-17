@@ -1506,6 +1506,9 @@ function Theme:Map()
         mUI:Skin(QuestMapFrame.EventsFrame.ScrollBox)
         mUI:Skin(QuestMapFrame.MapLegend.BorderFrame)
         mUI:Skin(MapLegendScrollFrame)
+        mUI:Skin(QuestMapFrame.QuestsFrame.DetailsFrame.BorderFrame)
+        mUI:Skin(QuestMapFrame.QuestsFrame.DetailsFrame.BackFrame)
+        mUI:Skin(QuestMapFrame.QuestsFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame)
         mUI:Skin({
             QuestMapFrame.QuestsTab.Background,
             QuestMapFrame.EventsTab.Background,
@@ -1936,8 +1939,12 @@ function Theme:Frames()
     mUI:Skin(CurrencyTransferMenuInset.NineSlice)
 
     -- Renown Frame
-    mUI:Skin(ExpansionLandingPage.Overlay.WarWithinLandingOverlay.Border)
-    mUI:Skin(MajorFactionRenownFrame)
+    C_Timer.After(0, function()
+        mUI:Skin(ExpansionLandingPage.Overlay.WarWithinLandingOverlay.Border)
+        mUI:Skin(ExpansionLandingPage.Overlay.WarWithinLandingOverlay.ScrollFadeOverlay)
+        mUI:Skin(ExpansionLandingPage.Overlay.WarWithinLandingOverlay)
+        mUI:Skin(MajorFactionRenownFrame)
+    end)
 
     -- Delves
     mUI:Skin(DelvesCompanionConfigurationFrame)

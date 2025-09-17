@@ -370,7 +370,7 @@ else
             aura.mUIBorder = aura:CreateTexture()
             aura.mUIBorder:SetAtlas("UI-HUD-ActionBar-IconFrame")
             aura.mUIBorder:SetPoint("TOPLEFT", aura.Icon)
-            aura.mUIBorder:SetSize(aura.Icon:GetWidth() + 2.25, aura.Icon:GetHeight() + 1.25)
+            aura.mUIBorder:SetDrawLayer("OVERLAY", 0)
 
             -- Set Icon Mask
             aura.mUIBorder.mask = aura:CreateMaskTexture()
@@ -389,6 +389,8 @@ else
                 Theme.aurabuttons[aura] = "unitframedebuff"
             end
         end
+
+        aura.mUIBorder:SetSize(aura.Icon:GetWidth() + 2.5, aura.Icon:GetHeight() + 1.75)
 
         if aura.Border and mUI.db.profile.unitframes.buffsdebuffs.debuffcolors then
             local r, g, b = aura.Border:GetVertexColor()
