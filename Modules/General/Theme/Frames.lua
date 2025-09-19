@@ -1940,9 +1940,11 @@ function Theme:Frames()
 
     -- Renown Frame
     C_Timer.After(0, function()
-        mUI:Skin(ExpansionLandingPage.Overlay.WarWithinLandingOverlay.Border)
-        mUI:Skin(ExpansionLandingPage.Overlay.WarWithinLandingOverlay.ScrollFadeOverlay)
-        mUI:Skin(ExpansionLandingPage.Overlay.WarWithinLandingOverlay)
+        if ExpansionLandingPage.Overlay.WarWithinLandingOverlay then
+            mUI:Skin(ExpansionLandingPage.Overlay.WarWithinLandingOverlay.Border)
+            mUI:Skin(ExpansionLandingPage.Overlay.WarWithinLandingOverlay.ScrollFadeOverlay)
+            mUI:Skin(ExpansionLandingPage.Overlay.WarWithinLandingOverlay)
+        end
         mUI:Skin(MajorFactionRenownFrame)
     end)
 
