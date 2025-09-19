@@ -42,7 +42,7 @@ function Theme:ButtonDefault(button, isDebuff)
     button.mUIBorder = button:CreateTexture(nil, "OVERLAY", nil, 7)
     button.mUIBorder:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border.png]])
     button.mUIBorder:SetPoint("CENTER", button.Icon, "CENTER", 0, 0)
-    button.mUIBorder:SetSize(button.Icon:GetWidth() + 1.5, button.Icon:GetHeight() + 1.5)
+    button.mUIBorder:SetSize(button.Icon:GetWidth() + 2, button.Icon:GetHeight() + 2)
     button.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
 
     button.mUIBorder.mask = button:CreateMaskTexture()
