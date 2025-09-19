@@ -39,14 +39,14 @@ function Theme:ButtonDefault(button, isDebuff)
     button.Icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
     -- Create Border
-    button.mUIBorder = button:CreateTexture()
-    button.mUIBorder:SetAtlas("UI-HUD-ActionBar-IconFrame")
-    button.mUIBorder:SetPoint("TOPLEFT", button.Icon)
-    button.mUIBorder:SetSize(button.Icon:GetWidth() + 2.25, button.Icon:GetHeight() + 2)
+    button.mUIBorder = button:CreateTexture(nil, "OVERLAY", nil, 7)
+    button.mUIBorder:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border.png]])
+    button.mUIBorder:SetPoint("CENTER", button.Icon, "CENTER", 0, 0)
+    button.mUIBorder:SetSize(button.Icon:GetWidth() + 1.5, button.Icon:GetHeight() + 1.5)
     button.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
 
     button.mUIBorder.mask = button:CreateMaskTexture()
-    button.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]],
+    button.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask.png]],
         "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     button.mUIBorder.mask:SetAllPoints(button.Icon)
     button.Icon:AddMaskTexture(button.mUIBorder.mask)
@@ -367,20 +367,19 @@ else
             aura.Icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
             -- Create Border
-            aura.mUIBorder = aura:CreateTexture()
-            aura.mUIBorder:SetAtlas("UI-HUD-ActionBar-IconFrame")
-            aura.mUIBorder:SetPoint("TOPLEFT", aura.Icon)
-            aura.mUIBorder:SetDrawLayer("OVERLAY", 0)
+            aura.mUIBorder = aura:CreateTexture(nil, "OVERLAY", nil, 7)
+            aura.mUIBorder:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border.png]])
+            aura.mUIBorder:SetPoint("CENTER", aura.Icon, "CENTER", 0, 0)
 
             -- Set Icon Mask
             aura.mUIBorder.mask = aura:CreateMaskTexture()
-            aura.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]],
+            aura.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask.png]],
                 "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
             aura.mUIBorder.mask:SetAllPoints(aura.Icon)
             aura.Icon:AddMaskTexture(aura.mUIBorder.mask)
 
             -- Cooldown Swipe
-            aura.Cooldown:SetSwipeTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]])
+            aura.Cooldown:SetSwipeTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask.png]])
             aura.Cooldown:SetSwipeColor(0.2, 0.2, 0.2, 0.75)
 
             if not isDebuff then
@@ -390,7 +389,13 @@ else
             end
         end
 
-        aura.mUIBorder:SetSize(aura.Icon:GetWidth() + 2.5, aura.Icon:GetHeight() + 1.75)
+        aura.mUIBorder:SetSize(aura.Icon:GetWidth() + 2, aura.Icon:GetHeight() + 2)
+
+        -- Set Count Position
+        if aura.Count then
+            aura.Count:ClearAllPoints()
+            aura.Count:SetPoint("BOTTOMRIGHT", aura.Icon, "BOTTOMRIGHT", -2, 2.5)
+        end
 
         if aura.Border and mUI.db.profile.unitframes.buffsdebuffs.debuffcolors then
             local r, g, b = aura.Border:GetVertexColor()
@@ -404,11 +409,10 @@ else
     function Theme:UpdateRaidframeAuras(aura)
         if not aura.mUIBorder then
             aura.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-            aura.mUIBorder = aura:CreateTexture()
-            aura.mUIBorder:SetAtlas("UI-HUD-ActionBar-IconFrame")
-            aura.mUIBorder:SetPoint("TOPLEFT", aura.icon)
-            aura.mUIBorder:SetDrawLayer("OVERLAY", 0)
-            aura.mUIBorder:SetSize(aura.icon:GetWidth() + 2, aura.icon:GetHeight() + 1)
+            aura.mUIBorder = aura:CreateTexture(nil, "OVERLAY", nil, 7)
+            aura.mUIBorder:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border.png]])
+            aura.mUIBorder:SetPoint("CENTER", aura.icon, "CENTER", 0, 0)
+            aura.mUIBorder:SetSize(aura.icon:GetWidth() + 2, aura.icon:GetHeight() + 2)
             aura.sizeX, aura.sizeY = aura.icon:GetSize()
             if aura.border then
                 local r, g, b = aura.border:GetVertexColor()
@@ -420,18 +424,21 @@ else
 
             -- Mask
             aura.mask = aura:CreateMaskTexture()
-            aura.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]],
+            aura.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask.png]],
                 "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
             aura.mask:SetAllPoints(aura.icon)
             aura.icon:AddMaskTexture(aura.mask)
 
             -- Cooldown Swipe
-            aura.cooldown:SetSwipeTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]])
+            aura.cooldown:SetSwipeTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask.png]])
             aura.cooldown:SetSwipeColor(0.2, 0.2, 0.2, 0.75)
+
+            aura.count:ClearAllPoints()
+            aura.count:SetPoint("BOTTOMRIGHT", aura.icon, "BOTTOMRIGHT", -1.5, 2.5)
         else
             if aura.sizeX ~= aura.icon:GetWidth() or aura.sizeY ~= aura.icon:GetHeight() then
                 aura.sizeX, aura.sizeY = aura.icon:GetSize()
-                aura.mUIBorder:SetSize(aura.icon:GetWidth() + 2, aura.icon:GetHeight() + 1)
+                aura.mUIBorder:SetSize(aura.icon:GetWidth() + 2, aura.icon:GetHeight() + 2)
             end
 
             if aura.border then
@@ -457,19 +464,19 @@ function Theme:AuraPositions()
 
         if BuffFrame.AuraContainer.isHorizontal then
             if BuffFrame.AuraContainer.addIconsToTop then
-                count:SetPoint("TOPRIGHT", 0, 0)
-                duration:SetPoint("CENTER", 0, -15)
+                count:SetPoint("TOPRIGHT", -1, 0)
+                duration:SetPoint("CENTER", 0, -14)
             else
-                count:SetPoint("TOPRIGHT", 0, 12)
-                duration:SetPoint("CENTER", 0, -5)
+                count:SetPoint("TOPRIGHT", -1, 12)
+                duration:SetPoint("CENTER", 0, -4)
             end
         else
             if not BuffFrame.AuraContainer.addIconsToRight then
-                count:SetPoint("TOPRIGHT", 0, 12)
-                duration:SetPoint("CENTER", 15, -10)
+                count:SetPoint("TOPRIGHT", -1, 12)
+                duration:SetPoint("CENTER", 15, -9)
             else
-                count:SetPoint("TOPRIGHT", -30, 12)
-                duration:SetPoint("CENTER", -13.5, -10)
+                count:SetPoint("TOPRIGHT", -31, 12)
+                duration:SetPoint("CENTER", -13.5, -9)
             end
         end
     end
@@ -491,37 +498,37 @@ function Theme:AuraPositions()
         if DebuffFrame.AuraContainer.isHorizontal then
             if DebuffFrame.AuraContainer.addIconsToTop then
                 if count then
-                    count:SetPoint("TOPRIGHT", 0, 0)
+                    count:SetPoint("TOPRIGHT", -1, 0)
                 end
 
                 if duration then
-                    duration:SetPoint("CENTER", 0, -15)
+                    duration:SetPoint("CENTER", 0, -14)
                 end
             else
                 if count then
-                    count:SetPoint("TOPRIGHT", 0, 12)
+                    count:SetPoint("TOPRIGHT", -1, 12)
                 end
 
                 if duration then
-                    duration:SetPoint("CENTER", 0, -5)
+                    duration:SetPoint("CENTER", 0, -4)
                 end
             end
         else
             if not DebuffFrame.AuraContainer.addIconsToRight then
                 if count then
-                    count:SetPoint("TOPRIGHT", 0, 12)
+                    count:SetPoint("TOPRIGHT", 0, 13)
                 end
 
                 if duration then
-                    duration:SetPoint("CENTER", 15, -10)
+                    duration:SetPoint("CENTER", 16, -9)
                 end
             else
                 if count then
-                    count:SetPoint("TOPRIGHT", -30, 12)
+                    count:SetPoint("TOPRIGHT", -30, 13)
                 end
 
                 if duration then
-                    duration:SetPoint("CENTER", -13.5, -10)
+                    duration:SetPoint("CENTER", -14.5, -9)
                 end
             end
         end

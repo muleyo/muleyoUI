@@ -66,15 +66,7 @@ function General:OnInitialize()
 
                         if not General.Module:IsEnabled() then return end
 
-                        if val == "Disabled" then
-                            General.Module.Theme:Disable()
-                        else
-                            if not General.Module.Theme:IsEnabled() then
-                                General.Module.Theme:Enable()
-                            else
-                                General.Module.Theme:Update()
-                            end
-                        end
+                        General.Module.Theme:Update()
                     end,
                     get = function() return mUI.db.profile.general.theme end,
                     order = 3
@@ -433,15 +425,7 @@ function General:OnInitialize()
 
                         if not General.Module:IsEnabled() then return end
 
-                        if val == "Disabled" then
-                            General.Module.Theme:Disable()
-                        else
-                            if not General.Module.Theme:IsEnabled() then
-                                General.Module.Theme:Enable()
-                            else
-                                General.Module.Theme:Update()
-                            end
-                        end
+                        General.Module.Theme:Update()
                     end,
                     get = function() return mUI.db.profile.general.theme end,
                     order = 3

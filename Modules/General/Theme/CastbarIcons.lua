@@ -38,14 +38,14 @@ function Theme:CreateCastbarIcons(unit, castbar)
             castbar.mUIBorder:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\uiactionbar2x.png]])
             castbar.mUIBorder:SetTexCoord(0.701171875, 0.880859375, 0.31689453125, 0.36083984375)
         else
-            castbar.mUIBorder:SetAtlas("UI-HUD-ActionBar-IconFrame")
+            castbar.mUIBorder:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border.png]])
         end
 
         castbar.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
 
         -- Set Icon Mask
         castbar.mUIBorder.mask = castbar:CreateMaskTexture()
-        castbar.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]],
+        castbar.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask.png]],
             "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
         castbar.mUIBorder.mask:SetAllPoints(castbar.Icon)
         castbar.mUIBorder:SetDrawLayer("OVERLAY", 7)
@@ -56,8 +56,8 @@ function Theme:CreateCastbarIcons(unit, castbar)
                 castbar.mUIBorder:SetSize(22, 21)
                 castbar.mUIBorder:SetPoint("TOPLEFT", castbar.Icon)
             else
-                castbar.mUIBorder:SetSize(21.5, 21)
-                castbar.mUIBorder:SetPoint("TOPLEFT", castbar.Icon)
+                castbar.mUIBorder:SetSize(22, 22)
+                castbar.mUIBorder:SetPoint("CENTER", castbar.Icon, "CENTER", 0, 0)
             end
         else
             castbar.Icon:SetSize(16, 16)
@@ -68,8 +68,8 @@ function Theme:CreateCastbarIcons(unit, castbar)
                 castbar.mUIBorder:SetPoint("TOPLEFT", castbar.Icon, "TOPLEFT", 0, 0)
                 castbar.mUIBorder:SetPoint("BOTTOMRIGHT", castbar.Icon, "BOTTOMRIGHT", 1.25, -1.25)
             else
-                castbar.mUIBorder:SetPoint("TOPLEFT", castbar.Icon)
-                castbar.mUIBorder:SetSize(17.25, 17)
+                castbar.mUIBorder:SetPoint("CENTER", castbar.Icon, "CENTER", 0, 0)
+                castbar.mUIBorder:SetSize(18, 18)
             end
         end
 

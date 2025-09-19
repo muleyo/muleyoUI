@@ -24,9 +24,7 @@ function Modules:OnEnable()
     Modules.db = mUI.db.profile.general
 
     -- Enable Modules
-    if Modules.db.theme ~= "Disabled" then
-        Modules.Theme:Enable()
-    end
+    Modules.Theme:Enable()
     if Modules.db.font ~= "None" then
         Modules.Font:Enable()
     end
@@ -73,7 +71,6 @@ end
 
 function Modules:OnDisable()
     -- Disable Modules
-    Modules.Theme:Disable()
     Modules.Font:Disable()
     Modules.Repair:Disable()
     Modules.Sell:Disable()
