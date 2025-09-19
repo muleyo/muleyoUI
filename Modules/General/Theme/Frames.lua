@@ -1933,24 +1933,30 @@ function Theme:Frames()
     mUI:Skin(BattleTagInviteFrame.Border)
 
     -- Currency Transfer
-    mUI:Skin(CurrencyTransferMenu)
-    mUI:Skin(CurrencyTransferMenu.NineSlice)
-    mUI:Skin(CurrencyTransferMenuInset)
-    mUI:Skin(CurrencyTransferMenuInset.NineSlice)
+    if not mUI:IsClassic() then
+        mUI:Skin(CurrencyTransferMenu)
+        mUI:Skin(CurrencyTransferMenu.NineSlice)
+        mUI:Skin(CurrencyTransferMenuInset)
+        mUI:Skin(CurrencyTransferMenuInset.NineSlice)
+    end
 
     -- Renown Frame
-    C_Timer.After(0, function()
-        if ExpansionLandingPage.Overlay.WarWithinLandingOverlay then
-            mUI:Skin(ExpansionLandingPage.Overlay.WarWithinLandingOverlay.Border)
-            mUI:Skin(ExpansionLandingPage.Overlay.WarWithinLandingOverlay.ScrollFadeOverlay)
-            mUI:Skin(ExpansionLandingPage.Overlay.WarWithinLandingOverlay)
-        end
-        mUI:Skin(MajorFactionRenownFrame)
-    end)
+    if not mUI:IsClassic() then
+        C_Timer.After(0, function()
+            if ExpansionLandingPage.Overlay.WarWithinLandingOverlay then
+                mUI:Skin(ExpansionLandingPage.Overlay.WarWithinLandingOverlay.Border)
+                mUI:Skin(ExpansionLandingPage.Overlay.WarWithinLandingOverlay.ScrollFadeOverlay)
+                mUI:Skin(ExpansionLandingPage.Overlay.WarWithinLandingOverlay)
+            end
+            mUI:Skin(MajorFactionRenownFrame)
+        end)
+    end
 
     -- Delves
-    mUI:Skin(DelvesCompanionConfigurationFrame)
-    mUI:Skin(DelvesCompanionConfigurationFrame.Border)
+    if not mUI:IsClassic() then
+        mUI:Skin(DelvesCompanionConfigurationFrame)
+        mUI:Skin(DelvesCompanionConfigurationFrame.Border)
+    end
 
     -- DropDowns
     if mUI:IsClassic() then
