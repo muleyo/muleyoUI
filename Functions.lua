@@ -96,12 +96,12 @@ function Functions:OnInitialize()
                 self:GetParent():Hide()
             end,
             OnShow = function(self, data)
-                self.editBox:SetText(data.url)
-                self.editBox:HighlightText()
-                self.editBox:SetScript("OnKeyDown", function(_, key)
+                self.EditBox:SetText(data.url)
+                self.EditBox:HighlightText()
+                self.EditBox:SetScript("OnKeyDown", function(_, key)
                     if key == "C" and IsControlKeyDown() then
                         C_Timer.After(0.3, function()
-                            self.editBox:GetParent():Hide()
+                            self.EditBox:GetParent():Hide()
                             UIErrorsFrame:AddMessage("Link copied to clipboard")
                         end)
                     end

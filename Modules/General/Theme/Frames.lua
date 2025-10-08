@@ -107,7 +107,7 @@ function Theme:AuctionHouse()
             mUI:Skin(AuctionHouseFrameAuctionsFrame.SummaryList.NineSlice)
 
             if C_AddOns.IsAddOnLoaded("Auctionator") then
-                C_Timer.After(0, function()
+                C_Timer.After(0.1, function()
                     mUI:Skin(_G["LibAHFrame-1.0-AuctionatorTabs_Shopping"])
                     mUI:Skin(_G["LibAHFrame-1.0-AuctionatorTabs_Selling"])
                     mUI:Skin(_G["LibAHFrame-1.0-AuctionatorTabs_Cancelling"])
@@ -1211,6 +1211,10 @@ function Theme:Communities()
     mUI:Skin(CommunitiesFrameCommunitiesList.InsetFrame)
     mUI:Skin(CommunitiesFrameCommunitiesList.InsetFrame.NineSlice)
     mUI:Skin(CommunitiesFrameGuildDetailsFrame)
+    mUI:Skin(CommunitiesFrameGuildDetailsFrameInfo)
+    mUI:Skin(CommunitiesFrameGuildDetailsFrameNews)
+    mUI:Skin(CommunitiesFrame.GuildBenefitsFrame.Perks)
+    mUI:Skin(CommunitiesFrame.GuildBenefitsFrame.Rewards)
     mUI:Skin(CommunitiesFrame.GuildBenefitsFrame)
     mUI:Skin(CommunitiesFrame.GuildBenefitsFrame.FactionFrame.Bar)
     mUI:Skin(CommunitiesFrame.RecruitmentDialog.BG)
@@ -1856,6 +1860,18 @@ function Theme:Auras()
     end
 end
 
+function Theme:ExpansionLandingPage()
+    if not Theme:IsHooked(ExpansionLandingPage, "OnShow") then
+        Theme:SecureHookScript(ExpansionLandingPage, "OnShow", function()
+            if ExpansionLandingPage.Overlay.WarWithinLandingOverlay then
+                mUI:Skin(ExpansionLandingPage.Overlay.WarWithinLandingOverlay.Border)
+                mUI:Skin(ExpansionLandingPage.Overlay.WarWithinLandingOverlay.ScrollFadeOverlay)
+                mUI:Skin(ExpansionLandingPage.Overlay.WarWithinLandingOverlay)
+            end
+        end)
+    end
+end
+
 function Theme:Frames()
     -- Bnet Toast
     Theme.blacklist[BNToastFrameIconTexture] = true
@@ -1942,20 +1958,20 @@ function Theme:Frames()
 
     -- Renown Frame
     if not mUI:IsClassic() then
-        C_Timer.After(0, function()
-            if ExpansionLandingPage.Overlay.WarWithinLandingOverlay then
-                mUI:Skin(ExpansionLandingPage.Overlay.WarWithinLandingOverlay.Border)
-                mUI:Skin(ExpansionLandingPage.Overlay.WarWithinLandingOverlay.ScrollFadeOverlay)
-                mUI:Skin(ExpansionLandingPage.Overlay.WarWithinLandingOverlay)
-            end
-            mUI:Skin(MajorFactionRenownFrame)
-        end)
+        mUI:Skin(MajorFactionRenownFrame)
     end
 
     -- Delves
     if not mUI:IsClassic() then
         mUI:Skin(DelvesCompanionConfigurationFrame)
         mUI:Skin(DelvesCompanionConfigurationFrame.Border)
+    end
+
+    -- Abandon
+    if not mUI:IsClassic() then
+        mUI:Skin(InstanceAbandonPopup)
+        mUI:Skin(InstanceAbandonPopup.BG)
+        mUI:Skin(InstanceAbandonFrame)
     end
 
     -- DropDowns
@@ -2065,6 +2081,7 @@ function Theme:Update()
     Theme:Castbars()
     Theme:Auras()
     Theme:Frames()
+    Theme:ExpansionLandingPage()
 
     -- Tooltips
     for _, tooltip in next, Theme.tooltips do
