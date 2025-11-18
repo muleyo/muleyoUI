@@ -101,7 +101,7 @@ function Theme:OnEnable()
 
     -- Update Tooltips
     Theme:SecureHook("SharedTooltip_SetBackdropStyle", function(frame)
-        if frame and frame.SetBackdrop then
+        if frame then
             Theme:StyleTooltip(frame)
         end
     end)
