@@ -6,16 +6,16 @@ function Style:OnInitialize()
 
     -- Tables
     Style.cfg = {
-        textColor = { 0.4, 0.4, 0.4 },
-        bossColor = { 1, 0, 0 },
-        eliteColor = { 1, 0, 0.5 },
-        rareeliteColor = { 1, 0.5, 0 },
-        rareColor = { 1, 0.5, 0 },
-        levelColor = { 0.8, 0.8, 0.5 },
-        deadColor = { 0.5, 0.5, 0.5 },
-        targetColor = { 1, 0.5, 0.5 },
-        guildColor = { 0.8, 0.0, 0.6 },
-        afkColor = { 0, 1, 1 }
+        textColor = {0.4, 0.4, 0.4},
+        bossColor = {1, 0, 0},
+        eliteColor = {1, 0, 0.5},
+        rareeliteColor = {1, 0.5, 0},
+        rareColor = {1, 0.5, 0},
+        levelColor = {0.8, 0.8, 0.5},
+        deadColor = {0.5, 0.5, 0.5},
+        targetColor = {1, 0.5, 0.5},
+        guildColor = {0.8, 0.0, 0.6},
+        afkColor = {0, 1, 1}
     }
 
     Style.classColors = {}
@@ -34,20 +34,27 @@ function Style:OnInitialize()
     end
 
     -- Create GameTooltip Healthbar Background
-    GameTooltipStatusBar.mUIbg = GameTooltipStatusBar:CreateTexture(nil, "BACKGROUND", nil, -8)
+    GameTooltipStatusBar.mUIbg = GameTooltipStatusBar:CreateTexture()
+    GameTooltipStatusBar.mUIbg:SetDrawLayer("BACKGROUND", -8)
     GameTooltipStatusBar.mUIbg:SetAllPoints()
     GameTooltipStatusBar.mUIbg:SetColorTexture(1, 1, 1)
     GameTooltipStatusBar.mUIbg:SetVertexColor(0, 0, 0, 0.5)
     GameTooltipStatusBar.mUIbg:SetAlpha(0)
 
     function Style:SetStatusBarColor(frame, r, g, b)
-        if not Style.cfg.barColor then return end
-        if r == Style.cfg.barColor.r and g == Style.cfg.barColor.g and b == Style.cfg.barColor.b then return end
+        if not Style.cfg.barColor then
+            return
+        end
+        if r == Style.cfg.barColor.r and g == Style.cfg.barColor.g and b == Style.cfg.barColor.b then
+            return
+        end
         frame:SetStatusBarColor(Style.cfg.barColor.r, Style.cfg.barColor.g, Style.cfg.barColor.b)
     end
 
     function Style:GetTarget(unit)
-        if not Style.db.style == "mUI" then return end
+        if not Style.db.style == "mUI" then
+            return
+        end
         if UnitIsUnit(unit, "player") then
             return ("|cffff0000%s|r"):format("<YOU>")
         elseif UnitIsPlayer(unit) then
@@ -61,12 +68,18 @@ function Style:OnInitialize()
     end
 
     function Style:OnTooltipSetUnit(frame)
-        if not Style.db.style == "mUI" then return end
-        if not frame or frame ~= _G.GameTooltip then return end
+        if not Style.db.style == "mUI" then
+            return
+        end
+        if not frame or frame ~= _G.GameTooltip then
+            return
+        end
 
         -- Get Unit
         local unitName, unit = frame:GetUnit()
-        if not unit then return end
+        if not unit then
+            return
+        end
         for i = 2, GameTooltip:NumLines() do
             local line = _G["GameTooltipTextLeft" .. i]
             if line then
@@ -93,7 +106,11 @@ function Style:OnInitialize()
             -- Get Class Color
             local _, unitClass = UnitClass(unit)
             local color = RAID_CLASS_COLORS[unitClass]
-            Style.cfg.barColor = color or { r = 0, g = 0.8, b = 0 }
+            Style.cfg.barColor = color or {
+                r = 0,
+                g = 0.8,
+                b = 0
+            }
             GameTooltipStatusBar:SetStatusBarColor(color.r, color.g, color.b)
             GameTooltipTextLeft1:SetTextColor(color.r, color.g, color.b)
 
@@ -167,26 +184,45 @@ function Style:OnInitialize()
     end
 
     function Style:OnTooltipSetSpell(tooltip, spellid)
-        if not Style.db.style == "mUI" then return end
-        if not spellid then return end
-        if type(spellid) == "table" and #spellid == 1 then spellid = spellid[1] end
-        local frame, text
-        for i = 1, 15 do
-            frame = _G[tooltip:GetName() .. "TextLeft" .. i]
-            if frame then text = frame:GetText() end
-            if text and string.find(text, "|cff0099ffID|r") then return end
+        if not Style.db.style == "mUI" then
+            return
         end
-        tooltip:AddDoubleLine("|cff0099ffID|r", spellid)
-        tooltip:Show()
+        if not spellid then
+            return
+        end
+        if type(spellid) == "table" and #spellid == 1 then
+            spellid = spellid[1]
+        end
+        local frame, text
+        if tooltip and tooltip.GetName then
+            local tooltipName = tooltip:GetName()
+            if tooltipName then
+                for i = 1, 15 do
+                    frame = _G[tooltipName .. "TextLeft" .. i]
+                    if frame then
+                        text = frame:GetText()
+                    end
+                    if text and string.find(text, "|cff0099ffID|r") then
+                        return
+                    end
+                end
+            end
+        end
+        if tooltip then
+            tooltip:AddDoubleLine("|cff0099ffID|r", spellid)
+            tooltip:Show()
+        end
     end
 
     function Style:OnMacroTooltipSetSpell(tooltip)
-        if not Style.db.style == "mUI" then return end
+        if not Style.db.style == "mUI" then
+            return
+        end
         if tooltip:GetTooltipData() and tooltip:GetTooltipData().lines and tooltip:GetTooltipData().lines[2] and
             tooltip:GetTooltipData().lines[2].leftText then
             local tooltipData = tooltip:GetTooltipData()
             local tooltipName = tooltipData.lines[2].leftText
-            local spellInfo   = C_Spell.GetSpellInfo(tooltipName)
+            local spellInfo = C_Spell.GetSpellInfo(tooltipName)
 
             if (spellInfo and spellInfo.spellID) then
                 Style:OnTooltipSetSpell(tooltip, spellInfo.spellID)
@@ -195,18 +231,24 @@ function Style:OnInitialize()
     end
 
     function Style:OnItemTooltipSetColor(tooltip)
-        if not Style.db.style == "mUI" then return end
-        if mUI.db.profile.general.theme == "Disabled" then return end
+        if not Style.db.style == "mUI" then
+            return
+        end
+        if mUI.db.profile.general.theme == "Disabled" then
+            return
+        end
         if tooltip.NineSlice then
             if mUI:IsClassic() then
                 local _, itemLink = tooltip:GetItem()
 
                 if itemLink then
                     local azerite = C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or
-                        C_AzeriteItem.IsAzeriteItemByID(itemLink) or false
+                                        C_AzeriteItem.IsAzeriteItemByID(itemLink) or false
                     local _, _, itemRarity = GetItemInfo(itemLink)
                     local r, g, b = 0.1, 0.1, 0.1
-                    if itemRarity then r, g, b = GetItemQualityColor(itemRarity) end
+                    if itemRarity then
+                        r, g, b = GetItemQualityColor(itemRarity)
+                    end
                     if azerite and backdrop.azeriteBorderColor then
                         tooltip.NineSlice:SetBorderColor(unpack(backdrop.azeriteBorderColor))
                     else
@@ -231,7 +273,7 @@ function Style:OnInitialize()
 
                 if itemLink then
                     local azerite = C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or
-                        C_AzeriteItem.IsAzeriteItemByID(itemLink) or false
+                                        C_AzeriteItem.IsAzeriteItemByID(itemLink) or false
                     local _, _, itemRarity = C_Item.GetItemInfo(itemLink)
 
                     if itemRarity and itemRarity >= 2 then
@@ -246,8 +288,12 @@ function Style:OnInitialize()
     end
 
     function Style:OnMacroTooltipSetColor(tooltip)
-        if not Style.db.style == "mUI" then return end
-        if mUI.db.profile.general.theme == "Disabled" then return end
+        if not Style.db.style == "mUI" then
+            return
+        end
+        if mUI.db.profile.general.theme == "Disabled" then
+            return
+        end
         if tooltip:GetTooltipData() and tooltip:GetTooltipData().lines and tooltip:GetTooltipData().lines[2] and
             tooltip:GetTooltipData().lines[2].leftText and tooltip:GetTooltipData().lines[2].leftColor then
             local tooltipData = tooltip:GetTooltipData()
@@ -296,8 +342,8 @@ function Style:OnEnable()
         end)
 
         Style:SecureHook(GameTooltip, "SetUnitAura", function(tooltip, unit, index, filter)
-            local _, _, _, _, _, _, _, _, _, spellID = AuraUtil.UnpackAuraData(C_UnitAuras.GetAuraDataByIndex(unit, index,
-                filter))
+            local _, _, _, _, _, _, _, _, _, spellID = AuraUtil.UnpackAuraData(
+                C_UnitAuras.GetAuraDataByIndex(unit, index, filter))
             Style:OnTooltipSetSpell(tooltip, spellID)
         end)
     else

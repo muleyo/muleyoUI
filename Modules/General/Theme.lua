@@ -32,13 +32,12 @@ function Theme:OnEnable()
                 Theme:UpdateUnitframeAuras(frame)
             end)
 
-            Theme:SecureHook("TargetFrame_UpdateAuraPositions", function(
-                aura, auraName, numAuras, numOppositeAuras, largeAuraList, updateFunc, maxRowWidth, offsetX,
-                mirrorAurasVertically)
-                Theme:UpdateUnitframeAuraPositions(
-                    aura, auraName, numAuras, numOppositeAuras, largeAuraList, updateFunc, maxRowWidth, offsetX,
+            Theme:SecureHook("TargetFrame_UpdateAuraPositions",
+                function(aura, auraName, numAuras, numOppositeAuras, largeAuraList, updateFunc, maxRowWidth, offsetX,
                     mirrorAurasVertically)
-            end)
+                    Theme:UpdateUnitframeAuraPositions(aura, auraName, numAuras, numOppositeAuras, largeAuraList,
+                        updateFunc, maxRowWidth, offsetX, mirrorAurasVertically)
+                end)
         else
             Theme:SecureHook(AuraFrameMixin, "Update", Theme.AuraPositions)
             Theme:HookDurationUpdates(BuffFrame.auraFrames)
@@ -73,7 +72,9 @@ function Theme:OnEnable()
 
             if mUI.db.profile.unitframes.raidframes.skinicons then
                 Theme:SecureHook("CompactUnitFrame_UpdateAuras", function(frame)
-                    if not frame or frame:IsForbidden() then return end
+                    if not frame or frame:IsForbidden() then
+                        return
+                    end
 
                     -- Check if frame is Raid/Party
                     local name = frame:GetName()
@@ -100,7 +101,9 @@ function Theme:OnEnable()
 
     -- Update Tooltips
     Theme:SecureHook("SharedTooltip_SetBackdropStyle", function(frame)
-        Theme:StyleTooltip(frame)
+        if frame and frame.SetBackdrop then
+            Theme:StyleTooltip(frame)
+        end
     end)
 
     if mUI:IsClassic() then

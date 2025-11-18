@@ -107,42 +107,48 @@ function Theme:AuctionHouse()
             mUI:Skin(AuctionHouseFrameAuctionsFrame.SummaryList.NineSlice)
 
             if C_AddOns.IsAddOnLoaded("Auctionator") then
-                C_Timer.After(0.1, function()
+                C_Timer.After(0.2, function()
+                    -- Tabs
                     mUI:Skin(_G["LibAHFrame-1.0-AuctionatorTabs_Shopping"])
                     mUI:Skin(_G["LibAHFrame-1.0-AuctionatorTabs_Selling"])
                     mUI:Skin(_G["LibAHFrame-1.0-AuctionatorTabs_Cancelling"])
                     mUI:Skin(_G["LibAHFrame-1.0-AuctionatorTabs_Auctionator"])
 
                     -- Shopping
-                    mUI:Skin(AuctionatorShoppingFrame.ShoppingResultsInset)
-                    mUI:Skin(AuctionatorShoppingFrame.ListsContainer.Inset)
-                    mUI:Skin(AuctionatorShoppingFrame.ListsContainer.Inset.NineSlice)
-                    mUI:Skin(AuctionatorShoppingFrame.ShoppingResultsInset.NineSlice)
-                    mUI:Skin(AuctionatorShoppingFrame.ListsContainer.ScrollBar.Background)
-                    mUI:Skin(AuctionatorShoppingFrame.ResultsListing.ScrollArea.ScrollBar.Background)
-                    mUI:Skin(AuctionatorShoppingFrame.ContainerTabs.ListsTab)
-                    mUI:Skin(AuctionatorShoppingFrame.ContainerTabs.RecentsTab)
+                    if AuctionatorShoppingFrame then
+                        mUI:Skin(AuctionatorShoppingFrame.ShoppingResultsInset)
+                        mUI:Skin(AuctionatorShoppingFrame.ListsContainer.Inset)
+                        mUI:Skin(AuctionatorShoppingFrame.ListsContainer.Inset.NineSlice)
+                        mUI:Skin(AuctionatorShoppingFrame.ShoppingResultsInset.NineSlice)
+                        mUI:Skin(AuctionatorShoppingFrame.ListsContainer.ScrollBar.Background)
+                        mUI:Skin(AuctionatorShoppingFrame.ResultsListing.ScrollArea.ScrollBar.Background)
+                        mUI:Skin(AuctionatorShoppingFrame.ContainerTabs.ListsTab)
+                        mUI:Skin(AuctionatorShoppingFrame.ContainerTabs.RecentsTab)
 
-                    -- Selling
-                    mUI:Skin(AuctionatorSellingFrame.HistoricalPriceInset)
-                    mUI:Skin(AuctionatorSellingFrame.HistoricalPriceInset.NineSlice)
-                    mUI:Skin(AuctionatorSellingFrame.BagInset)
-                    mUI:Skin(AuctionatorSellingFrame.BagInset.NineSlice)
-                    mUI:Skin(AuctionatorSellingFrame.BagListing.View.ScrollBar.Background)
-                    mUI:Skin(AuctionatorSellingFrame.CurrentPricesListing.ScrollArea.ScrollBar.Background)
-                    mUI:Skin(AuctionatorSellingFramePricesTab1)
-                    mUI:Skin(AuctionatorSellingFramePricesTab2)
-                    mUI:Skin(AuctionatorSellingFramePricesTab3)
+                        -- Selling
+                        mUI:Skin(AuctionatorSellingFrame.HistoricalPriceInset)
+                        mUI:Skin(AuctionatorSellingFrame.HistoricalPriceInset.NineSlice)
+                        mUI:Skin(AuctionatorSellingFrame.BagInset)
+                        mUI:Skin(AuctionatorSellingFrame.BagInset.NineSlice)
+                        mUI:Skin(AuctionatorSellingFrame.BagListing.View.ScrollBar.Background)
+                        mUI:Skin(AuctionatorSellingFrame.CurrentPricesListing.ScrollArea.ScrollBar.Background)
+                        mUI:Skin(AuctionatorSellingFramePricesTab1)
+                        mUI:Skin(AuctionatorSellingFramePricesTab2)
+                        mUI:Skin(AuctionatorSellingFramePricesTab3)
 
-                    -- Cancelling
-                    mUI:Skin(AuctionatorCancellingFrame.HistoricalPriceInset)
-                    mUI:Skin(AuctionatorCancellingFrame.HistoricalPriceInset.NineSlice)
-                    mUI:Skin(AuctionatorCancellingFrame.ResultsListing.ScrollArea.ScrollBar.Background)
+                        -- Cancelling
+                        mUI:Skin(AuctionatorCancellingFrame.HistoricalPriceInset)
+                        mUI:Skin(AuctionatorCancellingFrame.HistoricalPriceInset.NineSlice)
+                        mUI:Skin(AuctionatorCancellingFrame.ResultsListing.ScrollArea.ScrollBar.Background)
 
-                    -- Auctionator
-                    mUI:Skin(AuctionatorConfigFrame)
-                    mUI:Skin(AuctionatorConfigFrame.NineSlice)
+                        -- Auctionator
+                        mUI:Skin(AuctionatorConfigFrame)
+                        mUI:Skin(AuctionatorConfigFrame.NineSlice)
+                    end
                 end)
+            end
+
+            if _G["LibAHFrame-1.0-AuctionatorTabs_Shopping"] then
             end
         end
     end
@@ -1269,6 +1275,11 @@ function Theme:Friendlist()
         mUI:Skin(RecruitAFriendFrame.RewardClaiming.Inset.NineSlice)
         mUI:Skin(RecruitAFriendRecruitmentFrame)
         mUI:Skin(RecruitAFriendRecruitmentFrame.Border)
+        mUI:Skin(FriendsFrame.IgnoreListWindow)
+        mUI:Skin(FriendsFrame.IgnoreListWindow.NineSlice)
+        mUI:Skin(FriendsTabHeader:GetTabButton(1))
+        mUI:Skin(FriendsTabHeader:GetTabButton(2))
+        mUI:Skin(FriendsTabHeader:GetTabButton(3))
     end
     mUI:Skin(WhoFrameListInset)
     mUI:Skin(WhoFrameListInset.NineSlice)
