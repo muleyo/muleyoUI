@@ -2,11 +2,31 @@ local Theme = mUI:GetModule("mUI.Modules.General.Theme")
 
 -- Buffs & Debuffs
 Theme.debuffColors = {
-    ["none"] = { r = 0.80, g = 0, b = 0 },
-    ["Magic"] = { r = 0.20, g = 0.60, b = 1.00 },
-    ["Curse"] = { r = 0.60, g = 0.00, b = 1.00 },
-    ["Disease"] = { r = 0.60, g = 0.40, b = 0 },
-    ["Poison"] = { r = 0.00, g = 0.60, b = 0 }
+    ["none"] = {
+        r = 0.80,
+        g = 0,
+        b = 0
+    },
+    ["Magic"] = {
+        r = 0.20,
+        g = 0.60,
+        b = 1.00
+    },
+    ["Curse"] = {
+        r = 0.60,
+        g = 0.00,
+        b = 1.00
+    },
+    ["Disease"] = {
+        r = 0.60,
+        g = 0.40,
+        b = 0
+    },
+    ["Poison"] = {
+        r = 0.00,
+        g = 0.60,
+        b = 0
+    }
 }
 
 Theme.aurabuttons = {}
@@ -46,8 +66,8 @@ function Theme:ButtonDefault(button, isDebuff)
     button.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
 
     button.mUIBorder.mask = button:CreateMaskTexture()
-    button.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask.png]],
-        "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    button.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask.png]], "CLAMPTOBLACKADDITIVE",
+        "CLAMPTOBLACKADDITIVE")
     button.mUIBorder.mask:SetAllPoints(button.Icon)
     button.Icon:AddMaskTexture(button.mUIBorder.mask)
 
@@ -142,7 +162,9 @@ if WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC then
             button = _G["BuffButton" .. i]
             icon = _G["BuffButton" .. i .. "Icon"]
 
-            if not (button or icon) then return end
+            if not (button or icon) then
+                return
+            end
 
             -- Check if consolidated
             if not button.consolidated then
@@ -188,7 +210,9 @@ if WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC then
         local button = _G[button .. index]
         local icon = _G["DebuffButton" .. index .. "Icon"]
 
-        if not (button or icon) then return end
+        if not (button or icon) then
+            return
+        end
 
         local debuffType = select(4, UnitDebuff("player", index))
         local color = Theme.debuffColors[debuffType or "none"]
@@ -216,7 +240,9 @@ if WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC then
     end
 
     function Theme:UpdateUnitframeAuras(frame)
-        if not frame then return end
+        if not frame then
+            return
+        end
 
         local debuffType
         local color
@@ -233,19 +259,15 @@ if WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC then
             end
 
             if _G["TargetFrameBuff" .. i] and _G["TargetFrameBuff" .. i].mUIBorder then
-                _G["TargetFrameBuff" .. i].mUIBorder:SetSize(
-                    _G["TargetFrameBuff" .. i]:GetWidth() + 2,
-                    _G["TargetFrameBuff" .. i]:GetHeight() + 1
-                )
+                _G["TargetFrameBuff" .. i].mUIBorder:SetSize(_G["TargetFrameBuff" .. i]:GetWidth() + 2,
+                    _G["TargetFrameBuff" .. i]:GetHeight() + 1)
 
                 _G["TargetFrameBuff" .. i].mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
             end
 
             if _G["FocusFrameBuff" .. i] and _G["FocusFrameBuff" .. i].mUIBorder then
-                _G["FocusFrameBuff" .. i].mUIBorder:SetSize(
-                    _G["FocusFrameBuff" .. i]:GetWidth() + 2,
-                    _G["FocusFrameBuff" .. i]:GetHeight() + 1
-                )
+                _G["FocusFrameBuff" .. i].mUIBorder:SetSize(_G["FocusFrameBuff" .. i]:GetWidth() + 2,
+                    _G["FocusFrameBuff" .. i]:GetHeight() + 1)
 
                 _G["FocusFrameBuff" .. i].mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
             end
@@ -270,10 +292,8 @@ if WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC then
                 else
                     _G["TargetFrameDebuff" .. i].mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
                 end
-                _G["TargetFrameDebuff" .. i].mUIBorder:SetSize(
-                    _G["TargetFrameDebuff" .. i]:GetWidth() + 2,
-                    _G["TargetFrameDebuff" .. i]:GetHeight() + 1
-                )
+                _G["TargetFrameDebuff" .. i].mUIBorder:SetSize(_G["TargetFrameDebuff" .. i]:GetWidth() + 2,
+                    _G["TargetFrameDebuff" .. i]:GetHeight() + 1)
                 _G["TargetFrameDebuff" .. i .. "Border"]:Hide()
             end
 
@@ -283,27 +303,25 @@ if WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC then
                 else
                     _G["FocusFrameDebuff" .. i].mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
                 end
-                _G["FocusFrameDebuff" .. i].mUIBorder:SetSize(
-                    _G["FocusFrameDebuff" .. i]:GetWidth() + 2,
-                    _G["FocusFrameDebuff" .. i]:GetHeight() + 1
-                )
+                _G["FocusFrameDebuff" .. i].mUIBorder:SetSize(_G["FocusFrameDebuff" .. i]:GetWidth() + 2,
+                    _G["FocusFrameDebuff" .. i]:GetHeight() + 1)
                 _G["FocusFrameDebuff" .. i .. "Border"]:Hide()
             end
         end
     end
 
     function Theme:UpdateUnitframeAuraPositions(aura, auraName, numAuras, numOppositeAuras, largeAuraList, updateFunc,
-                                                maxRowWidth, offsetX, mirrorAurasVertically)
-        local LARGE_AURA_SIZE   = mUI.db.profile.unitframes.buffsdebuffs.buffsize
-        local SMALL_AURA_SIZE   = mUI.db.profile.unitframes.buffsdebuffs.debuffsize
-        local AURA_OFFSET_Y     = 3
-        local AURA_ROW_WIDTH    = 122
+        maxRowWidth, offsetX, mirrorAurasVertically)
+        local LARGE_AURA_SIZE = mUI.db.profile.unitframes.buffsdebuffs.buffsize
+        local SMALL_AURA_SIZE = mUI.db.profile.unitframes.buffsdebuffs.debuffsize
+        local AURA_OFFSET_Y = 3
+        local AURA_ROW_WIDTH = 122
         local NUM_TOT_AURA_ROWS = 2
 
         local size
-        local offsetY           = AURA_OFFSET_Y
-        local rowWidth          = 0
-        local firstBuffOnRow    = 1
+        local offsetY = AURA_OFFSET_Y
+        local rowWidth = 0
+        local firstBuffOnRow = 1
         for i = 1, numAuras do
             if (largeAuraList[i]) then
                 size = LARGE_AURA_SIZE
@@ -333,6 +351,10 @@ if WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC then
         end
     end
 else
+    -- Disable Flashing of Buffs and Debuffs
+    BuffFrame.AuraContainer.GetAuraWarningAlphaForDuration = nil
+    DebuffFrame.AuraContainer.GetAuraWarningAlphaForDuration = nil
+
     function Theme:UpdatePlayerBuffs()
         local Children = BuffFrame.auraFrames
 
@@ -347,7 +369,7 @@ else
     end
 
     function Theme:UpdatePlayerDebuffs()
-        local Children = { DebuffFrame.AuraContainer:GetChildren() }
+        local Children = {DebuffFrame.AuraContainer:GetChildren()}
 
         for index, child in pairs(Children) do
             local frame = select(index, DebuffFrame.AuraContainer:GetChildren())
@@ -424,8 +446,8 @@ else
 
             -- Mask
             aura.mask = aura:CreateMaskTexture()
-            aura.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask.png]],
-                "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+            aura.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask.png]], "CLAMPTOBLACKADDITIVE",
+                "CLAMPTOBLACKADDITIVE")
             aura.mask:SetAllPoints(aura.icon)
             aura.icon:AddMaskTexture(aura.mask)
 
