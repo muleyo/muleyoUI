@@ -16,7 +16,7 @@ function Hotkey:OnInitialize()
         }
     else
         Hotkey.bars = {
-            MainMenuBar = MainMenuBar,
+            MainActionBar = MainActionBar,
             MultiBarBottomLeft = MultiBarBottomLeft,
             MultiBarBottomRight = MultiBarBottomRight,
             MultiBarLeft = MultiBarLeft,
@@ -41,7 +41,7 @@ function Hotkey:OnInitialize()
                 end
 
                 for i = 1, numButtons do
-                    if name == "MainMenuBar" then
+                    if name == "MainActionBar" or name == "MainMenuBar" then
                         hotkey = _G["ActionButton" .. i .. "HotKey"]
                     elseif name == "PetActionBar" then
                         hotkey = _G["PetActionButton" .. i .. "HotKey"]
