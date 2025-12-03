@@ -805,11 +805,11 @@ function Theme:Actionbars()
                   MainMenuXPBarTexture1, MainMenuXPBarTexture2, MainMenuXPBarTexture3, ExhaustionTickNormal,
                   ExhaustionTickHighlight}, true)
     else
-        mUI:Skin(MainMenuBar)
-        mUI:Skin(MainMenuBar.EndCaps)
-        mUI:Skin(MainMenuBar.ActionBarPageNumber.UpButton)
-        mUI:Skin(MainMenuBar.ActionBarPageNumber.DownButton)
-        MainMenuBar.ActionBarPageNumber.Text:SetVertexColor(unpack(mUI:Color(0.15)))
+        mUI:Skin(MainActionBar)
+        mUI:Skin(MainActionBar.EndCaps)
+        mUI:Skin(MainActionBar.ActionBarPageNumber.UpButton)
+        mUI:Skin(MainActionBar.ActionBarPageNumber.DownButton)
+        MainActionBar.ActionBarPageNumber.Text:SetVertexColor(unpack(mUI:Color(0.15)))
         mUI:Skin(StatusTrackingBarManager)
         mUI:Skin(StatusTrackingBarManager.BottomBarFrameTexture)
         mUI:Skin(StatusTrackingBarManager.MainStatusTrackingBarContainer)
@@ -847,7 +847,7 @@ function Theme:Actionbars()
         end
     end
 
-    local DefaultActionBarShowable = _G["MainMenuBar"].numButtonsShowable
+    local DefaultActionBarShowable = _G["MainActionBar"].numButtonsShowable
 
     for i = 1, 12 do
         local Button = _G["ActionButton" .. i]
