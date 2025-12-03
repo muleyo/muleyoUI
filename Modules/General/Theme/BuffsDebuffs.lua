@@ -378,6 +378,10 @@ else
                 Theme:ButtonDefault(frame, true)
             end
 
+            if frame.DebuffBorder then
+                frame.DebuffBorder:SetAlpha(0)
+            end
+
             -- Set the color of the Debuff Border
             local color = DebuffTypeColor[child.buttonInfo and child.buttonInfo.debuffType or "none"]
             frame.mUIBorder:SetVertexColor(color.r, color.g, color.b, 1)
@@ -553,10 +557,6 @@ function Theme:AuraPositions()
                     duration:SetPoint("CENTER", -14.5, -9)
                 end
             end
-        end
-
-        if DebuffFrame.auraFrames[i].DebuffBorder then
-            DebuffFrame.auraFrames[i].DebuffBorder:SetAlpha(0)
         end
     end
 end
