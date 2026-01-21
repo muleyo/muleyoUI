@@ -12,10 +12,10 @@ function Functions:OnInitialize()
     local classColor = RAID_CLASS_COLORS[class]
     local customColor = Functions.db.general.color
     local themes = {
-        Disabled = { 1, 1, 1 },
-        Dark = { 0.3, 0.3, 0.3 },
-        Class = { classColor.r, classColor.g, classColor.b },
-        Custom = { customColor[1], customColor[2], customColor[3], customColor[4] },
+        Disabled = {1, 1, 1},
+        Dark = {0.3, 0.3, 0.3},
+        Class = {classColor.r, classColor.g, classColor.b},
+        Custom = {customColor[1], customColor[2], customColor[3], customColor[4]}
     }
     local theme = themes[Functions.db.general.theme]
 
@@ -73,17 +73,23 @@ function Functions:OnInitialize()
     mUI:RegisterComm("mUIVersion", "ReceiveVersion")
     mUI:RegisterEvent("ZONE_CHANGED_NEW_AREA", function()
         mUI:SendVersion()
-        if IsInGuild() then mUI:SendVersion("GUILD") end
+        if IsInGuild() then
+            mUI:SendVersion("GUILD")
+        end
     end)
     C_Timer.After(30, function()
         mUI:SendVersion()
-        if IsInGuild() then mUI:SendVersion("GUILD") end
+        if IsInGuild() then
+            mUI:SendVersion("GUILD")
+        end
         mUI:SendVersion("YELL")
     end)
 
     -- Link Popup
     function mUI:Link(url)
-        if not url then return end
+        if not url then
+            return
+        end
         StaticPopupDialogs["mUIPopup"] = nil
         StaticPopupDialogs["mUIPopup"] = {
             text = "|cff009cffmuleyo|rUI\n\n|cffffcc00Copy the link below ( CTRL + C )|r",
@@ -106,16 +112,18 @@ function Functions:OnInitialize()
                         end)
                     end
                 end)
-            end,
+            end
         }
-        StaticPopup_Show("mUIPopup", "", "", { url = url })
+        StaticPopup_Show("mUIPopup", "", "", {
+            url = url
+        })
     end
 
     function mUI:Reload(module)
         StaticPopupDialogs["mUIReloadPopup"] = nil -- Clear Popup before creating a new one
         StaticPopupDialogs["mUIReloadPopup"] = {
-            text = "|cff009cffmuleyo|r|cffffd100UI|r\n\n|cffffcc00Your UI requires a reload.\n\nReason: " ..
-                module .. "|r",
+            text = "|cff009cffmuleyo|r|cffffd100UI|r\n\n|cffffcc00Your UI requires a reload.\n\nReason: " .. module ..
+                "|r",
             button1 = "Reload UI",
             whileDead = true,
             hideOnEscape = false,
@@ -141,7 +149,7 @@ function Functions:OnInitialize()
     function mUI:Color(sub, alpha)
         -- Update Custom Color & Theme
         customColor = mUI.db.profile.general.color
-        themes["Custom"] = { customColor[1], customColor[2], customColor[3], customColor[4] }
+        themes["Custom"] = {customColor[1], customColor[2], customColor[3], customColor[4]}
         if not General:IsEnabled() then
             theme = themes["Disabled"]
         else
@@ -149,9 +157,13 @@ function Functions:OnInitialize()
         end
 
         if theme then
-            if theme[4] then alpha = alpha or theme[4] end
-            if not alpha then alpha = 1 end
-            local color = { 0, 0, 0, alpha }
+            if theme[4] then
+                alpha = alpha or theme[4]
+            end
+            if not alpha then
+                alpha = 1
+            end
+            local color = {0, 0, 0, alpha}
             if sub then
                 color[1] = theme[1] - sub
                 color[2] = theme[2] - sub
@@ -164,7 +176,7 @@ function Functions:OnInitialize()
     function mUI:Skin(frame, isTable, isGui)
         -- Update Custom Color & Theme
         customColor = mUI.db.profile.general.color
-        themes["Custom"] = { customColor[1], customColor[2], customColor[3], customColor[4] }
+        themes["Custom"] = {customColor[1], customColor[2], customColor[3], customColor[4]}
         if not General:IsEnabled() then
             theme = themes["Disabled"]
         else
@@ -173,11 +185,13 @@ function Functions:OnInitialize()
 
         -- Get blacklisted frames
         local blacklist = mUI:GetModule("mUI.Modules.General.Theme").blacklist
-        if not blacklist then return end
+        if not blacklist then
+            return
+        end
 
         if frame then
             if isGui then
-                for _, v in pairs({ frame:GetRegions() }) do
+                for _, v in pairs({frame:GetRegions()}) do
                     if v:GetObjectType() == "Texture" then
                         if v.SetDesaturated then
                             v:SetDesaturated(true)
@@ -186,7 +200,7 @@ function Functions:OnInitialize()
                     end
                 end
             elseif not isTable then
-                for _, v in pairs({ frame:GetRegions() }) do
+                for _, v in pairs({frame:GetRegions()}) do
                     if (not blacklist[v:GetName()]) and (not blacklist[v]) then
                         if v:GetObjectType() == "Texture" then
                             if themes["Disabled"] == theme then

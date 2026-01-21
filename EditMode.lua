@@ -11,7 +11,7 @@ function EditMode:OnInitialize()
                 enabled = false,
                 size = 32,
                 alpha = 0.3,
-                color = { 1, 1, 1 } -- White color
+                color = {1, 1, 1} -- White color
             }
         end
 
@@ -207,35 +207,71 @@ function EditMode:OnInitialize()
 
         -- Common draggable frames for Classic
         if mUI.db.profile.actionbars.style == "mUI" then
-            EditMode.availableFrames = {
-                -- Unit Frames
-                { frame = "PlayerFrame",                   name = "Player Frame" },
-                { frame = "TargetFrame",                   name = "Target Frame" },
-                { frame = "FocusFrame",                    name = "Focus Frame" },
-
-                -- Cast Bars
-                { frame = "CastingBarFrame",               name = "Player CastBar" },
-
-                -- Custom Buff/Debuff Anchors
-                { frame = "mUIBuffFrame",                  name = "Buffs" },
-                { frame = "mUIDebuffFrame",                name = "Debuffs" },
-
-                -- Custom mUI frames
-                { frame = "mUIActionBar1",                 name = "ActionBar 1" },
-                { frame = "mUIActionBar2",                 name = "ActionBar 2" },
-                { frame = "mUIActionBar3",                 name = "ActionBar 3" },
-                { frame = "mUIActionBar4",                 name = "ActionBar 4" },
-                { frame = "mUIActionBar5",                 name = "ActionBar 5" },
-                { frame = "mUIMicroMenu",                  name = "Micro Menu" },
-                { frame = "mUIBagBar",                     name = "Bags Bar" },
-                { frame = "mUIPetActionBar",               name = "Pet ActionBar" },
-                { frame = "mUIStanceBar",                  name = "Stance Bar" },
-                { frame = "mUIExpBar",                     name = "Experience Bar" },
-                { frame = "mUIStatsFrame",                 name = "Stats Frame" },
-                { frame = "mUITooltipFrame",               name = "Tooltip" },
-                { frame = "MainMenuBarVehicleLeaveButton", name = "Vehicle Leave Button" },
-                { frame = "ExtraActionBarFrame",           name = "Extra Action Button" },
-            }
+            EditMode.availableFrames = { -- Unit Frames
+            {
+                frame = "PlayerFrame",
+                name = "Player Frame"
+            }, {
+                frame = "TargetFrame",
+                name = "Target Frame"
+            }, {
+                frame = "FocusFrame",
+                name = "Focus Frame"
+            }, -- Cast Bars
+            {
+                frame = "CastingBarFrame",
+                name = "Player CastBar"
+            }, -- Custom Buff/Debuff Anchors
+            {
+                frame = "mUIBuffFrame",
+                name = "Buffs"
+            }, {
+                frame = "mUIDebuffFrame",
+                name = "Debuffs"
+            }, -- Custom mUI frames
+            {
+                frame = "mUIActionBar1",
+                name = "ActionBar 1"
+            }, {
+                frame = "mUIActionBar2",
+                name = "ActionBar 2"
+            }, {
+                frame = "mUIActionBar3",
+                name = "ActionBar 3"
+            }, {
+                frame = "mUIActionBar4",
+                name = "ActionBar 4"
+            }, {
+                frame = "mUIActionBar5",
+                name = "ActionBar 5"
+            }, {
+                frame = "mUIMicroMenu",
+                name = "Micro Menu"
+            }, {
+                frame = "mUIBagBar",
+                name = "Bags Bar"
+            }, {
+                frame = "mUIPetActionBar",
+                name = "Pet ActionBar"
+            }, {
+                frame = "mUIStanceBar",
+                name = "Stance Bar"
+            }, {
+                frame = "mUIExpBar",
+                name = "Experience Bar"
+            }, {
+                frame = "mUIStatsFrame",
+                name = "Stats Frame"
+            }, {
+                frame = "mUITooltipFrame",
+                name = "Tooltip"
+            }, {
+                frame = "MainMenuBarVehicleLeaveButton",
+                name = "Vehicle Leave Button"
+            }, {
+                frame = "ExtraActionBarFrame",
+                name = "Extra Action Button"
+            }}
 
             -- ExtraActionButton Frame
             UIPARENT_MANAGED_FRAME_POSITIONS["ExtraActionBarFrame"] = nil
@@ -243,25 +279,36 @@ function EditMode:OnInitialize()
             ExtraActionBarFrame:SetParent(UIParent)
             ExtraActionBarFrame:SetMovable(true)
         else
-            EditMode.availableFrames = {
-                -- Unit Frames
-                { frame = "PlayerFrame",     name = "Player Frame" },
-                { frame = "TargetFrame",     name = "Target Frame" },
-                { frame = "FocusFrame",      name = "Focus Frame" },
-
-                -- Cast Bars
-                { frame = "CastingBarFrame", name = "Player CastBar" },
-
-                -- Custom Buff/Debuff Anchors
-                { frame = "mUIBuffFrame",    name = "Buffs" },
-                { frame = "mUIDebuffFrame",  name = "Debuffs" },
-
-                -- Custom mUI frames
-                { frame = "mUIStatsFrame",   name = "Stats Frame" },
-
-                -- Tooltip
-                { frame = "mUITooltipFrame", name = "Tooltip" },
-            }
+            EditMode.availableFrames = { -- Unit Frames
+            {
+                frame = "PlayerFrame",
+                name = "Player Frame"
+            }, {
+                frame = "TargetFrame",
+                name = "Target Frame"
+            }, {
+                frame = "FocusFrame",
+                name = "Focus Frame"
+            }, -- Cast Bars
+            {
+                frame = "CastingBarFrame",
+                name = "Player CastBar"
+            }, -- Custom Buff/Debuff Anchors
+            {
+                frame = "mUIBuffFrame",
+                name = "Buffs"
+            }, {
+                frame = "mUIDebuffFrame",
+                name = "Debuffs"
+            }, -- Custom mUI frames
+            {
+                frame = "mUIStatsFrame",
+                name = "Stats Frame"
+            }, -- Tooltip
+            {
+                frame = "mUITooltipFrame",
+                name = "Tooltip"
+            }}
         end
 
         -- Tooltip Frame
@@ -334,7 +381,7 @@ function EditMode:OnInitialize()
                     if isCenterLine then
                         -- Center line: brighter, slightly thicker, different color
                         line:SetColorTexture(1, 0.8, 0, alpha * 2) -- Golden color
-                        line:SetSize(2, screenHeight)              -- 2 pixels thick
+                        line:SetSize(2, screenHeight) -- 2 pixels thick
                     else
                         -- Regular grid line
                         line:SetColorTexture(color[1], color[2], color[3], alpha)
@@ -358,7 +405,7 @@ function EditMode:OnInitialize()
                     if isCenterLine then
                         -- Center line: brighter, slightly thicker, different color
                         line:SetColorTexture(1, 0.8, 0, alpha * 2) -- Golden color
-                        line:SetSize(screenWidth, 2)               -- 2 pixels thick
+                        line:SetSize(screenWidth, 2) -- 2 pixels thick
                     else
                         -- Regular grid line
                         line:SetColorTexture(color[1], color[2], color[3], alpha)
@@ -669,8 +716,8 @@ function EditMode:OnInitialize()
                         if not EditMode.db.frames[frameName] or not EditMode.db.frames[frameName].position then
                             local relativeTo = UIParent
                             frame:ClearAllPoints()
-                            frame:SetPoint(defaultData.point, relativeTo, defaultData.relativePoint, defaultData.xOffset,
-                                defaultData.yOffset)
+                            frame:SetPoint(defaultData.point, relativeTo, defaultData.relativePoint,
+                                defaultData.xOffset, defaultData.yOffset)
                             frame:SetScale(defaultData.scale or 1.0)
                             -- Only set UserPlaced if frame is movable
                             if frame:IsMovable() then
@@ -698,17 +745,20 @@ function EditMode:OnInitialize()
             EditMode.scalingWindow:SetFrameLevel(1000) -- High level to be on top
 
             -- Title
-            EditMode.scalingWindow.title = EditMode.scalingWindow:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+            EditMode.scalingWindow.title =
+                EditMode.scalingWindow:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
             EditMode.scalingWindow.title:SetPoint("TOP", EditMode.scalingWindow, "TOP", 0, -5)
             EditMode.scalingWindow.title:SetText("Frame Scaling")
 
             -- Frame name label
-            EditMode.scalingWindow.frameLabel = EditMode.scalingWindow:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            EditMode.scalingWindow.frameLabel =
+                EditMode.scalingWindow:CreateFontString(nil, "OVERLAY", "GameFontNormal")
             EditMode.scalingWindow.frameLabel:SetPoint("TOP", EditMode.scalingWindow.title, "BOTTOM", 0, -10)
             EditMode.scalingWindow.frameLabel:SetText("Frame: None")
 
             -- Scale label
-            EditMode.scalingWindow.scaleLabel = EditMode.scalingWindow:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            EditMode.scalingWindow.scaleLabel =
+                EditMode.scalingWindow:CreateFontString(nil, "OVERLAY", "GameFontNormal")
             EditMode.scalingWindow.scaleLabel:SetPoint("TOP", EditMode.scalingWindow.frameLabel, "BOTTOM", 0, -25)
             EditMode.scalingWindow.scaleLabel:SetText("Scale: 1.00")
 
@@ -729,17 +779,17 @@ function EditMode:OnInitialize()
 
             -- Action Bar Layout Controls (hidden by default)
             -- Buttons per row
-            EditMode.scalingWindow.buttonsPerRowLabel = EditMode.scalingWindow:CreateFontString(nil,
-                "OVERLAY", "GameFontNormal")
-            EditMode.scalingWindow.buttonsPerRowLabel:SetPoint("TOP", EditMode.scalingWindow.scaleSlider,
-                "BOTTOM", 0, -25)
+            EditMode.scalingWindow.buttonsPerRowLabel = EditMode.scalingWindow:CreateFontString(nil, "OVERLAY",
+                "GameFontNormal")
+            EditMode.scalingWindow.buttonsPerRowLabel:SetPoint("TOP", EditMode.scalingWindow.scaleSlider, "BOTTOM", 0,
+                -25)
             EditMode.scalingWindow.buttonsPerRowLabel:SetText("Buttons per Row: 12")
             EditMode.scalingWindow.buttonsPerRowLabel:Hide()
 
             EditMode.scalingWindow.buttonsPerRowSlider = CreateFrame("Slider", "mUIButtonsPerRowSlider",
                 EditMode.scalingWindow, "OptionsSliderTemplate")
-            EditMode.scalingWindow.buttonsPerRowSlider:SetPoint("TOP",
-                EditMode.scalingWindow.buttonsPerRowLabel, "BOTTOM", 0, -15)
+            EditMode.scalingWindow.buttonsPerRowSlider:SetPoint("TOP", EditMode.scalingWindow.buttonsPerRowLabel,
+                "BOTTOM", 0, -15)
             EditMode.scalingWindow.buttonsPerRowSlider:SetMinMaxValues(1, 12)
             EditMode.scalingWindow.buttonsPerRowSlider:SetValue(12)
             EditMode.scalingWindow.buttonsPerRowSlider:SetValueStep(1)
@@ -751,17 +801,17 @@ function EditMode:OnInitialize()
             EditMode.scalingWindow.buttonsPerRowSlider:Hide()
 
             -- Visible buttons
-            EditMode.scalingWindow.visibleButtonsLabel = EditMode.scalingWindow:CreateFontString(nil,
-                "OVERLAY", "GameFontNormal")
-            EditMode.scalingWindow.visibleButtonsLabel:SetPoint("TOP",
-                EditMode.scalingWindow.buttonsPerRowSlider, "BOTTOM", 0, -25)
+            EditMode.scalingWindow.visibleButtonsLabel = EditMode.scalingWindow:CreateFontString(nil, "OVERLAY",
+                "GameFontNormal")
+            EditMode.scalingWindow.visibleButtonsLabel:SetPoint("TOP", EditMode.scalingWindow.buttonsPerRowSlider,
+                "BOTTOM", 0, -25)
             EditMode.scalingWindow.visibleButtonsLabel:SetText("Visible Buttons: 12")
             EditMode.scalingWindow.visibleButtonsLabel:Hide()
 
             EditMode.scalingWindow.visibleButtonsSlider = CreateFrame("Slider", "mUIVisibleButtonsSlider",
                 EditMode.scalingWindow, "OptionsSliderTemplate")
-            EditMode.scalingWindow.visibleButtonsSlider:SetPoint("TOP",
-                EditMode.scalingWindow.visibleButtonsLabel, "BOTTOM", 0, -15)
+            EditMode.scalingWindow.visibleButtonsSlider:SetPoint("TOP", EditMode.scalingWindow.visibleButtonsLabel,
+                "BOTTOM", 0, -15)
             EditMode.scalingWindow.visibleButtonsSlider:SetMinMaxValues(1, 12)
             EditMode.scalingWindow.visibleButtonsSlider:SetValue(12)
             EditMode.scalingWindow.visibleButtonsSlider:SetValueStep(1)
@@ -778,7 +828,8 @@ function EditMode:OnInitialize()
                 EditMode.scalingWindow.buttonsPerRowLabel:SetText("Buttons per Row: " .. intValue)
 
                 -- Apply changes immediately for preview
-                if EditMode.scalingWindow.currentFrameName and EditMode.scalingWindow.currentFrameName:match("^mUIActionBar[1-5]$") then
+                if EditMode.scalingWindow.currentFrameName and
+                    EditMode.scalingWindow.currentFrameName:match("^mUIActionBar[1-5]$") then
                     EditMode:ApplyActionBarLayout(EditMode.scalingWindow.currentFrameName, intValue,
                         EditMode.scalingWindow.visibleButtonsSlider:GetValue())
                 end
@@ -789,7 +840,8 @@ function EditMode:OnInitialize()
                 EditMode.scalingWindow.visibleButtonsLabel:SetText("Visible Buttons: " .. intValue)
 
                 -- Apply changes immediately for preview
-                if EditMode.scalingWindow.currentFrameName and EditMode.scalingWindow.currentFrameName:match("^mUIActionBar[1-5]$") then
+                if EditMode.scalingWindow.currentFrameName and
+                    EditMode.scalingWindow.currentFrameName:match("^mUIActionBar[1-5]$") then
                     EditMode:ApplyActionBarLayout(EditMode.scalingWindow.currentFrameName,
                         EditMode.scalingWindow.buttonsPerRowSlider:GetValue(), intValue)
                 end
@@ -811,8 +863,7 @@ function EditMode:OnInitialize()
 
             -- Restore Default button
             EditMode.scalingWindow.restoreDefaultButton = CreateFrame("Button", "mUIRestoreDefaultButton",
-                EditMode.scalingWindow,
-                "GameMenuButtonTemplate")
+                EditMode.scalingWindow, "GameMenuButtonTemplate")
             EditMode.scalingWindow.restoreDefaultButton:SetSize(100, 22)
             EditMode.scalingWindow.restoreDefaultButton:SetPoint("BOTTOM", EditMode.scalingWindow, "BOTTOM", 85, 40)
             EditMode.scalingWindow.restoreDefaultButton:SetText("Reset Position")
@@ -859,8 +910,8 @@ function EditMode:OnInitialize()
                         EditMode:ApplyActionBarLayout(EditMode.scalingWindow.currentFrameName, buttonsPerRow,
                             visibleButtons)
 
-                        mUI:Debug("Applied layout to " .. EditMode.scalingWindow.currentFrameName ..
-                            ": " .. buttonsPerRow .. " per row, " .. visibleButtons .. " visible")
+                        mUI:Debug("Applied layout to " .. EditMode.scalingWindow.currentFrameName .. ": " ..
+                                      buttonsPerRow .. " per row, " .. visibleButtons .. " visible")
                     end
                 end
                 EditMode.scalingWindow:Hide()
@@ -943,17 +994,17 @@ function EditMode:OnInitialize()
         -- These controls are added to the scaling window and shown/hidden as needed
         if EditMode.scalingWindow then
             -- Buttons per row
-            EditMode.scalingWindow.buttonsPerRowLabel = EditMode.scalingWindow:CreateFontString(nil,
-                "OVERLAY", "GameFontNormal")
-            EditMode.scalingWindow.buttonsPerRowLabel:SetPoint("TOP", EditMode.scalingWindow.scaleSlider,
-                "BOTTOM", 0, -25)
+            EditMode.scalingWindow.buttonsPerRowLabel = EditMode.scalingWindow:CreateFontString(nil, "OVERLAY",
+                "GameFontNormal")
+            EditMode.scalingWindow.buttonsPerRowLabel:SetPoint("TOP", EditMode.scalingWindow.scaleSlider, "BOTTOM", 0,
+                -25)
             EditMode.scalingWindow.buttonsPerRowLabel:SetText("Buttons per Row: 12")
             EditMode.scalingWindow.buttonsPerRowLabel:Hide()
 
             EditMode.scalingWindow.buttonsPerRowSlider = CreateFrame("Slider", "mUIButtonsPerRowSlider",
                 EditMode.scalingWindow, "OptionsSliderTemplate")
-            EditMode.scalingWindow.buttonsPerRowSlider:SetPoint("TOP",
-                EditMode.scalingWindow.buttonsPerRowLabel, "BOTTOM", 0, -15)
+            EditMode.scalingWindow.buttonsPerRowSlider:SetPoint("TOP", EditMode.scalingWindow.buttonsPerRowLabel,
+                "BOTTOM", 0, -15)
             EditMode.scalingWindow.buttonsPerRowSlider:SetMinMaxValues(1, 12)
             EditMode.scalingWindow.buttonsPerRowSlider:SetValue(12)
             EditMode.scalingWindow.buttonsPerRowSlider:SetValueStep(1)
@@ -965,17 +1016,17 @@ function EditMode:OnInitialize()
             EditMode.scalingWindow.buttonsPerRowSlider:Hide()
 
             -- Visible buttons
-            EditMode.scalingWindow.visibleButtonsLabel = EditMode.scalingWindow:CreateFontString(nil,
-                "OVERLAY", "GameFontNormal")
-            EditMode.scalingWindow.visibleButtonsLabel:SetPoint("TOP",
-                EditMode.scalingWindow.buttonsPerRowSlider, "BOTTOM", 0, -25)
+            EditMode.scalingWindow.visibleButtonsLabel = EditMode.scalingWindow:CreateFontString(nil, "OVERLAY",
+                "GameFontNormal")
+            EditMode.scalingWindow.visibleButtonsLabel:SetPoint("TOP", EditMode.scalingWindow.buttonsPerRowSlider,
+                "BOTTOM", 0, -25)
             EditMode.scalingWindow.visibleButtonsLabel:SetText("Visible Buttons: 12")
             EditMode.scalingWindow.visibleButtonsLabel:Hide()
 
             EditMode.scalingWindow.visibleButtonsSlider = CreateFrame("Slider", "mUIVisibleButtonsSlider",
                 EditMode.scalingWindow, "OptionsSliderTemplate")
-            EditMode.scalingWindow.visibleButtonsSlider:SetPoint("TOP",
-                EditMode.scalingWindow.visibleButtonsLabel, "BOTTOM", 0, -15)
+            EditMode.scalingWindow.visibleButtonsSlider:SetPoint("TOP", EditMode.scalingWindow.visibleButtonsLabel,
+                "BOTTOM", 0, -15)
             EditMode.scalingWindow.visibleButtonsSlider:SetMinMaxValues(1, 12)
             EditMode.scalingWindow.visibleButtonsSlider:SetValue(12)
             EditMode.scalingWindow.visibleButtonsSlider:SetValueStep(1)
@@ -992,7 +1043,8 @@ function EditMode:OnInitialize()
                 EditMode.scalingWindow.buttonsPerRowLabel:SetText("Buttons per Row: " .. intValue)
 
                 -- Apply changes immediately for preview
-                if EditMode.scalingWindow.currentFrameName and EditMode.scalingWindow.currentFrameName:match("^mUIActionBar[1-5]$") then
+                if EditMode.scalingWindow.currentFrameName and
+                    EditMode.scalingWindow.currentFrameName:match("^mUIActionBar[1-5]$") then
                     EditMode:ApplyActionBarLayout(EditMode.scalingWindow.currentFrameName, intValue,
                         EditMode.scalingWindow.visibleButtonsSlider:GetValue())
                 end
@@ -1003,7 +1055,8 @@ function EditMode:OnInitialize()
                 EditMode.scalingWindow.visibleButtonsLabel:SetText("Visible Buttons: " .. intValue)
 
                 -- Apply changes immediately for preview
-                if EditMode.scalingWindow.currentFrameName and EditMode.scalingWindow.currentFrameName:match("^mUIActionBar[1-5]$") then
+                if EditMode.scalingWindow.currentFrameName and
+                    EditMode.scalingWindow.currentFrameName:match("^mUIActionBar[1-5]$") then
                     EditMode:ApplyActionBarLayout(EditMode.scalingWindow.currentFrameName,
                         EditMode.scalingWindow.buttonsPerRowSlider:GetValue(), intValue)
                 end
@@ -1038,16 +1091,16 @@ function EditMode:OnInitialize()
             EditMode.actionBarLayoutWindow.barLabel:SetText("Action Bar: None")
 
             -- Buttons per row
-            EditMode.actionBarLayoutWindow.buttonsPerRowLabel = EditMode.actionBarLayoutWindow:CreateFontString(nil,
-                "OVERLAY", "GameFontNormal")
+            EditMode.actionBarLayoutWindow.buttonsPerRowLabel =
+                EditMode.actionBarLayoutWindow:CreateFontString(nil, "OVERLAY", "GameFontNormal")
             EditMode.actionBarLayoutWindow.buttonsPerRowLabel:SetPoint("TOP", EditMode.actionBarLayoutWindow.barLabel,
                 "BOTTOM", 0, -25)
             EditMode.actionBarLayoutWindow.buttonsPerRowLabel:SetText("Buttons per Row: 12")
 
-            EditMode.actionBarLayoutWindow.buttonsPerRowSlider = CreateFrame("Slider", "mUIButtonsPerRowSlider",
-                EditMode.actionBarLayoutWindow, "OptionsSliderTemplate")
-            EditMode.actionBarLayoutWindow.buttonsPerRowSlider:SetPoint("TOP",
-                EditMode.actionBarLayoutWindow.buttonsPerRowLabel, "BOTTOM", 0, -15)
+            EditMode.actionBarLayoutWindow.buttonsPerRowSlider =
+                CreateFrame("Slider", "mUIButtonsPerRowSlider", EditMode.actionBarLayoutWindow, "OptionsSliderTemplate")
+            EditMode.actionBarLayoutWindow.buttonsPerRowSlider:SetPoint("TOP", EditMode.actionBarLayoutWindow
+                .buttonsPerRowLabel, "BOTTOM", 0, -15)
             EditMode.actionBarLayoutWindow.buttonsPerRowSlider:SetMinMaxValues(1, 12)
             EditMode.actionBarLayoutWindow.buttonsPerRowSlider:SetValue(12)
             EditMode.actionBarLayoutWindow.buttonsPerRowSlider:SetValueStep(1)
@@ -1058,16 +1111,16 @@ function EditMode:OnInitialize()
             EditMode.actionBarLayoutWindow.buttonsPerRowSlider.Text:SetText("Buttons per Row")
 
             -- Visible buttons
-            EditMode.actionBarLayoutWindow.visibleButtonsLabel = EditMode.actionBarLayoutWindow:CreateFontString(nil,
-                "OVERLAY", "GameFontNormal")
-            EditMode.actionBarLayoutWindow.visibleButtonsLabel:SetPoint("TOP",
-                EditMode.actionBarLayoutWindow.buttonsPerRowSlider, "BOTTOM", 0, -25)
+            EditMode.actionBarLayoutWindow.visibleButtonsLabel =
+                EditMode.actionBarLayoutWindow:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            EditMode.actionBarLayoutWindow.visibleButtonsLabel:SetPoint("TOP", EditMode.actionBarLayoutWindow
+                .buttonsPerRowSlider, "BOTTOM", 0, -25)
             EditMode.actionBarLayoutWindow.visibleButtonsLabel:SetText("Visible Buttons: 12")
 
-            EditMode.actionBarLayoutWindow.visibleButtonsSlider = CreateFrame("Slider", "mUIVisibleButtonsSlider",
-                EditMode.actionBarLayoutWindow, "OptionsSliderTemplate")
-            EditMode.actionBarLayoutWindow.visibleButtonsSlider:SetPoint("TOP",
-                EditMode.actionBarLayoutWindow.visibleButtonsLabel, "BOTTOM", 0, -15)
+            EditMode.actionBarLayoutWindow.visibleButtonsSlider =
+                CreateFrame("Slider", "mUIVisibleButtonsSlider", EditMode.actionBarLayoutWindow, "OptionsSliderTemplate")
+            EditMode.actionBarLayoutWindow.visibleButtonsSlider:SetPoint("TOP", EditMode.actionBarLayoutWindow
+                .visibleButtonsLabel, "BOTTOM", 0, -15)
             EditMode.actionBarLayoutWindow.visibleButtonsSlider:SetMinMaxValues(1, 12)
             EditMode.actionBarLayoutWindow.visibleButtonsSlider:SetValue(12)
             EditMode.actionBarLayoutWindow.visibleButtonsSlider:SetValueStep(1)
@@ -1107,8 +1160,8 @@ function EditMode:OnInitialize()
             EditMode.actionBarLayoutWindow.applyButton = CreateFrame("Button", "mUIApplyLayoutButton",
                 EditMode.actionBarLayoutWindow, "GameMenuButtonTemplate")
             EditMode.actionBarLayoutWindow.applyButton:SetSize(70, 22)
-            EditMode.actionBarLayoutWindow.applyButton:SetPoint("BOTTOM", EditMode.actionBarLayoutWindow, "BOTTOM", -100,
-                40)
+            EditMode.actionBarLayoutWindow.applyButton:SetPoint("BOTTOM", EditMode.actionBarLayoutWindow, "BOTTOM",
+                -100, 40)
             EditMode.actionBarLayoutWindow.applyButton:SetText("Apply")
 
             -- Reset button
@@ -1130,9 +1183,10 @@ function EditMode:OnInitialize()
             -- Apply button events
             EditMode.actionBarLayoutWindow.applyButton:SetScript("OnClick", function()
                 if EditMode.actionBarLayoutWindow.currentBarName then
-                    local buttonsPerRow = math.floor(EditMode.actionBarLayoutWindow.buttonsPerRowSlider:GetValue() + 0.5)
+                    local buttonsPerRow =
+                        math.floor(EditMode.actionBarLayoutWindow.buttonsPerRowSlider:GetValue() + 0.5)
                     local visibleButtons = math.floor(EditMode.actionBarLayoutWindow.visibleButtonsSlider:GetValue() +
-                        0.5)
+                                                          0.5)
 
                     -- Save to database
                     EditMode:SaveActionBarLayout(EditMode.actionBarLayoutWindow.currentBarName, buttonsPerRow,
@@ -1142,8 +1196,8 @@ function EditMode:OnInitialize()
                     EditMode:ApplyActionBarLayout(EditMode.actionBarLayoutWindow.currentBarName, buttonsPerRow,
                         visibleButtons)
 
-                    mUI:Debug("Applied layout to " .. EditMode.actionBarLayoutWindow.currentBarName ..
-                        ": " .. buttonsPerRow .. " per row, " .. visibleButtons .. " visible")
+                    mUI:Debug("Applied layout to " .. EditMode.actionBarLayoutWindow.currentBarName .. ": " ..
+                                  buttonsPerRow .. " per row, " .. visibleButtons .. " visible")
                 end
                 EditMode.actionBarLayoutWindow:Hide()
             end)
@@ -1192,7 +1246,8 @@ function EditMode:OnInitialize()
             EditMode.scalingWindow.frameLabel:SetText("Frame: None")
 
             -- Scale label
-            EditMode.scalingWindow.scaleLabel = EditMode.scalingWindow:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            EditMode.scalingWindow.scaleLabel =
+                EditMode.scalingWindow:CreateFontString(nil, "OVERLAY", "GameFontNormal")
             EditMode.scalingWindow.scaleLabel:SetPoint("TOP", EditMode.scalingWindow.frameLabel, "BOTTOM", 0, -25)
             EditMode.scalingWindow.scaleLabel:SetText("Scale: 1.00")
 
@@ -1227,8 +1282,7 @@ function EditMode:OnInitialize()
 
             -- Restore Default button
             EditMode.scalingWindow.restoreDefaultButton = CreateFrame("Button", "mUIRestoreDefaultButton",
-                EditMode.scalingWindow,
-                "GameMenuButtonTemplate")
+                EditMode.scalingWindow, "GameMenuButtonTemplate")
             EditMode.scalingWindow.restoreDefaultButton:SetSize(100, 22)
             EditMode.scalingWindow.restoreDefaultButton:SetPoint("BOTTOM", EditMode.scalingWindow, "BOTTOM", 85, 40)
             EditMode.scalingWindow.restoreDefaultButton:SetText("Reset Position")
@@ -1360,7 +1414,10 @@ function EditMode:OnInitialize()
                 -- Get current layout settings
                 local barNumber = frameName:match("mUIActionBar([1-5])")
                 local barKey = "bar" .. barNumber
-                local layout = mUI.db.profile.actionbars.layout[barKey] or { buttonsPerRow = 12, visibleButtons = 12 }
+                local layout = mUI.db.profile.actionbars.layout[barKey] or {
+                    buttonsPerRow = 12,
+                    visibleButtons = 12
+                }
 
                 -- Set slider values
                 EditMode.scalingWindow.buttonsPerRowSlider:SetValue(layout.buttonsPerRow)
@@ -1392,13 +1449,8 @@ function EditMode:OnInitialize()
                 EditMode.originalButtonStates = {}
             end
 
-            local buttonPrefixes = {
-                "ActionButton",
-                "MultiBarBottomLeftButton",
-                "MultiBarBottomRightButton",
-                "MultiBarLeftButton",
-                "MultiBarRightButton"
-            }
+            local buttonPrefixes = {"ActionButton", "MultiBarBottomLeftButton", "MultiBarBottomRightButton",
+                                    "MultiBarLeftButton", "MultiBarRightButton"}
 
             for _, prefix in ipairs(buttonPrefixes) do
                 if not EditMode.originalButtonStates[prefix] then
@@ -1420,13 +1472,8 @@ function EditMode:OnInitialize()
                 return
             end
 
-            local buttonPrefixes = {
-                "ActionButton",
-                "MultiBarBottomLeftButton",
-                "MultiBarBottomRightButton",
-                "MultiBarLeftButton",
-                "MultiBarRightButton"
-            }
+            local buttonPrefixes = {"ActionButton", "MultiBarBottomLeftButton", "MultiBarBottomRightButton",
+                                    "MultiBarLeftButton", "MultiBarRightButton"}
 
             for _, prefix in ipairs(buttonPrefixes) do
                 if EditMode.originalButtonStates[prefix] then
@@ -1447,7 +1494,9 @@ function EditMode:OnInitialize()
         -- Save action bar layout to database
         function EditMode:SaveActionBarLayout(frameName, buttonsPerRow, visibleButtons)
             local barNumber = frameName:match("mUIActionBar([1-5])")
-            if not barNumber then return end
+            if not barNumber then
+                return
+            end
 
             local barKey = "bar" .. barNumber
             if not mUI.db.profile.actionbars.layout[barKey] then
@@ -1461,10 +1510,14 @@ function EditMode:OnInitialize()
         -- Apply action bar layout
         function EditMode:ApplyActionBarLayout(frameName, buttonsPerRow, visibleButtons)
             local barNumber = frameName:match("mUIActionBar([1-5])")
-            if not barNumber then return end
+            if not barNumber then
+                return
+            end
 
             local barFrame = _G[frameName]
-            if not barFrame then return end
+            if not barFrame then
+                return
+            end
 
             -- Get the appropriate button prefix based on bar number
             local buttonPrefix
@@ -1768,7 +1821,7 @@ function EditMode:OnInitialize()
 
             -- Store original position
             local point, _, relativePoint, x, y = frame:GetPoint()
-            frame.originalPosition = { point, UIParent, relativePoint, x, y }
+            frame.originalPosition = {point, UIParent, relativePoint, x, y}
 
             -- Store original settings
             frame.originalMovable = frame:IsMovable()
@@ -1795,7 +1848,7 @@ function EditMode:OnInitialize()
                 -- Ensure border is always visible and on top with very high frame level
                 local targetFrameLevel = math.max(frame:GetFrameLevel(), 2)
                 frame.draggableBorder:SetFrameLevel(targetFrameLevel + 200) -- Much higher to ensure visibility above all child frames
-                frame.draggableBorder:Show()                                -- Explicitly show the border frame
+                frame.draggableBorder:Show() -- Explicitly show the border frame
 
                 -- Create border textures
                 local borderSize = 2
@@ -1912,7 +1965,8 @@ function EditMode:OnInitialize()
             end)
 
             frame.draggableBorder:SetScript("OnMouseUp", function(self, button)
-                if EditMode.isDragModeEnabled and button == "RightButton" and not InCombatLockdown() and not (frame:IsProtected() and InCombatLockdown()) then
+                if EditMode.isDragModeEnabled and button == "RightButton" and not InCombatLockdown() and
+                    not (frame:IsProtected() and InCombatLockdown()) then
                     EditMode:ShowScalingWindow(frame, frameName)
                 end
             end)
@@ -1931,7 +1985,7 @@ function EditMode:OnInitialize()
                 frame.dragActiveOverlay = frame.draggableBorder:CreateTexture(nil, "OVERLAY")
                 frame.dragActiveOverlay:SetAllPoints(frame.draggableBorder)
                 frame.dragActiveOverlay:SetColorTexture(0.2, 0.8, 1, 0.4) -- Blue overlay while dragging
-                frame.dragActiveOverlay:SetDrawLayer("OVERLAY", 6)        -- Very high draw layer for visibility
+                frame.dragActiveOverlay:SetDrawLayer("OVERLAY", 6) -- Very high draw layer for visibility
                 frame.dragActiveOverlay:Hide()
             end
 
@@ -1983,7 +2037,7 @@ function EditMode:OnInitialize()
 
             -- Ensure overlay elements are always on top and visible
             frame.draggableBorder:SetFrameLevel(math.max(UIParent:GetFrameLevel() + 200, 500)) -- Very high frame level
-            frame.draggableLabel:SetDrawLayer("OVERLAY", 8)                                    -- Highest draw layer for text
+            frame.draggableLabel:SetDrawLayer("OVERLAY", 8) -- Highest draw layer for text
 
             -- Update border position to track the frame
             frame.draggableBorder:SetScript("OnUpdate", function(self)
@@ -2006,7 +2060,7 @@ function EditMode:OnInitialize()
                 -- Border drag handlers for hidden frames
                 frame.draggableBorder:SetScript("OnDragStart", function(self)
                     if EditMode.isDragModeEnabled and not InCombatLockdown() then
-                        frame:StartMoving()                    -- Move the actual frame
+                        frame:StartMoving() -- Move the actual frame
                         frame.dragActiveOverlay:Show()
                         self.top:SetColorTexture(0, 0.5, 1, 1) -- Change border to blue while dragging
                         self.bottom:SetColorTexture(0, 0.5, 1, 1)
@@ -2043,7 +2097,8 @@ function EditMode:OnInitialize()
 
                 -- Right-click to open scaling window for border frame
                 frame.draggableBorder:SetScript("OnMouseUp", function(self, button)
-                    if EditMode.isDragModeEnabled and button == "RightButton" and not InCombatLockdown() and not (frame:IsProtected() and InCombatLockdown()) then
+                    if EditMode.isDragModeEnabled and button == "RightButton" and not InCombatLockdown() and
+                        not (frame:IsProtected() and InCombatLockdown()) then
                         EditMode:ShowScalingWindow(frame, frameName)
                     end
                 end)
@@ -2064,14 +2119,16 @@ function EditMode:OnInitialize()
 
             -- Right-click to open scaling window
             frame:SetScript("OnMouseUp", function(self, button)
-                if EditMode.isDragModeEnabled and button == "RightButton" and not InCombatLockdown() and not (self:IsProtected() and InCombatLockdown()) then
+                if EditMode.isDragModeEnabled and button == "RightButton" and not InCombatLockdown() and
+                    not (self:IsProtected() and InCombatLockdown()) then
                     EditMode:ShowScalingWindow(self, frameName)
                 end
             end)
 
             -- Drag start
             frame:SetScript("OnDragStart", function(self)
-                if EditMode.isDragModeEnabled and not InCombatLockdown() and not (self:IsProtected() and InCombatLockdown()) then
+                if EditMode.isDragModeEnabled and not InCombatLockdown() and
+                    not (self:IsProtected() and InCombatLockdown()) then
                     self:StartMoving()
                     self.dragActiveOverlay:Show()
                     self.draggableBorder.top:SetColorTexture(0, 0.5, 1, 1) -- Change border to blue while dragging
@@ -2111,7 +2168,7 @@ function EditMode:OnInitialize()
 
             -- Visible frames: Green tint and border
             frame.draggableOverlay:SetColorTexture(0.1, 0.9, 0.1, 0.6) -- Green tint (increased from 0.4 to 0.6)
-            frame.draggableBorder.top:SetColorTexture(0, 1, 0, 1.0)    -- Green border (increased from 0.9 to 1.0)
+            frame.draggableBorder.top:SetColorTexture(0, 1, 0, 1.0) -- Green border (increased from 0.9 to 1.0)
             frame.draggableBorder.bottom:SetColorTexture(0, 1, 0, 1.0)
             frame.draggableBorder.left:SetColorTexture(0, 1, 0, 1.0)
             frame.draggableBorder.right:SetColorTexture(0, 1, 0, 1.0)
@@ -2138,7 +2195,8 @@ function EditMode:OnInitialize()
             end
 
             -- Handle UserPlaced state - keep it true if we have a saved position
-            if EditMode.db and EditMode.db.frames and EditMode.db.frames[frameName] and EditMode.db.frames[frameName].position then
+            if EditMode.db and EditMode.db.frames and EditMode.db.frames[frameName] and
+                EditMode.db.frames[frameName].position then
                 -- Only set UserPlaced if frame is movable
                 if frame:IsMovable() then
                     frame:SetUserPlaced(true) -- Keep UserPlaced true to prevent repositioning
@@ -2180,7 +2238,7 @@ function EditMode:OnInitialize()
             end
 
             if frame.draggableBorder then
-                frame.draggableBorder:SetScript("OnUpdate", nil)    -- Remove update script
+                frame.draggableBorder:SetScript("OnUpdate", nil) -- Remove update script
                 frame.draggableBorder:SetScript("OnDragStart", nil) -- Remove border drag handlers
                 frame.draggableBorder:SetScript("OnDragStop", nil)
                 frame.draggableBorder:SetScript("OnEnter", nil)
@@ -2196,7 +2254,8 @@ function EditMode:OnInitialize()
             end
 
             -- Restore original position only if we don't have a saved position
-            if frame.originalPosition and (not EditMode.db or not EditMode.db.frames or not EditMode.db.frames[frameName]) then
+            if frame.originalPosition and
+                (not EditMode.db or not EditMode.db.frames or not EditMode.db.frames[frameName]) then
                 frame:ClearAllPoints()
                 frame:SetPoint(unpack(frame.originalPosition))
             end
@@ -2327,7 +2386,12 @@ function EditMode:OnInitialize()
                 tile = true,
                 tileSize = 16,
                 edgeSize = 16,
-                insets = { left = 4, right = 4, top = 4, bottom = 4 }
+                insets = {
+                    left = 4,
+                    right = 4,
+                    top = 4,
+                    bottom = 4
+                }
             })
             EditMode.snappingPanel:SetBackdropColor(0, 0, 0, 0.8)
             EditMode.snappingPanel:SetBackdropBorderColor(0.5, 0.5, 0.5, 1)
@@ -2335,7 +2399,8 @@ function EditMode:OnInitialize()
             EditMode.snappingPanel:Hide() -- Hidden by default
 
             -- Title
-            EditMode.snappingPanel.title = EditMode.snappingPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+            EditMode.snappingPanel.title =
+                EditMode.snappingPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
             EditMode.snappingPanel.title:SetPoint("TOP", EditMode.snappingPanel, "TOP", 0, -10)
             EditMode.snappingPanel.title:SetText("Snapping")
             EditMode.snappingPanel.title:SetTextColor(1, 1, 1, 1)
@@ -2347,33 +2412,36 @@ function EditMode:OnInitialize()
             EditMode.snappingPanel.enableCheckbox:SetSize(20, 20)
             EditMode.snappingPanel.enableCheckbox:SetChecked(EditMode.db.snapping.enabled)
 
-            EditMode.snappingPanel.enableLabel = EditMode.snappingPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            EditMode.snappingPanel.enableLabel = EditMode.snappingPanel:CreateFontString(nil, "OVERLAY",
+                "GameFontNormal")
             EditMode.snappingPanel.enableLabel:SetPoint("LEFT", EditMode.snappingPanel.enableCheckbox, "RIGHT", 5, 0)
             EditMode.snappingPanel.enableLabel:SetText("Enable Snapping")
             EditMode.snappingPanel.enableLabel:SetTextColor(1, 1, 1, 1)
 
             -- Snap to Center checkbox
-            EditMode.snappingPanel.centerCheckbox = CreateFrame("CheckButton", "mUISnapToCenter", EditMode.snappingPanel,
-                "UICheckButtonTemplate")
-            EditMode.snappingPanel.centerCheckbox:SetPoint("TOPLEFT", EditMode.snappingPanel.enableCheckbox, "BOTTOMLEFT",
-                0, -10)
+            EditMode.snappingPanel.centerCheckbox = CreateFrame("CheckButton", "mUISnapToCenter",
+                EditMode.snappingPanel, "UICheckButtonTemplate")
+            EditMode.snappingPanel.centerCheckbox:SetPoint("TOPLEFT", EditMode.snappingPanel.enableCheckbox,
+                "BOTTOMLEFT", 0, -10)
             EditMode.snappingPanel.centerCheckbox:SetSize(20, 20)
             EditMode.snappingPanel.centerCheckbox:SetChecked(EditMode.db.snapping.snapToCenter)
 
-            EditMode.snappingPanel.centerLabel = EditMode.snappingPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            EditMode.snappingPanel.centerLabel = EditMode.snappingPanel:CreateFontString(nil, "OVERLAY",
+                "GameFontNormal")
             EditMode.snappingPanel.centerLabel:SetPoint("LEFT", EditMode.snappingPanel.centerCheckbox, "RIGHT", 5, 0)
             EditMode.snappingPanel.centerLabel:SetText("Snap to Center")
             EditMode.snappingPanel.centerLabel:SetTextColor(1, 1, 1, 1)
 
             -- Snap to Frames checkbox
-            EditMode.snappingPanel.framesCheckbox = CreateFrame("CheckButton", "mUISnapToFrames", EditMode.snappingPanel,
-                "UICheckButtonTemplate")
-            EditMode.snappingPanel.framesCheckbox:SetPoint("TOPLEFT", EditMode.snappingPanel.centerCheckbox, "BOTTOMLEFT",
-                0, -10)
+            EditMode.snappingPanel.framesCheckbox = CreateFrame("CheckButton", "mUISnapToFrames",
+                EditMode.snappingPanel, "UICheckButtonTemplate")
+            EditMode.snappingPanel.framesCheckbox:SetPoint("TOPLEFT", EditMode.snappingPanel.centerCheckbox,
+                "BOTTOMLEFT", 0, -10)
             EditMode.snappingPanel.framesCheckbox:SetSize(20, 20)
             EditMode.snappingPanel.framesCheckbox:SetChecked(EditMode.db.snapping.snapToFrames)
 
-            EditMode.snappingPanel.framesLabel = EditMode.snappingPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            EditMode.snappingPanel.framesLabel = EditMode.snappingPanel:CreateFontString(nil, "OVERLAY",
+                "GameFontNormal")
             EditMode.snappingPanel.framesLabel:SetPoint("LEFT", EditMode.snappingPanel.framesCheckbox, "RIGHT", 5, 0)
             EditMode.snappingPanel.framesLabel:SetText("Snap to Frames")
             EditMode.snappingPanel.framesLabel:SetTextColor(1, 1, 1, 1)
@@ -2392,14 +2460,15 @@ function EditMode:OnInitialize()
             EditMode.snappingPanel.gridLabel:SetTextColor(1, 1, 1, 1)
 
             -- Show Snap Lines checkbox
-            EditMode.snappingPanel.linesCheckbox = CreateFrame("CheckButton", "mUIShowSnapLines", EditMode.snappingPanel,
-                "UICheckButtonTemplate")
-            EditMode.snappingPanel.linesCheckbox:SetPoint("TOPLEFT", EditMode.snappingPanel.gridCheckbox, "BOTTOMLEFT", 0,
-                -10)
+            EditMode.snappingPanel.linesCheckbox = CreateFrame("CheckButton", "mUIShowSnapLines",
+                EditMode.snappingPanel, "UICheckButtonTemplate")
+            EditMode.snappingPanel.linesCheckbox:SetPoint("TOPLEFT", EditMode.snappingPanel.gridCheckbox, "BOTTOMLEFT",
+                0, -10)
             EditMode.snappingPanel.linesCheckbox:SetSize(20, 20)
             EditMode.snappingPanel.linesCheckbox:SetChecked(EditMode.db.snapping.showSnapLines)
 
-            EditMode.snappingPanel.linesLabel = EditMode.snappingPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            EditMode.snappingPanel.linesLabel =
+                EditMode.snappingPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
             EditMode.snappingPanel.linesLabel:SetPoint("LEFT", EditMode.snappingPanel.linesCheckbox, "RIGHT", 5, 0)
             EditMode.snappingPanel.linesLabel:SetText("Show Snap Lines")
             EditMode.snappingPanel.linesLabel:SetTextColor(1, 1, 1, 1)
@@ -2540,15 +2609,11 @@ function EditMode:OnInitialize()
             end
 
             mUI.statsFrame:ClearAllPoints()
-            mUI.statsFrame:SetPoint(
-                EditMode.db[layout].statsframe.point,
-                EditMode.db[layout].statsframe.x,
+            mUI.statsFrame:SetPoint(EditMode.db[layout].statsframe.point, EditMode.db[layout].statsframe.x,
                 EditMode.db[layout].statsframe.y)
 
             EditMode.QueueStatus:ClearAllPoints()
-            EditMode.QueueStatus:SetPoint(
-                EditMode.db[layout].queueicon.point,
-                EditMode.db[layout].queueicon.x,
+            EditMode.QueueStatus:SetPoint(EditMode.db[layout].queueicon.point, EditMode.db[layout].queueicon.x,
                 EditMode.db[layout].queueicon.y)
 
             if not EditMode:IsHooked(QueueStatusButton, "OnShow") then
@@ -2558,25 +2623,23 @@ function EditMode:OnInitialize()
             end
         end)
 
-        EditMode.LEM:AddFrameSettings(EditMode.QueueStatus, {
-            {
-                name = 'Button Size',
-                kind = EditMode.LEM.SettingType.Slider,
-                default = 1,
-                get = function(layout)
-                    return EditMode.db[layout].queueicon.scale
-                end,
-                set = function(layout, value)
-                    EditMode.db[layout].queueicon.scale = value
-                    QueueStatusButton:SetScale(value)
-                end,
-                minValue = 0.1,
-                maxValue = 5,
-                valueStep = 0.1,
-                formatter = function(value)
-                    return FormatPercentage(value, true)
-                end,
-            }
-        })
+        EditMode.LEM:AddFrameSettings(EditMode.QueueStatus, {{
+            name = 'Button Size',
+            kind = EditMode.LEM.SettingType.Slider,
+            default = 1,
+            get = function(layout)
+                return EditMode.db[layout].queueicon.scale
+            end,
+            set = function(layout, value)
+                EditMode.db[layout].queueicon.scale = value
+                QueueStatusButton:SetScale(value)
+            end,
+            minValue = 0.1,
+            maxValue = 5,
+            valueStep = 0.1,
+            formatter = function(value)
+                return FormatPercentage(value, true)
+            end
+        }})
     end
 end

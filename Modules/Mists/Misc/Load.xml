@@ -1,0 +1,13 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Include file="Dampening.lua" />
+    <Include file="Interrupt.lua" />
+    <Include file="Losecontrol.lua" />
+    <Include file="Menubutton.lua" />
+    <Include file="Safequeue.lua" />
+    <Include file="Surrender.lua" />
+    <Include file="Tabbinder.lua" />
+    <Include file="Achievements.lua" />
+    <Include file="Fastloot.lua" />
+    <Include file="Gryphons.lua" />
+    <Include file="Modules.lua" />
+</Ui>

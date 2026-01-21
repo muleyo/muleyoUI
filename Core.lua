@@ -30,7 +30,6 @@ function Core:OnInitialize()
     Core.layouts.unitframes = mUI:GetModule("mUI.Config.Layouts.Unitframes")
     Core.layouts.castbars = mUI:GetModule("mUI.Config.Layouts.Castbars")
     Core.layouts.nameplates = mUI:GetModule("mUI.Config.Layouts.Nameplates")
-    Core.layouts.npccolors = mUI:GetModule("mUI.Config.Layouts.NPCColors")
     Core.layouts.tooltips = mUI:GetModule("mUI.Config.Layouts.Tooltips")
     Core.layouts.mapminimap = mUI:GetModule("mUI.Config.Layouts.MapMinimap")
     Core.layouts.chat = mUI:GetModule("mUI.Config.Layouts.Chat")
@@ -39,6 +38,9 @@ function Core:OnInitialize()
     Core.layouts.profilesImport = mUI:GetModule("mUI.Config.Layouts.ProfilesImport")
     Core.layouts.profilesExport = mUI:GetModule("mUI.Config.Layouts.ProfilesExport")
     Core.layouts.about = mUI:GetModule("mUI.Config.Layouts.About")
+    if mUI:IsClassic() then
+        Core.layouts.NPCColors = mUI:GetModule("mUI.Config.Layouts.NPCColors")
+    end
 
     -- Enable Modules
     if Core.db.general.enabled then
@@ -83,7 +85,6 @@ function Core:OnInitialize()
     Config:RegisterOptionsTable("mUIOptions_Unitframes_Tab", Core.layouts.unitframes:GetOptions())
     Config:RegisterOptionsTable("mUIOptions_Castbars_Tab", Core.layouts.castbars:GetOptions())
     Config:RegisterOptionsTable("mUIOptions_Nameplates_Tab", Core.layouts.nameplates:GetOptions())
-    Config:RegisterOptionsTable("mUIOptions_NPCColors_Tab", Core.layouts.npccolors:GetOptions())
     Config:RegisterOptionsTable("mUIOptions_Tooltips_Tab", Core.layouts.tooltips:GetOptions())
     Config:RegisterOptionsTable("mUIOptions_MapMinimap_Tab", Core.layouts.mapminimap:GetOptions())
     Config:RegisterOptionsTable("mUIOptions_Chat_Tab", Core.layouts.chat:GetOptions())
@@ -92,10 +93,15 @@ function Core:OnInitialize()
     Config:RegisterOptionsTable("mUIOptions_ProfilesExport_Tab", Core.layouts.profilesExport:GetOptions())
     Config:RegisterOptionsTable("mUIOptions_ProfilesImport_Tab", Core.layouts.profilesImport:GetOptions())
     Config:RegisterOptionsTable("mUIOptions_About_Tab", Core.layouts.about:GetOptions())
+    if mUI:IsClassic() then
+        Config:RegisterOptionsTable("mUIOptions_NPCColors_Tab", Core.layouts.NPCColors:GetOptions())
+    end
 end
 
 function Core:OnEnable()
-    if (Core.modules.nameplates:IsEnabled()) and (C_AddOns.IsAddOnLoaded("Plater") or C_AddOns.IsAddOnLoaded("TidyPlates_ThreatPlates") or C_AddOns.IsAddOnLoaded("TidyPlates") or C_AddOns.IsAddOnLoaded("Kui_Nameplates")) then
+    if (Core.modules.nameplates:IsEnabled()) and
+        (C_AddOns.IsAddOnLoaded("Plater") or C_AddOns.IsAddOnLoaded("TidyPlates_ThreatPlates") or
+            C_AddOns.IsAddOnLoaded("TidyPlates") or C_AddOns.IsAddOnLoaded("Kui_Nameplates")) then
         Core.db.nameplates.enabled = false
         Core.modules.nameplates:Disable()
         mUI:Debug("Nameplates Module disabled because another Nameplates AddOn is active.")

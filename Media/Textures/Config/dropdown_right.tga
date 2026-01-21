@@ -1,0 +1,3 @@
+This is a placeholder for the dropdown right texture file.
+In a real implementation, this would be a 25x64 TGA image file with the right edge of the dropdown.
+Based on the screenshot, it should have a dark background with subtle borders to match the mUI theme.

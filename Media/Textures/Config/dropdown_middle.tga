@@ -1,0 +1,3 @@
+This is a placeholder for the dropdown middle texture file.
+In a real implementation, this would be a tileable TGA image file for the middle section of the dropdown.
+Based on the screenshot, it should have a dark background matching the mUI theme.

@@ -34,9 +34,10 @@ function mUI:OnInitialize()
     end
 
     function self:SwitchSettings(panel)
+        local gui = mUI:GetModule("mUI.Config.Gui")
         C_Timer.After(0, function()
-            mUIOptions.container:ReleaseChildren()
-            ACD:Open(panel, mUIOptions.container)
+            gui.container:ReleaseChildren()
+            ACD:Open(panel, gui.container)
         end)
     end
 
