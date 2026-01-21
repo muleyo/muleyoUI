@@ -34,8 +34,7 @@ function Style:OnInitialize()
     end
 
     -- Create GameTooltip Healthbar Background
-    GameTooltipStatusBar.mUIbg = GameTooltipStatusBar:CreateTexture()
-    GameTooltipStatusBar.mUIbg:SetDrawLayer("BACKGROUND", -8)
+    GameTooltipStatusBar.mUIbg = GameTooltipStatusBar:CreateTexture(nil, "BACKGROUND", nil, -8)
     GameTooltipStatusBar.mUIbg:SetAllPoints()
     GameTooltipStatusBar.mUIbg:SetColorTexture(1, 1, 1)
     GameTooltipStatusBar.mUIbg:SetVertexColor(0, 0, 0, 0.5)
@@ -55,6 +54,7 @@ function Style:OnInitialize()
         if not Style.db.style == "mUI" then
             return
         end
+
         if UnitIsUnit(unit, "player") then
             return ("|cffff0000%s|r"):format("<YOU>")
         elseif UnitIsPlayer(unit) then
@@ -130,8 +130,7 @@ function Style:OnInitialize()
                 frame:AppendText((" |c%s<AFK>|r"):format(Style.cfg.afkColorHex))
             end
         else -- Unit is NPC
-            -- if not InCombatLockdown() then
-            -- Get Reaction Color (not working during combat in current Alpha Build)
+            -- Get Reaction Color
             local reaction = UnitReaction(unit, "player")
             if reaction then
                 local color = FACTION_BAR_COLORS[reaction]
@@ -142,7 +141,7 @@ function Style:OnInitialize()
                 end
             end
 
-            -- Get Level Line of GameTooltip (not working during combat in current Alpha Build)
+            -- Get Level Line of GameTooltip
             local levelLine
 
             if string.find(GameTooltipTextLeft2:GetText() or "empty", "%a%s%d") then
@@ -158,7 +157,7 @@ function Style:OnInitialize()
                 levelLine:SetTextColor(color.r, color.g, color.b)
             end
 
-            -- Get Unit Classification (not working during combat in current Alpha Build)
+            -- Get Unit Classification
             local unitClassification = UnitClassification(unit)
             if unitClassification == "worldboss" or UnitLevel(unit) == -1 then
                 frame:AppendText(" |cffff0000[B]|r")
@@ -176,15 +175,14 @@ function Style:OnInitialize()
             if id then
                 frame:AddDoubleLine("|cff0099ffID|r", id)
             end
-            -- end
         end
 
-        -- Unit is dead (not working during combat in current Alpha Build)
+        -- Unit is dead
         if UnitIsDeadOrGhost(unit) then
             GameTooltipTextLeft1:SetTextColor(unpack(Style.cfg.deadColor))
         end
 
-        -- Current Target (not working during combat in current Alpha Build)
+        -- Current Target
         if (UnitExists(unit .. "target")) then
             GameTooltip:AddDoubleLine(("|c%s%s|r"):format(Style.cfg.targetColorHex, "Target"),
                 Style:GetTarget(unit .. "target"))
@@ -271,79 +269,36 @@ function Style:OnInitialize()
                     tooltip.NineSlice:SetBorderColor(unpack(mUI:Color(0.15)))
                 end
             end
+        end
+    end
 
+    function Style:OnMacroTooltipSetColor(tooltip)
+        if not Style.db.style == "mUI" then
+            return
+        end
+
+        if mUI.db.profile.general.theme == "Disabled" then
+            return
+        end
+
+        if tooltip:GetTooltipData() and tooltip:GetTooltipData().lines and tooltip:GetTooltipData().lines[2] and
+            tooltip:GetTooltipData().lines[2].leftText and tooltip:GetTooltipData().lines[2].leftColor then
+            local tooltipData = tooltip:GetTooltipData()
+            local tooltipName = tooltipData.lines[2].leftText
+            local tooltipColor = tooltipData.lines[2].leftColor
+            local _, itemLink = C_Item.GetItemInfo(tooltipName)
             if itemLink then
-                local azerite = C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or
-                                    C_AzeriteItem.IsAzeriteItemByID(itemLink) or false
-                local _, _, itemRarity = GetItemInfo(itemLink)
-                local r, g, b = 0.1, 0.1, 0.1
-                if itemRarity then
-                    r, g, b = GetItemQualityColor(itemRarity)
-                end
-                if azerite and backdrop.azeriteBorderColor then
-                    tooltip.NineSlice:SetBorderColor(unpack(backdrop.azeriteBorderColor))
-                else
-                    tooltip.NineSlice:SetBorderColor(r, g, b, 0.9)
-                end
-            else
-                mUI:Skin(tooltip.NineSlice)
-            end
-        else
-            local itemGUID
-            local itemLink
-            if tooltip:GetTooltipData() then
-                if tooltip:GetTooltipData().guid then
-                    itemGUID = tooltip:GetTooltipData().guid
-                    itemLink = C_Item.GetItemLinkByGUID(itemGUID)
-                end
-
-                if tooltip:GetTooltipData().hyperlink then
-                    itemLink = tooltip:GetTooltipData().hyperlink
-                end
-            end
-
-            if itemLink then
-                local azerite = C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or
-                                    C_AzeriteItem.IsAzeriteItemByID(itemLink) or false
-                local _, _, itemRarity = C_Item.GetItemInfo(itemLink)
-
-                if itemRarity and itemRarity >= 2 then
-                    local r, g, b = C_Item.GetItemQualityColor(itemRarity)
-                    tooltip.NineSlice:SetBorderColor(r, g, b, 0.9)
-                else
-                    tooltip.NineSlice:SetBorderColor(unpack(mUI:Color(0.15)))
-                end
+                tooltip.NineSlice:SetBorderColor(tooltipColor.r, tooltipColor.g, tooltipColor.b)
             end
         end
     end
-end
 
-function Style:OnMacroTooltipSetColor(tooltip)
-    if not Style.db.style == "mUI" then
-        return
-    end
-
-    if mUI.db.profile.general.theme == "Disabled" then
-        return
-    end
-
-    if tooltip:GetTooltipData() and tooltip:GetTooltipData().lines and tooltip:GetTooltipData().lines[2] and
-        tooltip:GetTooltipData().lines[2].leftText and tooltip:GetTooltipData().lines[2].leftColor then
-        local tooltipData = tooltip:GetTooltipData()
-        local tooltipName = tooltipData.lines[2].leftText
-        local tooltipColor = tooltipData.lines[2].leftColor
-        local _, itemLink = C_Item.GetItemInfo(tooltipName)
-        if itemLink then
-            tooltip.NineSlice:SetBorderColor(tooltipColor.r, tooltipColor.g, tooltipColor.b)
-        end
-    end
-end
-
-function Style:FixTooltipTextures()
-    for i = 1, 30 do
-        local frame = _G["GameTooltipTexture" .. i]
-        if frame and frame:IsShown() then
-            frame:SetDrawLayer("BACKGROUND", 1)
+    function Style:FixTooltipTextures()
+        for i = 1, 30 do
+            local frame = _G["GameTooltipTexture" .. i]
+            if frame and frame:IsShown() then
+                frame:SetDrawLayer("BACKGROUND", 1)
+            end
         end
     end
 end
@@ -353,6 +308,10 @@ function Style:OnEnable()
     if not Style.hooked then
         -- Macros
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Macro, function(tooltip)
+            if InCombatLockdown() then
+                return
+            end
+
             Style:OnMacroTooltipSetSpell(tooltip)
             Style:OnMacroTooltipSetColor(tooltip)
         end)
@@ -362,6 +321,7 @@ function Style:OnEnable()
             if InCombatLockdown() then
                 return
             end
+
             Style:OnTooltipSetSpell(tooltip, data.id)
         end)
 
@@ -370,6 +330,7 @@ function Style:OnEnable()
             if InCombatLockdown() then
                 return
             end
+
             Style:OnTooltipSetSpell(tooltip, data.id)
         end)
 
@@ -385,52 +346,6 @@ function Style:OnEnable()
         end)
 
         Style.hooked = true
-
-        Style:SecureHookScript(GameTooltip, "OnTooltipSetUnit", function(tooltip)
-            Style:OnTooltipSetUnit(tooltip)
-        end)
-
-        Style:SecureHookScript(GameTooltip, "OnTooltipSetSpell", function(tooltip)
-            Style:OnTooltipSetSpell(tooltip, select(2, tooltip:GetSpell()))
-        end)
-
-        Style:SecureHook(GameTooltip, "SetUnitBuff", function(tooltip, unit, index)
-            local _, _, _, _, _, _, _, _, _, spellID = UnitBuff(unit, index)
-            Style:OnTooltipSetSpell(tooltip, spellID)
-        end)
-
-        Style:SecureHook(GameTooltip, "SetUnitDebuff", function(tooltip, unit, index)
-            local _, _, _, _, _, _, _, _, _, spellID = UnitDebuff(unit, index)
-            Style:OnTooltipSetSpell(tooltip, spellID)
-        end)
-
-        Style:SecureHook(GameTooltip, "SetUnitAura", function(tooltip, unit, index, filter)
-            local _, _, _, _, _, _, _, _, _, spellID = AuraUtil.UnpackAuraData(
-                C_UnitAuras.GetAuraDataByIndex(unit, index, filter))
-            Style:OnTooltipSetSpell(tooltip, spellID)
-        end)
-    else
-        if not Style.hooked then
-            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Macro, function(tooltip)
-                Style:OnMacroTooltipSetSpell(tooltip)
-                Style:OnMacroTooltipSetColor(tooltip)
-            end)
-            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, function(tooltip, data)
-                Style:OnTooltipSetSpell(tooltip, data.id)
-            end)
-            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.UnitAura, function(tooltip, data)
-                Style:OnTooltipSetSpell(tooltip, data.id)
-            end)
-            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, function(frame)
-                Style:OnTooltipSetUnit(frame)
-            end)
-            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function(tooltip)
-                Style:OnItemTooltipSetColor(tooltip)
-                Style:FixTooltipTextures()
-            end)
-
-            Style.hooked = true
-        end
     end
 
     Style:SecureHook(GameTooltipStatusBar, "SetStatusBarColor", function(frame, r, g, b)
