@@ -4,7 +4,7 @@ function Cooldown:OnInitialize()
     function Cooldown:Update(button)
         if button.action then
             local start, duration, enable, modRate = GetActionCooldown(button.action)
-            if (duration and duration >= 1.5) then
+            if (duration and duration >= 1.51) then
                 button.icon:SetDesaturated(true)
             else
                 button.icon:SetDesaturated(false)

@@ -34,7 +34,8 @@ function Style:OnInitialize()
     end
 
     -- Create GameTooltip Healthbar Background
-    GameTooltipStatusBar.mUIbg = GameTooltipStatusBar:CreateTexture(nil, "BACKGROUND", nil, -8)
+    GameTooltipStatusBar.mUIbg = GameTooltipStatusBar:CreateTexture()
+    GameTooltipStatusBar.mUIbg:SetDrawLayer("BACKGROUND", -8)
     GameTooltipStatusBar.mUIbg:SetAllPoints()
     GameTooltipStatusBar.mUIbg:SetColorTexture(1, 1, 1)
     GameTooltipStatusBar.mUIbg:SetVertexColor(0, 0, 0, 0.5)
@@ -54,7 +55,10 @@ function Style:OnInitialize()
         if not Style.db.style == "mUI" then
             return
         end
+<<<<<<< HEAD:Modules/Mainline/Tooltips/Style.lua
 
+=======
+>>>>>>> 8199b4fe021e285074e487a7441bb1879e1fed59:Modules/Tooltips/Style.lua
         if UnitIsUnit(unit, "player") then
             return ("|cffff0000%s|r"):format("<YOU>")
         elseif UnitIsPlayer(unit) then
@@ -195,6 +199,7 @@ function Style:OnInitialize()
         if not Style.db.style == "mUI" then
             return
         end
+<<<<<<< HEAD:Modules/Mainline/Tooltips/Style.lua
 
         if not spellid then
             return
@@ -217,13 +222,43 @@ function Style:OnInitialize()
 
         tooltip:AddDoubleLine("|cff0099ffID|r", spellid)
         tooltip:Show()
+=======
+        if not spellid then
+            return
+        end
+        if type(spellid) == "table" and #spellid == 1 then
+            spellid = spellid[1]
+        end
+        local frame, text
+        if tooltip and tooltip.GetName then
+            local tooltipName = tooltip:GetName()
+            if tooltipName then
+                for i = 1, 15 do
+                    frame = _G[tooltipName .. "TextLeft" .. i]
+                    if frame then
+                        text = frame:GetText()
+                    end
+                    if text and string.find(text, "|cff0099ffID|r") then
+                        return
+                    end
+                end
+            end
+        end
+        if tooltip then
+            tooltip:AddDoubleLine("|cff0099ffID|r", spellid)
+            tooltip:Show()
+        end
+>>>>>>> 8199b4fe021e285074e487a7441bb1879e1fed59:Modules/Tooltips/Style.lua
     end
 
     function Style:OnMacroTooltipSetSpell(tooltip)
         if not Style.db.style == "mUI" then
             return
         end
+<<<<<<< HEAD:Modules/Mainline/Tooltips/Style.lua
 
+=======
+>>>>>>> 8199b4fe021e285074e487a7441bb1879e1fed59:Modules/Tooltips/Style.lua
         if tooltip:GetTooltipData() and tooltip:GetTooltipData().lines and tooltip:GetTooltipData().lines[2] and
             tooltip:GetTooltipData().lines[2].leftText then
             local tooltipData = tooltip:GetTooltipData()
@@ -240,11 +275,17 @@ function Style:OnInitialize()
         if not Style.db.style == "mUI" then
             return
         end
+<<<<<<< HEAD:Modules/Mainline/Tooltips/Style.lua
 
         if mUI.db.profile.general.theme == "Disabled" then
             return
         end
 
+=======
+        if mUI.db.profile.general.theme == "Disabled" then
+            return
+        end
+>>>>>>> 8199b4fe021e285074e487a7441bb1879e1fed59:Modules/Tooltips/Style.lua
         if tooltip.NineSlice then
             local itemGUID
             local itemLink
@@ -254,6 +295,7 @@ function Style:OnInitialize()
                     itemLink = C_Item.GetItemLinkByGUID(itemGUID)
                 end
 
+<<<<<<< HEAD:Modules/Mainline/Tooltips/Style.lua
                 if tooltip:GetTooltipData().hyperlink then
                     itemLink = tooltip:GetTooltipData().hyperlink
                 end
@@ -269,6 +311,49 @@ function Style:OnInitialize()
                     tooltip.NineSlice:SetBorderColor(r, g, b, 0.9)
                 else
                     tooltip.NineSlice:SetBorderColor(unpack(mUI:Color(0.15)))
+=======
+                if itemLink then
+                    local azerite = C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or
+                                        C_AzeriteItem.IsAzeriteItemByID(itemLink) or false
+                    local _, _, itemRarity = GetItemInfo(itemLink)
+                    local r, g, b = 0.1, 0.1, 0.1
+                    if itemRarity then
+                        r, g, b = GetItemQualityColor(itemRarity)
+                    end
+                    if azerite and backdrop.azeriteBorderColor then
+                        tooltip.NineSlice:SetBorderColor(unpack(backdrop.azeriteBorderColor))
+                    else
+                        tooltip.NineSlice:SetBorderColor(r, g, b, 0.9)
+                    end
+                else
+                    mUI:Skin(tooltip.NineSlice)
+                end
+            else
+                local itemGUID
+                local itemLink
+                if tooltip:GetTooltipData() then
+                    if tooltip:GetTooltipData().guid then
+                        itemGUID = tooltip:GetTooltipData().guid
+                        itemLink = C_Item.GetItemLinkByGUID(itemGUID)
+                    end
+
+                    if tooltip:GetTooltipData().hyperlink then
+                        itemLink = tooltip:GetTooltipData().hyperlink
+                    end
+                end
+
+                if itemLink then
+                    local azerite = C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or
+                                        C_AzeriteItem.IsAzeriteItemByID(itemLink) or false
+                    local _, _, itemRarity = C_Item.GetItemInfo(itemLink)
+
+                    if itemRarity and itemRarity >= 2 then
+                        local r, g, b = C_Item.GetItemQualityColor(itemRarity)
+                        tooltip.NineSlice:SetBorderColor(r, g, b, 0.9)
+                    else
+                        tooltip.NineSlice:SetBorderColor(unpack(mUI:Color(0.15)))
+                    end
+>>>>>>> 8199b4fe021e285074e487a7441bb1879e1fed59:Modules/Tooltips/Style.lua
                 end
             end
         end
@@ -278,11 +363,17 @@ function Style:OnInitialize()
         if not Style.db.style == "mUI" then
             return
         end
+<<<<<<< HEAD:Modules/Mainline/Tooltips/Style.lua
 
         if mUI.db.profile.general.theme == "Disabled" then
             return
         end
 
+=======
+        if mUI.db.profile.general.theme == "Disabled" then
+            return
+        end
+>>>>>>> 8199b4fe021e285074e487a7441bb1879e1fed59:Modules/Tooltips/Style.lua
         if tooltip:GetTooltipData() and tooltip:GetTooltipData().lines and tooltip:GetTooltipData().lines[2] and
             tooltip:GetTooltipData().lines[2].leftText and tooltip:GetTooltipData().lines[2].leftColor then
             local tooltipData = tooltip:GetTooltipData()
@@ -341,7 +432,55 @@ function Style:OnEnable()
             Style:FixTooltipTextures()
         end)
 
+<<<<<<< HEAD:Modules/Mainline/Tooltips/Style.lua
         Style.hooked = true
+=======
+        Style:SecureHookScript(GameTooltip, "OnTooltipSetUnit", function(tooltip)
+            Style:OnTooltipSetUnit(tooltip)
+        end)
+
+        Style:SecureHookScript(GameTooltip, "OnTooltipSetSpell", function(tooltip)
+            Style:OnTooltipSetSpell(tooltip, select(2, tooltip:GetSpell()))
+        end)
+
+        Style:SecureHook(GameTooltip, "SetUnitBuff", function(tooltip, unit, index)
+            local _, _, _, _, _, _, _, _, _, spellID = UnitBuff(unit, index)
+            Style:OnTooltipSetSpell(tooltip, spellID)
+        end)
+
+        Style:SecureHook(GameTooltip, "SetUnitDebuff", function(tooltip, unit, index)
+            local _, _, _, _, _, _, _, _, _, spellID = UnitDebuff(unit, index)
+            Style:OnTooltipSetSpell(tooltip, spellID)
+        end)
+
+        Style:SecureHook(GameTooltip, "SetUnitAura", function(tooltip, unit, index, filter)
+            local _, _, _, _, _, _, _, _, _, spellID = AuraUtil.UnpackAuraData(
+                C_UnitAuras.GetAuraDataByIndex(unit, index, filter))
+            Style:OnTooltipSetSpell(tooltip, spellID)
+        end)
+    else
+        if not Style.hooked then
+            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Macro, function(tooltip)
+                Style:OnMacroTooltipSetSpell(tooltip)
+                Style:OnMacroTooltipSetColor(tooltip)
+            end)
+            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, function(tooltip, data)
+                Style:OnTooltipSetSpell(tooltip, data.id)
+            end)
+            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.UnitAura, function(tooltip, data)
+                Style:OnTooltipSetSpell(tooltip, data.id)
+            end)
+            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, function(frame)
+                Style:OnTooltipSetUnit(frame)
+            end)
+            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function(tooltip)
+                Style:OnItemTooltipSetColor(tooltip)
+                Style:FixTooltipTextures()
+            end)
+
+            Style.hooked = true
+        end
+>>>>>>> 8199b4fe021e285074e487a7441bb1879e1fed59:Modules/Tooltips/Style.lua
     end
 
     Style:SecureHook(GameTooltipStatusBar, "SetStatusBarColor", function(frame, r, g, b)

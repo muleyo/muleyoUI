@@ -561,9 +561,5 @@ function Theme:AuraPositions()
                 end
             end
         end
-
-        if DebuffFrame.auraFrames[i].DebuffBorder then
-            DebuffFrame.auraFrames[i].DebuffBorder:SetAlpha(0)
-        end
     end
 end
