@@ -1,12 +1,6 @@
-<<<<<<< HEAD:mUI_Mainline.toc
 ## Interface: 120001
 ## Author: muleyo
 ## Version: 3.0.0
-=======
-## Interface: 110207
-## Author: muleyo
-## Version: 2.1.13
->>>>>>> 8199b4fe021e285074e487a7441bb1879e1fed59:mUI.toc
 ## Title: |cff009cffmuleyo|r|cffffd100UI|r
 ## Notes: Unleash your real potential
 ## SavedVariables: mUIDB

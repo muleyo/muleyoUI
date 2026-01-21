@@ -55,10 +55,6 @@ function Style:OnInitialize()
         if not Style.db.style == "mUI" then
             return
         end
-<<<<<<< HEAD:Modules/Mainline/Tooltips/Style.lua
-
-=======
->>>>>>> 8199b4fe021e285074e487a7441bb1879e1fed59:Modules/Tooltips/Style.lua
         if UnitIsUnit(unit, "player") then
             return ("|cffff0000%s|r"):format("<YOU>")
         elseif UnitIsPlayer(unit) then
@@ -199,7 +195,6 @@ function Style:OnInitialize()
         if not Style.db.style == "mUI" then
             return
         end
-<<<<<<< HEAD:Modules/Mainline/Tooltips/Style.lua
 
         if not spellid then
             return
@@ -222,43 +217,13 @@ function Style:OnInitialize()
 
         tooltip:AddDoubleLine("|cff0099ffID|r", spellid)
         tooltip:Show()
-=======
-        if not spellid then
-            return
-        end
-        if type(spellid) == "table" and #spellid == 1 then
-            spellid = spellid[1]
-        end
-        local frame, text
-        if tooltip and tooltip.GetName then
-            local tooltipName = tooltip:GetName()
-            if tooltipName then
-                for i = 1, 15 do
-                    frame = _G[tooltipName .. "TextLeft" .. i]
-                    if frame then
-                        text = frame:GetText()
-                    end
-                    if text and string.find(text, "|cff0099ffID|r") then
-                        return
-                    end
-                end
-            end
-        end
-        if tooltip then
-            tooltip:AddDoubleLine("|cff0099ffID|r", spellid)
-            tooltip:Show()
-        end
->>>>>>> 8199b4fe021e285074e487a7441bb1879e1fed59:Modules/Tooltips/Style.lua
     end
 
     function Style:OnMacroTooltipSetSpell(tooltip)
         if not Style.db.style == "mUI" then
             return
         end
-<<<<<<< HEAD:Modules/Mainline/Tooltips/Style.lua
 
-=======
->>>>>>> 8199b4fe021e285074e487a7441bb1879e1fed59:Modules/Tooltips/Style.lua
         if tooltip:GetTooltipData() and tooltip:GetTooltipData().lines and tooltip:GetTooltipData().lines[2] and
             tooltip:GetTooltipData().lines[2].leftText then
             local tooltipData = tooltip:GetTooltipData()
@@ -275,17 +240,11 @@ function Style:OnInitialize()
         if not Style.db.style == "mUI" then
             return
         end
-<<<<<<< HEAD:Modules/Mainline/Tooltips/Style.lua
 
         if mUI.db.profile.general.theme == "Disabled" then
             return
         end
 
-=======
-        if mUI.db.profile.general.theme == "Disabled" then
-            return
-        end
->>>>>>> 8199b4fe021e285074e487a7441bb1879e1fed59:Modules/Tooltips/Style.lua
         if tooltip.NineSlice then
             local itemGUID
             local itemLink
@@ -295,7 +254,6 @@ function Style:OnInitialize()
                     itemLink = C_Item.GetItemLinkByGUID(itemGUID)
                 end
 
-<<<<<<< HEAD:Modules/Mainline/Tooltips/Style.lua
                 if tooltip:GetTooltipData().hyperlink then
                     itemLink = tooltip:GetTooltipData().hyperlink
                 end
@@ -311,87 +269,81 @@ function Style:OnInitialize()
                     tooltip.NineSlice:SetBorderColor(r, g, b, 0.9)
                 else
                     tooltip.NineSlice:SetBorderColor(unpack(mUI:Color(0.15)))
-=======
-                if itemLink then
-                    local azerite = C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or
-                                        C_AzeriteItem.IsAzeriteItemByID(itemLink) or false
-                    local _, _, itemRarity = GetItemInfo(itemLink)
-                    local r, g, b = 0.1, 0.1, 0.1
-                    if itemRarity then
-                        r, g, b = GetItemQualityColor(itemRarity)
-                    end
-                    if azerite and backdrop.azeriteBorderColor then
-                        tooltip.NineSlice:SetBorderColor(unpack(backdrop.azeriteBorderColor))
-                    else
-                        tooltip.NineSlice:SetBorderColor(r, g, b, 0.9)
-                    end
+                end
+            end
+
+            if itemLink then
+                local azerite = C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or
+                                    C_AzeriteItem.IsAzeriteItemByID(itemLink) or false
+                local _, _, itemRarity = GetItemInfo(itemLink)
+                local r, g, b = 0.1, 0.1, 0.1
+                if itemRarity then
+                    r, g, b = GetItemQualityColor(itemRarity)
+                end
+                if azerite and backdrop.azeriteBorderColor then
+                    tooltip.NineSlice:SetBorderColor(unpack(backdrop.azeriteBorderColor))
                 else
-                    mUI:Skin(tooltip.NineSlice)
+                    tooltip.NineSlice:SetBorderColor(r, g, b, 0.9)
                 end
             else
-                local itemGUID
-                local itemLink
-                if tooltip:GetTooltipData() then
-                    if tooltip:GetTooltipData().guid then
-                        itemGUID = tooltip:GetTooltipData().guid
-                        itemLink = C_Item.GetItemLinkByGUID(itemGUID)
-                    end
-
-                    if tooltip:GetTooltipData().hyperlink then
-                        itemLink = tooltip:GetTooltipData().hyperlink
-                    end
+                mUI:Skin(tooltip.NineSlice)
+            end
+        else
+            local itemGUID
+            local itemLink
+            if tooltip:GetTooltipData() then
+                if tooltip:GetTooltipData().guid then
+                    itemGUID = tooltip:GetTooltipData().guid
+                    itemLink = C_Item.GetItemLinkByGUID(itemGUID)
                 end
 
-                if itemLink then
-                    local azerite = C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or
-                                        C_AzeriteItem.IsAzeriteItemByID(itemLink) or false
-                    local _, _, itemRarity = C_Item.GetItemInfo(itemLink)
-
-                    if itemRarity and itemRarity >= 2 then
-                        local r, g, b = C_Item.GetItemQualityColor(itemRarity)
-                        tooltip.NineSlice:SetBorderColor(r, g, b, 0.9)
-                    else
-                        tooltip.NineSlice:SetBorderColor(unpack(mUI:Color(0.15)))
-                    end
->>>>>>> 8199b4fe021e285074e487a7441bb1879e1fed59:Modules/Tooltips/Style.lua
+                if tooltip:GetTooltipData().hyperlink then
+                    itemLink = tooltip:GetTooltipData().hyperlink
                 end
             end
-        end
-    end
 
-    function Style:OnMacroTooltipSetColor(tooltip)
-        if not Style.db.style == "mUI" then
-            return
-        end
-<<<<<<< HEAD:Modules/Mainline/Tooltips/Style.lua
-
-        if mUI.db.profile.general.theme == "Disabled" then
-            return
-        end
-
-=======
-        if mUI.db.profile.general.theme == "Disabled" then
-            return
-        end
->>>>>>> 8199b4fe021e285074e487a7441bb1879e1fed59:Modules/Tooltips/Style.lua
-        if tooltip:GetTooltipData() and tooltip:GetTooltipData().lines and tooltip:GetTooltipData().lines[2] and
-            tooltip:GetTooltipData().lines[2].leftText and tooltip:GetTooltipData().lines[2].leftColor then
-            local tooltipData = tooltip:GetTooltipData()
-            local tooltipName = tooltipData.lines[2].leftText
-            local tooltipColor = tooltipData.lines[2].leftColor
-            local _, itemLink = C_Item.GetItemInfo(tooltipName)
             if itemLink then
-                tooltip.NineSlice:SetBorderColor(tooltipColor.r, tooltipColor.g, tooltipColor.b)
+                local azerite = C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or
+                                    C_AzeriteItem.IsAzeriteItemByID(itemLink) or false
+                local _, _, itemRarity = C_Item.GetItemInfo(itemLink)
+
+                if itemRarity and itemRarity >= 2 then
+                    local r, g, b = C_Item.GetItemQualityColor(itemRarity)
+                    tooltip.NineSlice:SetBorderColor(r, g, b, 0.9)
+                else
+                    tooltip.NineSlice:SetBorderColor(unpack(mUI:Color(0.15)))
+                end
             end
         end
     end
+end
 
-    function Style:FixTooltipTextures()
-        for i = 1, 30 do
-            local frame = _G["GameTooltipTexture" .. i]
-            if frame and frame:IsShown() then
-                frame:SetDrawLayer("BACKGROUND", 1)
-            end
+function Style:OnMacroTooltipSetColor(tooltip)
+    if not Style.db.style == "mUI" then
+        return
+    end
+
+    if mUI.db.profile.general.theme == "Disabled" then
+        return
+    end
+
+    if tooltip:GetTooltipData() and tooltip:GetTooltipData().lines and tooltip:GetTooltipData().lines[2] and
+        tooltip:GetTooltipData().lines[2].leftText and tooltip:GetTooltipData().lines[2].leftColor then
+        local tooltipData = tooltip:GetTooltipData()
+        local tooltipName = tooltipData.lines[2].leftText
+        local tooltipColor = tooltipData.lines[2].leftColor
+        local _, itemLink = C_Item.GetItemInfo(tooltipName)
+        if itemLink then
+            tooltip.NineSlice:SetBorderColor(tooltipColor.r, tooltipColor.g, tooltipColor.b)
+        end
+    end
+end
+
+function Style:FixTooltipTextures()
+    for i = 1, 30 do
+        local frame = _G["GameTooltipTexture" .. i]
+        if frame and frame:IsShown() then
+            frame:SetDrawLayer("BACKGROUND", 1)
         end
     end
 end
@@ -432,9 +384,8 @@ function Style:OnEnable()
             Style:FixTooltipTextures()
         end)
 
-<<<<<<< HEAD:Modules/Mainline/Tooltips/Style.lua
         Style.hooked = true
-=======
+
         Style:SecureHookScript(GameTooltip, "OnTooltipSetUnit", function(tooltip)
             Style:OnTooltipSetUnit(tooltip)
         end)
@@ -480,7 +431,6 @@ function Style:OnEnable()
 
             Style.hooked = true
         end
->>>>>>> 8199b4fe021e285074e487a7441bb1879e1fed59:Modules/Tooltips/Style.lua
     end
 
     Style:SecureHook(GameTooltipStatusBar, "SetStatusBarColor", function(frame, r, g, b)
