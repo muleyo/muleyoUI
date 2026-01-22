@@ -20,6 +20,10 @@ end
 
 function Overshields:OnEnable()
     Overshields:SecureHook("CompactUnitFrame_UpdateHealPrediction", function(frame)
+        -- Avoid triggering during combat when health values can be secret (12.0.0+)
+        if InCombatLockdown() then
+            return
+        end
         Overshields:Update(frame)
     end)
 end

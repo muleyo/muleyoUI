@@ -84,11 +84,17 @@ end
 
 function RF_Health:OnEnable()
     RF_Health:SecureHook("CompactUnitFrame_UpdateAuras", function(frame)
-        RF_Health:SetHealth(frame)
+        -- Avoid triggering during combat when health values can be secret (12.0.0+)
+        if not InCombatLockdown() then
+            RF_Health:SetHealth(frame)
+        end
     end)
 
     RF_Health:SecureHook("CompactUnitFrame_UpdateStatusText", function(frame)
-        RF_Health:SetHealth(frame)
+        -- Avoid triggering during combat when health values can be secret (12.0.0+)
+        if not InCombatLockdown() then
+            RF_Health:SetHealth(frame)
+        end
     end)
 
     RF_Health:Update()
