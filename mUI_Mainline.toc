@@ -1,6 +1,6 @@
 ## Interface: 120000
 ## Author: muleyo
-## Version: 3.0.1
+## Version: 3.0.2
 ## Title: |cff009cffmuleyo|r|cffffd100UI|r
 ## Notes: Unleash your real potential
 ## SavedVariables: mUIDB
