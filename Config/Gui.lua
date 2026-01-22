@@ -5,16 +5,16 @@ function Gui:OnInitialize()
     Gui.db = mUI.db.profile.gui
 
     -- Apply skinning
-    mUI:SkinCheckboxes()
-    mUI:SkinInlineGroups()
-    mUI:SkinDropdowns()
-    mUI:SkinSlider()
-    mUI:SkinEditBoxes()
-    mUI:SkinButtons()
+    -- mUI:SkinCheckboxes()
+    -- mUI:SkinInlineGroups()
+    -- mUI:SkinDropdowns()
+    -- mUI:SkinSlider()
+    -- mUI:SkinEditBoxes()
+    -- mUI:SkinButtons()
 
     -- Libraries
     local AceGUI = LibStub("AceGUI-3.0")
-    local ACD = LibStub("AceConfigDialog-3.0")
+    local ACD = LibStub("AceConfigDialog-3.0-mUI")
     local LSM = LibStub("LibSharedMedia-3.0")
     local font = LSM:Fetch('font', mUI.db.profile.general.font)
 
@@ -45,7 +45,7 @@ function Gui:OnInitialize()
 
     -- Make frame draggable
     Gui.frame:SetMovable(true)
-    Gui.frame:SetUserPlaced(true)
+    Gui.frame:SetUserPlaced(false)
     Gui.frame:SetClampedToScreen(true)
     Gui.frame:RegisterForDrag("LeftButton")
 

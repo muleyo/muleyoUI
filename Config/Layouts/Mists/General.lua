@@ -106,7 +106,7 @@ function General:OnInitialize()
                 desc = "Choose a Font you like\n\n|cffffff00Info:|r Requires Reload.",
                 type = "select",
                 values = General.LSM:HashTable("font"),
-                dialogControl = 'LSM30_Font',
+                dialogControl = 'mUI_LSM30_Font',
                 set = function(_, val)
                     mUI.db.profile.general.font = val
                     General.Module.Font:Update()

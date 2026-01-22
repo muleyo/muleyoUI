@@ -46,27 +46,15 @@ function RF_Textures:OnInitialize()
                 local texture = RF_Textures.LSM:Fetch('statusbar', RF_Textures.db.raidframes)
                 if RF_Textures.db.raidframes ~= "None" then
                     frame.healthBar:SetStatusBarTexture(texture)
-                    frame.healthBar:GetStatusBarTexture():SetDrawLayer("BORDER")
                     frame.powerBar:SetStatusBarTexture(texture)
-                    frame.powerBar:GetStatusBarTexture():SetDrawLayer("BORDER")
                     frame.myHealPrediction:SetTexture(texture)
                     frame.otherHealPrediction:SetTexture(texture)
                 else
                     frame.healthBar:SetStatusBarTexture(RF_Textures.defaultTextures.health)
-                    frame.healthBar:GetStatusBarTexture():SetDrawLayer("BORDER")
                     frame.powerBar:SetStatusBarTexture(RF_Textures.defaultTextures.power)
-                    frame.powerBar:GetStatusBarTexture():SetDrawLayer("BORDER")
                     frame.myHealPrediction:SetTexture(RF_Textures.defaultTextures.health)
                     frame.otherHealPrediction:SetTexture(RF_Textures.defaultTextures.health)
                 end
-
-                -- frame.selectionHighlight:SetTexture([[Interface\AddOns\mUI\Media\Textures\Raidframes\border.png]])
-                -- frame.aggroHighlight:SetTexture([[Interface\AddOns\mUI\Media\Textures\Raidframes\border.png]])
-
-                --[[frame.vertLeftBorder:Hide()
-                frame.vertRightBorder:Hide()
-                frame.horizTopBorder:Hide()
-                frame.horizBottomBorder:Hide()]]
             end
         end
     end

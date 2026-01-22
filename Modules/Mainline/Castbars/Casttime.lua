@@ -35,10 +35,9 @@ function Casttime:OnInitialize()
 
     function Casttime:Update(frame, elapsed)
         if frame.update and frame.update < elapsed then
-            if frame.casting then
-                frame.timer:SetText(format("%.1f", max(frame.maxValue - frame.value, 0)))
-            elseif frame.channeling then
-                frame.timer:SetText(format("%.1f", max(frame.value, 0)))
+            if frame.casting or frame.channeling then
+                local duration = UnitCastingDuration(frame.unit)
+                frame.timer:SetText(format("%.1f", duration:GetRemainingDuration()))
             else
                 frame.timer:SetText("")
             end
@@ -50,6 +49,10 @@ function Casttime:OnInitialize()
 end
 
 function Casttime:OnEnable()
+    Casttime:SecureHookScript(PlayerCastingBarFrame, "OnUpdate", function(frame, elapsed)
+        Casttime:Update(frame, elapsed)
+    end)
+
     Casttime:SecureHookScript(TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
         Casttime:Update(frame, elapsed)
     end)

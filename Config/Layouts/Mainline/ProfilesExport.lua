@@ -2,7 +2,7 @@ local ProfilesExport = mUI:NewModule("mUI.Config.Layouts.ProfilesExport")
 
 function ProfilesExport:OnInitialize()
     -- Load Libraries
-    local ACD = LibStub("AceConfigDialog-3.0")
+    local ACD = LibStub("AceConfigDialog-3.0-mUI")
 
     -- Get Modules
     ProfilesExport.Modules = mUI:GetModule("mUI.Modules.Profiles")

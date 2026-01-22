@@ -2,62 +2,62 @@ local Theme = mUI:GetModule("mUI.Modules.General.Theme")
 
 -- Buffs & Debuffs
 Theme.debuffColors = {
-    ["ui-debuff-border-default-noicon"] = {
+    ["UI-Debuff-Border-Default-NoIcon"] = {
         r = 0.80,
         g = 0,
         b = 0
     },
-    ["ui-debuff-border-bleed-noicon"] = {
+    ["UI-Debuff-Border-Bleed-NoIcon"] = {
         r = 0.80,
         g = 0,
         b = 0
     },
-    ["ui-debuff-border-poison-noicon"] = {
+    ["UI-Debuff-Border-Poison-NoIcon"] = {
         r = 0.00,
         g = 0.60,
         b = 0
     },
-    ["ui-debuff-border-disease-noicon"] = {
+    ["UI-Debuff-Border-Disease-NoIcon"] = {
         r = 0.60,
         g = 0.40,
         b = 0
     },
-    ["ui-debuff-border-curse-noicon"] = {
+    ["UI-Debuff-Border-Curse-NoIcon"] = {
         r = 0.60,
         g = 0.00,
         b = 1.00
     },
-    ["ui-debuff-border-magic-noicon"] = {
+    ["UI-Debuff-Border-Magic-NoIcon"] = {
         r = 0.20,
         g = 0.60,
         b = 1.00
     },
-    ["ui-debuff-border-default-icon"] = {
+    ["UI-Debuff-Border-Default-Icon"] = {
         r = 0.80,
         g = 0,
         b = 0
     },
-    ["ui-debuff-border-bleed-icon"] = {
+    ["UI-Debuff-Border-Bleed-Icon"] = {
         r = 0.80,
         g = 0,
         b = 0
     },
-    ["ui-debuff-border-poison-icon"] = {
+    ["UI-Debuff-Border-Poison-Icon"] = {
         r = 0.00,
         g = 0.60,
         b = 0
     },
-    ["ui-debuff-border-disease-icon"] = {
+    ["UI-Debuff-Border-Disease-Icon"] = {
         r = 0.60,
         g = 0.40,
         b = 0
     },
-    ["ui-debuff-border-curse-icon"] = {
+    ["UI-Debuff-Border-Curse-Icon"] = {
         r = 0.60,
         g = 0.00,
         b = 1.00
     },
-    ["ui-debuff-border-magic-icon"] = {
+    ["UI-Debuff-Border-Magic-Icon"] = {
         r = 0.20,
         g = 0.60,
         b = 1.00
@@ -198,7 +198,7 @@ function Theme:UpdatePlayerDebuffs()
 
             local atlas = frame.DebuffBorder:GetAtlas()
             if atlas then
-                local color = Theme.debuffColors[string.lower(frame.DebuffBorder:GetAtlas())]
+                local color = Theme.debuffColors[frame.DebuffBorder:GetAtlas()]
 
                 -- Set the color of the Debuff Border
                 frame.mUIBorder:SetVertexColor(color.r, color.g, color.b, 1)

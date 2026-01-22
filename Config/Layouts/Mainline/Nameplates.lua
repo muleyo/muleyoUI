@@ -3,7 +3,7 @@ local Nameplates = mUI:NewModule("mUI.Config.Layouts.Nameplates")
 function Nameplates:OnInitialize()
     -- Load Libraries
     Nameplates.LSM = LibStub("LibSharedMedia-3.0")
-    local ACD = LibStub("AceConfigDialog-3.0")
+    local ACD = LibStub("AceConfigDialog-3.0-mUI")
 
     -- Get Modules
     Nameplates.Module = mUI:GetModule("mUI.Modules.Nameplates")
@@ -48,7 +48,7 @@ function Nameplates:OnInitialize()
                 desc = "Select a Texture for the Nameplates",
                 type = "select",
                 values = Nameplates.LSM:HashTable("statusbar"),
-                dialogControl = 'LSM30_Statusbar',
+                dialogControl = 'mUI_LSM30_Status',
                 set = function(_, val)
                     mUI.db.profile.nameplates.texture = val
 

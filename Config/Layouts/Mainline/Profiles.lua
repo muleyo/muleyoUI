@@ -2,7 +2,7 @@ local Profiles = mUI:NewModule("mUI.Config.Layouts.Profiles")
 
 function Profiles:OnInitialize()
     -- Load Libraries
-    local ACD = LibStub("AceConfigDialog-3.0")
+    local ACD = LibStub("AceConfigDialog-3.0-mUI")
 
     -- Get Modules
     Profiles.Module = mUI:GetModule("mUI.Modules.Profiles")

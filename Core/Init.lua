@@ -7,7 +7,7 @@ mUI:SetDefaultModuleState(false)
 -- Register Slash Commands
 function mUI:OnInitialize()
     -- Load Libraries
-    local ACD = LibStub("AceConfigDialog-3.0")
+    local ACD = LibStub("AceConfigDialog-3.0-mUI")
 
     self:RegisterChatCommand("mui", "SlashCommand")
     self:RegisterChatCommand("rl", ReloadUI)

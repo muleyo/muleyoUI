@@ -48,7 +48,7 @@ function Unitframes:OnInitialize()
                 desc = "Select a Texture for the Unitframes (Player, Target, Focus, etc.)",
                 type = "select",
                 values = Unitframes.LSM:HashTable("statusbar"),
-                dialogControl = 'LSM30_Statusbar',
+                dialogControl = 'mUI_LSM30_Status',
                 set = function(_, val)
                     mUI.db.profile.unitframes.textures.unitframes = val
 
@@ -78,7 +78,7 @@ function Unitframes:OnInitialize()
                 desc = "Select a Texture for the Party / Raidframes",
                 type = "select",
                 values = Unitframes.LSM:HashTable("statusbar"),
-                dialogControl = 'LSM30_Statusbar',
+                dialogControl = 'mUI_LSM30_Status',
                 set = function(_, val)
                     mUI.db.profile.unitframes.textures.raidframes = val
 

@@ -39,28 +39,6 @@ function Misc:OnInitialize()
                 type = "header",
                 order = 2
             },
-            interrupt = {
-                name = "Interrupt Announce",
-                desc = "Announce successful Interrupts in Party/Raid/Instance Chat",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.misc.interrupt = val
-
-                    if not Misc.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val then
-                        Misc.Module.Interrupt:Enable()
-                    else
-                        Misc.Module.Interrupt:Disable()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.misc.interrupt
-                end,
-                order = 3
-            },
             menubutton = {
                 name = "Menu Button",
                 desc = "Show mUI Button on the ESC-Menu to open the Menu",
@@ -109,28 +87,6 @@ function Misc:OnInitialize()
                     return mUI.db.profile.misc.statusbar
                 end,
                 order = 6
-            },
-            dragonflying = {
-                name = "Dragonflying Wings",
-                desc = "Hide the Dragonflying Bar Wings",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.misc.dragonflying = val
-
-                    if not Misc.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val then
-                        Misc.Module.Dragonflying:Enable()
-                    else
-                        Misc.Module.Dragonflying:Disable()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.misc.dragonflying
-                end,
-                order = 7
             },
             buffcollapse = {
                 name = "Collapse Button",

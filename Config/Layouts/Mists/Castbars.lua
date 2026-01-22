@@ -72,7 +72,7 @@ function Castbars:OnInitialize()
                 name = "Castbar Texture",
                 desc = "Select a Texture for the Castbars",
                 type = "select",
-                dialogControl = "LSM30_Statusbar",
+                dialogControl = "mUI_LSM30_Status",
                 values = LibStub("LibSharedMedia-3.0"):HashTable("statusbar"),
                 set = function(_, val)
                     mUI.db.profile.castbars.texture = val

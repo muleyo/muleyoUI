@@ -166,8 +166,6 @@ function Theme:OnDisable()
     -- Update Theme
     Theme:Update()
 
-    Theme:StyleDragonriding()
-
     -- Unhook Frames
     Theme:UnhookAll()
 end

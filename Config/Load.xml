@@ -1,5 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Include file="AceSkin.lua" />
     <Include file="Gui.lua" />
     <Include file="Install.lua" />
 </Ui>

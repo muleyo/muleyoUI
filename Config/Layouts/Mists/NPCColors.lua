@@ -8,7 +8,7 @@ function NPCColors:OnInitialize()
     NPCColors.Health = mUI:GetModule("mUI.Modules.Nameplates.Health")
 
     -- Load Libraries
-    local ACD = LibStub("AceConfigDialog-3.0")
+    local ACD = LibStub("AceConfigDialog-3.0-mUI")
     local npcInfo = LibStub('LibNPCInfo')
 
     -- Initialize Layout

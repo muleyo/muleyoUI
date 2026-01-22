@@ -27,4 +27,5 @@
     <Include file="LibNPCInfo\lib.xml" />
     <Include file="LibEditMode\embed.xml" />
     <Include file="LibCustomGlow-1.0\LibCustomGlow-1.0.xml" />
+    <Include file="mUIConfig\Load.xml" />
 </Ui>

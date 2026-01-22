@@ -76,7 +76,7 @@ function Style:OnInitialize()
         end
 
         -- Get Unit
-        local unitName, unit = frame:GetUnit()
+        local _, unit = frame:GetUnit()
         if not unit then
             return
         end
@@ -88,18 +88,6 @@ function Style:OnInitialize()
                 end
             end
         end
-
-        -- Raid Icon (not working on current Alpha Build)
-        --[[if unit and GetRaidTargetIndex(unit) then
-            local raidIconIndex = GetRaidTargetIndex(unit)
-            if GetRaidTargetIndex(unit) == 16 then
-                GameTooltipTextLeft1:SetText(("%s"):format(unitName))
-            else
-                if raidIconIndex and ICON_LIST[raidIconIndex] then
-                    GameTooltipTextLeft1:SetText(("%s %s"):format(ICON_LIST[raidIconIndex] .. "14|t", unitName))
-                end
-            end
-        end]]
 
         -- Unit is Player
         if UnitIsPlayer(unit) then
@@ -336,7 +324,10 @@ function Style:OnEnable()
 
         -- Units
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, function(frame)
-            Style:OnTooltipSetUnit(frame)
+            local _, unit = frame:GetUnit()
+            if canaccessvalue(unit) then
+                Style:OnTooltipSetUnit(frame)
+            end
         end)
 
         -- Items
