@@ -5,7 +5,6 @@ function Theme:OnInitialize()
     Theme.db = mUI.db.profile.general
 
     -- Create Frames
-    Theme.dragonriding = CreateFrame("Frame")
     Theme.auras = CreateFrame("Frame")
     Theme.addons = CreateFrame("Frame")
 end
@@ -29,10 +28,10 @@ function Theme:OnEnable()
         Theme.auras:RegisterEvent("PLAYER_FOCUS_CHANGED")
         Theme.auras:RegisterEvent("WEAPON_ENCHANT_CHANGED")
         Theme.auras:RegisterUnitEvent("UNIT_AURA", "player", "target", "focus")
-        Theme:SecureHookScript(Theme.auras, "OnEvent", function()
+        Theme:SecureHookScript(Theme.auras, "OnEvent", function(_, _, _, info)
             -- Player Auras
             Theme:UpdatePlayerBuffs()
-            Theme:UpdatePlayerDebuffs()
+            -- Theme:UpdatePlayerDebuffs(info)
 
             -- Target Auras
             for aura in TargetFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do

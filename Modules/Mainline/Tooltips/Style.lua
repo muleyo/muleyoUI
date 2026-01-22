@@ -55,6 +55,9 @@ function Style:OnInitialize()
             return
         end
 
+        -- UnitIsPlayer alternative
+        -- GameTooltipTextLeft3:GetText():find("%(" .. PLAYER .. "%)")
+
         if UnitIsUnit(unit, "player") then
             return ("|cffff0000%s|r"):format("<YOU>")
         elseif UnitIsPlayer(unit) then
@@ -314,13 +317,13 @@ function Style:OnEnable()
         end)
 
         -- Auras
-        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.UnitAura, function(tooltip, data)
+        --[[TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.UnitAura, function(tooltip, data)
             if InCombatLockdown() then
                 return
             end
 
             Style:OnTooltipSetSpell(tooltip, data.id)
-        end)
+        end)]]
 
         -- Units
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, function(frame)

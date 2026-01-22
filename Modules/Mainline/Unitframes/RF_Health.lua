@@ -35,29 +35,31 @@ function RF_Health:OnInitialize()
             return
         end
         if frame:GetName() and frame.unit then
-            local name = frame:GetName()
-            if name and name:match("^Compact") then
-                local color = RAID_CLASS_COLORS[select(2, UnitClass(frame.unit))]
+            if not InCombatLockdown() then
+                local name = frame:GetName()
+                if name and name:match("^Compact") then
+                    local color = RAID_CLASS_COLORS[select(2, UnitClass(frame.unit))]
 
-                if not RF_Health.backup[1] then
-                    RF_Health.backup[1], RF_Health.backup[2], RF_Health.backup[3] = frame.statusText:GetFont()
-                    RF_Health.backup[4], RF_Health.backup[5], RF_Health.backup[6] = frame.statusText:GetTextColor()
-                end
+                    if not RF_Health.backup[1] then
+                        RF_Health.backup[1], RF_Health.backup[2], RF_Health.backup[3] = frame.statusText:GetFont()
+                        RF_Health.backup[4], RF_Health.backup[5], RF_Health.backup[6] = frame.statusText:GetTextColor()
+                    end
 
-                frame.statusText:ClearAllPoints()
-                frame.statusText:SetPoint("CENTER", frame, "CENTER", 0, -2.5)
+                    frame.statusText:ClearAllPoints()
+                    frame.statusText:SetPoint("CENTER", frame, "CENTER", 0, -2.5)
 
-                local frameWidth = frame:GetWidth()
-                local frameHeight = frame:GetHeight()
-                local scaleFactor = math.min(frameWidth / 100, frameHeight / 40)
-                local fontSize = math.max(12, math.min(16, 13 * scaleFactor))
+                    local frameWidth = frame:GetWidth()
+                    local frameHeight = frame:GetHeight()
+                    local scaleFactor = math.min(frameWidth / 100, frameHeight / 40)
+                    local fontSize = math.max(12, math.min(16, 13 * scaleFactor))
 
-                if RF_Health.db.healthcolor and color then
-                    frame.statusText:SetTextColor(color.r, color.g, color.b)
-                    frame.statusText:SetFont(STANDARD_TEXT_FONT, fontSize, "OUTLINE")
-                else
-                    frame.statusText:SetTextColor(1, 0.82, 0)
-                    frame.statusText:SetFont(STANDARD_TEXT_FONT, fontSize, "OUTLINE")
+                    if RF_Health.db.healthcolor and color then
+                        frame.statusText:SetTextColor(color.r, color.g, color.b)
+                        frame.statusText:SetFont(STANDARD_TEXT_FONT, fontSize, "OUTLINE")
+                    else
+                        frame.statusText:SetTextColor(1, 0.82, 0)
+                        frame.statusText:SetFont(STANDARD_TEXT_FONT, fontSize, "OUTLINE")
+                    end
                 end
             end
         end

@@ -35,9 +35,20 @@ function Casttime:OnInitialize()
 
     function Casttime:Update(frame, elapsed)
         if frame.update and frame.update < elapsed then
-            if frame.casting or frame.channeling then
+            if frame.casting then
                 local duration = UnitCastingDuration(frame.unit)
-                frame.timer:SetText(format("%.1f", duration:GetRemainingDuration()))
+                if duration then
+                    frame.timer:SetText(format("%.1f", duration:GetRemainingDuration()))
+                else
+                    frame.timer:SetText("")
+                end
+            elseif frame.channeling then
+                local duration = UnitChannelDuration(frame.unit)
+                if duration then
+                    frame.timer:SetText(format("%.1f", duration:GetRemainingDuration()))
+                else
+                    frame.timer:SetText("")
+                end
             else
                 frame.timer:SetText("")
             end

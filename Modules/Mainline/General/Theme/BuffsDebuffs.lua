@@ -260,7 +260,6 @@ function Theme:UpdateRaidframeAuras(aura)
         aura.mUIBorder:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border.png]])
         aura.mUIBorder:SetPoint("TOPLEFT", aura.icon, "TOPLEFT", -1, 1)
         aura.mUIBorder:SetPoint("BOTTOMRIGHT", aura.icon, "BOTTOMRIGHT", 1, -1)
-        aura.sizeX, aura.sizeY = aura.icon:GetSize()
         if aura.border then
             local r, g, b = aura.border:GetVertexColor()
             aura.mUIBorder:SetVertexColor(r, g, b, 1)
@@ -289,6 +288,7 @@ function Theme:UpdateRaidframeAuras(aura)
             aura.border:Hide()
         else
             aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
+            aura:SetSize(22, 22)
         end
     end
 end
