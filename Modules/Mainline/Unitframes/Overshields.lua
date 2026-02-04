@@ -81,10 +81,13 @@ function Overshields:OnInitialize()
         absorbBar:SetAlpha(alpha) -- Hide when at 100% health
 
         -- Anchor the LEFT side to the RIGHT edge of health, so it grows rightward
+        local defaultWidth = 72
+        local frameWidth = EditModeManagerFrame:GetRaidFrameWidth(Enum.EditModeUnitFrameSystemIndices.Party,
+            defaultWidth) - 2
         absorbBar:ClearAllPoints()
         absorbBar:SetPoint("TOPRIGHT", healthBar:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
         absorbBar:SetPoint("BOTTOMRIGHT", healthBar:GetStatusBarTexture(), "BOTTOMLEFT", 0, 0)
-        absorbBar:SetWidth(healthBar:GetWidth())
+        absorbBar:SetWidth(frameWidth)
 
         absorbBar:Show()
 

@@ -166,20 +166,24 @@ function Style:SetupScrollButtons(chatFrame)
     end
 
     -- Create scroll up button (state 4)
-    chatFrame.mUIScrollUpButton = Style:CreateScrollButton(chatFrame, 4)
-    chatFrame.mUIScrollUpButton:SetPoint("TOPRIGHT", chatFrame, "TOPRIGHT", -4, -4)
-    chatFrame.mUIScrollUpButton:SetParent(chatFrame)
-
-    -- Create scroll down button (state 3)  
-    chatFrame.mUIScrollDownButton = Style:CreateScrollButton(chatFrame, 3)
-    chatFrame.mUIScrollDownButton:SetPoint("TOPRIGHT", chatFrame.mUIScrollUpButton, "BOTTOMRIGHT", 0, -4)
-    chatFrame.mUIScrollDownButton:SetParent(chatFrame)
-
-    -- Create scroll to bottom button (state 1) - positioned below scroll down button
+    -- Create scroll to bottom button (state 1) - positioned at bottom with small padding
     chatFrame.mUIScrollToBottomButton = Style:CreateScrollToBottomButton(chatFrame)
-    chatFrame.mUIScrollToBottomButton:SetPoint("TOPRIGHT", chatFrame.mUIScrollDownButton, "BOTTOMRIGHT", 0, -4)
+    chatFrame.mUIScrollToBottomButton:SetPoint("BOTTOMRIGHT", chatFrame, "BOTTOMRIGHT", -4, 4)
     chatFrame.mUIScrollToBottomButton:SetParent(chatFrame)
+    chatFrame.mUIScrollToBottomButton:SetFrameLevel(chatFrame:GetFrameLevel() + 10)
     chatFrame.mUIScrollToBottomButton:Hide()
+
+    -- Create scroll down button (state 3) - positioned above scroll to bottom button
+    chatFrame.mUIScrollDownButton = Style:CreateScrollButton(chatFrame, 3)
+    chatFrame.mUIScrollDownButton:SetPoint("BOTTOMRIGHT", chatFrame.mUIScrollToBottomButton, "TOPRIGHT", 0, 4)
+    chatFrame.mUIScrollDownButton:SetParent(chatFrame)
+    chatFrame.mUIScrollDownButton:SetFrameLevel(chatFrame:GetFrameLevel() + 10)
+
+    -- Create scroll up button (state 4) - positioned above scroll down button
+    chatFrame.mUIScrollUpButton = Style:CreateScrollButton(chatFrame, 4)
+    chatFrame.mUIScrollUpButton:SetPoint("BOTTOMRIGHT", chatFrame.mUIScrollDownButton, "TOPRIGHT", 0, 4)
+    chatFrame.mUIScrollUpButton:SetParent(chatFrame)
+    chatFrame.mUIScrollUpButton:SetFrameLevel(chatFrame:GetFrameLevel() + 10)
 
     -- Hook scroll events to show/hide ScrollToBottom button
     chatFrame:HookScript("OnMouseWheel", function(self)
@@ -200,8 +204,8 @@ function Style:SetupScrollButtons(chatFrame)
                 self:ScrollDown()
             end
 
-            -- Update ScrollToBottom button visibility
-            if self.mUIScrollToBottomButton and Style.db.buttons.up_and_down then
+            -- Update ScrollToBottom button visibility - always show when not at bottom
+            if self.mUIScrollToBottomButton then
                 if self:AtBottom() then
                     Style:FadeOut(self.mUIScrollToBottomButton, 0, 0.2, function()
                         self.mUIScrollToBottomButton:Hide()
