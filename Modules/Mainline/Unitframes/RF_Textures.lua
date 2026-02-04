@@ -40,6 +40,7 @@ function RF_Textures:OnInitialize()
         if frame and frame:IsForbidden() then
             return
         end
+
         if frame and frame:GetName() then
             local name = frame:GetName()
             if name and name:match("^Compact") then
@@ -63,6 +64,24 @@ function RF_Textures:OnInitialize()
         end
     end
 
+    function RF_Textures:UpdatePowerColor(frame)
+        if frame and frame:IsForbidden() then
+            return
+        end
+
+        if frame and frame:GetName() then
+            local name = frame:GetName()
+            if name and name:match("^Compact") then
+                local _, powerType = UnitPowerType(frame.unit)
+                local color = PowerBarColor[powerType]
+
+                if powerType == "MANA" and color then
+                    frame.powerBar:SetStatusBarColor(0, 0.50196081399918, 1, 1)
+                end
+            end
+        end
+    end
+
     function RF_Textures:Update()
         for _, frame in pairs(RF_Textures.frames) do
             RF_Textures:SetTextures(_G["Compact" .. frame])
@@ -73,6 +92,10 @@ end
 function RF_Textures:OnEnable()
     RF_Textures:SecureHook("CompactUnitFrame_UpdateHealthColor", function(frame)
         RF_Textures:SetTextures(frame)
+    end)
+
+    RF_Textures:SecureHook("CompactUnitFrame_UpdatePowerColor", function(frame)
+        RF_Textures:UpdatePowerColor(frame)
     end)
 end
 
