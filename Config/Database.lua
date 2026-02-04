@@ -112,7 +112,8 @@ local defaults = {
                     width = 100,
                     height = 75
                 },
-                aurasize = 22,
+                aurasizeParty = 22,
+                aurasizeRaid = 15,
                 darkmode = false,
                 health = false,
                 healthcolor = false,

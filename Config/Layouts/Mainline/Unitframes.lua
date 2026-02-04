@@ -719,18 +719,33 @@ function Unitframes:OnInitialize()
                 end,
                 order = 37
             },
-            aurasize = {
-                name = "Buff Size",
+            aurasizeParty = {
+                name = "Buff Size (Party)",
                 desc = "Set the Size of Buffs on Raidframes",
                 type = "range",
                 min = 0,
                 max = 30,
                 step = 1,
                 set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.aurasize = val
+                    mUI.db.profile.unitframes.raidframes.aurasizeParty = val
                 end,
                 get = function()
-                    return mUI.db.profile.unitframes.raidframes.aurasize
+                    return mUI.db.profile.unitframes.raidframes.aurasizeParty
+                end,
+                order = 38
+            },
+            aurasizeRaid = {
+                name = "Buff Size (Raid)",
+                desc = "Set the Size of Buffs on Raidframes",
+                type = "range",
+                min = 0,
+                max = 30,
+                step = 1,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.aurasizeRaid = val
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.aurasizeRaid
                 end,
                 order = 38
             }
