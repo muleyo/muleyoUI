@@ -16,7 +16,7 @@ local function chatTab_SetPoint(self, _, anchor, _, _, _, shouldIgnore)
 end
 
 local function chatTab_OnDragStart(self)
-    local frame = Style:GetSlidingFrameForChatFrame(_G["ChatFrame" .. self:GetID()])
+    local frame = _G["ChatFrame" .. self:GetID()]
     if frame then
         frame.isDragging = true
     end
@@ -54,6 +54,13 @@ function Style:HandleChatTab(frame)
         Style:SecureHookScript(frame, "OnDragStart", chatTab_OnDragStart)
         Style:SecureHook(frame.Text, "SetPoint", chatTabText_SetPoint)
         Style:SecureHook(frame.Text, "SetTextColor", chatTabText_SetTextColor)
+        
+        -- Hook tab click to update fonts when switching tabs
+        Style:SecureHookScript(frame, "OnClick", function(self)
+            C_Timer.After(0, function()
+                Style:UpdateMessageFonts()
+            end)
+        end)
 
         handledTabs[frame] = true
     end
@@ -191,7 +198,7 @@ end
 
 function Style:EnableDragHook()
     Style:SecureHook("FCFTab_OnDragStop", function(self)
-        local frame = Style:GetSlidingFrameForChatFrame(_G["ChatFrame" .. self:GetID()])
+        local frame = _G["ChatFrame" .. self:GetID()]
         if frame then
             if frame.isMouseOver then
                 frame.isMouseOver = nil

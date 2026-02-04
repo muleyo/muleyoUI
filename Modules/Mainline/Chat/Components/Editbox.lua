@@ -24,18 +24,18 @@ function Style:HandleEditBox(frame)
     frame:ClearAllPoints()
 
     if Style.db.edit.position == "top" then
-        frame:SetPoint("TOPLEFT", frame.chatFrame, "TOPLEFT", 0, Style.db.edit.offset)
-        frame:SetPoint("TOPRIGHT", frame.chatFrame, "TOPRIGHT", 0, Style.db.edit.offset)
+        frame:SetPoint("TOPLEFT", frame.chatFrame, "TOPLEFT", -4, Style.db.edit.offset)
+        frame:SetPoint("TOPRIGHT", frame.chatFrame, "TOPRIGHT", 4, Style.db.edit.offset)
     else
-        frame:SetPoint("BOTTOMLEFT", frame.chatFrame, "BOTTOMLEFT", 0, -Style.db.edit.offset)
-        frame:SetPoint("BOTTOMRIGHT", frame.chatFrame, "BOTTOMRIGHT", 0, -Style.db.edit.offset)
+        frame:SetPoint("BOTTOMLEFT", frame.chatFrame, "BOTTOMLEFT", -4, -Style.db.edit.offset)
+        frame:SetPoint("BOTTOMRIGHT", frame.chatFrame, "BOTTOMRIGHT", 4, -Style.db.edit.offset)
     end
 
-    frame:SetFontObject("mUIEditBoxFont")
+    --[[frame:SetFontObject("mUIEditBoxFont")
     frame.header:SetFontObject("mUIEditBoxFont")
     frame.headerSuffix:SetFontObject("mUIEditBoxFont")
     frame.NewcomerHint:SetFontObject("mUIEditBoxFont")
-    frame.prompt:SetFontObject("mUIEditBoxFont")
+    frame.prompt:SetFontObject("mUIEditBoxFont")]]
 end
 
 function Style:UpdateEditBoxPosition()
@@ -46,11 +46,11 @@ function Style:UpdateEditBoxPosition()
         editBox:ClearAllPoints()
 
         if isOnTop then
-            editBox:SetPoint("TOPLEFT", editBox.chatFrame, "TOPLEFT", 0, offset)
-            editBox:SetPoint("TOPRIGHT", editBox.chatFrame, "TOPRIGHT", 0, offset)
+            editBox:SetPoint("TOPLEFT", editBox.chatFrame, "TOPLEFT", -4, offset)
+            editBox:SetPoint("TOPRIGHT", editBox.chatFrame, "TOPRIGHT", 4, offset)
         else
-            editBox:SetPoint("BOTTOMLEFT", editBox.chatFrame, "BOTTOMLEFT", 0, -offset)
-            editBox:SetPoint("BOTTOMRIGHT", editBox.chatFrame, "BOTTOMRIGHT", 0, -offset)
+            editBox:SetPoint("BOTTOMLEFT", editBox.chatFrame, "BOTTOMLEFT", -4, -offset)
+            editBox:SetPoint("BOTTOMRIGHT", editBox.chatFrame, "BOTTOMRIGHT", 4, -offset)
         end
     end
 end

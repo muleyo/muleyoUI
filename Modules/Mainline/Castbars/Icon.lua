@@ -15,13 +15,11 @@ function Icon:OnEnable()
     PlayerCastingBarFrame.Icon:Show()
     PlayerCastingBarFrame.Icon:SetSize(20, 20)
 
-    if Icon.db.theme ~= "Disabled" then
-        C_Timer.After(0.1, function()
-            if PlayerCastingBarFrame.mUIBorder then
-                PlayerCastingBarFrame.mUIBorder:Show()
-            end
-        end)
-    end
+    C_Timer.After(0.1, function()
+        if PlayerCastingBarFrame.mUIBorder then
+            PlayerCastingBarFrame.mUIBorder:Show()
+        end
+    end)
 end
 
 function Icon:OnDisable()

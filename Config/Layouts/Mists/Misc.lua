@@ -61,6 +61,18 @@ function Misc:OnInitialize()
                 end,
                 order = 3
             },
+            skinmenu = {
+                name = "Skin Menu Buttons",
+                desc = "Skin ESC-Menu Buttons to match mUI theme",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.misc.skinmenu = val
+                end,
+                get = function()
+                    return mUI.db.profile.misc.skinmenu
+                end,
+                order = 4
+            },
             menubutton = {
                 name = "Menu Button",
                 desc = "Show mUI Button on the ESC-Menu to open the Menu",
@@ -81,7 +93,7 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.menubutton
                 end,
-                order = 4
+                order = 5
             },
             fastloot = {
                 name = "Fast Loot",
@@ -103,12 +115,12 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.fastloot
                 end,
-                order = 5
+                order = 6
             },
             header2 = {
                 name = "Hide Frames",
                 type = "header",
-                order = 6
+                order = 7
             },
             gryphons = {
                 name = "Hide Gryphons",
@@ -130,12 +142,12 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.gryphons
                 end,
-                order = 7
+                order = 8
             },
             header3 = {
                 name = "PvP Options",
                 type = "header",
-                order = 8
+                order = 9
             },
             tabbinder = {
                 name = "Tab Binder",
@@ -157,7 +169,7 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.tabbinder
                 end,
-                order = 9
+                order = 10
             },
             dampening = {
                 name = "Dampening",
@@ -179,7 +191,7 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.dampening
                 end,
-                order = 10
+                order = 11
             },
             safequeue = {
                 name = "Safe Queue",
@@ -201,7 +213,7 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.safequeue
                 end,
-                order = 11
+                order = 12
             },
             losecontrol = {
                 name = "LoseControl",
@@ -223,7 +235,7 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.losecontrol
                 end,
-                order = 12
+                order = 13
             }
         }
     }
