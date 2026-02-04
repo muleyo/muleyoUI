@@ -64,6 +64,15 @@ Theme.debuffColors = {
     }
 }
 
+Theme.colorCurve = C_CurveUtil.CreateColorCurve()
+Theme.colorCurve:SetType(Enum.LuaCurveType.Step)
+Theme.colorCurve:AddPoint(0, DEBUFF_TYPE_NONE_COLOR)
+Theme.colorCurve:AddPoint(1, DEBUFF_TYPE_MAGIC_COLOR)
+Theme.colorCurve:AddPoint(2, DEBUFF_TYPE_CURSE_COLOR)
+Theme.colorCurve:AddPoint(3, DEBUFF_TYPE_DISEASE_COLOR)
+Theme.colorCurve:AddPoint(4, DEBUFF_TYPE_POISON_COLOR)
+Theme.colorCurve:AddPoint(11, DEBUFF_TYPE_BLEED_COLOR)
+
 Theme.aurabuttons = {}
 
 function Theme:UpdateDuration(aura, timeLeft)
@@ -188,7 +197,6 @@ function Theme:UpdatePlayerDebuffs()
 
     for index, child in pairs(Children) do
         local frame = select(index, DebuffFrame.AuraContainer:GetChildren())
-
         if not frame.mUIBorder then
             Theme:ButtonDefault(frame, true)
         end
@@ -196,9 +204,10 @@ function Theme:UpdatePlayerDebuffs()
         if frame.DebuffBorder then
             frame.DebuffBorder:Hide()
 
-            local atlas = frame.DebuffBorder:GetAtlas()
-            if atlas then
-                local color = Theme.debuffColors[frame.DebuffBorder:GetAtlas()]
+            local auraData = C_UnitAuras.GetDebuffDataByIndex("player", index)
+
+            if auraData and auraData.auraInstanceID then
+                local color = C_UnitAuras.GetAuraDispelTypeColor("player", auraData.auraInstanceID, Theme.colorCurve)
 
                 -- Set the color of the Debuff Border
                 frame.mUIBorder:SetVertexColor(color.r, color.g, color.b, 1)
@@ -375,8 +384,8 @@ function Theme:AuraPositions()
             end
         end
 
-        if DebuffFrame.auraFrames[i].DebuffBorder then
+        --[[if DebuffFrame.auraFrames[i].DebuffBorder then
             DebuffFrame.auraFrames[i].DebuffBorder:SetAlpha(0)
-        end
+        end]]
     end
 end
