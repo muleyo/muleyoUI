@@ -3,27 +3,31 @@ local SmoothHealth = mUI:NewModule("mUI.Modules.Unitframes.SmoothHealth", "AceHo
 function SmoothHealth:OnInitialize()
     self.updating = {}
 
-    function SmoothHealth:Raidframes(frame)
-        if not (frame and frame.unit) or frame:IsForbidden() then
-            return
-        end
-
-        if frame.healthBar and not self.updating[frame.healthBar] then
-            self.updating[frame.healthBar] = true
+    function SmoothHealth:Raidframes_Health(frame)
+        if frame.healthBar then
             frame.healthBar:SetValue(UnitHealth(frame.unit), 1)
-            self.updating[frame.healthBar] = nil
         end
     end
 
-    function SmoothHealth:Unitframes(frame)
-        if not (frame and frame.unit) or frame:IsForbidden() then
-            return
+    function SmoothHealth:Raidframes_Power(frame)
+        if frame.powerBar then
+            frame.powerBar:SetValue(UnitPower(frame.unit), 1)
         end
+    end
 
+    function SmoothHealth:Unitframes_Health(frame)
         if frame.healthbar and not self.updating[frame.healthbar] then
             self.updating[frame.healthbar] = true
             frame.healthbar:SetValue(UnitHealth(frame.unit), 1)
             self.updating[frame.healthbar] = nil
+        end
+    end
+
+    function SmoothHealth:Unitframes_Power(frame)
+        if frame.manabar and not self.updating[frame.manabar] then
+            self.updating[frame.manabar] = true
+            frame.manabar:SetValue(UnitPower(frame.unit), 1)
+            self.updating[frame.manabar] = nil
         end
     end
 end
@@ -36,20 +40,46 @@ function SmoothHealth:OnEnable()
         local name = frame:GetName()
 
         if name and name:match("^Compact") then
-            SmoothHealth:Raidframes(frame)
+            SmoothHealth:Raidframes_Health(frame)
         end
     end)
 
+    SmoothHealth:SecureHook("CompactUnitFrame_UpdatePower", function(frame)
+        if not frame or frame:IsForbidden() then
+            return
+        end
+        local name = frame:GetName()
+
+        if name and name:match("^Compact") then
+            SmoothHealth:Raidframes_Power(frame)
+        end
+    end)
+
+    -- Player
     SmoothHealth:SecureHook(PlayerFrame.healthbar, "SetValue", function()
-        SmoothHealth:Unitframes(PlayerFrame)
+        SmoothHealth:Unitframes_Health(PlayerFrame)
     end)
 
+    SmoothHealth:SecureHook(PlayerFrame.manabar, "SetValue", function()
+        SmoothHealth:Unitframes_Power(PlayerFrame)
+    end)
+
+    -- Target
     SmoothHealth:SecureHook(TargetFrame.healthbar, "SetValue", function()
-        SmoothHealth:Unitframes(TargetFrame)
+        SmoothHealth:Unitframes_Health(TargetFrame)
     end)
 
+    SmoothHealth:SecureHook(TargetFrame.manabar, "SetValue", function()
+        SmoothHealth:Unitframes_Power(TargetFrame)
+    end)
+
+    -- Focus
     SmoothHealth:SecureHook(FocusFrame.healthbar, "SetValue", function()
-        SmoothHealth:Unitframes(FocusFrame)
+        SmoothHealth:Unitframes_Health(FocusFrame)
+    end)
+
+    SmoothHealth:SecureHook(FocusFrame.manabar, "SetValue", function()
+        SmoothHealth:Unitframes_Power(FocusFrame)
     end)
 end
 
