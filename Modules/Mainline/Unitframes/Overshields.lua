@@ -1,6 +1,7 @@
 local Overshields = mUI:NewModule("mUI.Modules.Unitframes.Overshields", "AceHook-3.0")
 
 function Overshields:OnInitialize()
+    Overshields.orientation = nil
     -- No calculator needed - we use UnitGetTotalAbsorbs directly
 
     function Overshields:CreateAbsorbBar(frame)
@@ -9,7 +10,7 @@ function Overshields:OnInitialize()
         end
 
         -- Create a real StatusBar - it can handle secret values internally
-        local absorbBar = CreateFrame("StatusBar", nil, frame.healthBar)
+        local absorbBar = CreateFrame("StatusBar", nil, frame)
         local texture = absorbBar:CreateTexture(nil, "BORDER")
         texture:SetTexture("Interface\\RaidFrame\\Shield-Overlay", true, true)
         texture:SetAllPoints()
@@ -17,8 +18,6 @@ function Overshields:OnInitialize()
         absorbBar:GetStatusBarTexture():SetHorizTile(true)
         absorbBar:GetStatusBarTexture():SetVertTile(true)
         absorbBar:SetStatusBarColor(1, 1, 1, 1)
-        absorbBar:SetFrameStrata("LOW")
-        absorbBar:SetFrameLevel(frame.healthBar:GetFrameLevel() + 1)
 
         frame.mUIAbsorbBar = absorbBar
 
@@ -60,28 +59,17 @@ function Overshields:OnInitialize()
         -- Get health max value for the bar scale
         local _, maxHealth = healthBar:GetMinMaxValues()
 
-        -- Get dimensions for positioning
-        local barWidth, barHeight = healthBar:GetSize()
-        local orientation = healthBar:GetOrientation()
-
         -- Configure the StatusBar - it handles secret values internally
-        absorbBar:SetOrientation(orientation)
+        absorbBar:SetOrientation("HORIZONTAL")
         absorbBar:SetReverseFill(true) -- Fill from right to left (or top to bottom)
         absorbBar:SetMinMaxValues(0, maxHealth) -- Pass secret value directly, no arithmetic!
         absorbBar:SetValue(absorbAmount, 1) -- Pass absorb amount directly
 
-        if orientation == "HORIZONTAL" then
-            -- Don't set size, let anchoring control it
-            absorbBar:ClearAllPoints()
-            absorbBar:SetPoint("TOPRIGHT", healthBar, "TOPRIGHT", 0, -1)
-            absorbBar:SetPoint("BOTTOMRIGHT", healthBar, "BOTTOMRIGHT", 0, 1)
-            absorbBar:SetPoint("LEFT", healthBar, "LEFT", 0, 0) -- Stretch full width
-        else
-            absorbBar:ClearAllPoints()
-            absorbBar:SetPoint("TOPLEFT", healthBar, "TOPLEFT", 0, -1)
-            absorbBar:SetPoint("TOPRIGHT", healthBar, "TOPRIGHT", 0, -1)
-            absorbBar:SetPoint("BOTTOM", healthBar, "BOTTOM", 0, 1) -- Stretch full height
-        end
+        -- Don't set size, let anchoring control it
+        absorbBar:ClearAllPoints()
+        absorbBar:SetPoint("TOPRIGHT", healthBar, "TOPRIGHT", 0, 0)
+        absorbBar:SetPoint("BOTTOMRIGHT", healthBar, "BOTTOMRIGHT", 0, 0)
+        absorbBar:SetPoint("LEFT", healthBar, "LEFT", 0, 0) -- Stretch full width
 
         absorbBar:Show()
     end
