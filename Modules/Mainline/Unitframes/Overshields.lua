@@ -1,8 +1,15 @@
 local Overshields = mUI:NewModule("mUI.Modules.Unitframes.Overshields", "AceHook-3.0")
 
 function Overshields:OnInitialize()
-    Overshields.orientation = nil
-    -- No calculator needed - we use UnitGetTotalAbsorbs directly
+    Overshields.calculator = CreateUnitHealPredictionCalculator()
+
+    -- Curve that returns 1 when health is below 100%, and 0 when at 100%
+    -- X is health percentage (0-1), Y is the alpha value
+    Overshields.curve = C_CurveUtil.CreateCurve()
+    Overshields.curve:SetType(Enum.LuaCurveType.Linear)
+    Overshields.curve:AddPoint(0, 0) -- At 0% health, show (alpha = 1)
+    Overshields.curve:AddPoint(0.98, 0) -- At 99% health, show (alpha = 1)
+    Overshields.curve:AddPoint(1, 1) -- At 100% health, hide (alpha = 0)
 
     function Overshields:CreateAbsorbBar(frame)
         if frame.mUIAbsorbBar then
@@ -38,7 +45,7 @@ function Overshields:OnInitialize()
             return
         end
 
-        local unit = frame.displayedUnit
+        local unit = frame.unit
         local healthBar = frame.healthBar
 
         if not healthBar or not UnitExists(unit) then
@@ -53,25 +60,35 @@ function Overshields:OnInitialize()
             frame.overAbsorbGlow:Hide()
         end
 
-        -- Get absorb amount directly - no Calculator needed
-        local absorbAmount = UnitGetTotalAbsorbs(unit) or 0
-
         -- Get health max value for the bar scale
         local _, maxHealth = healthBar:GetMinMaxValues()
 
+        -- Use UnitGetDetailedHealPrediction to populate the calculator
+        UnitGetDetailedHealPrediction(unit, nil, Overshields.calculator)
+
+        -- Get absorb amount from the calculator
+        Overshields.calculator:SetDamageAbsorbClampMode(Enum.UnitDamageAbsorbClampMode.MaximumHealth)
+        local absorbAmount = Overshields.calculator:GetDamageAbsorbs()
+
+        -- Use curve to get alpha value (1 if health < 100%, 0 if health = 100%)
+        local alpha = UnitHealthPercent(unit, true, Overshields.curve)
+
         -- Configure the StatusBar - it handles secret values internally
         absorbBar:SetOrientation("HORIZONTAL")
-        absorbBar:SetReverseFill(true) -- Fill from right to left (or top to bottom)
+        absorbBar:SetReverseFill(true) -- Fill from right to left
         absorbBar:SetMinMaxValues(0, maxHealth) -- Pass secret value directly, no arithmetic!
         absorbBar:SetValue(absorbAmount, 1) -- Pass absorb amount directly
+        absorbBar:SetAlpha(alpha) -- Hide when at 100% health
 
-        -- Don't set size, let anchoring control it
+        -- Anchor the LEFT side to the RIGHT edge of health, so it grows rightward
         absorbBar:ClearAllPoints()
-        absorbBar:SetPoint("TOPRIGHT", healthBar, "TOPRIGHT", 0, 0)
-        absorbBar:SetPoint("BOTTOMRIGHT", healthBar, "BOTTOMRIGHT", 0, 0)
-        absorbBar:SetPoint("LEFT", healthBar, "LEFT", 0, 0) -- Stretch full width
+        absorbBar:SetPoint("TOPRIGHT", healthBar:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
+        absorbBar:SetPoint("BOTTOMRIGHT", healthBar:GetStatusBarTexture(), "BOTTOMLEFT", 0, 0)
+        absorbBar:SetWidth(healthBar:GetWidth())
 
         absorbBar:Show()
+
+        absorbBar:SetAlpha(alpha)
     end
 end
 
