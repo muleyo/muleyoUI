@@ -1154,7 +1154,17 @@ function Theme:GameMenu()
                      "mUI_EditModeButton", "mUI_MenuButton"}
 
     for _, button in pairs(buttons) do
-        mUI:Skin({_G[button].Left, _G[button].Middle, _G[button].Right}, true)
+        if mUI.db.profile.misc.skinmenu then
+            mUI:Skin({_G[button].Left, _G[button].Middle, _G[button].Right}, true)
+        else
+            _G[button].Left:SetDesaturated(false)
+            _G[button].Middle:SetDesaturated(false)
+            _G[button].Right:SetDesaturated(false)
+
+            _G[button].Left:SetVertexColor(1, 1, 1, 1)
+            _G[button].Middle:SetVertexColor(1, 1, 1, 1)
+            _G[button].Right:SetVertexColor(1, 1, 1, 1)
+        end
     end
 end
 

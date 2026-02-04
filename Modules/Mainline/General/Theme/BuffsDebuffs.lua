@@ -1,68 +1,14 @@
 local Theme = mUI:GetModule("mUI.Modules.General.Theme")
 
 -- Buffs & Debuffs
-Theme.debuffColors = {
-    ["UI-Debuff-Border-Default-NoIcon"] = {
-        r = 0.80,
-        g = 0,
-        b = 0
-    },
-    ["UI-Debuff-Border-Bleed-NoIcon"] = {
-        r = 0.80,
-        g = 0,
-        b = 0
-    },
-    ["UI-Debuff-Border-Poison-NoIcon"] = {
-        r = 0.00,
-        g = 0.60,
-        b = 0
-    },
-    ["UI-Debuff-Border-Disease-NoIcon"] = {
-        r = 0.60,
-        g = 0.40,
-        b = 0
-    },
-    ["UI-Debuff-Border-Curse-NoIcon"] = {
-        r = 0.60,
-        g = 0.00,
-        b = 1.00
-    },
-    ["UI-Debuff-Border-Magic-NoIcon"] = {
-        r = 0.20,
-        g = 0.60,
-        b = 1.00
-    },
-    ["UI-Debuff-Border-Default-Icon"] = {
-        r = 0.80,
-        g = 0,
-        b = 0
-    },
-    ["UI-Debuff-Border-Bleed-Icon"] = {
-        r = 0.80,
-        g = 0,
-        b = 0
-    },
-    ["UI-Debuff-Border-Poison-Icon"] = {
-        r = 0.00,
-        g = 0.60,
-        b = 0
-    },
-    ["UI-Debuff-Border-Disease-Icon"] = {
-        r = 0.60,
-        g = 0.40,
-        b = 0
-    },
-    ["UI-Debuff-Border-Curse-Icon"] = {
-        r = 0.60,
-        g = 0.00,
-        b = 1.00
-    },
-    ["UI-Debuff-Border-Magic-Icon"] = {
-        r = 0.20,
-        g = 0.60,
-        b = 1.00
-    }
-}
+Theme.colorCurve = C_CurveUtil.CreateColorCurve()
+Theme.colorCurve:SetType(Enum.LuaCurveType.Step)
+Theme.colorCurve:AddPoint(0, DEBUFF_TYPE_NONE_COLOR)
+Theme.colorCurve:AddPoint(1, DEBUFF_TYPE_MAGIC_COLOR)
+Theme.colorCurve:AddPoint(2, DEBUFF_TYPE_CURSE_COLOR)
+Theme.colorCurve:AddPoint(3, DEBUFF_TYPE_DISEASE_COLOR)
+Theme.colorCurve:AddPoint(4, DEBUFF_TYPE_POISON_COLOR)
+Theme.colorCurve:AddPoint(11, DEBUFF_TYPE_BLEED_COLOR)
 
 Theme.aurabuttons = {}
 
@@ -188,7 +134,6 @@ function Theme:UpdatePlayerDebuffs()
 
     for index, child in pairs(Children) do
         local frame = select(index, DebuffFrame.AuraContainer:GetChildren())
-
         if not frame.mUIBorder then
             Theme:ButtonDefault(frame, true)
         end
@@ -196,9 +141,10 @@ function Theme:UpdatePlayerDebuffs()
         if frame.DebuffBorder then
             frame.DebuffBorder:Hide()
 
-            local atlas = frame.DebuffBorder:GetAtlas()
-            if atlas then
-                local color = Theme.debuffColors[frame.DebuffBorder:GetAtlas()]
+            local auraData = C_UnitAuras.GetDebuffDataByIndex("player", index)
+
+            if auraData and auraData.auraInstanceID then
+                local color = C_UnitAuras.GetAuraDispelTypeColor("player", auraData.auraInstanceID, Theme.colorCurve)
 
                 -- Set the color of the Debuff Border
                 frame.mUIBorder:SetVertexColor(color.r, color.g, color.b, 1)
@@ -288,7 +234,16 @@ function Theme:UpdateRaidframeAuras(aura)
             aura.border:Hide()
         else
             aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
-            aura:SetSize(22, 22)
+
+            local auraSize
+
+            if IsInRaid() then
+                auraSize = mUI.db.profile.unitframes.raidframes.aurasizeRaid
+            else
+                auraSize = mUI.db.profile.unitframes.raidframes.aurasizeParty
+            end
+
+            aura:SetSize(auraSize, auraSize)
         end
     end
 end
@@ -375,8 +330,8 @@ function Theme:AuraPositions()
             end
         end
 
-        if DebuffFrame.auraFrames[i].DebuffBorder then
+        --[[if DebuffFrame.auraFrames[i].DebuffBorder then
             DebuffFrame.auraFrames[i].DebuffBorder:SetAlpha(0)
-        end
+        end]]
     end
 end

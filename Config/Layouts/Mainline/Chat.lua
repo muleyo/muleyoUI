@@ -167,7 +167,10 @@ function Chat:OnInitialize()
                         return
                     end
 
-                    Chat.Module.Style:UpdateEditBoxFont()
+                    -- Apply font settings after WoW updates fonts internally
+                    C_Timer.After(0, function()
+                        Chat.Module.Style:UpdateEditBoxFont()
+                    end)
                 end,
                 order = 8
             },
@@ -230,6 +233,8 @@ function Chat:OnInitialize()
                     if not (mUI.db.profile.chat.style == "mUI" or Chat.Module:IsEnabled()) then
                         return
                     end
+
+                    Chat.Module.Style:UpdateChatBackgroundAlpha()
 
                     for i = 1, 10 do
                         Chat.Module.Style:ForMessageLinePool(i, "UpdateGradientBackgroundAlpha")
@@ -309,11 +314,14 @@ function Chat:OnInitialize()
                         return
                     end
 
-                    Chat.Module.Style:UpdateMessageFonts()
-
                     for i = 1, 10 do
                         Chat.Module.Style:ForMessageLinePool(i, "UpdateHeight")
                     end
+
+                    -- Apply font settings after WoW updates fonts internally
+                    C_Timer.After(0, function()
+                        Chat.Module.Style:UpdateMessageFonts()
+                    end)
                 end,
                 get = function()
                     return mUI.db.profile.chat.settings.chat.font.size
@@ -371,18 +379,6 @@ function Chat:OnInitialize()
                 end,
                 order = 18
             },
-            smooth = {
-                name = "Smooth Scrolling",
-                desc = "Enable/Disable Smooth Scrolling\n\n|cffffff00Info:|r Requires mUI Style",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.chat.settings.smooth = val
-                end,
-                get = function()
-                    return mUI.db.profile.chat.settings.smooth
-                end,
-                order = 19
-            },
             tooltips = {
                 name = "Mouseover Tooltips",
                 desc = "Enable/Disable Mouseover for Chat Tooltips\n\n|cffffff00Info:|r Requires mUI Style",
@@ -393,7 +389,7 @@ function Chat:OnInitialize()
                 get = function()
                     return mUI.db.profile.chat.settings.tooltips
                 end,
-                order = 20
+                order = 19
             },
             scroll = {
                 name = "Scroll Buttons",
@@ -409,19 +405,20 @@ function Chat:OnInitialize()
                     for i = 1, 10 do
                         Chat.Module.Style:ForChatFrame(i, "ToggleScrollButtons")
                     end
+                    Chat.Module.Style:UpdateAllScrollButtons()
                 end,
                 get = function()
                     return mUI.db.profile.chat.settings.buttons.up_and_down
                 end,
-                order = 21
+                order = 20
             },
             header4 = {
                 name = "Fading",
                 type = "header",
-                order = 22
+                order = 21
             },
             fading = {
-                name = "Enable Fading",
+                name = "Message Fading",
                 desc = "Enable/Disable fading Chat Messages\n\n|cffffff00Info:|r Requires mUI Style",
                 type = "toggle",
                 set = function(_, val)
@@ -431,21 +428,19 @@ function Chat:OnInitialize()
                         return
                     end
 
-                    if value then
-                        for i = 1, 10 do
-                            Chat.Module.Style:ForChatFrame(i, "ResetFadingTimer")
-                            Chat.Module.Style:ForChatFrame(i, "UpdateFading")
-                        end
-                    else
-                        for i = 1, 10 do
-                            Chat.Module.Style:ForChatFrame(i, "FadeInMessages")
+                    -- Apply fading setting to all chat frames
+                    for i = 1, 10 do
+                        Chat.Module.Style:ForChatFrame(i, "SetFading", val)
+                        if val then
+                            Chat.Module.Style:ForChatFrame(i, "SetTimeVisible",
+                                mUI.db.profile.chat.settings.fade.out_delay)
                         end
                     end
                 end,
                 get = function()
                     return mUI.db.profile.chat.settings.fade.enabled
                 end,
-                order = 23
+                order = 22
             },
             fadetabs = {
                 name = "Tabs & Buttons Fading",
@@ -458,9 +453,7 @@ function Chat:OnInitialize()
                         return
                     end
 
-                    for i = 1, 10 do
-                        Chat.Module.Style:ForChatFrame(i, "FadeInChatWidgets")
-                    end
+                    Chat.Module.Style:UpdateTabAndButtonFading(val)
                 end,
                 get = function()
                     return mUI.db.profile.chat.settings.dock.fade.enabled
@@ -476,6 +469,17 @@ function Chat:OnInitialize()
                 step = 1,
                 set = function(_, val)
                     mUI.db.profile.chat.settings.fade.out_delay = val
+
+                    if not (mUI.db.profile.chat.style == "mUI" or Chat.Module:IsEnabled()) then
+                        return
+                    end
+
+                    -- Apply new timer to all chat frames if fading is enabled
+                    if mUI.db.profile.chat.settings.fade.enabled then
+                        for i = 1, 10 do
+                            Chat.Module.Style:ForChatFrame(i, "SetTimeVisible", val)
+                        end
+                    end
                 end,
                 get = function()
                     return mUI.db.profile.chat.settings.fade.out_delay

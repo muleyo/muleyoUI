@@ -37,7 +37,6 @@ function Theme:OnEnable()
                 Theme:UpdateUnitframeAuraPositions(aura, auraName, numAuras, numOppositeAuras, largeAuraList,
                     updateFunc, maxRowWidth, offsetX, mirrorAurasVertically)
             end)
-
     end
 
     -- Castbar Icon Skins

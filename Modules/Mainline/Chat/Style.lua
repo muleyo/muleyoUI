@@ -1,29 +1,57 @@
 local Style = mUI:GetModule("mUI.Modules.Chat.Style")
 
+-- Store chat frame references at module level for config updates
+local chatFrames = {}
+local tempChatFrames = {}
+local expectedChatFrames = {}
+
+function Style:UpdateAllScrollButtons()
+    -- Update scroll buttons on all static chat frames
+    for i = 1, Constants.ChatFrameConstants.MaxChatWindows do
+        local chatFrame = _G["ChatFrame" .. i]
+        if chatFrame and chatFrame.ToggleScrollButtons then
+            chatFrame:ToggleScrollButtons()
+        end
+    end
+
+    -- Update scroll buttons on all temporary chat frames
+    for frame in next, tempChatFrames do
+        if frame and frame.ToggleScrollButtons then
+            frame:ToggleScrollButtons()
+        end
+    end
+end
+
 function Style:OnEnable()
     -- Disable Altkeys for EditBox
     ChatFrame1EditBox:SetAltArrowKeyMode(false)
 
     -- Create Fonts
-    Style:CreateFonts()
+    -- Style:CreateFonts()
 
     -- Handle Dock
     Style:HandleDock(GeneralDockManager)
 
-    local chatFrames = {}
-    local tempChatFrames = {}
-    local expectedChatFrames = {}
-
     -- static chat frames
     for i = 1, Constants.ChatFrameConstants.MaxChatWindows do
-        local frame = Style:HandleChatFrame(_G["ChatFrame" .. i], i)
+        local frame = _G["ChatFrame" .. i]
         if frame then
             chatFrames[frame] = true
+
+            -- Set fading based on config
+            frame:SetFading(Style.db.fade.enabled)
+            if Style.db.fade.enabled then
+                frame:SetTimeVisible(Style.db.fade.out_delay)
+            end
         end
 
         Style:HandleChatTab(_G["ChatFrame" .. i .. "Tab"])
         Style:HandleEditBox(_G["ChatFrame" .. i .. "EditBox"])
         Style:HandleMinimizeButton(_G["ChatFrame" .. i .. "ButtonFrameMinimizeButton"], _G["ChatFrame" .. i .. "Tab"])
+        Style:HideDefaultScrollbar(_G["ChatFrame" .. i])
+        Style:HideChatFrameBackground(_G["ChatFrame" .. i])
+        Style:AddChatFrameBackground(_G["ChatFrame" .. i])
+        Style:SetupScrollButtons(_G["ChatFrame" .. i])
 
         if i == 1 then
             Style:HandleQuickJoinToastButton(QuickJoinToastButton)
@@ -47,28 +75,75 @@ function Style:OnEnable()
         end
     end)
 
+    -- Disable font size change from right-click menu
+    Style:SecureHook("FCF_SetChatWindowFontSize", function(chatFrame, size)
+        -- Revert to the configured font size
+        C_Timer.After(0, function()
+            Style:UpdateMessageFonts()
+        end)
+    end)
+
     Style:SecureHook("FCF_OpenTemporaryWindow", function(chatType, chatTarget)
         local chatFrame = chatTarget and (expectedChatFrames[chatType] and expectedChatFrames[chatType][chatTarget]) or
                               expectedChatFrames[chatType]
         if chatFrame then
-            local frame = Style:HandleChatFrame(chatFrame, 1)
+            local frame = chatFrame
             if frame then
+                -- Set fading based on config
+                frame:SetFading(Style.db.fade.enabled)
+                if Style.db.fade.enabled then
+                    frame:SetTimeVisible(Style.db.fade.out_delay)
+                end
+
                 Style:HandleChatTab(_G[chatFrame:GetName() .. "Tab"])
                 Style:HandleEditBox(_G[chatFrame:GetName() .. "EditBox"])
                 Style:HandleMinimizeButton(_G[chatFrame:GetName() .. "ButtonFrameMinimizeButton"],
                     _G[chatFrame:GetName() .. "Tab"])
+                Style:HideDefaultScrollbar(chatFrame)
+                Style:HideChatFrameBackground(chatFrame)
+                Style:AddChatFrameBackground(chatFrame)
+
+                -- Setup or update scroll buttons
+                if not chatFrame.mUIScrollButtonsSetup then
+                    Style:SetupScrollButtons(chatFrame)
+                else
+                    -- Buttons already exist, just update their visibility
+                    if chatFrame.ToggleScrollButtons then
+                        chatFrame:ToggleScrollButtons()
+                    end
+                end
+
+                -- Apply fonts to temporary windows - suppress font message
+                Style:ApplyChatFrameFont(chatFrame)
+                local editBox = _G[chatFrame:GetName() .. "EditBox"]
+                if editBox then
+                    Style:ApplyEditBoxFont(editBox)
+                end
+
+                -- Setup hyperlink tooltips for temporary frames
+                if not chatFrame.mUIHyperlinkHooked then
+                    chatFrame:SetScript("OnHyperlinkEnter",
+                        function(self, link, text, region, left, bottom, width, height)
+                            if not Style.db.tooltips then
+                                return
+                            end
+                            GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                            GameTooltip:SetHyperlink(link)
+                            GameTooltip:Show()
+                        end)
+
+                    chatFrame:SetScript("OnHyperlinkLeave", function(self)
+                        if not Style.db.tooltips then
+                            return
+                        end
+                        GameTooltip:Hide()
+                    end)
+
+                    chatFrame.mUIHyperlinkHooked = true
+                end
 
                 tempChatFrames[frame] = true
             end
-        end
-    end)
-
-    Style:SecureHook("FCF_Close", function(chatFrame)
-        local frame = Style:GetSlidingFrameForChatFrame(chatFrame)
-        if tempChatFrames[frame] then
-            frame:Release()
-
-            tempChatFrames[frame] = nil
         end
     end)
 
@@ -78,22 +153,13 @@ function Style:OnEnable()
         end
     end)
 
-    -- ? consider moving it elsewhere
-    Style.updater = CreateFrame("Frame", "mUIUpdater", UIParent)
-    Style:SecureHookScript(Style.updater, "OnUpdate", function(self, elapsed)
-        self.elapsed = (self.elapsed or 0) + elapsed
-        if self.elapsed >= 0.01 then
-            for frame in next, chatFrames do
-                frame:OnFrame()
-            end
+    -- Tab and button fading on mouse enter/leave
+    if Style.db.dock.fade.enabled then
+        Style:SetupTabAndButtonFading()
+    end
 
-            for frame in next, tempChatFrames do
-                frame:OnFrame()
-            end
-
-            self.elapsed = 0
-        end
-    end)
+    -- Enable hyperlink tooltips
+    Style:EnableHyperlinkTooltips()
 
     -- ? consider moving it elsewhere as well
     Style:RegisterEvent("GLOBAL_MOUSE_DOWN", function(button)
@@ -125,8 +191,300 @@ function Style:OnEnable()
     Style:EnableDispatcher()
     Style:EnableDragHook()
     Style:EnableAlerts()
+    Style:EnableTextProcessing()
+
+    -- Apply font settings immediately and after a delay to catch initial messages
+    Style:UpdateMessageFonts()
+    Style:UpdateEditBoxFont()
+    C_Timer.After(0.5, function()
+        Style:UpdateMessageFonts()
+        Style:UpdateEditBoxFont()
+    end)
 end
 
 function Style:OnDisable()
     Style:UnhookAll()
+end
+
+-- Constants for fading
+local DOCK_FADE_IN_DURATION = 0.2
+local DOCK_FADE_OUT_DURATION = 1.0
+local DOCK_FADE_OUT_DELAY = 3.5
+local INACTIVE_TAB_ALPHA = 0.5
+
+local function isTabAlerting(chatFrame)
+    if not chatFrame then
+        return false
+    end
+    local tab = _G[chatFrame:GetName() .. "Tab"]
+    return tab and tab.glow and tab.glow:IsShown()
+end
+
+local function isMouseOverDockOrTabs()
+    -- Check if mouse is over the dock manager
+    if GeneralDockManager:IsMouseOver() then
+        return true
+    end
+
+    -- Check if mouse is over any tab
+    for i = 1, Constants.ChatFrameConstants.MaxChatWindows do
+        local tab = _G["ChatFrame" .. i .. "Tab"]
+        if tab and tab:IsShown() and tab:IsMouseOver() then
+            return true
+        end
+    end
+
+    -- Check if mouse is over any chat frame
+    for i = 1, Constants.ChatFrameConstants.MaxChatWindows do
+        local chatFrame = _G["ChatFrame" .. i]
+        if chatFrame and chatFrame:IsShown() and chatFrame:IsMouseOver() then
+            return true
+        end
+    end
+
+    -- Check if mouse is over any button frame
+    for i = 1, Constants.ChatFrameConstants.MaxChatWindows do
+        local chatFrame = _G["ChatFrame" .. i]
+        if chatFrame and chatFrame.buttonFrame and chatFrame.buttonFrame:IsShown() and
+            chatFrame.buttonFrame:IsMouseOver() then
+            return true
+        end
+    end
+
+    return false
+end
+
+function Style:SetupTabAndButtonFading()
+    local lastDockMouseOver = false
+
+    local function updateTabsAndDockFading()
+        local isDockMouseOver = isMouseOverDockOrTabs()
+
+        -- Only update if state changed
+        if isDockMouseOver ~= lastDockMouseOver then
+            lastDockMouseOver = isDockMouseOver
+
+            if isDockMouseOver then
+                -- Mouse is over dock/tabs - show everything
+                Style:FadeIn(GeneralDockManager, DOCK_FADE_IN_DURATION)
+                Style:StopFading(GeneralDockManager, 1)
+
+                -- Show all tabs and buttons
+                for i = 1, Constants.ChatFrameConstants.MaxChatWindows do
+                    local chatFrame = _G["ChatFrame" .. i]
+                    local tab = _G["ChatFrame" .. i .. "Tab"]
+
+                    if tab and tab:IsShown() then
+                        -- Only active tab gets full alpha, inactive tabs get reduced alpha
+                        local isActive = chatFrame and chatFrame == SELECTED_DOCK_FRAME
+                        local targetAlpha = isActive and 1 or INACTIVE_TAB_ALPHA
+
+                        Style:FadeIn(tab, DOCK_FADE_IN_DURATION)
+                        Style:StopFading(tab, targetAlpha)
+                    end
+
+                    if chatFrame and chatFrame.buttonFrame then
+                        Style:FadeIn(chatFrame.buttonFrame, DOCK_FADE_IN_DURATION)
+                        Style:StopFading(chatFrame.buttonFrame, 1)
+                    end
+                end
+            else
+                -- Mouse left - fade out everything except alerting tabs
+                -- Collect all elements to fade them simultaneously
+                local elementsToFade = {}
+
+                -- Add dock manager
+                table.insert(elementsToFade, GeneralDockManager)
+
+                -- Add tabs and button frames
+                for i = 1, Constants.ChatFrameConstants.MaxChatWindows do
+                    local chatFrame = _G["ChatFrame" .. i]
+                    local tab = _G["ChatFrame" .. i .. "Tab"]
+
+                    -- Only add tabs that are not alerting
+                    if tab and tab:IsShown() and not isTabAlerting(chatFrame) then
+                        table.insert(elementsToFade, tab)
+                    elseif tab and isTabAlerting(chatFrame) then
+                        -- Keep alerting tabs visible at appropriate alpha
+                        local isActive = chatFrame and chatFrame == SELECTED_DOCK_FRAME
+                        local targetAlpha = isActive and 1 or INACTIVE_TAB_ALPHA
+                        Style:StopFading(tab, targetAlpha)
+                    end
+
+                    if chatFrame and chatFrame.buttonFrame then
+                        table.insert(elementsToFade, chatFrame.buttonFrame)
+                    end
+                end
+
+                -- Fade all elements at the same time
+                for _, element in ipairs(elementsToFade) do
+                    Style:FadeOut(element, DOCK_FADE_OUT_DELAY, DOCK_FADE_OUT_DURATION)
+                end
+            end
+        end
+    end
+
+    local function updateChatFrameScrollButtons(chatFrame)
+        if not chatFrame or not chatFrame:IsShown() then
+            return
+        end
+
+        local isMouseOver = chatFrame:IsMouseOver()
+        if isMouseOver ~= chatFrame.mUIIsMouseOver then
+            chatFrame.mUIIsMouseOver = isMouseOver
+
+            if isMouseOver then
+                -- Fade in scroll buttons when hovering chat frame
+                if chatFrame.mUIScrollUpButton then
+                    Style:FadeIn(chatFrame.mUIScrollUpButton, DOCK_FADE_IN_DURATION, function()
+                        if chatFrame.mUIIsMouseOver then
+                            Style:StopFading(chatFrame.mUIScrollUpButton, 1)
+                        else
+                            Style:FadeOut(chatFrame.mUIScrollUpButton, DOCK_FADE_OUT_DELAY, DOCK_FADE_OUT_DURATION)
+                        end
+                    end)
+                end
+
+                if chatFrame.mUIScrollDownButton then
+                    Style:FadeIn(chatFrame.mUIScrollDownButton, DOCK_FADE_IN_DURATION, function()
+                        if chatFrame.mUIIsMouseOver then
+                            Style:StopFading(chatFrame.mUIScrollDownButton, 1)
+                        else
+                            Style:FadeOut(chatFrame.mUIScrollDownButton, DOCK_FADE_OUT_DELAY, DOCK_FADE_OUT_DURATION)
+                        end
+                    end)
+                end
+            else
+                -- Fade out scroll buttons
+                if chatFrame.mUIScrollUpButton then
+                    Style:FadeOut(chatFrame.mUIScrollUpButton, DOCK_FADE_OUT_DELAY, DOCK_FADE_OUT_DURATION)
+                end
+
+                if chatFrame.mUIScrollDownButton then
+                    Style:FadeOut(chatFrame.mUIScrollDownButton, DOCK_FADE_OUT_DELAY, DOCK_FADE_OUT_DURATION)
+                end
+            end
+        end
+    end
+
+    -- Set up OnUpdate handler for mouse tracking
+    local fadeUpdater = CreateFrame("Frame")
+    fadeUpdater:SetScript("OnUpdate", function()
+        if not Style.db.dock.fade.enabled then
+            return
+        end
+
+        -- Update dock and tabs fading (global check)
+        updateTabsAndDockFading()
+
+        -- Update scroll buttons for each chat frame
+        for frame in next, chatFrames do
+            updateChatFrameScrollButtons(frame)
+        end
+
+        for frame in next, tempChatFrames do
+            updateChatFrameScrollButtons(frame)
+        end
+    end)
+
+    -- Initial fade-out on load if mouse is not over chat area
+    C_Timer.After(0.5, function()
+        if not isMouseOverDockOrTabs() then
+            -- Collect all elements to fade them simultaneously
+            local elementsToFade = {}
+
+            -- Add dock manager
+            table.insert(elementsToFade, GeneralDockManager)
+
+            for i = 1, Constants.ChatFrameConstants.MaxChatWindows do
+                local chatFrame = _G["ChatFrame" .. i]
+                local tab = _G["ChatFrame" .. i .. "Tab"]
+
+                -- Only add tabs that are not alerting
+                if tab and tab:IsShown() and not isTabAlerting(chatFrame) then
+                    table.insert(elementsToFade, tab)
+                end
+
+                if chatFrame and chatFrame.buttonFrame then
+                    table.insert(elementsToFade, chatFrame.buttonFrame)
+                end
+
+                -- Add scroll buttons if not hovering frame
+                if chatFrame and not chatFrame:IsMouseOver() then
+                    if chatFrame.mUIScrollUpButton then
+                        table.insert(elementsToFade, chatFrame.mUIScrollUpButton)
+                    end
+
+                    if chatFrame.mUIScrollDownButton then
+                        table.insert(elementsToFade, chatFrame.mUIScrollDownButton)
+                    end
+                end
+            end
+
+            -- Fade all elements at the same time
+            for _, element in ipairs(elementsToFade) do
+                Style:FadeOut(element, DOCK_FADE_OUT_DELAY, DOCK_FADE_OUT_DURATION)
+            end
+        end
+    end)
+end
+
+function Style:UpdateTabAndButtonFading(enabled)
+    if enabled then
+        Style:SetupTabAndButtonFading()
+    else
+        -- Fade in all tabs and buttons when fading is disabled
+        for i = 1, Constants.ChatFrameConstants.MaxChatWindows do
+            local chatFrame = _G["ChatFrame" .. i]
+            if chatFrame then
+                local tab = _G["ChatFrame" .. i .. "Tab"]
+                if tab then
+                    Style:StopFading(tab, 1)
+                    tab:SetAlpha(1)
+                end
+
+                if chatFrame.buttonFrame then
+                    Style:StopFading(chatFrame.buttonFrame, 1)
+                    chatFrame.buttonFrame:SetAlpha(1)
+                end
+
+                if chatFrame.mUIScrollUpButton then
+                    Style:StopFading(chatFrame.mUIScrollUpButton, 1)
+                    chatFrame.mUIScrollUpButton:SetAlpha(1)
+                end
+
+                if chatFrame.mUIScrollDownButton then
+                    Style:StopFading(chatFrame.mUIScrollDownButton, 1)
+                    chatFrame.mUIScrollDownButton:SetAlpha(1)
+                end
+            end
+        end
+
+        Style:StopFading(GeneralDockManager, 1)
+        GeneralDockManager:SetAlpha(1)
+    end
+end
+
+function Style:EnableHyperlinkTooltips()
+    -- Hook hyperlink events for all chat frames
+    for i = 1, Constants.ChatFrameConstants.MaxChatWindows do
+        local chatFrame = _G["ChatFrame" .. i]
+        if chatFrame then
+            chatFrame:SetScript("OnHyperlinkEnter", function(self, link, text, region, left, bottom, width, height)
+                if not Style.db.tooltips then
+                    return
+                end
+                GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                GameTooltip:SetHyperlink(link)
+                GameTooltip:Show()
+            end)
+
+            chatFrame:SetScript("OnHyperlinkLeave", function(self)
+                if not Style.db.tooltips then
+                    return
+                end
+                GameTooltip:Hide()
+            end)
+        end
+    end
 end

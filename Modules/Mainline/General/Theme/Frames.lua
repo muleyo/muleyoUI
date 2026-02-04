@@ -1150,12 +1150,28 @@ function Theme:Quest()
     mUI:Skin(ProfessionsRecipeTracker.Header)
     mUI:Skin(ScenarioObjectiveTracker)
     mUI:Skin(ScenarioObjectiveTracker.Header)
+    mUI:Skin(WorldQuestObjectiveTracker)
+    mUI:Skin(WorldQuestObjectiveTracker.Header)
     mUI:Skin({QuestNPCModelTopBorder, QuestNPCModelRightBorder, QuestNPCModelTopRightCorner,
               QuestNPCModelBottomRightCorner, QuestNPCModelBottomBorder, QuestNPCModelBottomLeftCorner,
               QuestNPCModelLeftBorder, QuestNPCModelTopLeftCorner, QuestNPCModelTextTopBorder,
               QuestNPCModelTextRightBorder, QuestNPCModelTextTopRightCorner, QuestNPCModelTextBottomRightCorner,
               QuestNPCModelTextBottomBorder, QuestNPCModelTextBottomLeftCorner, QuestNPCModelTextLeftBorder,
               QuestNPCModelTextTopLeftCorner}, true)
+end
+
+function Theme:DamageMeter()
+    if not Theme:IsHooked(DamageMeter, "GetSessionWindow") then
+        Theme:SecureHook(DamageMeter, "GetSessionWindow", function(self)
+            for i = 1, 3 do
+                if self.windowDataList[i] and self.windowDataList[i].sessionWindow then
+                    if not self.windowDataList[i].sessionWindow.isSkinned then
+                        mUI:Skin({self.windowDataList[i].sessionWindow.Header}, true)
+                    end
+                end
+            end
+        end)
+    end
 end
 
 function Theme:Settings()
@@ -1322,12 +1338,21 @@ end
 function Theme:GameMenu(frame)
     C_Timer.After(0, function()
         for _, button in pairs(frame:GetLayoutChildren()) do
-            button.Left:SetDesaturated(true)
-            button.Center:SetDesaturated(true)
-            button.Right:SetDesaturated(true)
-            button.Left:SetVertexColor(unpack(mUI:Color(0.15)))
-            button.Center:SetVertexColor(unpack(mUI:Color(0.15)))
-            button.Right:SetVertexColor(unpack(mUI:Color(0.15)))
+            if mUI.db.profile.misc.skinmenu then
+                button.Left:SetDesaturated(true)
+                button.Center:SetDesaturated(true)
+                button.Right:SetDesaturated(true)
+                button.Left:SetVertexColor(unpack(mUI:Color(0.15)))
+                button.Center:SetVertexColor(unpack(mUI:Color(0.15)))
+                button.Right:SetVertexColor(unpack(mUI:Color(0.15)))
+            else
+                button.Left:SetDesaturated(false)
+                button.Center:SetDesaturated(false)
+                button.Right:SetDesaturated(false)
+                button.Left:SetVertexColor(1, 1, 1, 1)
+                button.Center:SetVertexColor(1, 1, 1, 1)
+                button.Right:SetVertexColor(1, 1, 1, 1)
+            end
         end
     end)
 end
@@ -1488,6 +1513,7 @@ function Theme:Update()
     Theme:Frames()
     Theme:Transmog()
     Theme:Housing()
+    Theme:DamageMeter()
 
     -- Tooltips
     for _, tooltip in next, Theme.tooltips do

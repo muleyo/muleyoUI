@@ -43,10 +43,8 @@ function Style:OnInitialize()
                 _G[castbar].Icon:Show()
                 _G[castbar].Icon:SetSize(20, 20)
 
-                if Style.db.general.theme ~= "Disabled" then
-                    if _G[castbar].mUIBorder and (not _G[castbar].mUIBorder:IsVisible()) then
-                        _G[castbar].mUIBorder:Show()
-                    end
+                if _G[castbar].mUIBorder then
+                    _G[castbar].mUIBorder:Show()
                 end
             end
         else

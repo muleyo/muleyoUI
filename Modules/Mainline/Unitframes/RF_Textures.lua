@@ -40,6 +40,7 @@ function RF_Textures:OnInitialize()
         if frame and frame:IsForbidden() then
             return
         end
+
         if frame and frame:GetName() then
             local name = frame:GetName()
             if name and name:match("^Compact") then
@@ -55,6 +56,28 @@ function RF_Textures:OnInitialize()
                     frame.myHealPrediction:SetTexture(RF_Textures.defaultTextures.health)
                     frame.otherHealPrediction:SetTexture(RF_Textures.defaultTextures.health)
                 end
+
+                -- Use custom selection highlight texture
+                frame.selectionHighlight:SetTexture([[Interface\AddOns\mUI\Media\Textures\Raidframes\border.png]])
+                frame.aggroHighlight:SetTexture([[Interface\AddOns\mUI\Media\Textures\Raidframes\border.png]])
+            end
+        end
+    end
+
+    function RF_Textures:UpdatePowerColor(frame)
+        if frame and frame:IsForbidden() then
+            return
+        end
+
+        if frame and frame:GetName() then
+            local name = frame:GetName()
+            if name and name:match("^Compact") then
+                local _, powerType = UnitPowerType(frame.unit)
+                local color = PowerBarColor[powerType]
+
+                if powerType == "MANA" and color then
+                    frame.powerBar:SetStatusBarColor(0, 0.50196081399918, 1, 1)
+                end
             end
         end
     end
@@ -69,6 +92,10 @@ end
 function RF_Textures:OnEnable()
     RF_Textures:SecureHook("CompactUnitFrame_UpdateHealthColor", function(frame)
         RF_Textures:SetTextures(frame)
+    end)
+
+    RF_Textures:SecureHook("CompactUnitFrame_UpdatePowerColor", function(frame)
+        RF_Textures:UpdatePowerColor(frame)
     end)
 end
 
