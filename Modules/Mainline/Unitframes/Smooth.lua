@@ -1,16 +1,29 @@
 local SmoothHealth = mUI:NewModule("mUI.Modules.Unitframes.SmoothHealth", "AceHook-3.0")
 
 function SmoothHealth:OnInitialize()
-    SmoothHealth.frame = CreateFrame("Frame")
-    SmoothHealth.bars = {}
+    self.updating = {}
 
-    function SmoothHealth:UnitFrame(frame)
+    function SmoothHealth:Raidframes(frame)
         if not (frame and frame.unit) or frame:IsForbidden() then
             return
         end
 
-        if frame.healthBar then
+        if frame.healthBar and not self.updating[frame.healthBar] then
+            self.updating[frame.healthBar] = true
             frame.healthBar:SetValue(UnitHealth(frame.unit), 1)
+            self.updating[frame.healthBar] = nil
+        end
+    end
+
+    function SmoothHealth:Unitframes(frame)
+        if not (frame and frame.unit) or frame:IsForbidden() then
+            return
+        end
+
+        if frame.healthbar and not self.updating[frame.healthbar] then
+            self.updating[frame.healthbar] = true
+            frame.healthbar:SetValue(UnitHealth(frame.unit), 1)
+            self.updating[frame.healthbar] = nil
         end
     end
 end
@@ -23,8 +36,20 @@ function SmoothHealth:OnEnable()
         local name = frame:GetName()
 
         if name and name:match("^Compact") then
-            SmoothHealth:UnitFrame(frame)
+            SmoothHealth:Raidframes(frame)
         end
+    end)
+
+    SmoothHealth:SecureHook(PlayerFrame.healthbar, "SetValue", function()
+        SmoothHealth:Unitframes(PlayerFrame)
+    end)
+
+    SmoothHealth:SecureHook(TargetFrame.healthbar, "SetValue", function()
+        SmoothHealth:Unitframes(TargetFrame)
+    end)
+
+    SmoothHealth:SecureHook(FocusFrame.healthbar, "SetValue", function()
+        SmoothHealth:Unitframes(FocusFrame)
     end)
 end
 
