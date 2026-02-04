@@ -1,4 +1,5 @@
 local Style = mUI:NewModule("mUI.Modules.Chat.Style", "AceHook-3.0")
+local LSM = LibStub("LibSharedMedia-3.0")
 
 function Style:OnInitialize()
     -- Load Database
@@ -244,11 +245,6 @@ end
 ---------------------------------
 
 function Style:UpdateEditBoxFont()
-    -- Get font settings
-    local fontPath = Style.db.edit.font.path or "Fonts\\FRIZQT__.TTF"
-    local fontSize = Style.db.edit.font.size or 12
-    local fontOutline = Style.db.edit.font.outline and "OUTLINE" or ""
-
     -- Apply to all chat editboxes
     for i = 1, Constants.ChatFrameConstants.MaxChatWindows do
         local editBox = _G["ChatFrame" .. i .. "EditBox"]
@@ -264,9 +260,14 @@ function Style:ApplyEditBoxFont(editBox)
     end
 
     -- Get font settings
-    local fontPath = Style.db.edit.font.path or "Fonts\\FRIZQT__.TTF"
+    local fontPath = LSM:Fetch("font", mUI.db.profile.general.font)
     local fontSize = Style.db.edit.font.size or 12
     local fontOutline = Style.db.edit.font.outline and "OUTLINE" or ""
+
+    -- Validate font
+    if not fontPath then
+        fontPath = "Fonts\\FRIZQT__.TTF"
+    end
 
     -- Apply to main edit box
     if editBox.SetFont then
@@ -306,9 +307,14 @@ function Style:ApplyChatFrameFont(chatFrame)
     end
 
     -- Get font settings
-    local fontPath = Style.db.chat.font.path or "Fonts\\FRIZQT__.TTF"
+    local fontPath = LSM:Fetch("font", mUI.db.profile.general.font)
     local fontSize = Style.db.chat.font.size or 12
     local fontOutline = Style.db.chat.font.outline and "OUTLINE" or ""
+
+    -- Validate font
+    if not fontPath then
+        fontPath = "Fonts\\FRIZQT__.TTF"
+    end
 
     local fontObject = chatFrame:GetFontObject()
     if fontObject then
@@ -342,11 +348,6 @@ function Style:ApplyChatFrameFont(chatFrame)
 end
 
 function Style:UpdateMessageFonts()
-    -- Get font settings
-    local fontPath = Style.db.chat.font.path or "Fonts\\FRIZQT__.TTF"
-    local fontSize = Style.db.chat.font.size or 12
-    local fontOutline = Style.db.chat.font.outline and "OUTLINE" or ""
-
     -- Update the font objects used by chat frames
     for i = 1, Constants.ChatFrameConstants.MaxChatWindows do
         local chatFrame = _G["ChatFrame" .. i]
