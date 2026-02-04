@@ -23,6 +23,7 @@ function Modules:OnInitialize()
     Modules.Restingtextures = mUI:GetModule("mUI.Modules.Unitframes.Restingtextures")
     Modules.Elitecolor = mUI:GetModule("mUI.Modules.Unitframes.Elitecolor")
     Modules.Smooth = mUI:GetModule("mUI.Modules.Unitframes.SmoothHealth")
+    Modules.Overshields = mUI:GetModule("mUI.Modules.Unitframes.Overshields")
 end
 
 function Modules:OnEnable()
@@ -94,6 +95,9 @@ function Modules:OnEnable()
     if Modules.db.smooth then
         Modules.Smooth:Enable()
     end
+    if Modules.db.overshields then
+        Modules.Overshields:Enable()
+    end
 end
 
 function Modules:OnDisable()
@@ -119,4 +123,5 @@ function Modules:OnDisable()
     Modules.RF_Name:Disable()
     Modules.RF_Solo:Disable()
     Modules.Smooth:Disable()
+    Modules.Overshields:Disable()
 end
