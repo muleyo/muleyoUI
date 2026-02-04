@@ -3,7 +3,6 @@ local Modules = mUI:NewModule("mUI.Modules.Unitframes")
 function Modules:OnInitialize()
     -- Modules
     Modules.RF_Textures = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Textures")
-    Modules.RF_Size = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Size")
     Modules.RF_Health = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Health")
     Modules.RF_Name = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Name")
     Modules.RF_RoleIcons = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_RoleIcons")
@@ -77,9 +76,6 @@ function Modules:OnEnable()
     if Modules.db.elitecolor then
         Modules.Elitecolor:Enable()
     end
-    if Modules.db.raidframes.size.enabled then
-        Modules.RF_Size:Enable()
-    end
     if Modules.db.raidframes.roleicons then
         Modules.RF_RoleIcons:Enable()
     end
@@ -117,7 +113,6 @@ function Modules:OnDisable()
     Modules.Reputationcolor:Disable()
     Modules.Restingtextures:Disable()
     Modules.Elitecolor:Disable()
-    Modules.RF_Size:Disable()
     Modules.RF_RoleIcons:Disable()
     Modules.RF_Health:Disable()
     Modules.RF_Name:Disable()
