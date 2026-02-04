@@ -73,6 +73,20 @@ function RF_Health:OnInitialize()
         end
     end
 
+    function RF_Health:UpdateSize(frame)
+        if (not frame) or frame:IsForbidden() then
+            return
+        end
+        if frame:GetName() and frame.unit then
+            local name = frame:GetName()
+            if name and name:match("^Compact") then
+                frame.CenterDefensiveBuff:SetSize(25, 25)
+                frame.CenterDefensiveBuff:ClearAllPoints()
+                frame.CenterDefensiveBuff:SetPoint("TOP", frame, 0, 0)
+            end
+        end
+    end
+
     function RF_Health:Update()
         for _, frame in pairs(RF_Health.frames) do
             if _G["Compact" .. frame] then
@@ -99,6 +113,10 @@ function RF_Health:OnEnable()
 
     RF_Health:SecureHook("CompactUnitFrame_UpdateStatusText", function(frame)
         RF_Health:SetHealth(frame)
+    end)
+
+    RF_Health:SecureHook("CompactUnitFrame_UpdateAuras", function(frame)
+        RF_Health:UpdateSize(frame)
     end)
 
     RF_Health:Update()
