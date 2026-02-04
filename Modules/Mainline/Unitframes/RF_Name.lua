@@ -46,9 +46,17 @@ function RF_Name:OnInitialize()
                     frame.name:SetText(unitName)
                     frame.name:SetTextColor(color.r, color.g, color.b)
 
-                    -- Calculate font size based on frame size
-                    local frameWidth = frame:GetWidth()
-                    local frameHeight = frame:GetHeight()
+                    -- Use EditMode API to get frame dimensions (GetWidth/GetHeight are protected)
+                    local defaultWidth, defaultHeight = 72, 36
+
+                    -- Try to get dimensions from EditMode, fallback to defaults if not available
+                    local frameWidth = defaultWidth
+                    local frameHeight = defaultHeight
+                    frameWidth = EditModeManagerFrame:GetRaidFrameWidth(Enum.EditModeUnitFrameSystemIndices.Party,
+                        defaultWidth)
+                    frameHeight = EditModeManagerFrame:GetRaidFrameHeight(Enum.EditModeUnitFrameSystemIndices.Party,
+                        defaultHeight)
+
                     local scaleFactor = math.min(frameWidth / 100, frameHeight / 40)
                     local fontSize = math.max(8, math.min(13, 13 * scaleFactor))
                     frame.name:SetFont(STANDARD_TEXT_FONT, fontSize, "OUTLINE")

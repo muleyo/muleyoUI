@@ -1381,6 +1381,8 @@ function Theme:Frames()
     -- EditMode
     mUI:Skin(EditModeManagerFrame)
     mUI:Skin(EditModeManagerFrame.Border)
+    mUI:Skin(EditModeSystemSettingsDialog)
+    mUI:Skin(EditModeSystemSettingsDialog.Border)
 
     -- Vehicle Seat
     mUI:Skin(VehicleSeatIndicator)

@@ -18,6 +18,7 @@ function Media:OnInitialize()
     Media.LSM:Register("font", "Inter Bold", [[Interface\Addons\mUI\Media\Fonts\InterBold.ttf]])
     Media.LSM:Register("font", "Magistral TT Bold", [[Interface\Addons\mUI\Media\Fonts\MagistralTTBold.ttf]])
     Media.LSM:Register("font", "Myriad Web Bold", [[Interface\Addons\mUI\Media\Fonts\MyriadWebBold.ttf]])
+    Media.LSM:Register("font", "Pepsi", [[Interface\Addons\mUI\Media\Fonts\Pepsi.ttf]])
     Media.LSM:Register("font", "Prototype", [[Interface\Addons\mUI\Media\Fonts\Prototype.ttf]])
 
     -- Status
@@ -31,27 +32,21 @@ function Media:OnInitialize()
         [[Interface\Addons\mUI\Media\Textures\Status\DragonflightTexture.tga]])
     Media.LSM:Register("statusbar", "Flat", [[Interface\Addons\mUI\Media\Textures\Status\Flat.tga]])
     Media.LSM:Register("statusbar", "Glaze", [[Interface\Addons\mUI\Media\Textures\Status\Glaze.blp]])
-    Media.LSM:Register("statusbar", "KlixPlugins",
-        [[Interface\Addons\mUI\Media\Textures\Status\KlixPlugins.tga]])
+    Media.LSM:Register("statusbar", "KlixPlugins", [[Interface\Addons\mUI\Media\Textures\Status\KlixPlugins.tga]])
     Media.LSM:Register("statusbar", "LiteStep", [[Interface\Addons\mUI\Media\Textures\Status\LiteStep.tga]])
     Media.LSM:Register("statusbar", "Melli", [[Interface\Addons\mUI\Media\Textures\Status\Melli.tga]])
     Media.LSM:Register("statusbar", "Melli 6px", [[Interface\Addons\mUI\Media\Textures\Status\Melli6px.tga]])
     Media.LSM:Register("statusbar", "Melli Dark", [[Interface\Addons\mUI\Media\Textures\Status\MelliDark.tga]])
-    Media.LSM:Register("statusbar", "Melli Dark Rough", [[Interface\Addons\mUI\Media\Textures\Status\MelliDarkRough.tga]])
+    Media.LSM:Register("statusbar", "Melli Dark Rough",
+        [[Interface\Addons\mUI\Media\Textures\Status\MelliDarkRough.tga]])
     Media.LSM:Register("statusbar", "Miniamlist", [[Interface\Addons\mUI\Media\Textures\Status\Minimalist.tga]])
     Media.LSM:Register("statusbar", "Otravi", [[Interface\Addons\mUI\Media\Textures\Status\Otravi.tga]])
-    Media.LSM:Register("statusbar", "Skullflower",
-        [[Interface\Addons\mUI\Media\Textures\Status\Skullflower.tga]])
-    Media.LSM:Register("statusbar", "Skullflower1",
-        [[Interface\Addons\mUI\Media\Textures\Status\Skullflower1.tga]])
-    Media.LSM:Register("statusbar", "Skullflower2",
-        [[Interface\Addons\mUI\Media\Textures\Status\Skullflower2.tga]])
-    Media.LSM:Register("statusbar", "Skullflower3",
-        [[Interface\Addons\mUI\Media\Textures\Status\Skullflower3.tga]])
-    Media.LSM:Register("statusbar", "Skullflower4",
-        [[Interface\Addons\mUI\Media\Textures\Status\Skullflower4.tga]])
-    Media.LSM:Register("statusbar", "Skullflower5",
-        [[Interface\Addons\mUI\Media\Textures\Status\Skullflower5.tga]])
+    Media.LSM:Register("statusbar", "Skullflower", [[Interface\Addons\mUI\Media\Textures\Status\Skullflower.tga]])
+    Media.LSM:Register("statusbar", "Skullflower1", [[Interface\Addons\mUI\Media\Textures\Status\Skullflower1.tga]])
+    Media.LSM:Register("statusbar", "Skullflower2", [[Interface\Addons\mUI\Media\Textures\Status\Skullflower2.tga]])
+    Media.LSM:Register("statusbar", "Skullflower3", [[Interface\Addons\mUI\Media\Textures\Status\Skullflower3.tga]])
+    Media.LSM:Register("statusbar", "Skullflower4", [[Interface\Addons\mUI\Media\Textures\Status\Skullflower4.tga]])
+    Media.LSM:Register("statusbar", "Skullflower5", [[Interface\Addons\mUI\Media\Textures\Status\Skullflower5.tga]])
     Media.LSM:Register("statusbar", "SkullflowerGradient",
         [[Interface\Addons\mUI\Media\Textures\Status\SkullflowerGradient.tga]])
     Media.LSM:Register("statusbar", "SkullflowerGradient1",

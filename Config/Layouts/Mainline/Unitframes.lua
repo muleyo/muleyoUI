@@ -520,90 +520,9 @@ function Unitframes:OnInitialize()
                 order = 27
             },
             header4 = {
-                name = "Party / Raidframes Resize",
-                type = "header",
-                order = 28
-            },
-            enablesizing = {
-                name = function()
-                    if mUI.db.profile.unitframes.raidframes.size.enabled then
-                        return "|cff00ff00Enabled|r"
-                    else
-                        return "|cffff0000Disabled|r"
-                    end
-                end,
-                desc = "Enable / Disable Raidframes re-sizing",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.size.enabled = val
-
-                    if not Unitframes.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val then
-                        Unitframes.Module.RF_Size:Enable()
-                    else
-                        Unitframes.Module.RF_Size:Disable()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.size.enabled
-                end,
-                order = 29
-            },
-            width = {
-                name = "Width",
-                desc = "Set the Width of Raidframes",
-                type = "range",
-                min = 0,
-                max = 200,
-                step = 1,
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.size.width = val
-
-                    if not Unitframes.Module:IsEnabled() then
-                        return
-                    end
-                    if not Unitframes.Module.RF_Size:IsEnabled() then
-                        return
-                    end
-
-                    Unitframes.Module.RF_Size:Update()
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.size.width
-                end,
-                order = 30
-            },
-            height = {
-                name = "Height",
-                desc = "Set the Height of Raidframes",
-                type = "range",
-                min = 0,
-                max = 200,
-                step = 1,
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.size.height = val
-
-                    if not Unitframes.Module:IsEnabled() then
-                        return
-                    end
-                    if not Unitframes.Module.RF_Size:IsEnabled() then
-                        return
-                    end
-
-                    Unitframes.Module.RF_Size:Update()
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.size.height
-                end,
-                order = 31
-            },
-            header5 = {
                 name = "Raidframes",
                 type = "header",
-                order = 32
+                order = 28
             },
             roleicons = {
                 name = "Role Icons",
@@ -625,7 +544,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.roleicons
                 end,
-                order = 33
+                order = 29
             },
             healthcolor = {
                 name = "Classcolor Health",
@@ -655,7 +574,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.healthcolor
                 end,
-                order = 34
+                order = 30
             },
             names = {
                 name = "Classcolor Names",
@@ -677,7 +596,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.names
                 end,
-                order = 35
+                order = 31
             },
             solo = {
                 name = "Solo Partyframes",
@@ -699,7 +618,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.solo
                 end,
-                order = 36
+                order = 32
             },
             skinicons = {
                 name = "Skin Aura Icons",
@@ -717,7 +636,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.skinicons
                 end,
-                order = 37
+                order = 33
             },
             aurasizeParty = {
                 name = "Buff Size (Party)",
@@ -732,7 +651,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.aurasizeParty
                 end,
-                order = 38
+                order = 34
             },
             aurasizeRaid = {
                 name = "Buff Size (Raid)",
@@ -747,7 +666,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.aurasizeRaid
                 end,
-                order = 38
+                order = 35
             }
         }
     }

@@ -50,6 +50,9 @@ function RF_Textures:OnInitialize()
                     frame.powerBar:SetStatusBarTexture(texture)
                     frame.myHealPrediction:SetTexture(texture)
                     frame.otherHealPrediction:SetTexture(texture)
+
+                    frame.healthBar:GetStatusBarTexture():SetDrawLayer("BORDER")
+                    frame.powerBar:GetStatusBarTexture():SetDrawLayer("BORDER")
                 else
                     frame.healthBar:SetStatusBarTexture(RF_Textures.defaultTextures.health)
                     frame.powerBar:SetStatusBarTexture(RF_Textures.defaultTextures.power)

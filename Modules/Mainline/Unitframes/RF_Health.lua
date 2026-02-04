@@ -47,10 +47,20 @@ function RF_Health:OnInitialize()
                 frame.statusText:ClearAllPoints()
                 frame.statusText:SetPoint("CENTER", frame, "CENTER", 0, -2.5)
 
-                local frameWidth = frame:GetWidth()
-                local frameHeight = frame:GetHeight()
+                -- Use EditMode API to get frame dimensions (GetWidth/GetHeight are protected)
+                local fontSize = 13
+                local defaultWidth, defaultHeight = 72, 36
+
+                -- Try to get dimensions from EditMode, fallback to defaults if not available
+                local frameWidth = defaultWidth
+                local frameHeight = defaultHeight
+                frameWidth = EditModeManagerFrame:GetRaidFrameWidth(Enum.EditModeUnitFrameSystemIndices.Party,
+                    defaultWidth)
+                frameHeight = EditModeManagerFrame:GetRaidFrameHeight(Enum.EditModeUnitFrameSystemIndices.Party,
+                    defaultHeight)
+
                 local scaleFactor = math.min(frameWidth / 100, frameHeight / 40)
-                local fontSize = math.max(12, math.min(16, 13 * scaleFactor))
+                fontSize = math.max(12, math.min(16, 13 * scaleFactor))
 
                 if RF_Health.db.healthcolor and color then
                     frame.statusText:SetTextColor(color.r, color.g, color.b)
@@ -59,6 +69,20 @@ function RF_Health:OnInitialize()
                     frame.statusText:SetTextColor(1, 0.82, 0)
                     frame.statusText:SetFont(STANDARD_TEXT_FONT, fontSize, "OUTLINE")
                 end
+            end
+        end
+    end
+
+    function RF_Health:UpdateSize(frame)
+        if (not frame) or frame:IsForbidden() then
+            return
+        end
+        if frame:GetName() and frame.unit then
+            local name = frame:GetName()
+            if name and name:match("^Compact") then
+                frame.CenterDefensiveBuff:SetSize(25, 25)
+                frame.CenterDefensiveBuff:ClearAllPoints()
+                frame.CenterDefensiveBuff:SetPoint("TOP", frame, 0, 0)
             end
         end
     end
@@ -89,6 +113,10 @@ function RF_Health:OnEnable()
 
     RF_Health:SecureHook("CompactUnitFrame_UpdateStatusText", function(frame)
         RF_Health:SetHealth(frame)
+    end)
+
+    RF_Health:SecureHook("CompactUnitFrame_UpdateAuras", function(frame)
+        RF_Health:UpdateSize(frame)
     end)
 
     RF_Health:Update()

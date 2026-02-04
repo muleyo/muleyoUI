@@ -431,7 +431,7 @@ function Chat:OnInitialize()
                         return
                     end
 
-                    if value then
+                    if val then
                         for i = 1, 10 do
                             Chat.Module.Style:ForChatFrame(i, "ResetFadingTimer")
                             Chat.Module.Style:ForChatFrame(i, "UpdateFading")
