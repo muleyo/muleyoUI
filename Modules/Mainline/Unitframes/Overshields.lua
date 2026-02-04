@@ -7,9 +7,8 @@ function Overshields:OnInitialize()
     -- X is health percentage (0-1), Y is the alpha value
     Overshields.curve = C_CurveUtil.CreateCurve()
     Overshields.curve:SetType(Enum.LuaCurveType.Linear)
-    Overshields.curve:AddPoint(0, 0) -- At 0% health, show (alpha = 1)
-    Overshields.curve:AddPoint(0.98, 0) -- At 99% health, show (alpha = 1)
-    Overshields.curve:AddPoint(1, 1) -- At 100% health, hide (alpha = 0)
+    Overshields.curve:AddPoint(0.98, 0) -- At 99% health, hide (alpha = 0)
+    Overshields.curve:AddPoint(1, 1) -- At 100% health, show (alpha = 1)
 
     function Overshields:CreateAbsorbBar(frame)
         if frame.mUIAbsorbBar then
