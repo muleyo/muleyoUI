@@ -1,69 +1,6 @@
 local Theme = mUI:GetModule("mUI.Modules.General.Theme")
 
 -- Buffs & Debuffs
-Theme.debuffColors = {
-    ["UI-Debuff-Border-Default-NoIcon"] = {
-        r = 0.80,
-        g = 0,
-        b = 0
-    },
-    ["UI-Debuff-Border-Bleed-NoIcon"] = {
-        r = 0.80,
-        g = 0,
-        b = 0
-    },
-    ["UI-Debuff-Border-Poison-NoIcon"] = {
-        r = 0.00,
-        g = 0.60,
-        b = 0
-    },
-    ["UI-Debuff-Border-Disease-NoIcon"] = {
-        r = 0.60,
-        g = 0.40,
-        b = 0
-    },
-    ["UI-Debuff-Border-Curse-NoIcon"] = {
-        r = 0.60,
-        g = 0.00,
-        b = 1.00
-    },
-    ["UI-Debuff-Border-Magic-NoIcon"] = {
-        r = 0.20,
-        g = 0.60,
-        b = 1.00
-    },
-    ["UI-Debuff-Border-Default-Icon"] = {
-        r = 0.80,
-        g = 0,
-        b = 0
-    },
-    ["UI-Debuff-Border-Bleed-Icon"] = {
-        r = 0.80,
-        g = 0,
-        b = 0
-    },
-    ["UI-Debuff-Border-Poison-Icon"] = {
-        r = 0.00,
-        g = 0.60,
-        b = 0
-    },
-    ["UI-Debuff-Border-Disease-Icon"] = {
-        r = 0.60,
-        g = 0.40,
-        b = 0
-    },
-    ["UI-Debuff-Border-Curse-Icon"] = {
-        r = 0.60,
-        g = 0.00,
-        b = 1.00
-    },
-    ["UI-Debuff-Border-Magic-Icon"] = {
-        r = 0.20,
-        g = 0.60,
-        b = 1.00
-    }
-}
-
 Theme.colorCurve = C_CurveUtil.CreateColorCurve()
 Theme.colorCurve:SetType(Enum.LuaCurveType.Step)
 Theme.colorCurve:AddPoint(0, DEBUFF_TYPE_NONE_COLOR)
@@ -297,7 +234,9 @@ function Theme:UpdateRaidframeAuras(aura)
             aura.border:Hide()
         else
             aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
-            aura:SetSize(22, 22)
+
+            local auraSize = mUI.db.profile.unitframes.raidframes.aurasize
+            aura:SetSize(auraSize, auraSize)
         end
     end
 end

@@ -433,10 +433,33 @@ function Unitframes:OnInitialize()
                 end,
                 order = 22
             },
+            overshields = {
+                name = "Overshields",
+                desc = "Show Absorbshields on Unitframes\n\n|cffffff00Info:|r Requires Reload",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.overshields = val
+
+                    if not Unitframes.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Unitframes.Module.Overshields:Enable()
+                    else
+                        Unitframes.Module.Overshields:Disable()
+                        mUI:Reload("Disable Overshields")
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.overshields
+                end,
+                order = 23
+            },
             header3 = {
                 name = "Buffs & Debuffs",
                 type = "header",
-                order = 23
+                order = 24
             },
             enablebuffdebuff = {
                 name = function()
@@ -464,7 +487,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.buffsdebuffs.enabled
                 end,
-                order = 24
+                order = 25
             },
             buffsize = {
                 name = "Buff Size",
@@ -479,7 +502,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.buffsdebuffs.buffsize
                 end,
-                order = 25
+                order = 26
             },
             debuffsize = {
                 name = "Debuff Size",
@@ -494,12 +517,12 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.buffsdebuffs.debuffsize
                 end,
-                order = 25
+                order = 27
             },
             header4 = {
                 name = "Party / Raidframes Resize",
                 type = "header",
-                order = 26
+                order = 28
             },
             enablesizing = {
                 name = function()
@@ -527,7 +550,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.size.enabled
                 end,
-                order = 27
+                order = 29
             },
             width = {
                 name = "Width",
@@ -551,7 +574,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.size.width
                 end,
-                order = 28
+                order = 30
             },
             height = {
                 name = "Height",
@@ -575,12 +598,12 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.size.height
                 end,
-                order = 29
+                order = 31
             },
             header5 = {
                 name = "Raidframes",
                 type = "header",
-                order = 30
+                order = 32
             },
             roleicons = {
                 name = "Role Icons",
@@ -602,7 +625,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.roleicons
                 end,
-                order = 32
+                order = 33
             },
             healthcolor = {
                 name = "Classcolor Health",
@@ -695,6 +718,21 @@ function Unitframes:OnInitialize()
                     return mUI.db.profile.unitframes.raidframes.skinicons
                 end,
                 order = 37
+            },
+            aurasize = {
+                name = "Buff Size",
+                desc = "Set the Size of Buffs on Raidframes",
+                type = "range",
+                min = 0,
+                max = 30,
+                step = 1,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.aurasize = val
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.aurasize
+                end,
+                order = 38
             }
         }
     }

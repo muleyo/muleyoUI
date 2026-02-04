@@ -112,6 +112,7 @@ local defaults = {
                     width = 100,
                     height = 75
                 },
+                aurasize = 22,
                 darkmode = false,
                 health = false,
                 healthcolor = false,
