@@ -18,7 +18,6 @@ function Theme:OnEnable()
 
     -- Buffs & Debuffs
     if not C_AddOns.IsAddOnLoaded("BlizzBuffsFacade") then
-        -- Theme:SecureHook(AuraFrameMixin, "UpdateAuraButtons", Theme.AuraPositions)
         -- not working as of now
         -- Theme:HookDurationUpdates(BuffFrame.auraFrames)
         -- Theme:HookDurationUpdates(DebuffFrame.auraFrames)
@@ -28,10 +27,10 @@ function Theme:OnEnable()
         Theme.auras:RegisterEvent("PLAYER_FOCUS_CHANGED")
         Theme.auras:RegisterEvent("WEAPON_ENCHANT_CHANGED")
         Theme.auras:RegisterUnitEvent("UNIT_AURA", "player", "target", "focus")
-        Theme:SecureHookScript(Theme.auras, "OnEvent", function(_, _, _, info)
+        Theme:SecureHookScript(Theme.auras, "OnEvent", function()
             -- Player Auras
             Theme:UpdatePlayerBuffs()
-            -- Theme:UpdatePlayerDebuffs(info)
+            Theme:UpdatePlayerDebuffs()
 
             -- Target Auras
             for aura in TargetFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
@@ -73,6 +72,8 @@ function Theme:OnEnable()
                 end
             end)
         end
+
+        Theme:SecureHook(AuraFrameMixin, "UpdateAuraButtons", Theme.AuraPositions)
     end
 
     -- Castbar Icon Skins
