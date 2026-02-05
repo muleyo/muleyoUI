@@ -52,10 +52,18 @@ function RF_Name:OnInitialize()
                     -- Try to get dimensions from EditMode, fallback to defaults if not available
                     local frameWidth = defaultWidth
                     local frameHeight = defaultHeight
-                    frameWidth = EditModeManagerFrame:GetRaidFrameWidth(Enum.EditModeUnitFrameSystemIndices.Party,
-                        defaultWidth)
-                    frameHeight = EditModeManagerFrame:GetRaidFrameHeight(Enum.EditModeUnitFrameSystemIndices.Party,
-                        defaultHeight)
+
+                    if IsInRaid() then
+                        frameWidth = EditModeManagerFrame:GetRaidFrameWidth(Enum.EditModeUnitFrameSystemIndices.Raid,
+                            defaultWidth)
+                        frameHeight = EditModeManagerFrame:GetRaidFrameHeight(Enum.EditModeUnitFrameSystemIndices.Raid,
+                            defaultHeight)
+                    else
+                        frameWidth = EditModeManagerFrame:GetRaidFrameWidth(Enum.EditModeUnitFrameSystemIndices.Party,
+                            defaultWidth)
+                        frameHeight = EditModeManagerFrame:GetRaidFrameHeight(Enum.EditModeUnitFrameSystemIndices.Party,
+                            defaultHeight)
+                    end
 
                     local scaleFactor = math.min(frameWidth / 100, frameHeight / 40)
                     local fontSize = math.max(8, math.min(13, 13 * scaleFactor))

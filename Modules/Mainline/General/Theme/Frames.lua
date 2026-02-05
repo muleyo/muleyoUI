@@ -420,6 +420,12 @@ function Theme:Professions()
         mUI:Skin(ProfessionsFrame.CraftingPage.CraftingOutputLog.TitleContainer)
         mUI:Skin(ProfessionsFrame.CraftingPage.CraftingOutputLog.NineSlice)
         mUI:Skin({ProfessionsFrame.CraftingPage.RankBar.Border}, true)
+
+        C_Timer.After(0.1, function()
+            for tab in ProfessionsFrame.SpecPage.tabsPool:EnumerateActive() do
+                mUI:Skin(tab)
+            end
+        end)
     end
 end
 
@@ -1332,6 +1338,10 @@ function Theme:Housing()
     if HousingDashboardFrame then
         mUI:Skin(HousingDashboardFrame)
         mUI:Skin(HousingDashboardFrame.NineSlice)
+        C_Timer.After(0.15, function()
+            mUI:Skin(HousingDashboardFrame.HouseInfoContent.ContentFrame.TabSystem.tabs[1])
+            mUI:Skin(HousingDashboardFrame.HouseInfoContent.ContentFrame.TabSystem.tabs[2])
+        end)
     end
 end
 
