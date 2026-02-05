@@ -69,9 +69,13 @@ function Style:OnEnable()
 
         -- the PET_BATTLE_COMBAT_LOG chatType doesn't have chatTarget
         if chatTarget then
+            -- Ensure it's a table before indexing
+            if type(expectedChatFrames[chatType]) ~= "table" then
+                expectedChatFrames[chatType] = {}
+            end
             expectedChatFrames[chatType][chatTarget] = chatFrame
         else
-            expectedChatFrames[chatType] = chatFrame
+            expectedChatFrames[chatType]["__noTarget"] = chatFrame
         end
     end)
 
@@ -84,8 +88,14 @@ function Style:OnEnable()
     end)
 
     Style:SecureHook("FCF_OpenTemporaryWindow", function(chatType, chatTarget)
-        local chatFrame = chatTarget and (expectedChatFrames[chatType] and expectedChatFrames[chatType][chatTarget]) or
-                              expectedChatFrames[chatType]
+        local chatFrame = nil
+        if expectedChatFrames[chatType] then
+            if chatTarget and type(expectedChatFrames[chatType]) == "table" then
+                chatFrame = expectedChatFrames[chatType][chatTarget]
+            elseif not chatTarget and type(expectedChatFrames[chatType]) == "table" then
+                chatFrame = expectedChatFrames[chatType]["__noTarget"]
+            end
+        end
         if chatFrame then
             local frame = chatFrame
             if frame then

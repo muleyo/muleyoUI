@@ -51,8 +51,9 @@ function Mouseover:OnInitialize()
     }
 
     Mouseover.MICRO_BUTTONS = {"CharacterMicroButton", "ProfessionMicroButton", "PlayerSpellsMicroButton",
-                               "AchievementMicroButton", "QuestLogMicroButton", "GuildMicroButton", "LFDMicroButton",
-                               "CollectionsMicroButton", "EJMicroButton", "StoreMicroButton", "MainMenuMicroButton"}
+                               "AchievementMicroButton", "QuestLogMicroButton", "HousingMicroButton",
+                               "GuildMicroButton", "LFDMicroButton", "CollectionsMicroButton", "EJMicroButton",
+                               "StoreMicroButton", "MainMenuMicroButton"}
 
     Mouseover.BAG_BUTTONS = {"MainMenuBarBackpackButton", "BagBarExpandToggle", "CharacterBag0Slot",
                              "CharacterBag1Slot", "CharacterBag2Slot", "CharacterBag3Slot", "CharacterReagentBag0Slot"}
