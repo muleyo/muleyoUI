@@ -12,7 +12,9 @@ function Classcolor:OnInitialize()
         player = PlayerFrame.healthbar,
         pet = PetFrame.healthbar,
         target = TargetFrame.healthbar,
+        focus = FocusFrame.healthbar,
         targettarget = TargetFrameToT.healthbar,
+        focustarget = FocusFrameToT.healthbar,
         boss1 = Boss1TargetFrame.healthbar,
         boss2 = Boss2TargetFrame.healthbar,
         boss3 = Boss3TargetFrame.healthbar,
@@ -51,7 +53,8 @@ function Classcolor:OnInitialize()
             Classcolor:SetColor(healthbar, unit)
         end
 
-        TargetFrameNameBackground:SetVertexColor(0, 0, 0, 0.5)
+        TargetFrameNameBackground:SetAlpha(0)
+        FocusFrameNameBackground:SetAlpha(0)
     end
 end
 
