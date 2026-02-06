@@ -15,9 +15,7 @@ function Modules:OnInitialize()
     Modules.Hitindicator = mUI:GetModule("mUI.Modules.Unitframes.Hitindicator")
     Modules.Pvpbadge = mUI:GetModule("mUI.Modules.Unitframes.Pvpbadge")
     Modules.Name = mUI:GetModule("mUI.Modules.Unitframes.Name")
-    Modules.Level = mUI:GetModule("mUI.Modules.Unitframes.Level")
     Modules.Restingtextures = mUI:GetModule("mUI.Modules.Unitframes.Restingtextures")
-    Modules.Elitecolor = mUI:GetModule("mUI.Modules.Unitframes.Elitecolor")
 end
 
 function Modules:OnEnable()
@@ -48,14 +46,8 @@ function Modules:OnEnable()
     if Modules.db.name then
         Modules.Name:Enable()
     end
-    if Modules.db.level then
-        Modules.Level:Enable()
-    end
     if Modules.db.buffsdebuffs.enabled then
         Modules.BuffsDebuffs:Enable()
-    end
-    if Modules.db.elitecolor then
-        Modules.Elitecolor:Enable()
     end
     if Modules.db.raidframes.size.enabled then
         Modules.RF_Size:Enable()
@@ -84,9 +76,7 @@ function Modules:OnDisable()
     Modules.UF_Textures:Disable()
     Modules.RF_Textures:Disable()
     Modules.Name:Disable()
-    Modules.Level:Disable()
     Modules.Restingtextures:Disable()
-    Modules.Elitecolor:Disable()
     Modules.RF_Size:Disable()
     Modules.RF_RoleIcons:Disable()
     Modules.RF_Colors:Disable()

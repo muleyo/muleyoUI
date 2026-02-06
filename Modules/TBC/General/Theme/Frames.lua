@@ -933,6 +933,8 @@ function Theme:Quest()
     -- Quest
     mUI:Skin(QuestFrame)
     mUI:Skin(QuestFrame.NineSlice)
+    mUI:Skin(QuestFrameInset)
+    mUI:Skin(QuestFrameInset.NineSlice)
     mUI:Skin(QuestLogFrame)
     mUI:Skin(QuestLogFrame.NineSlice)
     mUI:Skin(QuestLogListScrollFrame)
@@ -958,67 +960,106 @@ function Theme:Quest()
 
     QuestLogItemChooseText.STC = QuestLogItemChooseText.SetTextColor
     QuestLogItemChooseText.SetTextColor = function(self)
-        self:STC(0.8, 0.8, 0.8)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(0.8, 0.8, 0.8)
+        end
     end
 
     QuestLogRewardTitleText.STC = QuestLogRewardTitleText.SetTextColor
     QuestLogRewardTitleText.SetTextColor = function(self)
-        self:STC(1, 0.875, 0.25)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(1, 0.875, 0.25)
+        end
     end
 
     QuestLogItemReceiveText.STC = QuestLogItemReceiveText.SetTextColor
     QuestLogItemReceiveText.SetTextColor = function(self)
-        self:STC(0.8, 0.8, 0.8)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(0.8, 0.8, 0.8)
+        end
     end
 
     QuestLogObjective1.STC = QuestLogObjective1.SetTextColor
     QuestLogObjective1.SetTextColor = function(self)
-        self:STC(1, 0.95, 0.75)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(1, 0.95, 0.75)
+        end
     end
 
     QuestLogObjective2.STC = QuestLogObjective2.SetTextColor
     QuestLogObjective2.SetTextColor = function(self)
-        self:STC(1, 0.95, 0.75)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(1, 0.95, 0.75)
+        end
     end
 
     QuestLogObjective3.STC = QuestLogObjective3.SetTextColor
     QuestLogObjective3.SetTextColor = function(self)
-        self:STC(1, 0.95, 0.75)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(1, 0.95, 0.75)
+        end
     end
 
     QuestLogObjective4.STC = QuestLogObjective4.SetTextColor
     QuestLogObjective4.SetTextColor = function(self)
-        self:STC(1, 0.95, 0.75)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(1, 0.95, 0.75)
+        end
     end
 
     QuestLogObjective5.STC = QuestLogObjective5.SetTextColor
     QuestLogObjective5.SetTextColor = function(self)
-        self:STC(1, 0.95, 0.75)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(1, 0.95, 0.75)
+        end
     end
 
     QuestLogObjective6.STC = QuestLogObjective6.SetTextColor
     QuestLogObjective6.SetTextColor = function(self)
-        self:STC(1, 0.95, 0.75)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(1, 0.95, 0.75)
+        end
     end
 
     QuestLogObjective7.STC = QuestLogObjective7.SetTextColor
     QuestLogObjective7.SetTextColor = function(self)
-        self:STC(1, 0.95, 0.75)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(1, 0.95, 0.75)
+        end
     end
 
     QuestLogObjective8.STC = QuestLogObjective8.SetTextColor
     QuestLogObjective8.SetTextColor = function(self)
-        self:STC(1, 0.95, 0.75)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(1, 0.95, 0.75)
+        end
     end
 
     QuestLogObjective9.STC = QuestLogObjective9.SetTextColor
     QuestLogObjective9.SetTextColor = function(self)
-        self:STC(1, 0.95, 0.75)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(1, 0.95, 0.75)
+        end
     end
 
     QuestLogObjective10.STC = QuestLogObjective10.SetTextColor
     QuestLogObjective10.SetTextColor = function(self)
-        self:STC(1, 0.95, 0.75)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(1, 0.95, 0.75)
+        end
     end
 end
 
@@ -1118,7 +1159,8 @@ end
 function Theme:Castbars()
     -- Castbars
     mUI:Skin({PlayerCastingBarFrame.Border, TargetFrameSpellBar.Border, TargetFrameSpellBar.BorderShield,
-              Boss1TargetFrameSpellBar.Border, Boss1TargetFrameSpellBar.BorderShield, Boss2TargetFrameSpellBar.Border,
+              FocusFrameSpellBar.Border, FocusFrameSpellBar.BorderShield, Boss1TargetFrameSpellBar.Border,
+              Boss1TargetFrameSpellBar.BorderShield, Boss2TargetFrameSpellBar.Border,
               Boss2TargetFrameSpellBar.BorderShield, Boss3TargetFrameSpellBar.Border,
               Boss3TargetFrameSpellBar.BorderShield, Boss4TargetFrameSpellBar.Border,
               Boss4TargetFrameSpellBar.BorderShield, Boss5TargetFrameSpellBar.Border,

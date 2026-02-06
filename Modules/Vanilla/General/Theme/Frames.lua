@@ -943,74 +943,120 @@ function Theme:Quest()
     QuestLogDescriptionTitle:SetTextColor(1, 0.875, 0.25)
     QuestLogObjectivesText:SetTextColor(0.8, 0.8, 0.8)
     QuestLogQuestDescription:SetTextColor(0.8, 0.8, 0.8)
-    QuestLogRequiredMoneyText:SetTextColor(0.8, 0.8, 0.8)
     QuestLogRewardTitleText:SetTextColor(0.8, 0.8, 0.8, 1)
     QuestLogSpellLearnText:SetTextColor(0.8, 0.8, 0.8)
     QuestLogTimerText:SetTextColor(0.8, 0.8, 0.8)
 
+    QuestLogRequiredMoneyText.STC = QuestLogRequiredMoneyText.SetTextColor
+    QuestLogRequiredMoneyText.SetTextColor = function(self)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(0.8, 0.8, 0.8)
+        end
+    end
+
     QuestLogItemChooseText.STC = QuestLogItemChooseText.SetTextColor
     QuestLogItemChooseText.SetTextColor = function(self)
-        self:STC(0.8, 0.8, 0.8)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(0.8, 0.8, 0.8)
+        end
     end
 
     QuestLogRewardTitleText.STC = QuestLogRewardTitleText.SetTextColor
     QuestLogRewardTitleText.SetTextColor = function(self)
-        self:STC(1, 0.875, 0.25)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(1, 0.875, 0.25)
+        end
     end
 
     QuestLogItemReceiveText.STC = QuestLogItemReceiveText.SetTextColor
     QuestLogItemReceiveText.SetTextColor = function(self)
-        self:STC(0.8, 0.8, 0.8)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(0.8, 0.8, 0.8)
+        end
     end
 
     QuestLogObjective1.STC = QuestLogObjective1.SetTextColor
     QuestLogObjective1.SetTextColor = function(self)
-        self:STC(1, 0.95, 0.75)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(1, 0.95, 0.75)
+        end
     end
 
     QuestLogObjective2.STC = QuestLogObjective2.SetTextColor
     QuestLogObjective2.SetTextColor = function(self)
-        self:STC(1, 0.95, 0.75)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(1, 0.95, 0.75)
+        end
     end
 
     QuestLogObjective3.STC = QuestLogObjective3.SetTextColor
     QuestLogObjective3.SetTextColor = function(self)
-        self:STC(1, 0.95, 0.75)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(1, 0.95, 0.75)
+        end
     end
 
     QuestLogObjective4.STC = QuestLogObjective4.SetTextColor
     QuestLogObjective4.SetTextColor = function(self)
-        self:STC(1, 0.95, 0.75)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(1, 0.95, 0.75)
+        end
     end
 
     QuestLogObjective5.STC = QuestLogObjective5.SetTextColor
     QuestLogObjective5.SetTextColor = function(self)
-        self:STC(1, 0.95, 0.75)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(1, 0.95, 0.75)
+        end
     end
 
     QuestLogObjective6.STC = QuestLogObjective6.SetTextColor
     QuestLogObjective6.SetTextColor = function(self)
-        self:STC(1, 0.95, 0.75)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(1, 0.95, 0.75)
+        end
     end
 
     QuestLogObjective7.STC = QuestLogObjective7.SetTextColor
     QuestLogObjective7.SetTextColor = function(self)
-        self:STC(1, 0.95, 0.75)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(1, 0.95, 0.75)
+        end
     end
 
     QuestLogObjective8.STC = QuestLogObjective8.SetTextColor
     QuestLogObjective8.SetTextColor = function(self)
-        self:STC(1, 0.95, 0.75)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(1, 0.95, 0.75)
+        end
     end
 
     QuestLogObjective9.STC = QuestLogObjective9.SetTextColor
     QuestLogObjective9.SetTextColor = function(self)
-        self:STC(1, 0.95, 0.75)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(1, 0.95, 0.75)
+        end
     end
 
     QuestLogObjective10.STC = QuestLogObjective10.SetTextColor
     QuestLogObjective10.SetTextColor = function(self)
-        self:STC(1, 0.95, 0.75)
+        if not self.STCUpdated then
+            self.STCUpdated = true
+            self:STC(1, 0.95, 0.75)
+        end
     end
 end
 
@@ -1096,10 +1142,9 @@ end
 function Theme:Unitframes()
     -- Unitframes
     mUI:Skin({PlayerFrameTexture, PlayerFrameVehicleTexture, PetFrameTexture, TargetFrameTextureFrameTexture,
-              FocusFrameTextureFrameTexture, Boss1TargetFrameTextureFrameTexture, Boss2TargetFrameTextureFrameTexture,
+              Boss1TargetFrameTextureFrameTexture, Boss2TargetFrameTextureFrameTexture,
               Boss3TargetFrameTextureFrameTexture, Boss4TargetFrameTextureFrameTexture,
-              Boss5TargetFrameTextureFrameTexture, TargetFrameToTTextureFrameTexture, FocusFrameToTTextureFrameTexture},
-        true)
+              Boss5TargetFrameTextureFrameTexture, TargetFrameToTTextureFrameTexture}, true)
     mUI:Skin(PlayerFrameAlternateManaBar)
     mUI:Skin(PlayerFrameGroupIndicator)
 end

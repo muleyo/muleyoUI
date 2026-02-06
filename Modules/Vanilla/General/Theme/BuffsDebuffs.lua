@@ -257,23 +257,11 @@ function Theme:UpdateUnitframeAuras(frame)
             Theme.aurabuttons[_G["TargetFrameBuff" .. i]] = "unitframebuff"
         end
 
-        if _G["FocusFrameBuff" .. i] and (not _G["FocusFrameBuff" .. i].mUIBorder) then
-            Theme:ApplySkin(_G["FocusFrameBuff" .. i], _G["FocusFrameBuff" .. i .. "Icon"], frame.unit)
-            Theme.aurabuttons[_G["FocusFrameBuff" .. i]] = "unitframebuff"
-        end
-
         if _G["TargetFrameBuff" .. i] and _G["TargetFrameBuff" .. i].mUIBorder then
             _G["TargetFrameBuff" .. i].mUIBorder:SetSize(_G["TargetFrameBuff" .. i]:GetWidth() + 2,
                 _G["TargetFrameBuff" .. i]:GetHeight() + 1)
 
             _G["TargetFrameBuff" .. i].mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
-        end
-
-        if _G["FocusFrameBuff" .. i] and _G["FocusFrameBuff" .. i].mUIBorder then
-            _G["FocusFrameBuff" .. i].mUIBorder:SetSize(_G["FocusFrameBuff" .. i]:GetWidth() + 2,
-                _G["FocusFrameBuff" .. i]:GetHeight() + 1)
-
-            _G["FocusFrameBuff" .. i].mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
         end
     end
     for i = 1, MAX_TARGET_DEBUFFS do
@@ -281,11 +269,6 @@ function Theme:UpdateUnitframeAuras(frame)
         if _G["TargetFrameDebuff" .. i] and (not _G["TargetFrameDebuff" .. i].mUIBorder) then
             Theme:ApplySkin(_G["TargetFrameDebuff" .. i], _G["TargetFrameDebuff" .. i .. "Icon"], frame.unit)
             Theme.aurabuttons[_G["TargetFrameDebuff" .. i]] = "unitframedebuff"
-        end
-
-        if _G["FocusFrameDebuff" .. i] and (not _G["FocusFrameDebuff" .. i].mUIBorder) then
-            Theme:ApplySkin(_G["FocusFrameDebuff" .. i], _G["FocusFrameDebuff" .. i .. "Icon"], frame.unit)
-            Theme.aurabuttons[_G["FocusFrameDebuff" .. i]] = "unitframedebuff"
         end
 
         color = Theme.debuffColors[debuffType or "none"]
@@ -299,17 +282,6 @@ function Theme:UpdateUnitframeAuras(frame)
             _G["TargetFrameDebuff" .. i].mUIBorder:SetSize(_G["TargetFrameDebuff" .. i]:GetWidth() + 2,
                 _G["TargetFrameDebuff" .. i]:GetHeight() + 1)
             _G["TargetFrameDebuff" .. i .. "Border"]:Hide()
-        end
-
-        if _G["FocusFrameDebuff" .. i] and _G["FocusFrameDebuff" .. i].mUIBorder then
-            if mUI.db.profile.unitframes.buffsdebuffs.debuffcolors then
-                _G["FocusFrameDebuff" .. i].mUIBorder:SetVertexColor(color.r, color.g, color.b)
-            else
-                _G["FocusFrameDebuff" .. i].mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
-            end
-            _G["FocusFrameDebuff" .. i].mUIBorder:SetSize(_G["FocusFrameDebuff" .. i]:GetWidth() + 2,
-                _G["FocusFrameDebuff" .. i]:GetHeight() + 1)
-            _G["FocusFrameDebuff" .. i .. "Border"]:Hide()
         end
     end
 end
