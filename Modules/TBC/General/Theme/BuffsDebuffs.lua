@@ -315,16 +315,6 @@ function Theme:UpdateRaidframeAuras(aura)
             aura.border:Hide()
         else
             aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
-
-            local auraSize
-
-            if IsInRaid() then
-                auraSize = mUI.db.profile.unitframes.raidframes.aurasizeRaid
-            else
-                auraSize = mUI.db.profile.unitframes.raidframes.aurasizeParty
-            end
-
-            aura:SetSize(auraSize, auraSize)
         end
     end
 end
