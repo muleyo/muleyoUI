@@ -10,7 +10,7 @@ function Functions:OnInitialize()
     -- Get Player Class, Colors and Theme
     local _, class = UnitClass("player")
     local classColor = RAID_CLASS_COLORS[class]
-    local customColor = Functions.db.general.color
+    local customColor = Functions.db.general.color or {1, 1, 1, 1}
     local themes = {
         Disabled = {1, 1, 1},
         Dark = {0.3, 0.3, 0.3},
@@ -24,8 +24,13 @@ function Functions:OnInitialize()
         print("|cff009cffm|r|cffffd100UI|r:", msg)
     end
 
-    function mUI:IsClassic()
-        return WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
+    function mUI:GameVersion()
+        return {
+            ["Vanilla"] = WOW_PROJECT_CLASSIC == WOW_PROJECT_ID,
+            ["TBC"] = WOW_PROJECT_BURNING_CRUSADE_CLASSIC == WOW_PROJECT_ID,
+            ["Mists"] = WOW_PROJECT_MISTS_CLASSIC == WOW_PROJECT_ID,
+            ["Mainline"] = WOW_PROJECT_MAINLINE == WOW_PROJECT_ID
+        }
     end
 
     -- Update both bars in the OnEvent handler
@@ -148,7 +153,7 @@ function Functions:OnInitialize()
     -- Theme Functions
     function mUI:Color(sub, alpha)
         -- Update Custom Color & Theme
-        customColor = mUI.db.profile.general.color
+        customColor = mUI.db.profile.general.color or {0, 0, 0, 1}
         themes["Custom"] = {customColor[1], customColor[2], customColor[3], customColor[4]}
         if not General:IsEnabled() then
             theme = themes["Disabled"]
@@ -175,7 +180,7 @@ function Functions:OnInitialize()
 
     function mUI:Skin(frame, isTable, isGui)
         -- Update Custom Color & Theme
-        customColor = mUI.db.profile.general.color
+        customColor = mUI.db.profile.general.color or {0, 0, 0, 1}
         themes["Custom"] = {customColor[1], customColor[2], customColor[3], customColor[4]}
         if not General:IsEnabled() then
             theme = themes["Disabled"]

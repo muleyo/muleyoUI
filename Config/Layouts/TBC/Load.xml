@@ -1,0 +1,16 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Include file="General.lua" />
+    <Include file="Actionbars.lua" />
+    <Include file="Unitframes.lua" />
+    <Include file="Castbars.lua" />
+    <Include file="NPCColors.lua" />
+    <Include file="Nameplates.lua" />
+    <Include file="Tooltips.lua" />
+    <Include file="MapMinimap.lua" />
+    <Include file="Chat.lua" />
+    <Include file="Misc.lua" />
+    <Include file="Profiles.lua" />
+    <Include file="ProfilesExport.lua" />
+    <Include file="ProfilesImport.lua" />
+    <Include file="About.lua" />
+</Ui>

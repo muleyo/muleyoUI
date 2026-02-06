@@ -1,0 +1,7 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Include file="Menubutton.lua" />
+    <Include file="Tabbinder.lua" />
+    <Include file="Fastloot.lua" />
+    <Include file="Gryphons.lua" />
+    <Include file="Modules.lua" />
+</Ui>

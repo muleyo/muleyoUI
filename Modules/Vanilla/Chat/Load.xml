@@ -1,0 +1,18 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Include file="Link.lua" />
+    <Include file="Copy.lua" />
+    <Include file="Core.lua" />
+    <Include file="Components\Backdrop.lua" />
+    <Include file="Components\Button.lua" />
+    <Include file="Components\Dock.lua" />
+    <Include file="Components\Editbox.lua" />
+    <Include file="Components\Fonts.lua" />
+    <Include file="Components\Gradientbackground.lua" />
+    <Include file="Components\Messageline.lua" />
+    <Include file="Components\Slidingmessageframe.lua" />
+    <Include file="Components\Scrollbutton.lua" />
+    <Include file="Components\Tab.lua" />
+    <Include file="Style.lua" />
+    <Include file="Modules.lua" />
+    <Frame name="mUIHyperlinkPropagator" propagateHyperlinksToParent="true" virtual="true" />
+</Ui>
