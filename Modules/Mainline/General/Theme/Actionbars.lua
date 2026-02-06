@@ -1,13 +1,7 @@
 local Theme = mUI:GetModule("mUI.Modules.General.Theme")
 
-if WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC then
-    Theme.Bars = {_G["MultiBarBottomLeft"], _G["MultiBarBottomRight"], _G["MultiBarRight"], _G["MultiBarLeft"]}
-
-    Theme.backup = ActionButton1NormalTexture.SetVertexColor
-else
-    Theme.Bars = {_G["MultiBarBottomLeft"], _G["MultiBarBottomRight"], _G["MultiBarRight"], _G["MultiBarLeft"],
-                  _G["MultiBar5"], _G["MultiBar6"], _G["MultiBar7"]}
-end
+Theme.Bars = {_G["MultiBarBottomLeft"], _G["MultiBarBottomRight"], _G["MultiBarRight"], _G["MultiBarLeft"],
+              _G["MultiBar5"], _G["MultiBar6"], _G["MultiBar7"]}
 
 -- Style ActionButton
 function Theme:StyleButton(Button, Type)

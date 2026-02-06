@@ -1,0 +1,11 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Include file="Style.lua" />
+    <Include file="Hotkey.lua" />
+    <Include file="Macro.lua" />
+    <Include file="Flash.lua" />
+    <Include file="Range.lua" />
+    <Include file="Mouseover.lua" />
+    <Include file="Fontsize.lua" />
+    <Include file="Cooldown.lua" />
+    <Include file="Modules.lua" />
+</Ui>

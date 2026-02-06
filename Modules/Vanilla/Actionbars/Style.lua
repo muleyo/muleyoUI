@@ -1,7 +1,5 @@
 local Style = mUI:NewModule("mUI.Modules.Actionbars.Style", "AceHook-3.0")
 
-if WOW_PROJECT_ID ~= WOW_PROJECT_MISTS_CLASSIC then return end
-
 -- LSM
 Style.LSM = LibStub("LibSharedMedia-3.0")
 
@@ -19,36 +17,12 @@ Style.frame:RegisterEvent("UNIT_EXITED_VEHICLE")
 
 -- Tables
 Style.stanceButtons = {}
-Style.defaultActionButtons = {
-    "ActionButton",
-    "MultiBarBottomLeftButton",
-    "MultiBarBottomRightButton",
-    "MultiBarRightButton",
-    "MultiBarLeftButton",
-    "StanceButton",
-    "PetActionButton"
-}
-Style.microButtons = {
-    "CharacterMicroButton",
-    "SpellbookMicroButton",
-    "TalentMicroButton",
-    "AchievementMicroButton",
-    "QuestLogMicroButton",
-    "GuildMicroButton",
-    "PVPMicroButton",
-    "LFGMicroButton",
-    "CollectionsMicroButton",
-    "EJMicroButton",
-    "StoreMicroButton",
-    "MainMenuMicroButton"
-}
-Style.bagButtons = {
-    "CharacterBag3Slot",
-    "CharacterBag2Slot",
-    "CharacterBag1Slot",
-    "CharacterBag0Slot",
-    "MainMenuBarBackpackButton"
-}
+Style.defaultActionButtons = {"ActionButton", "MultiBarBottomLeftButton", "MultiBarBottomRightButton",
+                              "MultiBarRightButton", "MultiBarLeftButton", "StanceButton", "PetActionButton"}
+Style.microButtons = {"CharacterMicroButton", "SpellbookMicroButton", "TalentMicroButton", "QuestLogMicroButton",
+                      "SocialsMicroButton", "WorldMapMicroButton", "MainMenuMicroButton", "HelpMicroButton"}
+Style.bagButtons = {"KeyRingButton", "CharacterBag3Slot", "CharacterBag2Slot", "CharacterBag1Slot", "CharacterBag0Slot",
+                    "MainMenuBarBackpackButton"}
 
 function Style:FetchActiveBar()
     if (HasBonusActionBar() or HasOverrideActionBar() or HasVehicleActionBar() or HasTempShapeshiftActionBar()) then
@@ -129,8 +103,8 @@ function Style:CreateActionbars()
     Style.bar3:SetSize(462, 38)
     Style.bar4:SetSize(38, 462)
     Style.bar5:SetSize(38, 462)
-    Style.micromenu:SetSize(305, 38)
-    Style.bagbar:SetSize(155, 32)
+    Style.micromenu:SetSize(215, 38)
+    Style.bagbar:SetSize(215, 40)
     Style.petbar:SetSize(340, 32)
     Style.stancebar:SetSize(205, 32)
     Style.expbar:SetSize(460, 12)
@@ -185,21 +159,14 @@ function Style:CreateActionbars()
 
     -- Use State Driver
     RegisterStateDriver(Style.bar1, "page",
-        "[vehicleui] v; " ..
-        "[overridebar] o; " ..
-        "[possessbar] p; " ..
-        "[actionbar:2] 2; " ..
-        "[actionbar:3] 3; " ..
-        "[actionbar:4] 4; " ..
-        "[bonusbar:1,stealth] 1s; " ..                            -- cat stealth
-        "[bonusbar:1] 1; " ..                                     -- cat
-        "[bonusbar:2] 2; " ..                                     -- bear
-        "[bonusbar:3] 3; " ..                                     -- moonkin/tree
-        "[bonusbar:4] 4; " ..                                     -- other bonus
+        "[vehicleui] v; " .. "[overridebar] o; " .. "[possessbar] p; " .. "[actionbar:2] 2; " .. "[actionbar:3] 3; " ..
+            "[actionbar:4] 4; " .. "[bonusbar:1,stealth] 1s; " .. -- cat stealth
+        "[bonusbar:1] 1; " .. -- cat
+        "[bonusbar:2] 2; " .. -- bear
+        "[bonusbar:3] 3; " .. -- moonkin/tree
+        "[bonusbar:4] 4; " .. -- other bonus
         "[form:1] f1; [form:2] f2; [form:3] f3; [form:4] f4; " .. -- any other forms
-        "[stealth] st; " ..
-        "base"
-    )
+        "[stealth] st; " .. "base")
     RegisterStateDriver(Style.bar1, "visibility", "[vehicleui] hide; show")
     RegisterStateDriver(Style.petbar, "visibility", "[vehicleui] hide;[pet] show; hide")
     RegisterStateDriver(Style.stancebar, "visibility", "[vehicleui] hide; show")
@@ -294,7 +261,7 @@ function Style:UpdateStanceButtons()
                 mUIbutton:Show()
             end
 
-            mUI:Skin({ _G["mUIStanceButton" .. i .. "NormalTexture2"] }, true)
+            mUI:Skin({_G["mUIStanceButton" .. i .. "NormalTexture2"]}, true)
         end
     end
 
@@ -318,7 +285,12 @@ function Style:CreateExpBar()
         edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
         edgeSize = 6,
         bgFile = nil,
-        insets = { left = 0, right = 0, top = 0, bottom = 0 },
+        insets = {
+            left = 0,
+            right = 0,
+            top = 0,
+            bottom = 0
+        }
     })
 
     -- Create Experience Bar Text
@@ -353,8 +325,7 @@ end
 function Style:UpdateExpBar()
     -- Set Experience Bar Texture
     Style.expbar:SetStatusBarTexture(Style.LSM:Fetch('statusbar', mUI.db.profile.unitframes.textures.unitframes))
-    Style.expbar.rested:SetStatusBarTexture(Style.LSM:Fetch('statusbar',
-        mUI.db.profile.unitframes.textures.unitframes))
+    Style.expbar.rested:SetStatusBarTexture(Style.LSM:Fetch('statusbar', mUI.db.profile.unitframes.textures.unitframes))
     Style.expbar:SetStatusBarColor(0.6, 0.06, 0.9)
     Style.expbar.rested:SetStatusBarColor(0.2, 0.4, 1, 1)
     Style.expbar.backdrop:SetBackdropBorderColor(unpack(mUI:Color(0.25)))
@@ -390,21 +361,15 @@ function Style:UpdateExpBar()
         Style.expbar.rested:SetValue(restedBarValue)
 
         -- Set Exp Bar Text with the actual total rested percentage
-        Style.expbar.text:SetText(
-            mUI:abbrNum(currentXP) .. " / " ..
-            mUI:abbrNum(maxXP) .. " XP - " ..
-            string.format("%.1f%% (%.1f%% rested)", percent, restedPercentForThisLevel)
-        )
+        Style.expbar.text:SetText(mUI:abbrNum(currentXP) .. " / " .. mUI:abbrNum(maxXP) .. " XP - " ..
+                                      string.format("%.1f%% (%.1f%% rested)", percent, restedPercentForThisLevel))
     else
         -- Hide Rested XP Bar if not rested
         Style.expbar.rested:Hide()
 
         -- Set Exp Bar Text
-        Style.expbar.text:SetText(
-            mUI:abbrNum(currentXP) .. " / " ..
-            mUI:abbrNum(maxXP) .. " XP - " ..
-            string.format("%.1f%%", percent)
-        )
+        Style.expbar.text:SetText(mUI:abbrNum(currentXP) .. " / " .. mUI:abbrNum(maxXP) .. " XP - " ..
+                                      string.format("%.1f%%", percent))
     end
 
     Style.expbar:SetValue(percent)
@@ -419,13 +384,15 @@ function Style:UpdateExpBarStateDriver()
 end
 
 function Style:UpdateBorders(bar, button)
-    if not button or (button.isForbidden and (not button:IsForbidden())) then return end
+    if not button or (button.isForbidden and (not button:IsForbidden())) then
+        return
+    end
 
     -- Create Icon Mask
     if not button.mask then
         button.mask = button:CreateMaskTexture()
-        button.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]],
-            "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+        button.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]], "CLAMPTOBLACKADDITIVE",
+            "CLAMPTOBLACKADDITIVE")
         button.mask:SetAllPoints(button.icon)
         button.icon:AddMaskTexture(button.mask)
 
@@ -444,7 +411,7 @@ function Style:UpdateBorders(bar, button)
     elseif bar == "StanceButton" then
         normalTexture:SetSize(33, 32)
     elseif bar == "BagButton" then
-        normalTexture:SetSize(31, 31)
+        normalTexture:SetSize(40, 40)
     elseif bar == "OverrideActionBar" then
         normalTexture:SetSize(56, 55)
     else
@@ -502,7 +469,9 @@ function Style:UpdateBorders(bar, button)
 end
 
 function Style:SetPositions()
-    if InCombatLockdown() then return end
+    if InCombatLockdown() then
+        return
+    end
     for i = 1, NUM_ACTIONBAR_BUTTONS do
         local button = _G["ActionButton" .. i]
         local prevButton = _G["ActionButton" .. i - 1]
@@ -618,11 +587,13 @@ function Style:SetPositions()
                 button:ClearAllPoints()
                 button:SetPoint("BOTTOMLEFT", Style.bagbar, "BOTTOMLEFT", 0, 0)
 
-                -- Update Border Styles
-                Style:UpdateBorders("BagButton", button)
-                C_Timer.After(0.1, function()
-                    mUI:Skin({ button:GetNormalTexture() }, true)
-                end)
+                if button:GetName() ~= "KeyRingButton" then
+                    -- Update Border Styles
+                    Style:UpdateBorders("BagButton", button)
+                    C_Timer.After(0.1, function()
+                        mUI:Skin({button:GetNormalTexture()}, true)
+                    end)
+                end
             else
                 button:ClearAllPoints()
                 button:SetPoint("LEFT", prevButton, "RIGHT", 1, 0)
@@ -630,7 +601,7 @@ function Style:SetPositions()
                 -- Update Border Styles
                 Style:UpdateBorders("BagButton", button)
                 C_Timer.After(0.1, function()
-                    mUI:Skin({ button:GetNormalTexture() }, true)
+                    mUI:Skin({button:GetNormalTexture()}, true)
                 end)
             end
         end
@@ -667,7 +638,9 @@ function Style:HideDefaultFrames()
 end
 
 Style:SecureHookScript(Style.frame, "OnEvent", function(_, event, cvar)
-    if C_AddOns.IsAddOnLoaded("Bartender4") or C_AddOns.IsAddOnLoaded("Dominos") then return end
+    if C_AddOns.IsAddOnLoaded("Bartender4") or C_AddOns.IsAddOnLoaded("Dominos") then
+        return
+    end
     if mUI.db.profile.actionbars.style ~= "mUI" then
         Style.frame:UnregisterAllEvents()
         return
@@ -699,7 +672,7 @@ Style:SecureHookScript(Style.frame, "OnEvent", function(_, event, cvar)
                     Style:UpdateBorders(nil, button)
                 end
 
-                mUI:Skin({ button.NormalTexture }, true)
+                mUI:Skin({button.NormalTexture}, true)
             end)
 
             -- Update Pet Actionbar
@@ -708,7 +681,7 @@ Style:SecureHookScript(Style.frame, "OnEvent", function(_, event, cvar)
                     Style:UpdateBorders("PetActionButton", _G["PetActionButton" .. i])
                     _G["PetActionButton" .. i .. "AutoCastable"]:Hide()
 
-                    mUI:Skin({ _G["PetActionButton" .. i .. "NormalTexture2"] }, true)
+                    mUI:Skin({_G["PetActionButton" .. i .. "NormalTexture2"]}, true)
                 end
             end)
 
@@ -732,12 +705,6 @@ Style:SecureHookScript(Style.frame, "OnEvent", function(_, event, cvar)
                     MainMenuBarVehicleLeaveButton:ClearAllPoints()
                     MainMenuBarVehicleLeaveButton:SetPoint("BOTTOM", UIParent, "BOTTOM", 260, 100)
                 end
-            end)
-
-            -- Alternate Power Bar
-            Style:SecureHookScript(PlayerPowerBarAlt, "OnShow", function()
-                PlayerPowerBarAlt:ClearAllPoints()
-                PlayerPowerBarAlt:SetPoint("TOP", UIParent, "TOP", 0, -50)
             end)
 
             Style.loaded = true

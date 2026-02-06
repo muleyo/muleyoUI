@@ -38,7 +38,7 @@ function Core:OnInitialize()
     Core.layouts.profilesImport = mUI:GetModule("mUI.Config.Layouts.ProfilesImport")
     Core.layouts.profilesExport = mUI:GetModule("mUI.Config.Layouts.ProfilesExport")
     Core.layouts.about = mUI:GetModule("mUI.Config.Layouts.About")
-    if mUI:IsClassic() then
+    if mUI:GameVersion()["Mists"] or mUI:GameVersion()["TBC"] then
         Core.layouts.NPCColors = mUI:GetModule("mUI.Config.Layouts.NPCColors")
     end
 
@@ -93,7 +93,7 @@ function Core:OnInitialize()
     Config:RegisterOptionsTable("mUIOptions_ProfilesExport_Tab", Core.layouts.profilesExport:GetOptions())
     Config:RegisterOptionsTable("mUIOptions_ProfilesImport_Tab", Core.layouts.profilesImport:GetOptions())
     Config:RegisterOptionsTable("mUIOptions_About_Tab", Core.layouts.about:GetOptions())
-    if mUI:IsClassic() then
+    if mUI:GameVersion()["Mists"] or mUI:GameVersion()["TBC"] then
         Config:RegisterOptionsTable("mUIOptions_NPCColors_Tab", Core.layouts.NPCColors:GetOptions())
     end
 end

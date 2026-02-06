@@ -4,7 +4,7 @@ function EditMode:OnInitialize()
     -- Load Database
     EditMode.db = mUI.db.profile.edit
 
-    if mUI:IsClassic() then
+    if mUI:GameVersion()["Mists"] or mUI:GameVersion()["Vanilla"] then
         -- Initialize grid database settings if they don't exist
         if not EditMode.db.grid then
             EditMode.db.grid = {
@@ -179,14 +179,6 @@ function EditMode:OnInitialize()
                 yOffset = 100,
                 scale = 1
             },
-            ["ExtraActionBarFrame"] = {
-                point = "BOTTOM",
-                relativeTo = "UIParent",
-                relativePoint = "BOTTOM",
-                xOffset = 250,
-                yOffset = 150,
-                scale = 1
-            },
             ["PlayerPowerBarAlt"] = {
                 point = "TOP",
                 relativeTo = "UIParent",
@@ -204,6 +196,17 @@ function EditMode:OnInitialize()
                 scale = 1
             }
         }
+
+        if mUI:GameVersion()["Mists"] then
+            EditMode.defaults["ExtraActionBarFrame"] = {
+                point = "BOTTOM",
+                relativeTo = "UIParent",
+                relativePoint = "BOTTOM",
+                xOffset = 250,
+                yOffset = 150,
+                scale = 1
+            }
+        end
 
         -- Common draggable frames for Classic
         if mUI.db.profile.actionbars.style == "mUI" then
@@ -273,11 +276,13 @@ function EditMode:OnInitialize()
                 name = "Extra Action Button"
             }}
 
-            -- ExtraActionButton Frame
-            UIPARENT_MANAGED_FRAME_POSITIONS["ExtraActionBarFrame"] = nil
-            UIPARENT_MANAGED_FRAME_POSITIONS["PlayerPowerBarAlt"] = nil
-            ExtraActionBarFrame:SetParent(UIParent)
-            ExtraActionBarFrame:SetMovable(true)
+            if mUI:GameVersion()["Mists"] then
+                -- ExtraActionButton Frame
+                UIPARENT_MANAGED_FRAME_POSITIONS["ExtraActionBarFrame"] = nil
+                UIPARENT_MANAGED_FRAME_POSITIONS["PlayerPowerBarAlt"] = nil
+                ExtraActionBarFrame:SetParent(UIParent)
+                ExtraActionBarFrame:SetMovable(true)
+            end
         else
             EditMode.availableFrames = { -- Unit Frames
             {
@@ -2558,7 +2563,35 @@ function EditMode:OnInitialize()
         EditMode:SecureHookScript(GameMenuFrame, "OnShow", function()
             GameMenuFrame:SetHeight(GameMenuFrame:GetHeight() + 45)
         end)
-    else
+    elseif mUI:GameVersion()["TBC"] then
+        -- Load Libraries
+        EditMode.LEM = LibStub('LibEditMode')
+
+        -- Stats Frame
+        function EditMode:StatsFrame(layout, point, x, y)
+            EditMode.db[layout].statsframe.point = point
+            EditMode.db[layout].statsframe.x = x
+            EditMode.db[layout].statsframe.y = y
+        end
+
+        EditMode.LEM:AddFrame(mUI.statsFrame, EditMode.StatsFrame)
+
+        EditMode.LEM:RegisterCallback('layout', function(layout)
+            if not EditMode.db[layout] then
+                EditMode.db[layout] = {
+                    ["statsframe"] = {
+                        ["point"] = "BOTTOMLEFT",
+                        ["x"] = 0,
+                        ["y"] = 0
+                    }
+                }
+            end
+
+            mUI.statsFrame:ClearAllPoints()
+            mUI.statsFrame:SetPoint(EditMode.db[layout].statsframe.point, EditMode.db[layout].statsframe.x,
+                EditMode.db[layout].statsframe.y)
+        end)
+    elseif mUI:GameVersion()["Mainline"] then
         -- Load Libraries
         EditMode.LEM = LibStub('LibEditMode')
 

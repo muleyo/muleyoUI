@@ -2,10 +2,6 @@ local Theme = mUI:GetModule("mUI.Modules.General.Theme")
 
 local _, playerClass = UnitClass("player")
 
-if WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC then
-    Theme.bagsbackup = MainMenuBarBackpackButtonNormalTexture.SetVertexColor
-end
-
 function Theme:Achievements()
     -- Achievements Frame
     if AchievementFrame then
