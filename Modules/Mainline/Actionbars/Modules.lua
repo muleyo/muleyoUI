@@ -8,7 +8,6 @@ function Modules:OnInitialize()
     Modules.Mouseover = mUI:GetModule("mUI.Modules.Actionbars.Mouseover")
     Modules.Range = mUI:GetModule("mUI.Modules.Actionbars.Range")
     Modules.Fontsize = mUI:GetModule("mUI.Modules.Actionbars.Fontsize")
-    Modules.Style = mUI:GetModule("mUI.Modules.Actionbars.Style")
 end
 
 function Modules:OnEnable()
@@ -41,5 +40,4 @@ function Modules:OnDisable()
     Modules.Mouseover:Disable()
     Modules.Range:Disable()
     Modules.Fontsize:Disable()
-    Modules.Style:Disable()
 end
