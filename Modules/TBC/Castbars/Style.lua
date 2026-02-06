@@ -36,10 +36,6 @@ function Style:OnInitialize()
             _G[castbar].Border:SetPoint("CENTER", _G[castbar])
             _G[castbar].Flash:ClearAllPoints()
             _G[castbar].Flash:SetPoint("CENTER", _G[castbar])
-            _G[castbar]:SetMovable(true)
-            _G[castbar]:SetUserPlaced(true)
-            _G[castbar]:ClearAllPoints()
-            _G[castbar]:SetPoint("CENTER", UIParent, 0, -150)
             _G[castbar].Text:ClearAllPoints()
             _G[castbar].Text:SetPoint("TOP", _G[castbar], "TOP", 0, 2)
             _G[castbar].Text:SetFont(Style.font, 12, "OUTLINE")
@@ -173,6 +169,10 @@ function Style:OnEnable()
 
             self:SetStatusBarColor(color.r, color.g, color.b)
         end
+    end)
+
+    Style:SecureHookScript(EditModeManagerFrame, "OnHide", function()
+        Style:Update()
     end)
 end
 
