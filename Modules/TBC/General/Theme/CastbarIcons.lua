@@ -3,6 +3,7 @@ local Theme = mUI:GetModule("mUI.Modules.General.Theme")
 Theme.castbars = {
     player = "PlayerCastingBarFrame",
     target = "TargetFrameSpellBar",
+    focus = "FocusFrameSpellBar",
     boss1 = "Boss1TargetFrameSpellBar",
     boss2 = "Boss2TargetFrameSpellBar",
     boss3 = "Boss3TargetFrameSpellBar",
