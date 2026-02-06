@@ -10,7 +10,7 @@ function Functions:OnInitialize()
     -- Get Player Class, Colors and Theme
     local _, class = UnitClass("player")
     local classColor = RAID_CLASS_COLORS[class]
-    local customColor = Functions.db.general.color or {1, 1, 1, 1}
+    local customColor = Functions.db.general.color or {0, 0, 0, 1}
     local themes = {
         Disabled = {1, 1, 1},
         Dark = {0.3, 0.3, 0.3},
