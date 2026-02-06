@@ -180,28 +180,6 @@ function Nameplates:OnInitialize()
                 end,
                 order = 9
             },
-            focus = {
-                name = "Focus Highlight",
-                desc = "Highlight the Nameplate of your Focus Target with a different texture",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.nameplates.focus = val
-
-                    if not Nameplates.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val then
-                        Nameplates.Module.Textures:RefreshNameplates()
-                    else
-                        Nameplates.Module.Textures:RefreshNameplates()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.nameplates.focus
-                end,
-                order = 12
-            },
             header3 = {
                 name = "PVE Options",
                 type = "header",
