@@ -29,9 +29,9 @@ end
 function BuffsDebuffs:OnEnable()
     BuffsDebuffs:SecureHook("TargetFrame_UpdateAuraPositions", function(_, type, numAuras)
         for i = 1, numAuras do
-            if type == "TargetFrameBuff" or type == "FocusFrameBuff" then
+            if type == "TargetFrameBuff" then
                 BuffsDebuffs:UpdateSize(_G[type .. i], "buff")
-            elseif type == "TargetFrameDebuff" or type == "FocusFrameDebuff" then
+            elseif type == "TargetFrameDebuff" then
                 BuffsDebuffs:UpdateSize(_G[type .. i], "debuff")
             end
         end
