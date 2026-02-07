@@ -150,10 +150,7 @@ end
 local function chatFrame_OnHyperlinkEnterHook(self, link, text, fontString)
     if Style.db.tooltips then
         local linkType = LinkUtil.SplitLinkData(link)
-        if linkType == "battlepet" then
-            GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT", 4, 2)
-            BattlePetToolTip_ShowLink(text)
-        elseif linkType ~= "trade" then
+        if linkType ~= "trade" then
             GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT", 4, 2)
 
             local isOK = pcall(GameTooltip.SetHyperlink, GameTooltip, link)
@@ -172,7 +169,6 @@ local function chatFrame_OnHyperlinkEnterHook(self, link, text, fontString)
 end
 
 local function chatFrame_OnHyperlinkLeaveHook(self)
-    BattlePetTooltip:Hide()
     GameTooltip:Hide()
 
     local slidingFrame = Style:GetSlidingFrameForChatFrame(self)
