@@ -13,6 +13,8 @@ function Modules:OnInitialize()
     Modules.Invite = mUI:GetModule("mUI.Modules.General.Invite")
     Modules.Cinematic = mUI:GetModule("mUI.Modules.General.Cinematic")
     Modules.TalkingHead = mUI:GetModule("mUI.Modules.General.TalkingHead")
+    Modules.RoleCheck = mUI:GetModule("mUI.Modules.General.RoleCheck")
+    Modules.Quests = mUI:GetModule("mUI.Modules.General.Quests")
     Modules.ItemInfo = mUI:GetModule("mUI.Modules.General.ItemInfo")
     Modules.Stats = mUI:GetModule("mUI.Modules.General.Stats")
     Modules.ErrorMessages = mUI:GetModule("mUI.Modules.General.ErrorMessages")
@@ -55,6 +57,12 @@ function Modules:OnEnable()
     if Modules.db.automation.talkinghead then
         Modules.TalkingHead:Enable()
     end
+    if Modules.db.automation.rolecheck then
+        Modules.RoleCheck:Enable()
+    end
+    if Modules.db.automation.quests then
+        Modules.Quests:Enable()
+    end
     if Modules.db.display.iteminfo then
         Modules.ItemInfo:Enable()
     end
@@ -81,6 +89,8 @@ function Modules:OnDisable()
     Modules.Invite:Disable()
     Modules.Cinematic:Disable()
     Modules.TalkingHead:Disable()
+    Modules.RoleCheck:Disable()
+    Modules.Quests:Disable()
     Modules.ItemInfo:Disable()
     Modules.Stats:Disable()
     Modules.ErrorMessages:Disable()

@@ -22,7 +22,9 @@ local defaults = {
                 resurrect = false,
                 invite = false,
                 cinematic = true,
-                talkinghead = true
+                talkinghead = true,
+                rolecheck = false,
+                quests = false
             },
             display = {
                 iteminfo = true,

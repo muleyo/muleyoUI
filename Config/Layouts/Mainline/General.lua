@@ -336,10 +336,54 @@ function General:OnInitialize()
                 end,
                 order = 15
             },
+            rolecheck = {
+                name = "Role Check",
+                desc = "Accept LFG role checks automatically",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.general.automation.rolecheck = val
+
+                    if not General.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        General.Module.RoleCheck:Enable()
+                    else
+                        General.Module.RoleCheck:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.general.automation.rolecheck
+                end,
+                order = 16
+            },
+            quests = {
+                name = "Accept Quests",
+                desc = "Accept quests automatically",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.general.automation.quests = val
+
+                    if not General.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        General.Module.Quests:Enable()
+                    else
+                        General.Module.Quests:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.general.automation.quests
+                end,
+                order = 17
+            },
             header3 = {
                 name = "Display",
                 type = "header",
-                order = 16
+                order = 18
             },
             iteminfo = {
                 name = "Item Info",
@@ -361,7 +405,7 @@ function General:OnInitialize()
                 get = function()
                     return mUI.db.profile.general.display.iteminfo
                 end,
-                order = 17
+                order = 19
             },
             stats = {
                 name = "Stats",
@@ -383,7 +427,7 @@ function General:OnInitialize()
                 get = function()
                     return mUI.db.profile.general.display.stats
                 end,
-                order = 18
+                order = 20
             },
             movementspeed = {
                 name = "Speed",
@@ -395,7 +439,7 @@ function General:OnInitialize()
                 get = function()
                     return mUI.db.profile.general.display.movementspeed
                 end,
-                order = 19
+                order = 21
             },
             errormessages = {
                 name = "Error Messages",
@@ -417,7 +461,7 @@ function General:OnInitialize()
                 get = function()
                     return mUI.db.profile.general.display.errormessages
                 end,
-                order = 20
+                order = 22
             },
             friendlist = {
                 name = "Friends Class Colors",
@@ -439,7 +483,7 @@ function General:OnInitialize()
                 get = function()
                     return mUI.db.profile.general.display.friendlist
                 end,
-                order = 21
+                order = 23
             }
         }
     }

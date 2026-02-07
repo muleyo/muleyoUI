@@ -19,6 +19,8 @@
     <Include file="Invite.lua" />
     <Include file="Cinematic.lua" />
     <Include file="TalkingHead.lua" />
+    <Include file="RoleCheck.lua" />
+    <Include file="Quests.lua" />
     <Include file="ItemInfo.lua" />
     <Include file="Stats.lua" />
     <Include file="ErrorMessages.lua" />
