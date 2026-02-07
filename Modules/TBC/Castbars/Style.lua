@@ -121,6 +121,8 @@ function Style:OnEnable()
 
             self:SetStatusBarColor(color.r, color.g, color.b)
         end
+
+        Style:EnableStyle("player", "PlayerCastingBarFrame")
     end)
 
     Style:SecureHookScript(TargetFrameSpellBar, "OnUpdate", function(self)

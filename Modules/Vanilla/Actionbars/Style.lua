@@ -447,6 +447,12 @@ function Style:UpdateBorders(bar, button)
     checkedTexture:SetTexCoord(0.701171875, 0.880859375, 0.52001953125, 0.56396484375)
     checkedTexture:SetAllPoints(normalTexture)
 
+    if button.Flash then
+        button.Flash:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\uiactionbar2x.png]])
+        button.Flash:SetTexCoord(0.701171875, 0.880859375, 0.47509765625, 0.51904296875)
+        button.Flash:SetAllPoints(normalTexture)
+    end
+
     if button.HotKey then
         button.HotKey:ClearAllPoints()
         button.HotKey:SetPoint("TOPRIGHT", button, "TOPRIGHT", -1, -3)
