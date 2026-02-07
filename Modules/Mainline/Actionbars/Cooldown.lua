@@ -8,12 +8,7 @@ function Cooldown:OnInitialize()
             -- Get Cooldown Info
             local cd = C_ActionBar.GetActionCooldown(button.action)
 
-            -- Skip if on GCD
-            if cd.isOnGCD then
-                return
-            end
-
-            if button.cooldown:IsShown() then
+            if button.cooldown:IsShown() and not cd.isOnGCD then
                 button.icon:SetDesaturated(true)
             else
                 button.icon:SetDesaturated(false)
