@@ -21,7 +21,7 @@
 ## Category-zhTW: 使用者介面
 
 ## LIBS
-Libs\Load_Classic.xml
+Libs\Load_Mists.xml
 
 ## Init
 Core\Load.xml

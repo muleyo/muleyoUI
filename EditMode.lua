@@ -2574,7 +2574,25 @@ function EditMode:OnInitialize()
             EditMode.db[layout].statsframe.y = y
         end
 
+        -- GameTooltip
+        local mUIGameTooltip = CreateFrame("Frame", "mUIGameTooltip", UIParent)
+        mUIGameTooltip:SetSize(200, 100)
+        mUIGameTooltip:Show()
+
+        EditMode:SecureHook("GameTooltip_SetDefaultAnchor", function(tooltip, parent)
+            tooltip:SetOwner(parent, "ANCHOR_NONE")
+            tooltip:ClearAllPoints()
+            tooltip:SetPoint("BOTTOMRIGHT", mUIGameTooltip, "BOTTOMRIGHT")
+        end)
+
+        function EditMode:GameTooltip(layout, point, x, y)
+            EditMode.db[layout].gametooltip.point = point
+            EditMode.db[layout].gametooltip.x = x
+            EditMode.db[layout].gametooltip.y = y
+        end
+
         EditMode.LEM:AddFrame(mUI.statsFrame, EditMode.StatsFrame)
+        EditMode.LEM:AddFrame(mUIGameTooltip, EditMode.GameTooltip)
 
         EditMode.LEM:RegisterCallback('layout', function(layout)
             if not EditMode.db[layout] then
@@ -2583,13 +2601,29 @@ function EditMode:OnInitialize()
                         ["point"] = "BOTTOMLEFT",
                         ["x"] = 0,
                         ["y"] = 0
+                    },
+                    ["gametooltip"] = {
+                        ["point"] = "BOTTOMRIGHT",
+                        ["x"] = 0,
+                        ["y"] = 0
                     }
                 }
+            else
+                if not EditMode.db[layout]["gametooltip"] then
+                    EditMode.db[layout]["gametooltip"] = {
+                        ["point"] = "BOTTOMRIGHT",
+                        ["x"] = 0,
+                        ["y"] = 0
+                    }
+                end
             end
 
             mUI.statsFrame:ClearAllPoints()
             mUI.statsFrame:SetPoint(EditMode.db[layout].statsframe.point, EditMode.db[layout].statsframe.x,
                 EditMode.db[layout].statsframe.y)
+
+            mUIGameTooltip:SetPoint(EditMode.db[layout].gametooltip.point, EditMode.db[layout].gametooltip.x,
+                EditMode.db[layout].gametooltip.y)
         end)
     elseif mUI:GameVersion()["Mainline"] then
         -- Load Libraries

@@ -10,12 +10,14 @@ function Anchor:OnEnable()
 end
 
 function Anchor:OnDisable()
-    Anchor:Unhook("GameTooltip_SetDefaultAnchor")
+    Anchor:UnhookAll()
 
     local EditMode = mUI:GetModule("mUI.EditMode", true)
-    EditMode:SecureHook("GameTooltip_SetDefaultAnchor", function(tooltip, parent)
-        tooltip:SetOwner(parent, "ANCHOR_NONE")
-        tooltip:ClearAllPoints()
-        tooltip:SetPoint("BOTTOMRIGHT", mUITooltipFrame, "BOTTOMRIGHT")
-    end)
+    if not EditMode:IsHooked("GameTooltip_SetDefaultAnchor") then
+        EditMode:SecureHook("GameTooltip_SetDefaultAnchor", function(tooltip, parent)
+            tooltip:SetOwner(parent, "ANCHOR_NONE")
+            tooltip:ClearAllPoints()
+            tooltip:SetPoint("BOTTOMRIGHT", mUIGameTooltip, "BOTTOMRIGHT")
+        end)
+    end
 end
