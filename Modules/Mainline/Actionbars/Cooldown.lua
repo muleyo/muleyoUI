@@ -13,13 +13,10 @@ function Cooldown:OnInitialize()
                 return
             end
 
-            -- Set Cooldown
-            Cooldown.duration:SetTimeFromStart(cd.startTime, cd.duration)
-
-            if Cooldown.duration:IsZero() then
-                button.icon:SetDesaturated(false)
-            else
+            if button.cooldown:IsShown() then
                 button.icon:SetDesaturated(true)
+            else
+                button.icon:SetDesaturated(false)
             end
         end
     end
