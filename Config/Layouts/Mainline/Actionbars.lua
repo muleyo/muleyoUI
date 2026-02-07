@@ -127,6 +127,28 @@ function Actionbars:OnInitialize()
                 end,
                 order = 6
             },
+            cooldown = {
+                name = "Desaturate Cooldown",
+                desc = "Desaturate Actionbutton when Spell is on Cooldown",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.actionbars.cooldown = val
+
+                    if not Actionbars.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Actionbars.Module.Cooldown:Enable()
+                    else
+                        Actionbars.Module.Cooldown:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.actionbars.cooldown
+                end,
+                order = 7
+            },
             fontsize = {
                 name = "Fontsize",
                 desc = "Change the Fontsize of the Hotkey Text\n\n|cffffff00Info:|r 12 is default",
