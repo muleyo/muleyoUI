@@ -1443,6 +1443,13 @@ function Theme:Frames()
     mUI:Skin(InstanceAbandonPopup.BG)
     mUI:Skin(InstanceAbandonFrame)
 
+    -- CooldownViewerSettings
+    mUI:Skin(CooldownViewerSettings)
+    mUI:Skin(CooldownViewerSettingsInset)
+    mUI:Skin(CooldownViewerSettingsInset.NineSlice)
+    mUI:Skin(CooldownViewerSettings.TitleContainer)
+    mUI:Skin(CooldownViewerSettings.NineSlice)
+
     -- DropDowns
 
     function MenuStyle1Mixin:Generate()
