@@ -97,7 +97,7 @@ function Overshields:OnInitialize()
             absorbOverlay:SetParent(healthBar)
             absorbOverlay:ClearAllPoints() -- we'll be attaching the overlay on heal prediction update.
 
-            if absorbBar:IsShown() then -- If absorb bar is shown, attach absorb overlay to it; otherwise, attach to health bar.
+            if absorbBar:IsShown() then -- If absorb bar is shown, attach absorb overlay to it otherwise, attach to health bar.
                 absorbOverlay:SetPoint("TOPRIGHT", absorbBar, "TOPRIGHT", 0, 0)
                 absorbOverlay:SetPoint("BOTTOMRIGHT", absorbBar, "BOTTOMRIGHT", 0, 0)
             else
@@ -116,8 +116,6 @@ function Overshields:OnInitialize()
             absorbGlow:SetPoint("TOPLEFT", absorbOverlay, "TOPLEFT", -7, 0)
             absorbGlow:SetPoint("BOTTOMLEFT", absorbOverlay, "BOTTOMLEFT", -7, 0)
             absorbGlow:SetAlpha(0.6)
-
-            -- frame.overAbsorbGlow:Show();	--uncomment this if you want to ALWAYS show the glow to the left of the shield overlay
         end
     end
 end
