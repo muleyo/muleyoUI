@@ -132,11 +132,11 @@ function About:OnInitialize()
                 width = 1,
                 order = 20
             },
-            github = {
-                name = "GitHub",
+            donate = {
+                name = "Donate",
                 type = "execute",
                 func = function()
-                    mUI:Link("https://github.com/muleyo/muleyoUI")
+                    mUI:Link("https://pay.muleyo.dev/?donation=true")
                 end,
                 width = 1,
                 order = 21
