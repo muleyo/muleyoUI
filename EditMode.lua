@@ -2576,13 +2576,13 @@ function EditMode:OnInitialize()
 
         -- GameTooltip
         local mUIGameTooltip = CreateFrame("Frame", "mUIGameTooltip", UIParent)
-        mUIGameTooltip:SetSize(200, 100)
-        mUIGameTooltip:Show()
+        mUIGameTooltip:SetSize(160, 90)
+        mUIGameTooltip:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0)
 
         EditMode:SecureHook("GameTooltip_SetDefaultAnchor", function(tooltip, parent)
             tooltip:SetOwner(parent, "ANCHOR_NONE")
             tooltip:ClearAllPoints()
-            tooltip:SetPoint("BOTTOMRIGHT", mUIGameTooltip, "BOTTOMRIGHT")
+            tooltip:SetPoint("CENTER", mUIGameTooltip, "CENTER")
         end)
 
         function EditMode:GameTooltip(layout, point, x, y)
@@ -2622,6 +2622,7 @@ function EditMode:OnInitialize()
             mUI.statsFrame:SetPoint(EditMode.db[layout].statsframe.point, EditMode.db[layout].statsframe.x,
                 EditMode.db[layout].statsframe.y)
 
+            mUIGameTooltip:ClearAllPoints()
             mUIGameTooltip:SetPoint(EditMode.db[layout].gametooltip.point, EditMode.db[layout].gametooltip.x,
                 EditMode.db[layout].gametooltip.y)
         end)

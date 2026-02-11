@@ -1252,6 +1252,12 @@ function Theme:Frames()
     mUI:Skin(BattleTagInviteFrame)
     mUI:Skin(BattleTagInviteFrame.Border)
 
+    -- EditMode
+    mUI:Skin(EditModeManagerFrame)
+    mUI:Skin(EditModeManagerFrame.Border)
+    mUI:Skin(EditModeSystemSettingsDialog)
+    mUI:Skin(EditModeSystemSettingsDialog.Border)
+
     -- DropDowns
     function MenuStyle1Mixin:Generate()
         local background = self:AttachTexture()
