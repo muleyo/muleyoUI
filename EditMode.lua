@@ -1,3 +1,4 @@
+local _, ns = ...
 local EditMode = mUI:NewModule("mUI.EditMode", "AceHook-3.0")
 
 function EditMode:OnInitialize()
@@ -2565,7 +2566,7 @@ function EditMode:OnInitialize()
         end)
     elseif mUI:GameVersion()["TBC"] then
         -- Load Libraries
-        EditMode.LEM = LibStub('LibEditMode')
+        EditMode.LEM = ns.LibEditMode
 
         -- Stats Frame
         function EditMode:StatsFrame(layout, point, x, y)
@@ -2628,7 +2629,7 @@ function EditMode:OnInitialize()
         end)
     elseif mUI:GameVersion()["Mainline"] then
         -- Load Libraries
-        EditMode.LEM = LibStub('LibEditMode')
+        EditMode.LEM = ns.LibEditMode
 
         -- Create Holder Frame
         EditMode.QueueStatus = CreateFrame("Frame", "mUI QueueStatusButton", UIParent)
