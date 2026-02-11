@@ -1,4 +1,4 @@
-local Module = mUI:NewModule("mUI.Config.Install");
+local Module = mUI:NewModule("mUI.Config.Install")
 
 function Module:OnInitialize()
     if not (mUI.db.profile.install) then
@@ -47,14 +47,14 @@ function Module:OnInitialize()
         Button:SetScript("OnClick", function()
             mUI.db.profile.install = true
             mUI.db.profile.reset = true
-            local fadeInfo = {};
-            fadeInfo.mode = "OUT";
-            fadeInfo.timeToFade = 0.4;
+            local fadeInfo = {}
+            fadeInfo.mode = "OUT"
+            fadeInfo.timeToFade = 0.4
             fadeInfo.finishedFunc = function()
                 Install:Hide()
                 mUI:GUI()
             end
-            UIFrameFade(Install, fadeInfo);
+            UIFrameFade(Install, fadeInfo)
         end)
     end
 end

@@ -360,22 +360,22 @@ function ItemInfo:OnInitialize()
 
         local buttonId = button:GetID()
         if (buttonId == INVSLOT_MAINHAND) then
-            additionalFrame.enchantDisplay:SetPoint("BOTTOMRIGHT", button, "BOTTOMLEFT", -5, 0);
+            additionalFrame.enchantDisplay:SetPoint("BOTTOMRIGHT", button, "BOTTOMLEFT", -5, 0)
 
-            additionalFrame.socketDisplay[1]:SetPoint("RIGHT", button, "LEFT", -5, 0);
+            additionalFrame.socketDisplay[1]:SetPoint("RIGHT", button, "LEFT", -5, 0)
             for i = 2, ItemInfo.NUM_SOCKET_TEXTURES do
-                additionalFrame.socketDisplay[i]:SetPoint("RIGHT", additionalFrame.socketDisplay[i - 1], "LEFT", -2, 0);
+                additionalFrame.socketDisplay[i]:SetPoint("RIGHT", additionalFrame.socketDisplay[i - 1], "LEFT", -2, 0)
             end
         elseif (buttonId == INVSLOT_RANGED) then
-            additionalFrame.enchantDisplay:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT", 5, 0);
+            additionalFrame.enchantDisplay:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT", 5, 0)
 
-            additionalFrame.socketDisplay[1]:SetPoint("LEFT", button, "RIGHT", 5, 0);
+            additionalFrame.socketDisplay[1]:SetPoint("LEFT", button, "RIGHT", 5, 0)
             for i = 2, ItemInfo.NUM_SOCKET_TEXTURES do
-                additionalFrame.socketDisplay[i]:SetPoint("LEFT", additionalFrame.socketDisplay[i - 1], "RIGHT", 2, 0);
+                additionalFrame.socketDisplay[i]:SetPoint("LEFT", additionalFrame.socketDisplay[i - 1], "RIGHT", 2, 0)
             end
         else
-            additionalFrame.enchantDisplay:SetPoint("BOTTOM", button, "TOP", 0, 20);
-            ItemInfo:AnchorTextureLeftOfParent(additionalFrame.ilvlDisplay, additionalFrame.socketDisplay);
+            additionalFrame.enchantDisplay:SetPoint("BOTTOM", button, "TOP", 0, 20)
+            ItemInfo:AnchorTextureLeftOfParent(additionalFrame.ilvlDisplay, additionalFrame.socketDisplay)
         end
 
     end

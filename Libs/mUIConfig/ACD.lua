@@ -614,7 +614,7 @@ local function confirmPopup(appName, rootframe, basepath, info, message, func, .
     frame:Show()
     frame.text:SetText(message)
     -- From StaticPopup.lua
-    -- local height = 32 + text:GetHeight() + 2;
+    -- local height = 32 + text:GetHeight() + 2
     -- height = height + 6 + accept:GetHeight()
     -- We add 32 + 2 + 6 + 21 (button height) == 61
     local height = 61 + frame.text:GetHeight()
@@ -648,7 +648,7 @@ local function validationErrorPopup(message)
     frame:Show()
     frame.text:SetText(message)
     -- From StaticPopup.lua
-    -- local height = 32 + text:GetHeight() + 2;
+    -- local height = 32 + text:GetHeight() + 2
     -- height = height + 6 + accept:GetHeight()
     -- We add 32 + 2 + 6 + 21 (button height) == 61
     local height = 61 + frame.text:GetHeight()

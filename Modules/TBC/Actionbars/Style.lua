@@ -14,6 +14,25 @@ function Style:OnInitialize()
         StanceBar = StanceBar
     }
 
+    function Style:HideDefaultArt()
+        if StanceBar then
+            if StanceBar.BackgroundArtLeft then
+                StanceBar.BackgroundArtLeft:Hide()
+                StanceBar.BackgroundArtLeft:SetAlpha(0)
+            end
+
+            if StanceBar.BackgroundArtMiddle then
+                StanceBar.BackgroundArtMiddle:Hide()
+                StanceBar.BackgroundArtMiddle:SetAlpha(0)
+            end
+
+            if StanceBar.BackgroundArtRight then
+                StanceBar.BackgroundArtRight:Hide()
+                StanceBar.BackgroundArtRight:SetAlpha(0)
+            end
+        end
+    end
+
     function Style:UpdateBorders(bar, button, enabled)
         if not enabled or not button or (button.isForbidden and (not button:IsForbidden())) then
             return
@@ -136,4 +155,5 @@ end
 
 function Style:OnEnable()
     Style:Update(true)
+    Style:HideDefaultArt()
 end

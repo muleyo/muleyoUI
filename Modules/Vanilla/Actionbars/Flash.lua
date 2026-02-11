@@ -88,9 +88,9 @@ function Flash:OnEnable()
                 end
                 button = PetBattleFrame.BottomFrame.abilityButtons[id]
                 if id == BATTLE_PET_ABILITY_SWITCH then
-                    button = PetBattleFrame.BottomFrame.SwitchPetButton;
+                    button = PetBattleFrame.BottomFrame.SwitchPetButton
                 elseif id == BATTLE_PET_ABILITY_CATCH then
-                    button = PetBattleFrame.BottomFrame.CatchButton;
+                    button = PetBattleFrame.BottomFrame.CatchButton
                 end
                 if not button then
                     return

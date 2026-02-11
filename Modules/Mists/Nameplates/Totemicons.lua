@@ -8,7 +8,9 @@ function Totemicons:OnInitialize()
     Totemicons.frame = CreateFrame("Frame")
 
     -- Variables
-    Totemicons.startTimes = setmetatable({ __mode = "v" }, {})
+    Totemicons.startTimes = setmetatable({
+        __mode = "v"
+    }, {})
 
     -- Tables
     Totemicons.active = {}
@@ -18,34 +20,34 @@ function Totemicons:OnInitialize()
         [5913] = true
     }
     Totemicons.totems = {
-        [2630] = { 2484, 20 },     -- Earthbind
-        [60561] = { 51485, 20 },   -- Earthgrab
-        [3527] = { 5394, 15 },     -- Healing Stream
-        [6112] = { 8512, 120 },    -- Windfury
-        [97369] = { 192222, 15 },  -- Liquid Magma
-        [5913] = { 8143, 10 },     -- Tremor
-        [5925] = { 204336, 3 },    -- Grounding
-        [78001] = { 157153, 15 },  -- Cloudburst
-        [53006] = { 98008, 6 },    -- Spirit Link
-        [59764] = { 108280, 12 },  -- Healing Tide
-        [61245] = { 192058, 2 },   -- Static Charge
-        [100943] = { 198838, 15 }, -- Earthen Wall
-        [97285] = { 192077, 15 },  -- Wind Rush
-        [105451] = { 204331, 15 }, -- Counterstrike
-        [104818] = { 207399, 30 }, -- Ancestral
-        [105427] = { 204330, 15 }, -- Skyfury
-        [179867] = { 355580, 6 },  -- Static Field
-        [166523] = { 324386, 30 }, -- Vesper Totem (Kyrian)
+        [2630] = {2484, 20}, -- Earthbind
+        [60561] = {51485, 20}, -- Earthgrab
+        [3527] = {5394, 15}, -- Healing Stream
+        [6112] = {8512, 120}, -- Windfury
+        [97369] = {192222, 15}, -- Liquid Magma
+        [5913] = {8143, 10}, -- Tremor
+        [5925] = {204336, 3}, -- Grounding
+        [78001] = {157153, 15}, -- Cloudburst
+        [53006] = {98008, 6}, -- Spirit Link
+        [59764] = {108280, 12}, -- Healing Tide
+        [61245] = {192058, 2}, -- Static Charge
+        [100943] = {198838, 15}, -- Earthen Wall
+        [97285] = {192077, 15}, -- Wind Rush
+        [105451] = {204331, 15}, -- Counterstrike
+        [104818] = {207399, 30}, -- Ancestral
+        [105427] = {204330, 15}, -- Skyfury
+        [179867] = {355580, 6}, -- Static Field
+        [166523] = {324386, 30}, -- Vesper Totem (Kyrian)
 
         -- Warrior
-        [119052] = { 236320, 15 }, -- War Banner
+        [119052] = {236320, 15}, -- War Banner
 
-        --Priest
-        [101398] = { 211522, 12 }, -- Psyfiend
+        -- Priest
+        [101398] = {211522, 12} -- Psyfiend
     }
 
     function Totemicons:GetNPCIDByGUID(guid)
-        local _, _, _, _, _, npcID = strsplit("-", guid);
+        local _, _, _, _, _, npcID = strsplit("-", guid)
         return tonumber(npcID)
     end
 
@@ -85,7 +87,7 @@ function Totemicons:OnInitialize()
 
         if npcID and Totemicons.totems[npcID] then
             local isFriendly = UnitReaction(unit, "player") >= 4
-            --if isFriendly then return end
+            -- if isFriendly then return end
 
             if not nameplate.mUITotemIcon then
                 nameplate.mUITotemIcon = Totemicons:CreateIcon(nameplate)
@@ -108,7 +110,7 @@ function Totemicons:OnInitialize()
 
             if Totemicons.toglow[npcID] then
                 iconFrame:SetSize(35, 35)
-                Totemicons.glow.ButtonGlow_Start(iconFrame, { 1, 0, 0.3, 1 })
+                Totemicons.glow.ButtonGlow_Start(iconFrame, {1, 0, 0.3, 1})
             end
 
             Totemicons.active[guid] = nameplate
@@ -133,9 +135,8 @@ function Totemicons:OnInitialize()
     end
 
     function Totemicons:COMBAT_LOG_EVENT_UNFILTERED(event, unit)
-        local timestamp, eventType, hideCaster,
-        srcGUID, srcName, srcFlags, srcFlags2,
-        dstGUID, dstName, dstFlags, dstFlags2 = CombatLogGetCurrentEventInfo()
+        local timestamp, eventType, hideCaster, srcGUID, srcName, srcFlags, srcFlags2, dstGUID, dstName, dstFlags,
+            dstFlags2 = CombatLogGetCurrentEventInfo()
 
         if eventType == "SPELL_SUMMON" then
             local npcID = Totemicons:GetNPCIDByGUID(dstGUID)
