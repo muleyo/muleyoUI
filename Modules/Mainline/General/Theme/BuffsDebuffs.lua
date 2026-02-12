@@ -8,6 +8,7 @@ Theme.colorCurve:AddPoint(1, DEBUFF_TYPE_MAGIC_COLOR)
 Theme.colorCurve:AddPoint(2, DEBUFF_TYPE_CURSE_COLOR)
 Theme.colorCurve:AddPoint(3, DEBUFF_TYPE_DISEASE_COLOR)
 Theme.colorCurve:AddPoint(4, DEBUFF_TYPE_POISON_COLOR)
+Theme.colorCurve:AddPoint(9, DEBUFF_TYPE_BLEED_COLOR)
 Theme.colorCurve:AddPoint(11, DEBUFF_TYPE_BLEED_COLOR)
 
 Theme.aurabuttons = {}
@@ -145,9 +146,13 @@ function Theme:UpdatePlayerDebuffs()
 
             if auraData and auraData.auraInstanceID then
                 local color = C_UnitAuras.GetAuraDispelTypeColor("player", auraData.auraInstanceID, Theme.colorCurve)
-
-                -- Set the color of the Debuff Border
-                frame.mUIBorder:SetVertexColor(color.r, color.g, color.b, 1)
+                if color then
+                    -- Set the color of the Debuff Border
+                    frame.mUIBorder:SetVertexColor(color.r, color.g, color.b, 1)
+                else
+                    color = DEBUFF_TYPE_NONE_COLOR
+                    frame.mUIBorder:SetVertexColor(color.r, color.g, color.b, 1)
+                end
             end
         end
     end

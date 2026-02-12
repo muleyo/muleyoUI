@@ -175,10 +175,8 @@ function Style:OnInitialize()
 
         -- Current Target
         if (UnitExists(unit .. "target")) then
-            if not issecretvalue(unit) then
-                GameTooltip:AddDoubleLine(("|c%s%s|r"):format(Style.cfg.targetColorHex, "Target"),
-                    Style:GetTarget(unit .. "target"))
-            end
+            GameTooltip:AddDoubleLine(("|c%s%s|r"):format(Style.cfg.targetColorHex, "Target"),
+                Style:GetTarget(unit .. "target"))
         end
     end
 
@@ -330,9 +328,11 @@ function Style:OnEnable()
         -- Units
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, function(frame)
             local _, unit = frame:GetUnit()
-            if not issecretvalue(unit) then
-                Style:OnTooltipSetUnit(frame)
+            if issecretvalue(unit) then
+                return
             end
+
+            Style:OnTooltipSetUnit(frame)
         end)
 
         -- Items
