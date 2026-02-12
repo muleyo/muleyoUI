@@ -1451,24 +1451,16 @@ function Theme:Frames()
     mUI:Skin(CooldownViewerSettings.NineSlice)
 
     -- DropDowns
-
-    function MenuStyle1Mixin:Generate()
-        local background = self:AttachTexture()
-        background:SetAtlas("common-dropdown-bg")
-        background:SetVertexColor(unpack(mUI:Color(0.15)))
-
-        local x, y = 10, 3
-        background:SetPoint("TOPLEFT", -x, y)
-        background:SetPoint("BOTTOMRIGHT", x, -y)
-        background:SetAlpha(.925)
+    if not Theme:IsHooked(MenuStyle1Mixin, "Generate") then
+        Theme:SecureHook(MenuStyle1Mixin, "Generate", function(tooltip)
+            mUI:Skin(tooltip)
+        end)
     end
 
-    function MenuStyle2Mixin:Generate()
-        local background = self:AttachTexture()
-        background:SetAtlas("common-dropdown-c-bg")
-        background:SetPoint("TOPLEFT", -17, 12)
-        background:SetPoint("BOTTOMRIGHT", 17, -22)
-        background:SetVertexColor(unpack(mUI:Color(0.15)))
+    if not Theme:IsHooked(MenuStyle2Mixin, "Generate") then
+        Theme:SecureHook(MenuStyle2Mixin, "Generate", function(tooltip)
+            mUI:Skin(tooltip)
+        end)
     end
 end
 
