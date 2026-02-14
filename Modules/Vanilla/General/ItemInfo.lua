@@ -15,55 +15,6 @@ function ItemInfo:OnInitialize()
     ItemInfo.LEGENDARY_ITEM_LEVEL = 483
     ItemInfo.STEP_ITEM_LEVEL = 17
     ItemInfo.levelThresholds = {}
-    ItemInfo.NUM_SOCKET_TEXTURES = 4
-    ItemInfo.expansionRequiredSockets = {
-        [10] = {
-            [INVSLOT_NECK] = 2,
-            [INVSLOT_FINGER1] = 2,
-            [INVSLOT_FINGER2] = 2
-        },
-        [9] = {
-            [INVSLOT_NECK] = 3
-        }
-    }
-
-    ItemInfo.expansionEnchantableSlots = {
-        [10] = {
-            [INVSLOT_BACK] = true,
-            [INVSLOT_CHEST] = true,
-            [INVSLOT_WRIST] = true,
-            [INVSLOT_WRIST] = true,
-            [INVSLOT_LEGS] = true,
-            [INVSLOT_FEET] = true,
-            [INVSLOT_MAINHAND] = true,
-            [INVSLOT_FINGER1] = true,
-            [INVSLOT_FINGER2] = true
-        },
-        [9] = {
-            [INVSLOT_HEAD] = true,
-            [INVSLOT_BACK] = true,
-            [INVSLOT_CHEST] = true,
-            [INVSLOT_WRIST] = true,
-            [INVSLOT_WAIST] = true,
-            [INVSLOT_LEGS] = true,
-            [INVSLOT_FEET] = true,
-            [INVSLOT_MAINHAND] = true,
-            [INVSLOT_FINGER1] = true,
-            [INVSLOT_FINGER2] = true
-        }
-    }
-
-    ItemInfo.slotsThatHaveEnchants = {
-        [INVSLOT_SHOULDER] = true,
-        [INVSLOT_BACK] = true,
-        [INVSLOT_CHEST] = true,
-        [INVSLOT_WRIST] = true,
-        [INVSLOT_LEGS] = true,
-        [INVSLOT_HAND] = true,
-        [INVSLOT_FEET] = true,
-        [INVSLOT_MAINHAND] = true,
-        [INVSLOT_OFFHAND] = true
-    }
 
     ItemInfo.buttonLayout = {
         [INVSLOT_HEAD] = "left",
@@ -92,162 +43,6 @@ function ItemInfo:OnInitialize()
                                "CharacterTrinket0Slot", "CharacterTrinket1Slot", "CharacterBackSlot",
                                "CharacterMainHandSlot", "CharacterSecondaryHandSlot"}
 
-    ItemInfo.gemsWeCareAbout = {192991, -- Increased Primary Stat and Versatility
-    192985, -- Increased Primary Stat and Haste
-    192982, -- Increased Primary Stat and Critical Strike
-    192988, -- Increased Primary Stat and Mastery
-    192945, -- Increased Haste and Critical Strike
-    192948, -- Increased Haste and Mastery
-    192952, -- Increased Haste and Versatility
-    192955, -- Increased Haste
-    192961, -- Increased Mastery and Haste
-    192958, -- Increased Mastery and Critical Strike
-    192964, -- Increased Mastery and Versatility
-    192967, -- Increased Mastery
-    192919, -- Increased Critical Strike and Haste
-    192925, -- Increased Critical Strike and Versatility
-    192922, -- Increased Critical Strike and Mastery
-    192928, -- Increased Critical Strike
-    192935, -- Increased Versatility and Haste
-    192932, -- Increased Versatility and Critical Strike
-    192938, -- Increased Versatility and Mastery
-    192942, -- Increased Versatility
-    192973, -- Increased Stamina and Haste
-    192970, -- Increased Stamina and Critical Strike
-    192979, -- Increased Stamina and Versatility
-    192976 -- Increased Stamina and Mastery
-    }
-
-    ItemInfo.enchantReplacementTable = {
-        ["Stamina"] = "Stam",
-        ["Intellect"] = "Int",
-        ["Agility"] = "Agi",
-        ["Strength"] = "Str",
-
-        ["Mastery"] = "Mast",
-        ["Versatility"] = "Vers",
-        ["Critical Strike"] = "Crit",
-        ["Haste"] = "Haste",
-        ["Avoidance"] = "Avoid",
-
-        ["Rating"] = "",
-        ["rating"] = "",
-
-        ["Minor"] = "Min",
-        ["Movement"] = "Move",
-
-        [" and "] = " "
-    }
-
-    ItemInfo.enchantPattern = ENCHANTED_TOOLTIP_LINE:gsub('%%s', '(.*)')
-    ItemInfo.enchantAtlasPattern = "(.*)%s*|A:(.*):20:20|a"
-    ItemInfo.enchatColoredPatten = "|cn(.*):(.*)|r"
-
-    function ItemInfo:HasEnchant(itemLink)
-        if (not itemLink) then
-            return false
-        end
-
-        local itemString = itemLink:match("item[%-?%d:]+")
-        if (not itemString) then
-            return false
-        end
-
-        local _, _, enchantId = strsplit(":", itemString)
-
-        return enchantId and enchantId ~= ""
-    end
-
-    -- Functions
-    function ItemInfo:GetItemEnchantAsText(unit, slot)
-        ItemInfo.scanningTooltip:ClearLines()
-        ItemInfo.scanningTooltip:SetInventoryItem(unit, slot)
-
-        local itemLink = GetInventoryItemLink(unit, slot)
-        if (not ItemInfo:HasEnchant(itemLink)) then
-            return nil, nil
-        end
-
-        for i = ItemInfo.scanningTooltip:NumLines(), 3, -1 do
-            local fontString = _G["mUIScanningTooltipTextLeft" .. i]
-            if (fontString and fontString:GetObjectType() == "FontString") then
-                local text = fontString:GetText() -- string or nil
-                if (text) then
-                    local startsWithPlus = string.find(text, "^%+")
-                    local r, g, b, a = fontString:GetTextColor()
-                    -- nice red blizzard
-                    if (r == 1 and
-                        (string.format("%.3f", g) == "0.125" and string.format("%.3f", b) == "0.125" and a == 1)) then
-                        if (startsWithPlus) then
-                            return nil, ItemInfo:ProcessEnchantText(text)
-                        end
-                    elseif (r == 0 and g == 1 and b == 0 and a == 1) then
-                        if (not string.find(text, "<") and not string.find(text, "Equip: ") and
-                            not string.find(text, "Socket Bonus:") and not string.find(text, "Use: ")) then
-                            if (startsWithPlus) then
-                                return nil, ItemInfo:ProcessEnchantText(text)
-                            elseif ((slot == INVSLOT_MAINHAND or slot == INVSLOT_OFFHAND or slot == INVSLOT_BACK)) then
-                                return nil, ItemInfo:ProcessEnchantText(text)
-                            end
-                        end
-                    end
-                end
-            end
-        end
-
-    end
-
-    function ItemInfo:GetSocketTextures(unit, slot)
-        ItemInfo.scanningTooltip:ClearLines()
-        ItemInfo.scanningTooltip:SetInventoryItem(unit, slot)
-
-        local textures = {}
-
-        for i = 1, 10 do
-            local texture = _G["mUIScanningTooltipTexture" .. i]
-            if (texture and texture:IsShown()) then
-                table.insert(textures, texture:GetTexture())
-            end
-        end
-
-        return textures
-
-    end
-
-    function ItemInfo:CanEnchantSlot(unit, slot)
-        local class = select(2, UnitClass(unit))
-        if (class == "HUNTER" and slot == INVSLOT_RANGED) then
-            return true
-        end
-
-        return ItemInfo.slotsThatHaveEnchants[slot]
-    end
-
-    function ItemInfo:pairsByKeys(t, f)
-        local a = {}
-        for n in pairs(t) do
-            table.insert(a, n)
-        end
-        table.sort(a, f)
-        local i = 0 -- iterator variable
-        local iter = function() -- iterator function
-            i = i + 1
-            if a[i] == nil then
-                return nil
-            else
-                return a[i], t[a[i]]
-            end
-        end
-        return iter
-    end
-
-    function ItemInfo:ProcessEnchantText(enchantText)
-        for seek, replacement in ItemInfo:pairsByKeys(ItemInfo.enchantReplacementTable) do
-            enchantText = enchantText:gsub(seek, replacement)
-        end
-        return enchantText
-    end
-
     function ItemInfo:ColorGradient(perc, ...)
         if perc >= 1 then
             local r, g, b = select(select('#', ...) - 2, ...)
@@ -269,29 +64,12 @@ function ItemInfo:OnInitialize()
         return ItemInfo:ColorGradient(perc, 1, 0, 0, 1, 1, 0, 0, 1, 0)
     end
 
-    function ItemInfo:AnchorTextureLeftOfParent(parent, textures)
-        textures[1]:SetPoint("RIGHT", parent, "LEFT", -3, 1)
-        for i = 2, ItemInfo.NUM_SOCKET_TEXTURES do
-            textures[i]:SetPoint("RIGHT", textures[i - 1], "LEFT", -2, 0)
-        end
-    end
-
-    function ItemInfo:AnchorTextureRightOfParent(parent, textures)
-        textures[1]:SetPoint("LEFT", parent, "RIGHT", 3, 1)
-        for i = 2, ItemInfo.NUM_SOCKET_TEXTURES do
-            textures[i]:SetPoint("LEFT", textures[i - 1], "RIGHT", 2, 0)
-        end
-    end
-
     function ItemInfo:CreateAdditionalDisplayForButton(button)
         local parent = button:GetParent()
         local additionalFrame = CreateFrame("frame", nil, parent)
         additionalFrame:SetWidth(100)
 
         additionalFrame.ilvlDisplay = additionalFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlightOutline")
-
-        additionalFrame.enchantDisplay = additionalFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlightOutline")
-        additionalFrame.enchantDisplay:SetTextColor(0, 1, 0, 1)
 
         additionalFrame.durabilityDisplay = CreateFrame("StatusBar", nil, additionalFrame)
         additionalFrame.durabilityDisplay:SetMinMaxValues(0, 1)
@@ -302,14 +80,6 @@ function ItemInfo:OnInitialize()
         additionalFrame.durabilityDisplay:SetWidth(2.3)
         additionalFrame.durabilityDisplay:SetOrientation("VERTICAL")
 
-        additionalFrame.socketDisplay = {}
-
-        for i = 1, ItemInfo.NUM_SOCKET_TEXTURES do
-            additionalFrame.socketDisplay[i] = additionalFrame:CreateTexture()
-            additionalFrame.socketDisplay[i]:SetWidth(14)
-            additionalFrame.socketDisplay[i]:SetHeight(14)
-        end
-
         return additionalFrame
     end
 
@@ -319,13 +89,10 @@ function ItemInfo:OnInitialize()
         additionalFrame:SetPoint("TOPLEFT", button, "TOPRIGHT")
         additionalFrame:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT")
 
-        additionalFrame.ilvlDisplay:SetPoint("BOTTOMLEFT", additionalFrame, "BOTTOMLEFT", 10, 2)
-        additionalFrame.enchantDisplay:SetPoint("TOPLEFT", additionalFrame, "TOPLEFT", 10, -7)
+        additionalFrame.ilvlDisplay:SetPoint("BOTTOM", button, "BOTTOM", 0, 2)
 
         additionalFrame.durabilityDisplay:SetPoint("TOPLEFT", button, "TOPLEFT", -6, 0)
         additionalFrame.durabilityDisplay:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", -6, 0)
-
-        ItemInfo:AnchorTextureRightOfParent(additionalFrame.ilvlDisplay, additionalFrame.socketDisplay)
     end
 
     function ItemInfo:positonRight(button)
@@ -334,14 +101,11 @@ function ItemInfo:OnInitialize()
         additionalFrame:SetPoint("TOPRIGHT", button, "TOPLEFT")
         additionalFrame:SetPoint("BOTTOMRIGHT", button, "BOTTOMLEFT")
 
-        additionalFrame.ilvlDisplay:SetPoint("BOTTOMRIGHT", additionalFrame, "BOTTOMRIGHT", -10, 2)
-        additionalFrame.enchantDisplay:SetPoint("TOPRIGHT", additionalFrame, "TOPRIGHT", -10, -7)
+        additionalFrame.ilvlDisplay:SetPoint("BOTTOM", button, "BOTTOM", 0, 2)
 
         additionalFrame.durabilityDisplay:SetWidth(1.2)
         additionalFrame.durabilityDisplay:SetPoint("TOPRIGHT", button, "TOPRIGHT", 4, 0)
         additionalFrame.durabilityDisplay:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 4, 0)
-
-        ItemInfo:AnchorTextureLeftOfParent(additionalFrame.ilvlDisplay, additionalFrame.socketDisplay)
     end
 
     function ItemInfo:positonCenter(button)
@@ -356,28 +120,7 @@ function ItemInfo:OnInitialize()
         additionalFrame.durabilityDisplay:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", 0, -2)
         additionalFrame.durabilityDisplay:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, -2)
 
-        additionalFrame.ilvlDisplay:SetPoint("BOTTOM", button, "TOP", 0, 7)
-
-        local buttonId = button:GetID()
-        if (buttonId == INVSLOT_MAINHAND) then
-            additionalFrame.enchantDisplay:SetPoint("BOTTOMRIGHT", button, "BOTTOMLEFT", -5, 0)
-
-            additionalFrame.socketDisplay[1]:SetPoint("RIGHT", button, "LEFT", -5, 0)
-            for i = 2, ItemInfo.NUM_SOCKET_TEXTURES do
-                additionalFrame.socketDisplay[i]:SetPoint("RIGHT", additionalFrame.socketDisplay[i - 1], "LEFT", -2, 0)
-            end
-        elseif (buttonId == INVSLOT_RANGED) then
-            additionalFrame.enchantDisplay:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT", 5, 0)
-
-            additionalFrame.socketDisplay[1]:SetPoint("LEFT", button, "RIGHT", 5, 0)
-            for i = 2, ItemInfo.NUM_SOCKET_TEXTURES do
-                additionalFrame.socketDisplay[i]:SetPoint("LEFT", additionalFrame.socketDisplay[i - 1], "RIGHT", 2, 0)
-            end
-        else
-            additionalFrame.enchantDisplay:SetPoint("BOTTOM", button, "TOP", 0, 20)
-            ItemInfo:AnchorTextureLeftOfParent(additionalFrame.ilvlDisplay, additionalFrame.socketDisplay)
-        end
-
+        additionalFrame.ilvlDisplay:SetPoint("BOTTOM", button, "BOTTOM", 0, 2)
     end
 
     function ItemInfo:AnchorAdditionalDisplay(button)
@@ -411,60 +154,6 @@ function ItemInfo:OnInitialize()
                 end
             end
             additionalFrame.ilvlDisplay:SetText(itemiLvlText)
-
-            local atlas, enchantText
-            if itemLink then
-                atlas, enchantText = ItemInfo:GetItemEnchantAsText(unit, slot)
-            end
-
-            local canEnchant = ItemInfo:CanEnchantSlot(unit, slot)
-
-            if (not enchantText) then
-                local shouldDisplayEchantMissingText = canEnchant and itemLink and
-                                                           IsLevelAtEffectiveMaxLevel(UnitLevel(unit))
-                additionalFrame.enchantDisplay:SetText(shouldDisplayEchantMissingText and "|cffff0000No Enchant|r" or "")
-            else
-                -- trim size
-                local maxSize = 18
-                local containsColor = string.find(enchantText, "|c")
-                if (containsColor) then
-                    maxSize = maxSize + strlen("|cffffffff|r")
-                end
-                enchantText = string.sub(enchantText, 1, maxSize)
-
-                local enchantQuality = ""
-                if atlas then
-                    enchantQuality = "|A:" .. atlas .. ":12:12|a"
-                end
-
-                -- for symmetry, put quality on the left of offhand
-                if slot == INVSLOT_OFFHAND then
-                    additionalFrame.enchantDisplay:SetText(enchantQuality .. enchantText)
-                else
-                    additionalFrame.enchantDisplay:SetText(enchantText .. enchantQuality)
-                end
-            end
-
-            local textures = itemLink and ItemInfo:GetSocketTextures(unit, slot) or {}
-            for i = 1, ItemInfo.NUM_SOCKET_TEXTURES do
-                local socketTexture = additionalFrame.socketDisplay[i]
-                if (#textures >= i) then
-                    socketTexture:SetTexture(textures[i])
-                    socketTexture:SetVertexColor(1, 1, 1)
-                    socketTexture:Show()
-                else
-                    local expansion = GetExpansionForLevel(UnitLevel(unit))
-                    local expansionSocketRequirement = expansion and ItemInfo.expansionRequiredSockets[expansion]
-                    if (expansionSocketRequirement and expansionSocketRequirement[slot] and i <=
-                        expansionSocketRequirement[slot]) then
-                        socketTexture:SetTexture("Interface\\ItemSocketingFrame\\UI-EmptySocket-Red")
-                        socketTexture:SetVertexColor(1, 0, 0)
-                        socketTexture:Show()
-                    else
-                        socketTexture:Hide()
-                    end
-                end
-            end
 
             additionalFrame.prevItemLink = itemLink
         end
@@ -671,9 +360,6 @@ function ItemInfo:OnInitialize()
     end
 
     function ItemInfo:PLAYER_ENTERING_WORLD(isInitialLogin, isReloadingUi)
-        for _, gemID in ipairs(ItemInfo.gemsWeCareAbout) do
-            C_Item.RequestLoadItemDataByID(gemID)
-        end
     end
 
     -- Bag/Bank/Merchant Equipment ItemLevel

@@ -270,6 +270,7 @@ function Theme:Inspect()
         mUI:Skin(InspectFrameTab4)
         InspectMainHandSlotFrame:Hide()
         InspectSecondaryHandSlotFrame:Hide()
+        InspectRangedSlot:Hide()
         _G.select(InspectMainHandSlot:GetNumRegions(), InspectMainHandSlot:GetRegions()):Hide()
         _G.select(InspectSecondaryHandSlot:GetNumRegions(), InspectSecondaryHandSlot:GetRegions()):Hide()
     end

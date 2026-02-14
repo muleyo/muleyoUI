@@ -321,7 +321,7 @@ function General:OnInitialize()
             },
             iteminfo = {
                 name = "Item Info",
-                desc = "Display item information on items and tooltips, such as Enchant, Sockets and Item Level.",
+                desc = "Display item information on items and tooltips, such as Item Level and Durability.",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.general.display.iteminfo = val
