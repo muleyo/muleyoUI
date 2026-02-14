@@ -19,8 +19,7 @@ function Gui:OnInitialize()
     local font = LSM:Fetch('font', mUI.db.profile.general.font)
 
     -- Create Custom Options Frame
-    Gui.frame = CreateFrame("Frame", "mUIOptions", UIParent)
-    local guiBorder = CreateFrame("Frame", nil, Gui.frame, "BackdropTemplate")
+    Gui.frame = CreateFrame("Frame", "mUIOptions", UIParent, "BackdropTemplate")
 
     -- Set FrameStrata, Size and Default Position
     Gui.frame:SetFrameStrata("DIALOG")
@@ -29,19 +28,21 @@ function Gui:OnInitialize()
     Gui.frame:SetScale(Gui.db.scale)
 
     -- Set Backdrop
-    local pixelSize = PixelUtil.GetNearestPixelSize(1, guiBorder:GetEffectiveScale())
-    guiBorder:SetBackdrop({
+    local pixel = mUI:Scale(1)
+    Gui.frame:SetBackdrop({
         bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
-        edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
-        tileSize = pixelSize,
-        edgeSize = 0.83333335195979
+        tileSize = pixel,
+        edgeSize = pixel
     })
 
-    PixelUtil.SetPoint(guiBorder, "TOPLEFT", Gui.frame, "TOPLEFT", -1, 1, 1, 1)
-    PixelUtil.SetPoint(guiBorder, "BOTTOMRIGHT", Gui.frame, "BOTTOMRIGHT", 1, -1, 1, 1)
+    -- Disable pixel snapping on border textures
+    for _, region in next, {Gui.frame:GetRegions()} do
+        if region and region.IsObjectType then
+            mUI:DisablePixelSnap(region)
+        end
+    end
 
-    guiBorder:SetBackdropColor(0.05, 0.05, 0.05, 0.95)
-    guiBorder:SetBackdropBorderColor(0, 0.6, 1, 1)
+    Gui.frame:SetBackdropColor(0.05, 0.05, 0.05, 0.95)
 
     -- Make frame draggable
     Gui.frame:SetMovable(true)

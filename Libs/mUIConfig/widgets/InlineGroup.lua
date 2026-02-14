@@ -72,7 +72,7 @@ local function Constructor()
     border:SetPoint("TOPLEFT", 0, -17)
     border:SetPoint("BOTTOMRIGHT", -1, 3)
 
-    local pixel = 1 / UIParent:GetEffectiveScale()
+    local pixel = mUI:Scale(1)
 
     local PaneBackdrop = {
         edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
@@ -86,6 +86,12 @@ local function Constructor()
     }
 
     border:SetBackdrop(PaneBackdrop)
+    -- Disable pixel snapping on border textures
+    for _, region in next, {border:GetRegions()} do
+        if region and region.IsObjectType then
+            mUI:DisablePixelSnap(region)
+        end
+    end
     border:SetBackdropBorderColor(0, 0.6, 1, 1)
 
     -- Container Support

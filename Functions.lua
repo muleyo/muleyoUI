@@ -1,5 +1,81 @@
 local Functions = mUI:NewModule("mUI.Functions")
 
+-- Pixel Perfect Scaling System (ElvUI approach)
+-- Must be at file scope so it's available before OnInitialize
+do
+    local physicalWidth, physicalHeight = GetPhysicalScreenSize()
+    mUI.physicalWidth = physicalWidth
+    mUI.physicalHeight = physicalHeight
+    mUI.perfect = 768 / physicalHeight
+    mUI.mult = mUI.perfect / UIParent:GetScale()
+
+    function mUI:Scale(x)
+        local m = self.mult
+        if m == 1 or x == 0 then
+            return x
+        else
+            local y = m > 1 and m or -m
+            return x - x % (x < 0 and y or -y)
+        end
+    end
+
+    function mUI:PixelScaleChanged(event)
+        if event == "UI_SCALE_CHANGED" then
+            self.physicalWidth, self.physicalHeight = GetPhysicalScreenSize()
+            self.perfect = 768 / self.physicalHeight
+        end
+        self.mult = self.perfect / UIParent:GetScale()
+    end
+
+    -- Disable WoW's built-in pixel snapping on a frame and its textures
+    -- This prevents WoW from doing inconsistent sub-pixel rounding on borders
+    function mUI:DisablePixelSnap(frame)
+        if frame and not frame:IsForbidden() and not frame.PixelSnapDisabled then
+            if frame.SetSnapToPixelGrid then
+                frame:SetSnapToPixelGrid(false)
+                frame:SetTexelSnappingBias(0)
+            elseif frame.GetStatusBarTexture then
+                local texture = frame:GetStatusBarTexture()
+                if type(texture) == "table" and texture.SetSnapToPixelGrid then
+                    texture:SetSnapToPixelGrid(false)
+                    texture:SetTexelSnappingBias(0)
+                end
+            end
+            frame.PixelSnapDisabled = true
+        end
+    end
+
+    -- Create a pixel-perfect backdrop on a frame (ElvUI SetTemplate approach)
+    function mUI:SetPixelBorders(frame, bgColor, borderColor)
+        if not frame.SetBackdrop then
+            Mixin(frame, BackdropTemplateMixin)
+        end
+
+        local edgeSize = mUI:Scale(1)
+
+        frame:SetBackdrop({
+            bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+            edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
+            edgeSize = edgeSize
+        })
+
+        -- Disable pixel snapping on backdrop textures
+        for _, region in next, {frame:GetRegions()} do
+            if region and region.IsObjectType then
+                mUI:DisablePixelSnap(region)
+            end
+        end
+
+        if bgColor then
+            frame:SetBackdropColor(unpack(bgColor))
+        end
+
+        if borderColor then
+            frame:SetBackdropBorderColor(unpack(borderColor))
+        end
+    end
+end
+
 function Functions:OnInitialize()
     -- Load Database
     Functions.db = mUI.db.profile
@@ -23,6 +99,11 @@ function Functions:OnInitialize()
     function mUI:Debug(msg)
         print("|cff009cffm|r|cffffd100UI|r:", msg)
     end
+
+    -- Update on UI scale change
+    mUI:RegisterEvent("UI_SCALE_CHANGED", function()
+        mUI:PixelScaleChanged("UI_SCALE_CHANGED")
+    end)
 
     function mUI:GameVersion()
         return {
@@ -97,7 +178,7 @@ function Functions:OnInitialize()
         end
         StaticPopupDialogs["mUIPopup"] = nil
         StaticPopupDialogs["mUIPopup"] = {
-            text = "|cff009cffmuleyo|rUI\n\n|cffffcc00Copy the link below ( CTRL + C )|r",
+            text = "|cff009cffmuleyo|r|cffffd100UI|r\n\n|cffffcc00Copy the link below ( CTRL + C )|r",
             button1 = CLOSE,
             whileDead = true,
             hideOnEscape = true,

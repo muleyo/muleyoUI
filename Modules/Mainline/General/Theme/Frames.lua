@@ -1154,6 +1154,8 @@ function Theme:Quest()
     mUI:Skin(ScenarioObjectiveTracker.Header)
     mUI:Skin(WorldQuestObjectiveTracker)
     mUI:Skin(WorldQuestObjectiveTracker.Header)
+    mUI:Skin(InitiativeTasksObjectiveTracker)
+    mUI:Skin(InitiativeTasksObjectiveTracker.Header)
     mUI:Skin({QuestNPCModelTopBorder, QuestNPCModelRightBorder, QuestNPCModelTopRightCorner,
               QuestNPCModelBottomRightCorner, QuestNPCModelBottomBorder, QuestNPCModelBottomLeftCorner,
               QuestNPCModelLeftBorder, QuestNPCModelTopLeftCorner, QuestNPCModelTextTopBorder,
@@ -1449,6 +1451,15 @@ function Theme:Frames()
     mUI:Skin(CooldownViewerSettingsInset.NineSlice)
     mUI:Skin(CooldownViewerSettings.TitleContainer)
     mUI:Skin(CooldownViewerSettings.NineSlice)
+    mUI:Skin(CooldownViewerLayoutDialog)
+    mUI:Skin(CooldownViewerLayoutDialog.Border)
+    mUI:Skin(CooldownViewerImportLayoutDialog)
+    mUI:Skin(CooldownViewerImportLayoutDialog.Border)
+
+    for _, tab in pairs(CooldownViewerSettings.TabButtons) do
+        Theme.blacklist[select(2, tab:GetRegions())] = true
+        mUI:Skin(tab)
+    end
 
     -- DropDowns
     if not Theme:IsHooked(MenuStyle1Mixin, "Generate") then

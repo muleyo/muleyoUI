@@ -58,6 +58,9 @@ function Theme:OnEnable()
                 -- Check if frame is Raid/Party
                 local name = frame:GetName()
                 if name and name:match("^Compact") then
+                    if frame.CenterDefensiveBuff then
+                        Theme:UpdateRaidframeAuras(frame.CenterDefensiveBuff)
+                    end
                     if frame.debuffFrames then
                         for i = 1, #frame.debuffFrames do
                             Theme:UpdateRaidframeAuras(frame.debuffFrames[i])

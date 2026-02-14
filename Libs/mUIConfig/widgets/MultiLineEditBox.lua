@@ -276,23 +276,24 @@ local methods = {
 Constructor
 -------------------------------------------------------------------------------]]
 
-local pixel = 1 / UIParent:GetEffectiveScale()
-
-local backdrop = {
-    bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
-    edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
-    edgeSize = pixel,
-    insets = {
-        left = pixel,
-        right = pixel,
-        top = pixel,
-        bottom = pixel
-    }
-}
-
 local function Constructor()
     local frame = CreateFrame("Frame", nil, UIParent)
     frame:Hide()
+
+    local pixel = mUI:Scale(1)
+
+    -- Create fresh backdrop table for this instance
+    local backdrop = {
+        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
+        edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
+        edgeSize = pixel,
+        insets = {
+            left = pixel,
+            right = pixel,
+            top = pixel,
+            bottom = pixel
+        }
+    }
 
     local widgetNum = AceGUI:GetNextWidgetNum(Type)
 
@@ -330,6 +331,12 @@ local function Constructor()
     scrollBG:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, 0)
     scrollBG:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -20, 0)
     scrollBG:SetBackdrop(backdrop)
+    -- Disable pixel snapping on border textures
+    for _, region in next, {scrollBG:GetRegions()} do
+        if region and region.IsObjectType then
+            mUI:DisablePixelSnap(region)
+        end
+    end
     scrollBG:SetBackdropBorderColor(0, 0.6, 1, 1)
     scrollBG:SetFrameLevel(frame:GetFrameLevel() + 1)
 
