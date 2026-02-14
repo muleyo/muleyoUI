@@ -234,11 +234,11 @@ do
                 self.dropdownBorder:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 1)
             else
                 self.dropdownBorder:ClearAllPoints()
-                PixelUtil.SetPoint(self.dropdownBorder, "TOPLEFT", frame, "TOPLEFT", 0, -17.5, 1, 1)
+                self.dropdownBorder:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, -17.5)
                 self.dropdownBorder:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
             end
 
-            local pixel = 1 / UIParent:GetEffectiveScale()
+            local pixel = mUI:Scale(1)
 
             self.dropdownBorder:SetBackdrop({
                 edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
@@ -250,6 +250,13 @@ do
                     bottom = pixel
                 }
             })
+
+            -- Disable pixel snapping on border textures
+            for _, region in next, {self.dropdownBorder:GetRegions()} do
+                if region and region.IsObjectType then
+                    mUI:DisablePixelSnap(region)
+                end
+            end
 
             self.dropdownBorder:SetBackdropBorderColor(0, 0.6, 1, 1)
         end

@@ -196,34 +196,34 @@ Constructor
 -------------------------------------------------------------------------------]]
 ---
 
-local pixel = 1 / UIParent:GetEffectiveScale()
-
-local SliderBackdrop = {
-    bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
-    edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
-    edgeSize = pixel,
-    insets = {
-        left = pixel,
-        right = pixel,
-        top = pixel,
-        bottom = pixel
-    }
-}
-
-local ManualBackdrop = {
-    bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
-    edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
-    edgeSize = pixel,
-    insets = {
-        left = pixel,
-        right = pixel,
-        top = pixel,
-        bottom = pixel
-    }
-}
-
 local function Constructor()
     local frame = CreateFrame("Frame", nil, UIParent)
+    local pixel = mUI:Scale(1)
+
+    -- Create fresh backdrop tables for this instance
+    local SliderBackdrop = {
+        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
+        edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
+        edgeSize = pixel,
+        insets = {
+            left = pixel,
+            right = pixel,
+            top = pixel,
+            bottom = pixel
+        }
+    }
+
+    local ManualBackdrop = {
+        bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+        edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
+        edgeSize = pixel,
+        insets = {
+            left = pixel,
+            right = pixel,
+            top = pixel,
+            bottom = pixel
+        }
+    }
 
     frame:EnableMouse(true)
     frame:SetScript("OnMouseDown", Frame_OnMouseDown)
@@ -239,10 +239,16 @@ local function Constructor()
     slider:SetHeight(15)
     slider:SetHitRectInsets(0, 0, -10, 0)
     slider:SetBackdrop(SliderBackdrop)
-    slider:SetBackdropColor(0, 0, 0, 1)
+    slider:SetBackdropColor(1, 0, 0, 1)
     slider:SetBackdropBorderColor(0, 0.6, 1, 1)
+    -- Disable pixel snapping on slider backdrop textures
+    for _, region in next, {slider:GetRegions()} do
+        if region and region.IsObjectType then
+            mUI:DisablePixelSnap(region)
+        end
+    end
     slider:SetThumbTexture("Interface\\AddOns\\mUI\\Media\\Textures\\Config\\slider_thumb_horizontal.png")
-    slider:GetThumbTexture():SetSize(10, 11)
+    slider:GetThumbTexture():SetSize(10, 12)
     slider:SetPoint("TOP", label, "BOTTOM")
     slider:SetPoint("LEFT", 3, 0)
     slider:SetPoint("RIGHT", -3, 0)
@@ -270,6 +276,12 @@ local function Constructor()
     editbox:SetBackdrop(ManualBackdrop)
     editbox:SetBackdropColor(0, 0, 0, 0.5)
     editbox:SetBackdropBorderColor(0.3, 0.3, 0.30, 0.80)
+    -- Disable pixel snapping on editbox backdrop textures
+    for _, region in next, {editbox:GetRegions()} do
+        if region and region.IsObjectType then
+            mUI:DisablePixelSnap(region)
+        end
+    end
     editbox:SetScript("OnEnter", EditBox_OnEnter)
     editbox:SetScript("OnLeave", EditBox_OnLeave)
     editbox:SetScript("OnEnterPressed", EditBox_OnEnterPressed)

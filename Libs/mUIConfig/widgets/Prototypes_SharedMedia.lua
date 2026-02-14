@@ -137,21 +137,30 @@ do
 end
 
 do
+    local function GetPixel()
+        return (mUI and mUI.Scale) and mUI:Scale(1) or (1 / UIParent:GetEffectiveScale())
+    end
 
-    local sliderBackdrop = {
-        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
-        edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
-        tile = true,
-        tileSize = 8,
-        edgeSize = 0.8
-    }
-    local frameBackdrop = {
-        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
-        edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
-        tile = true,
-        tileSize = 32,
-        edgeSize = 0.8
-    }
+    local function GetSliderBackdrop()
+        local pixel = GetPixel()
+        return {
+            bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
+            edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
+            tile = true,
+            tileSize = 8,
+            edgeSize = pixel
+        }
+    end
+    local function GetFrameBackdrop()
+        local pixel = GetPixel()
+        return {
+            bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
+            edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
+            tile = true,
+            tileSize = 32,
+            edgeSize = pixel
+        }
+    end
 
     local function OnMouseWheel(self, dir)
         self.slider:SetValue(self.slider:GetValue() + (15 * dir * -1))
@@ -210,9 +219,15 @@ do
             frame = CreateFrame("Frame", nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
             frame:SetClampedToScreen(true)
             frame:SetWidth(188)
-            frame:SetBackdrop(frameBackdrop)
+            frame:SetBackdrop(GetFrameBackdrop())
             frame:SetFrameStrata("TOOLTIP")
             frame:EnableMouseWheel(true)
+            -- Disable pixel snapping on border textures
+            for _, region in next, {frame:GetRegions()} do
+                if region and region.IsObjectType and mUI and mUI.DisablePixelSnap then
+                    mUI:DisablePixelSnap(region)
+                end
+            end
             frame:SetBackdropBorderColor(0, 0.6, 1, 1)
 
             local contentframe = CreateFrame("Frame", nil, frame)
@@ -242,7 +257,13 @@ do
             slider:SetOrientation("VERTICAL")
             slider:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -14, -10)
             slider:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -14, 10)
-            slider:SetBackdrop(sliderBackdrop)
+            slider:SetBackdrop(GetSliderBackdrop())
+            -- Disable pixel snapping on slider border textures
+            for _, region in next, {slider:GetRegions()} do
+                if region and region.IsObjectType and mUI and mUI.DisablePixelSnap then
+                    mUI:DisablePixelSnap(region)
+                end
+            end
             slider:SetBackdropBorderColor(0, 0.6, 1, 1)
             slider:SetThumbTexture("Interface\\AddOns\\mUI\\Media\\Textures\\Config\\slider_thumb.png")
             slider:SetMinMaxValues(0, 1)
@@ -262,7 +283,7 @@ do
         ClearFrames(frame)
         frame:ClearAllPoints()
         frame:Hide()
-        frame:SetBackdrop(frameBackdrop)
+        frame:SetBackdrop(GetFrameBackdrop())
         frame.bgTex:SetTexture(nil)
         table.insert(DropDownCache, frame)
         return nil

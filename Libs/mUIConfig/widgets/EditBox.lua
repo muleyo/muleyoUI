@@ -275,7 +275,7 @@ local function Constructor()
     if not frame.border then
         frame.border = CreateFrame("Frame", nil, frame, "BackdropTemplate")
 
-        local pixel = 1 / UIParent:GetEffectiveScale()
+        local pixel = mUI:Scale(1)
 
         frame.border:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, -20)
         frame.border:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, -1)
@@ -290,6 +290,13 @@ local function Constructor()
                 bottom = pixel
             }
         })
+
+        -- Disable pixel snapping on border textures
+        for _, region in next, {frame.border:GetRegions()} do
+            if region and region.IsObjectType then
+                mUI:DisablePixelSnap(region)
+            end
+        end
 
         frame.border:SetBackdropBorderColor(0, 0.6, 1, 1)
     end
