@@ -1154,6 +1154,8 @@ function Theme:Quest()
     mUI:Skin(ScenarioObjectiveTracker.Header)
     mUI:Skin(WorldQuestObjectiveTracker)
     mUI:Skin(WorldQuestObjectiveTracker.Header)
+    mUI:Skin(InitiativeTasksObjectiveTracker)
+    mUI:Skin(InitiativeTasksObjectiveTracker.Header)
     mUI:Skin({QuestNPCModelTopBorder, QuestNPCModelRightBorder, QuestNPCModelTopRightCorner,
               QuestNPCModelBottomRightCorner, QuestNPCModelBottomBorder, QuestNPCModelBottomLeftCorner,
               QuestNPCModelLeftBorder, QuestNPCModelTopLeftCorner, QuestNPCModelTextTopBorder,
