@@ -47,7 +47,10 @@ function Style:OnInitialize()
         if r == Style.cfg.barColor.r and g == Style.cfg.barColor.g and b == Style.cfg.barColor.b then
             return
         end
-        frame:SetStatusBarColor(Style.cfg.barColor.r, Style.cfg.barColor.g, Style.cfg.barColor.b)
+        local texture = frame:GetStatusBarTexture()
+        if texture then
+            texture:SetVertexColor(Style.cfg.barColor.r, Style.cfg.barColor.g, Style.cfg.barColor.b)
+        end
     end
 
     function Style:GetTarget(unit)
@@ -102,7 +105,10 @@ function Style:OnInitialize()
                 g = 0.8,
                 b = 0
             }
-            GameTooltipStatusBar:SetStatusBarColor(color.r, color.g, color.b)
+            local barTexture = GameTooltipStatusBar:GetStatusBarTexture()
+            if barTexture then
+                barTexture:SetVertexColor(color.r, color.g, color.b)
+            end
             GameTooltipTextLeft1:SetTextColor(color.r, color.g, color.b)
 
             -- NEEDS TESTING
@@ -127,7 +133,10 @@ function Style:OnInitialize()
                 local color = FACTION_BAR_COLORS[reaction]
                 if color then
                     Style.cfg.barColor = color
-                    GameTooltipStatusBar:SetStatusBarColor(color.r, color.g, color.b)
+                    local barTexture = GameTooltipStatusBar:GetStatusBarTexture()
+                    if barTexture then
+                        barTexture:SetVertexColor(color.r, color.g, color.b)
+                    end
                     GameTooltipTextLeft1:SetTextColor(color.r, color.g, color.b)
                 end
             end
@@ -199,8 +208,11 @@ function Style:OnInitialize()
             if frame then
                 text = frame:GetText()
             end
-            if text and string.find(text, "|cff0099ffID|r") then
-                return
+            if text then
+                local ok, found = xpcall(string.find, nop, text, "|cff0099ffID|r")
+                if ok and found then
+                    return
+                end
             end
         end
 
@@ -291,8 +303,11 @@ function Style:OnInitialize()
             if frame then
                 text = frame:GetText()
             end
-            if text and string.find(text, "|cff0099ffID|r") then
-                return
+            if text then
+                local ok, found = xpcall(string.find, nop, text, "|cff0099ffID|r")
+                if ok and found then
+                    return
+                end
             end
         end
 
@@ -340,8 +355,8 @@ function Style:OnEnable()
                 return
             end
 
-            Style:OnMacroTooltipSetSpell(tooltip)
-            Style:OnMacroTooltipSetColor(tooltip)
+            xpcall(Style.OnMacroTooltipSetSpell, nop, Style, tooltip)
+            xpcall(Style.OnMacroTooltipSetColor, nop, Style, tooltip)
         end)
 
         -- Spells
@@ -350,7 +365,7 @@ function Style:OnEnable()
                 return
             end
 
-            Style:OnTooltipSetSpell(tooltip, data.id)
+            xpcall(Style.OnTooltipSetSpell, nop, Style, tooltip, data.id)
         end)
 
         -- Auras
@@ -359,7 +374,7 @@ function Style:OnEnable()
                 return
             end
 
-            Style:OnTooltipSetSpell(tooltip, data.id)
+            xpcall(Style.OnTooltipSetSpell, nop, Style, tooltip, data.id)
         end)
 
         -- Units
@@ -369,9 +384,9 @@ function Style:OnEnable()
 
         -- Items
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function(tooltip)
-            Style:OnTooltipSetItem(tooltip)
-            Style:OnItemTooltipSetColor(tooltip)
-            Style:FixTooltipTextures()
+            xpcall(Style.OnTooltipSetItem, nop, Style, tooltip)
+            xpcall(Style.OnItemTooltipSetColor, nop, Style, tooltip)
+            xpcall(Style.FixTooltipTextures, nop, Style)
         end)
 
         Style.hooked = true
