@@ -65,9 +65,9 @@ function Style:OnInitialize()
             return ("|c%s%s|r"):format(Style.classColors[class], UnitName(unit))
         elseif UnitReaction(unit, "player") then
             return ("|c%s%s|r"):format(Style.factionColors[UnitReaction(unit, "player")], UnitName(unit))
-        else
-            return ("|cffffffff%s|r"):format(UnitName(unit))
         end
+
+        return ("|cffffffff%s|r"):format(UnitName(unit))
     end
 
     function Style:OnTooltipSetUnit(frame)
@@ -174,7 +174,7 @@ function Style:OnInitialize()
         end
 
         -- Current Target
-        if (UnitExists(unit .. "target")) then
+        if UnitExists(unit .. "target") then
             GameTooltip:AddDoubleLine(("|c%s%s|r"):format(Style.cfg.targetColorHex, "Target"),
                 Style:GetTarget(unit .. "target"))
         end
@@ -263,6 +263,43 @@ function Style:OnInitialize()
         end
     end
 
+    function Style:OnTooltipSetItem(tooltip)
+        if not Style.db.style == "mUI" then
+            return
+        end
+
+        local tooltipData = tooltip:GetTooltipData()
+        if not tooltipData then
+            return
+        end
+
+        local itemID
+        if tooltipData.id then
+            itemID = tooltipData.id
+        elseif tooltipData.hyperlink then
+            itemID = C_Item.GetItemInfoInstant(tooltipData.hyperlink)
+        end
+
+        if not itemID then
+            return
+        end
+
+        -- Check if ID is already shown
+        local frame, text
+        for i = 1, 15 do
+            frame = _G[tooltip:GetName() .. "TextLeft" .. i]
+            if frame then
+                text = frame:GetText()
+            end
+            if text and string.find(text, "|cff0099ffID|r") then
+                return
+            end
+        end
+
+        tooltip:AddDoubleLine("|cff0099ffID|r", itemID)
+        tooltip:Show()
+    end
+
     function Style:OnMacroTooltipSetColor(tooltip)
         if not Style.db.style == "mUI" then
             return
@@ -326,17 +363,13 @@ function Style:OnEnable()
         end)
 
         -- Units
-        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, function(frame)
-            local _, unit = frame:GetUnit()
-            if issecretvalue(unit) then
-                return
-            end
-
-            Style:OnTooltipSetUnit(frame)
+        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, function(frame, data)
+            xpcall(Style.OnTooltipSetUnit, nop, Style, frame)
         end)
 
         -- Items
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function(tooltip)
+            Style:OnTooltipSetItem(tooltip)
             Style:OnItemTooltipSetColor(tooltip)
             Style:FixTooltipTextures()
         end)

@@ -118,18 +118,45 @@ function ItemInfo:OnInitialize()
     192976 -- Increased Stamina and Mastery
     }
 
-    ItemInfo.enchantReplacementTable = {
-        ["Stamina"] = "Stam",
-        ["Intellect"] = "Int",
-        ["Agility"] = "Agi",
-        ["Strength"] = "Str",
+    -- Full enchant name replacements (if found anywhere in text, replace the entire string)
+    ItemInfo.enchantNameTable = {
+        -- Midnight
+        ["Mark of the Nalorakk"] = "Stam & Str",
+        ["Mark of the Rootwarden"] = "Stam & Agi",
+        ["Mark of the Worldsoul"] = "Primary Stat",
+        ["Mark of the Magister"] = "Int & Mana",
+        ["Lynx's Dexterity"] = "Avoid & Stam",
+        ["Shaladrassil's Roots"] = "Leech & Stam",
+        ["Farstrider's Hunt"] = "Speed & Stam",
+        ["Hex of Leeching"] = "Leech",
+        ["Blessing of Speed"] = "Speed",
+        ["Rune of Avoidance"] = "Avoid",
+        ["Amani Mastery"] = "Mast",
+        ["Eyes of the Eagle"] = "1% Crit",
+        ["Zul'jins Mastery"] = "Mast",
+        ["Nature's Wrath"] = "Crit",
+        ["Nature's Fury"] = "Crit",
+        ["Thalassian Haste"] = "Haste",
+        ["Thalassian Versatility"] = "Vers",
+        ["Silvermoon's Alacrity"] = "Haste",
+        ["Silvermoon's Tenacity"] = "Vers",
+        ["Flight of the Eagle"] = "Speed",
+        ["Akil'zon's Swiftness"] = "Speed",
+        ["Nature's Grace"] = "Avoid",
+        ["Amirdrassil's Grace"] = "Avoid",
+        ["Thalassian Recovery"] = "Leech",
+        ["Silvermoon's Mending"] = "Leech",
+        ["Strength of Halazzi"] = "Strength of Halazzi",
+        ["Jan'alai's Precision"] = "Jan'alai's Precision",
+        ["Berserker's Rage"] = "Berserker's Rage",
+        ["Worldsoul Cradle"] = "Worldsoul Cradle",
+        ["Worldsoul Aegis"] = "Worldsoul Aegis",
+        ["Worldsoul Tenacity"] = "Worldsoul Tenacity",
+        ["Flames of the Sin'dorei"] = "Flames of the Sin'dorei",
+        ["Acuity of the Ren'dorei"] = "Acuity of the Ren'dorei",
+        ["Arcane Mastery"] = "Arcane Mastery",
 
-        ["Mastery"] = "Mast",
-        ["Versatility"] = "Vers",
-        ["Critical Strike"] = "Crit",
-        ["Haste"] = "Haste",
-        ["Avoidance"] = "Avoid",
-
+        -- The War Within
         ["Minor Speed Increase"] = "Speed",
         ["Homebound Speed"] = "Speed & HS Red.",
         ["Plainsrunner's Breeze"] = "Speed",
@@ -165,7 +192,25 @@ function ItemInfo:OnInitialize()
 
         ["Shadowed Belt Clasp"] = "Stamina",
 
-        ["Incandescent Essence"] = "Essence",
+        -- Dragonflight
+        ["Incandescent Essence"] = "Essence"
+    }
+
+    -- Partial stat abbreviations (gsub replacements applied to remaining text)
+    ItemInfo.enchantAbbreviationTable = {
+        ["Stamina"] = "Stam",
+        ["Intellect"] = "Int",
+        ["Agility"] = "Agi",
+        ["Strength"] = "Str",
+
+        ["Mastery"] = "Mast",
+        ["Versatility"] = "Vers",
+        ["Critical Strike"] = "Crit",
+        ["Haste"] = "Haste",
+        ["Avoidance"] = "Avoid",
+
+        -- strip "Enchant Slot - " prefix from old-style enchants
+        ["Enchant .-%- "] = "",
         -- strip all +, we are starved for space
         ["+"] = ""
     }
@@ -258,7 +303,10 @@ function ItemInfo:OnInitialize()
         for n in pairs(t) do
             table.insert(a, n)
         end
-        table.sort(a, f)
+        -- Sort longest keys first so full enchant names match before partial ones
+        table.sort(a, function(x, y)
+            return #x > #y
+        end)
         local i = 0 -- iterator variable
         local iter = function() -- iterator function
             i = i + 1
@@ -272,7 +320,15 @@ function ItemInfo:OnInitialize()
     end
 
     function ItemInfo:ProcessEnchantText(enchantText)
-        for seek, replacement in ItemInfo:pairsByKeys(ItemInfo.enchantReplacementTable) do
+        -- First pass: check for known enchant names and replace the entire string
+        for seek, replacement in ItemInfo:pairsByKeys(ItemInfo.enchantNameTable) do
+            if enchantText:find(seek) then
+                return replacement
+            end
+        end
+
+        -- Second pass: abbreviate stat names and clean up formatting
+        for seek, replacement in ItemInfo:pairsByKeys(ItemInfo.enchantAbbreviationTable) do
             enchantText = enchantText:gsub(seek, replacement)
         end
         return enchantText
