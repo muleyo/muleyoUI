@@ -667,6 +667,36 @@ function Unitframes:OnInitialize()
                     return mUI.db.profile.unitframes.raidframes.aurasizeRaid
                 end,
                 order = 35
+            },
+            debuffsizeParty = {
+                name = "Debuff Size (Party)",
+                desc = "Set the Size of Debuffs on Raidframes",
+                type = "range",
+                min = 0,
+                max = 30,
+                step = 1,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.debuffsizeParty = val
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.debuffsizeParty
+                end,
+                order = 36
+            },
+            debuffsizeRaid = {
+                name = "Debuff Size (Raid)",
+                desc = "Set the Size of Debuffs on Raidframes",
+                type = "range",
+                min = 0,
+                max = 30,
+                step = 1,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.debuffsizeRaid = val
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.debuffsizeRaid
+                end,
+                order = 37
             }
         }
     }

@@ -1,28 +1,30 @@
-local Cooldown = mUI:NewModule("mUI.Modules.Actionbars.Cooldown", "AceHook-3.0")
+local Cooldown = mUI:NewModule("mUI.Modules.Actionbars.Cooldown", "AceEvent-3.0")
 
 function Cooldown:OnInitialize()
-    Cooldown.duration = C_DurationUtil.CreateDuration()
+    function Cooldown:UpdateAll()
+        local _, canGlide = C_PlayerInfo.GetGlidingInfo()
+        if canGlide then
+            return
+        end
 
-    function Cooldown:Update(button)
-        if button.action then
-            -- Get Cooldown Info
-            local cd = C_ActionBar.GetActionCooldown(button.action)
+        for _, button in pairs(ActionBarButtonEventsFrame.frames) do
+            if button.action then
+                local cd = C_ActionBar.GetActionCooldown(button.action)
 
-            if button.cooldown:IsShown() and not cd.isOnGCD then
-                button.icon:SetDesaturated(true)
-            else
-                button.icon:SetDesaturated(false)
+                if button.cooldown:IsShown() and not cd.isOnGCD then
+                    button.icon:SetDesaturated(true)
+                else
+                    button.icon:SetDesaturated(false)
+                end
             end
         end
     end
 end
 
 function Cooldown:OnEnable()
-    Cooldown:SecureHook("ActionButton_UpdateCooldown", function(button)
-        Cooldown:Update(button)
-    end)
+    Cooldown:RegisterEvent("SPELL_UPDATE_COOLDOWN", "UpdateAll")
 end
 
-function Cooldown:OnCooldownDone()
-    Cooldown:UnhookAll()
+function Cooldown:OnDisable()
+    Cooldown:UnregisterEvent("SPELL_UPDATE_COOLDOWN")
 end

@@ -237,6 +237,20 @@ function Theme:UpdateRaidframeAuras(aura)
             local r, g, b = aura.border:GetVertexColor()
             aura.mUIBorder:SetVertexColor(r, g, b, 1)
             aura.border:Hide()
+
+            -- Resize non-important debuffs (boss/role debuffs are 1.5x baseSize)
+            local isImportant = aura.baseSize and (aura:GetWidth() > aura.baseSize * 1.1)
+            if not isImportant then
+                local auraSize
+
+                if IsInRaid() then
+                    auraSize = mUI.db.profile.unitframes.raidframes.debuffsizeRaid
+                else
+                    auraSize = mUI.db.profile.unitframes.raidframes.debuffsizeParty
+                end
+
+                aura:SetSize(auraSize, auraSize)
+            end
         else
             aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
 
