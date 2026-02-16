@@ -239,7 +239,7 @@ function Theme:UpdateRaidframeAuras(aura)
             aura.border:Hide()
 
             -- Resize non-important debuffs (boss/role debuffs are 1.5x baseSize)
-            local isImportant = aura.baseSize and (aura:GetWidth() > aura.baseSize * 1.2)
+            local isImportant = aura.baseSize and (aura:GetWidth() > aura.baseSize * 1.1)
             if not isImportant then
                 local auraSize
 
