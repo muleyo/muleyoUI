@@ -5,13 +5,13 @@ function Font:OnInitialize()
     Font.db = mUI.db.profile.general
 
     Font.fonts = {SystemFont_NamePlateCastBar, SystemFont_NamePlateFixed, SystemFont_LargeNamePlateFixed,
-                  SystemFont_LargeNamePlate, SystemFont_NamePlate, SystemFont_World, SystemFont_World_ThickOutline,
-                  SystemFont_Outline_Small, SystemFont_Outline, SystemFont_InverseShadow_Small, SystemFont_Med2,
-                  SystemFont_Med3, SystemFont_Shadow_Med3, SystemFont_Huge1, SystemFont_Huge1_Outline,
-                  SystemFont_OutlineThick_Huge2, SystemFont_OutlineThick_Huge4, SystemFont_OutlineThick_WTF,
-                  NumberFont_GameNormal, NumberFont_Shadow_Small, NumberFont_OutlineThick_Mono_Small,
-                  NumberFont_Shadow_Med, NumberFont_Normal_Med, NumberFont_Outline_Med, NumberFont_Outline_Large,
-                  NumberFont_Outline_Huge, Fancy22Font, QuestFont_Huge, QuestFont_Outline_Huge, QuestFont_Super_Huge,
+                  SystemFont_LargeNamePlate, SystemFont_NamePlate, SystemFont_Outline_Small, SystemFont_Outline,
+                  SystemFont_InverseShadow_Small, SystemFont_Med2, SystemFont_Med3, SystemFont_Shadow_Med3,
+                  SystemFont_Huge1, SystemFont_Huge1_Outline, SystemFont_OutlineThick_Huge2,
+                  SystemFont_OutlineThick_Huge4, SystemFont_OutlineThick_WTF, NumberFont_GameNormal,
+                  NumberFont_Shadow_Small, NumberFont_OutlineThick_Mono_Small, NumberFont_Shadow_Med,
+                  NumberFont_Normal_Med, NumberFont_Outline_Med, NumberFont_Outline_Large, NumberFont_Outline_Huge,
+                  Fancy22Font, QuestFont_Huge, QuestFont_Outline_Huge, QuestFont_Super_Huge,
                   QuestFont_Super_Huge_Outline, SplashHeaderFont, Game11Font, Game12Font, Game13Font, Game13FontShadow,
                   Game15Font, Game18Font, Game20Font, Game24Font, Game27Font, Game30Font, Game32Font, Game36Font,
                   Game48Font, Game48FontShadow, Game60Font, Game72Font, Game11Font_o1, Game12Font_o1, Game13Font_o1,
@@ -84,12 +84,11 @@ function Font:OnInitialize()
                   PriceFontYellow, QuestFont, QuestFont_Shadow_Enormous, QuestFont_Shadow_Huge,
                   QuestFont_Shadow_Super_Huge, QuestFontHighlightHuge, QuestFontLeft, QuestFontNormalHuge,
                   QuestFontNormalLarge, QuestFontNormalSmall, QuestTitleFont, QuestTitleFontBlackShadow,
-                  BossEmoteNormalHuge, ChatFontNormal, ChatFontSmall, CombatLogFont, CombatTextFont,
-                  CombatTextFontOutline, ConsoleFontNormal, ConsoleFontSmall, DialogButtonHighlightText,
-                  DialogButtonNormalText, ErrorFont, FocusFontSmall, GameNormalNumberFont, GameTooltipHeaderText,
-                  GameTooltipText, GameTooltipTextSmall, IMEHighlight, IMENormal, InvoiceTextFontNormal,
-                  InvoiceTextFontSmall, ItemTextFontNormal, LFGActivityEntry, LFGActivityEntryDifficult,
-                  LFGActivityEntryTrivial, LFGActivityHeader, MailTextFontNormal, MissionCombatTextFontOutline,
+                  BossEmoteNormalHuge, ChatFontNormal, ChatFontSmall, CombatLogFont, ConsoleFontNormal,
+                  ConsoleFontSmall, DialogButtonHighlightText, DialogButtonNormalText, ErrorFont, FocusFontSmall,
+                  GameNormalNumberFont, GameTooltipHeaderText, GameTooltipText, GameTooltipTextSmall, IMEHighlight,
+                  IMENormal, InvoiceTextFontNormal, InvoiceTextFontSmall, ItemTextFontNormal, LFGActivityEntry,
+                  LFGActivityEntryDifficult, LFGActivityEntryTrivial, LFGActivityHeader, MailTextFontNormal,
                   MovieSubtitleFont, NewSubSpellFont, NPE_TutorialKeyString, ObjectiveFont, OptionsFontLeft,
                   PlayerChoiceTextFont, PVPInfoTextFont, QuestMapRewardsFont, SubSpellFont, SubZoneTextFont,
                   TextStatusBarText, TextStatusBarTextLarge, VehicleMenuBarStatusBarText, WhiteNormalNumberFont,
@@ -97,7 +96,7 @@ function Font:OnInitialize()
 
     -- Functions
     function Font:Update()
-        local fontSizes = {9, 9, 14, 14, 12, 64, 64}
+        local fontSizes = {9, 9, 14, 14, 12}
 
         if (not C_AddOns.IsAddOnLoaded("NiceDamage")) and (not C_AddOns.IsAddOnLoaded("ClassicNumbers")) then
             DAMAGE_TEXT_FONT = Font.db.fontpath
@@ -119,6 +118,10 @@ function Font:OnInitialize()
         mUI:ApplyFont(SystemFont_NamePlate, 9, "OUTLINE")
         mUI:ApplyFont(SystemFont_LargeNamePlateFixed, 9, "OUTLINE")
         mUI:ApplyFont(SystemFont_NamePlateFixed, 9, "OUTLINE")
+
+        -- Set Font for Floating Combat Text (explicit to ensure outline flags are applied)
+        SystemFont_World:SetFont(Font.db.fontpath, 64, "OUTLINE")
+        SystemFont_World_ThickOutline:SetFont(Font.db.fontpath, 64, "THICKOUTLINE")
 
         -- Set Font Size for Community Chat
         CommunitiesFrame.Chat.MessageFrame:SetFont(Font.db.fontpath, 14, "OUTLINE")

@@ -3,7 +3,7 @@ local Style = mUI:GetModule("mUI.Modules.Chat.Style")
 -- Store chat frame references at module level for config updates
 local chatFrames = {}
 local tempChatFrames = {}
-local expectedChatFrames = {}
+local pendingTempFrame = nil
 
 function Style:UpdateAllScrollButtons()
     -- Update scroll buttons on all static chat frames
@@ -63,20 +63,7 @@ function Style:OnEnable()
 
     -- temporary chat frames
     Style:SecureHook("FCF_SetTemporaryWindowType", function(chatFrame, chatType, chatTarget)
-        if not expectedChatFrames[chatType] then
-            expectedChatFrames[chatType] = {}
-        end
-
-        -- the PET_BATTLE_COMBAT_LOG chatType doesn't have chatTarget
-        if chatTarget then
-            -- Ensure it's a table before indexing
-            if type(expectedChatFrames[chatType]) ~= "table" then
-                expectedChatFrames[chatType] = {}
-            end
-            expectedChatFrames[chatType][chatTarget] = chatFrame
-        else
-            expectedChatFrames[chatType]["__noTarget"] = chatFrame
-        end
+        pendingTempFrame = chatFrame
     end)
 
     -- Disable font size change from right-click menu
@@ -88,14 +75,8 @@ function Style:OnEnable()
     end)
 
     Style:SecureHook("FCF_OpenTemporaryWindow", function(chatType, chatTarget)
-        local chatFrame = nil
-        if expectedChatFrames[chatType] then
-            if chatTarget and type(expectedChatFrames[chatType]) == "table" then
-                chatFrame = expectedChatFrames[chatType][chatTarget]
-            elseif not chatTarget and type(expectedChatFrames[chatType]) == "table" then
-                chatFrame = expectedChatFrames[chatType]["__noTarget"]
-            end
-        end
+        local chatFrame = pendingTempFrame
+        pendingTempFrame = nil
         if chatFrame then
             local frame = chatFrame
             if frame then
