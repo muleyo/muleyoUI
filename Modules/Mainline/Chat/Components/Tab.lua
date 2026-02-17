@@ -54,7 +54,7 @@ function Style:HandleChatTab(frame)
         Style:SecureHookScript(frame, "OnDragStart", chatTab_OnDragStart)
         Style:SecureHook(frame.Text, "SetPoint", chatTabText_SetPoint)
         Style:SecureHook(frame.Text, "SetTextColor", chatTabText_SetTextColor)
-        
+
         -- Hook tab click to update fonts when switching tabs
         Style:SecureHookScript(frame, "OnClick", function(self)
             C_Timer.After(0, function()
@@ -118,14 +118,17 @@ function Style:HandleChatTab(frame)
     end
 
     -- reset the tab
-    frame:SetPoint(frame:GetPoint(1))
+    local point, relativeTo, relativePoint, offsetX, offsetY = frame:GetPoint()
+    if point then
+        frame:SetPoint(point, relativeTo, relativePoint, offsetX, offsetY)
+    end
 
     if not frame.selectedColorTable then
         frame.Text:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
     end
 
     -- it can be "CENTER" or "LEFT", so just use the index
-    frame.Text:SetPoint(frame.Text:GetPoint(1))
+    frame.Text:SetPoint(frame.Text:GetPoint())
 end
 
 local handledMiniTabs = {}
