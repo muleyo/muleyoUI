@@ -361,6 +361,7 @@ function Theme:PVP()
         mUI:Skin(ConquestQueueFrame.Inset.NineSlice)
         ConquestJoinButton_LeftSeparator:Hide()
         ConquestJoinButton_RightSeparator:Hide()
+        Theme:StyleTooltip(ConquestTooltip)
     end
 end
 
