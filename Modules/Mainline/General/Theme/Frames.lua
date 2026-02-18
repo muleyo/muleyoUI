@@ -456,6 +456,7 @@ function Theme:PVP()
         mUI:Skin(PVPQueueFrame.HonorInset)
         mUI:Skin(PVPQueueFrame.HonorInset.NineSlice)
         PVPQueueFrame.HonorInset:Hide()
+        Theme:StyleTooltip(ConquestTooltip)
     end
 end
 
@@ -939,7 +940,7 @@ function Theme:Friendlist()
     mUI:Skin(RaidInfoFrame)
     mUI:Skin(RaidInfoFrame.Header)
     mUI:Skin(RaidInfoFrame.Border)
-    mUI:Skin(FriendsTooltip.NineSlice)
+    Theme:StyleTooltip(FriendsTooltip)
 end
 
 function Theme:Guild()
@@ -1408,10 +1409,9 @@ function Theme:Frames()
     mUI:Skin(LFGListApplicationDialog.Border)
     mUI:Skin(LFGListInviteDialog)
     mUI:Skin(LFGListInviteDialog.Border)
-    mUI:Skin(QueueStatusFrame)
-    mUI:Skin(QueueStatusFrame.NineSlice)
     mUI:Skin(LFGInvitePopup)
     mUI:Skin(LFGInvitePopup.Border)
+    Theme:StyleTooltip(QueueStatusFrame)
 
     -- PVP Scoreboard
     mUI:Skin(PVPMatchScoreboard.Content)
