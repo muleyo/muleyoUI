@@ -772,7 +772,7 @@ function Theme:Friendlist()
     mUI:Skin(RaidInfoFrame)
     mUI:Skin(RaidInfoFrame.Header)
     mUI:Skin(RaidInfoFrame.Border)
-    mUI:Skin(FriendsTooltip.NineSlice)
+    Theme:StyleTooltip(FriendsTooltip)
 end
 
 function Theme:Guild()
@@ -1243,8 +1243,7 @@ function Theme:Frames()
     mUI:Skin(ReportFrame.Border)
 
     -- LFG Ready/Invite Dialogs
-    mUI:Skin(QueueStatusFrame)
-    mUI:Skin(QueueStatusFrame.NineSlice)
+    Theme:StyleTooltip(QueueStatusFrame)
 
     -- ReadyCheck
     mUI:Skin(ReadyCheckListenerFrame)
