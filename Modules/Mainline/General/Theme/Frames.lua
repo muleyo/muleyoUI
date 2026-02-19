@@ -1455,6 +1455,7 @@ function Theme:Frames()
     mUI:Skin(CooldownViewerLayoutDialog.Border)
     mUI:Skin(CooldownViewerImportLayoutDialog)
     mUI:Skin(CooldownViewerImportLayoutDialog.Border)
+    mUI:Skin(CooldownViewerSettingsEditAlert.BG)
 
     for _, tab in pairs(CooldownViewerSettings.TabButtons) do
         Theme.blacklist[select(2, tab:GetRegions())] = true
