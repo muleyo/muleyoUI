@@ -54,33 +54,6 @@ function SmoothHealth:OnEnable()
             SmoothHealth:Raidframes_Power(frame)
         end
     end)
-
-    -- Player
-    SmoothHealth:SecureHook(PlayerFrame.healthbar, "SetValue", function()
-        SmoothHealth:Unitframes_Health(PlayerFrame)
-    end)
-
-    --[[SmoothHealth:SecureHook(PlayerFrame.manabar, "SetValue", function()
-        SmoothHealth:Unitframes_Power(PlayerFrame)
-    end)]]
-
-    -- Target
-    SmoothHealth:SecureHook(TargetFrame.healthbar, "SetValue", function()
-        SmoothHealth:Unitframes_Health(TargetFrame)
-    end)
-
-    --[[SmoothHealth:SecureHook(TargetFrame.manabar, "SetValue", function()
-        SmoothHealth:Unitframes_Power(TargetFrame)
-    end)]]
-
-    -- Focus
-    SmoothHealth:SecureHook(FocusFrame.healthbar, "SetValue", function()
-        SmoothHealth:Unitframes_Health(FocusFrame)
-    end)
-
-    --[[SmoothHealth:SecureHook(FocusFrame.manabar, "SetValue", function()
-        SmoothHealth:Unitframes_Power(FocusFrame)
-    end)]]
 end
 
 function SmoothHealth:OnDisable()

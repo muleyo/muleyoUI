@@ -91,8 +91,8 @@ function Theme:Calendar()
         mUI:Skin(CalendarClassButton12)
         mUI:Skin(CalendarClassButton13)
         mUI:Skin(CalendarClassTotalsButton)
-        mUI:Skin({CalendarCreateEventDivider, CalendarCreateEventFrameButtonBackground,
-                  CalendarCreateEventMassInviteButtonBorder, CalendarCreateEventCreateButtonBorder}, true)
+        mUI:Skin({CalendarCreateEventDivider, CalendarCreateEventFrameButtonBackground, CalendarCreateEventMassInviteButtonBorder,
+                  CalendarCreateEventCreateButtonBorder}, true)
     end
 end
 
@@ -125,8 +125,7 @@ function Theme:Trainer()
 
         mUI:Skin(ClassTrainerFrame)
         mUI:Skin(ClassTrainerFrame.NineSlice)
-        mUI:Skin({select(1, ClassTrainerListScrollFrame:GetRegions()):Hide(),
-                  select(2, ClassTrainerListScrollFrame:GetRegions()):Hide()}, true)
+        mUI:Skin({select(1, ClassTrainerListScrollFrame:GetRegions()):Hide(), select(2, ClassTrainerListScrollFrame:GetRegions()):Hide()}, true)
     end
 end
 
@@ -189,14 +188,12 @@ function Theme:Collections()
         mUI:Skin(WardrobeTransmogFrame.Inset.NineSlice)
         WardrobeTransmogFrame.Inset.BG:SetVertexColor(1, 1, 1) -- Reset Background Color
         mUI:Skin({WardrobeCollectionFrameScrollFrameScrollBarBottom, WardrobeCollectionFrameScrollFrameScrollBarMiddle,
-                  WardrobeCollectionFrameScrollFrameScrollBarTop,
-                  WardrobeCollectionFrameScrollFrameScrollBarThumbTexture}, true)
+                  WardrobeCollectionFrameScrollFrameScrollBarTop, WardrobeCollectionFrameScrollFrameScrollBarThumbTexture}, true)
 
         -- Specific Frames
-        mUI:Skin({CollectionsJournalBg, MountJournalListScrollFrameScrollBarThumbTexture,
-                  MountJournalListScrollFrameScrollBarTop, MountJournalListScrollFrameScrollBarMiddle,
-                  MountJournalListScrollFrameScrollBarBottom, PetJournalListScrollFrameScrollBarThumbTexture,
-                  PetJournalListScrollFrameScrollBarTop, PetJournalListScrollFrameScrollBarMiddle,
+        mUI:Skin({CollectionsJournalBg, MountJournalListScrollFrameScrollBarThumbTexture, MountJournalListScrollFrameScrollBarTop,
+                  MountJournalListScrollFrameScrollBarMiddle, MountJournalListScrollFrameScrollBarBottom,
+                  PetJournalListScrollFrameScrollBarThumbTexture, PetJournalListScrollFrameScrollBarTop, PetJournalListScrollFrameScrollBarMiddle,
                   PetJournalListScrollFrameScrollBarBottom}, true)
 
         -- Tabs
@@ -256,14 +253,12 @@ function Theme:Inspect()
         mUI:Skin(InspectPaperDollItemsFrame)
         mUI:Skin(InspectPaperDollItemsFrame.InspectTalents)
         mUI:Skin(InspectPVPFrame)
-        mUI:Skin({InspectModelFrameBorderLeft, InspectModelFrameBorderRight, InspectModelFrameBorderTop,
-                  InspectModelFrameBorderTopLeft, InspectModelFrameBorderTopRight, InspectModelFrameBorderBottom,
-                  InspectModelFrameBorderBottomLeft, InspectModelFrameBorderBottomRight, InspectModelFrameBorderBottom2,
-                  InspectFeetSlotFrame, InspectHandsSlotFrame, InspectWaistSlotFrame, InspectLegsSlotFrame,
-                  InspectFinger0SlotFrame, InspectFinger1SlotFrame, InspectTrinket0SlotFrame, InspectTrinket1SlotFrame,
-                  InspectWristSlotFrame, InspectTabardSlotFrame, InspectShirtSlotFrame, InspectChestSlotFrame,
-                  InspectBackSlotFrame, InspectShoulderSlotFrame, InspectNeckSlotFrame, InspectHeadSlotFrame,
-                  InspectSecondaryHandSlotFrame}, true)
+        mUI:Skin({InspectModelFrameBorderLeft, InspectModelFrameBorderRight, InspectModelFrameBorderTop, InspectModelFrameBorderTopLeft,
+                  InspectModelFrameBorderTopRight, InspectModelFrameBorderBottom, InspectModelFrameBorderBottomLeft,
+                  InspectModelFrameBorderBottomRight, InspectModelFrameBorderBottom2, InspectFeetSlotFrame, InspectHandsSlotFrame,
+                  InspectWaistSlotFrame, InspectLegsSlotFrame, InspectFinger0SlotFrame, InspectFinger1SlotFrame, InspectTrinket0SlotFrame,
+                  InspectTrinket1SlotFrame, InspectWristSlotFrame, InspectTabardSlotFrame, InspectShirtSlotFrame, InspectChestSlotFrame,
+                  InspectBackSlotFrame, InspectShoulderSlotFrame, InspectNeckSlotFrame, InspectHeadSlotFrame, InspectSecondaryHandSlotFrame}, true)
         mUI:Skin(InspectFrameTab1)
         mUI:Skin(InspectFrameTab2)
         mUI:Skin(InspectFrameTab3)
@@ -285,9 +280,8 @@ function Theme:GuildBank()
         mUI:Skin(GuildBankFrameTab3)
         mUI:Skin(GuildBankFrameTab4)
         mUI:Skin(GuildBankFrame)
-        mUI:Skin({GuildBankFrameLeft, GuildBankFrameMiddle, GuildBankFrameRight,
-                  select(1, GuildBankInfoScrollFrame:GetRegions()), select(2, GuildBankInfoScrollFrame:GetRegions())},
-            true)
+        mUI:Skin({GuildBankFrameLeft, GuildBankFrameMiddle, GuildBankFrameRight, select(1, GuildBankInfoScrollFrame:GetRegions()),
+                  select(2, GuildBankInfoScrollFrame:GetRegions())}, true)
 
         mUI:Skin(GuildBankTab1)
         mUI:Skin(GuildBankTab2)
@@ -314,8 +308,7 @@ function Theme:Professions()
         -- Blacklist Frames
         Theme.blacklist["TradeSkillFramePortrait"] = true
         mUI:Skin(TradeSkillFrame)
-        mUI:Skin({select(1, TradeSkillListScrollFrame:GetRegions()), select(2, TradeSkillListScrollFrame:GetRegions())},
-            true)
+        mUI:Skin({select(1, TradeSkillListScrollFrame:GetRegions()), select(2, TradeSkillListScrollFrame:GetRegions())}, true)
     end
 end
 
@@ -385,8 +378,8 @@ function Theme:Macros()
         mUI:Skin(MacroPopupFrame.BorderBox)
         mUI:Skin(MacroFrameTab1)
         mUI:Skin(MacroFrameTab2)
-        mUI:Skin({MacroButtonScrollFrameTop, MacroButtonScrollFrameMiddle, MacroButtonScrollFrameBottom,
-                  MacroButtonScrollFrameScrollBarThumbTexture}, true)
+        mUI:Skin({MacroButtonScrollFrameTop, MacroButtonScrollFrameMiddle, MacroButtonScrollFrameBottom, MacroButtonScrollFrameScrollBarThumbTexture},
+            true)
     end
 end
 
@@ -406,6 +399,8 @@ function Theme:Talents()
         Theme.blacklist["PlayerTalentFrameBackgroundTopRight"] = true
         Theme.blacklist["PlayerTalentFrameBackgroundBottomLeft"] = true
         Theme.blacklist["PlayerTalentFrameBackgroundBottomRight"] = true
+        Theme.blacklist[select(2, PlayerSpecTab1:GetRegions())] = true
+        Theme.blacklist[select(2, PlayerSpecTab2:GetRegions())] = true
 
         mUI:Skin(PlayerTalentFrame)
         mUI:Skin(PlayerTalentFrameScrollFrame)
@@ -469,21 +464,15 @@ function Theme:Actionbars()
     mUI:Skin(OverrideActionBarExpBar)
     mUI:Skin(StanceBarFrame)
     mUI:Skin(PetActionBarFrame)
-    mUI:Skin({OverrideActionBarHealthBarOverlay, OverrideActionBarPowerBarOverlay, MainMenuXPBarTexture0,
-              MainMenuXPBarTexture1, MainMenuXPBarTexture2, MainMenuXPBarTexture3, ExhaustionTickNormal,
-              ExhaustionTickHighlight}, true)
+    mUI:Skin({OverrideActionBarHealthBarOverlay, OverrideActionBarPowerBarOverlay, MainMenuXPBarTexture0, MainMenuXPBarTexture1,
+              MainMenuXPBarTexture2, MainMenuXPBarTexture3, ExhaustionTickNormal, ExhaustionTickHighlight}, true)
     mUI:Skin(OverrideActionBar)
     mUI:Skin({OverrideActionBarLeaveFrameDivider3}, true)
-    mUI:Skin({MainStatusTrackingBarContainer.MainMenuBarFrameTexture1,
-              MainStatusTrackingBarContainer.MainMenuBarFrameTexture2,
-              MainStatusTrackingBarContainer.MainMenuBarFrameTexture3,
-              MainStatusTrackingBarContainer.MainMenuBarFrameTexture4,
-              MainStatusTrackingBarContainer.MainMenuBarFrameTexture5,
-              MainStatusTrackingBarContainer.StandaloneFrameTexture1,
-              MainStatusTrackingBarContainer.StandaloneFrameTexture2,
-              MainStatusTrackingBarContainer.StandaloneFrameTexture3,
-              MainStatusTrackingBarContainer.StandaloneFrameTexture4,
-              MainStatusTrackingBarContainer.StandaloneFrameTexture5}, true)
+    mUI:Skin({MainStatusTrackingBarContainer.MainMenuBarFrameTexture1, MainStatusTrackingBarContainer.MainMenuBarFrameTexture2,
+              MainStatusTrackingBarContainer.MainMenuBarFrameTexture3, MainStatusTrackingBarContainer.MainMenuBarFrameTexture4,
+              MainStatusTrackingBarContainer.MainMenuBarFrameTexture5, MainStatusTrackingBarContainer.StandaloneFrameTexture1,
+              MainStatusTrackingBarContainer.StandaloneFrameTexture2, MainStatusTrackingBarContainer.StandaloneFrameTexture3,
+              MainStatusTrackingBarContainer.StandaloneFrameTexture4, MainStatusTrackingBarContainer.StandaloneFrameTexture5}, true)
 
     -- Actionbars
     for j = 1, #Theme.Bars do
@@ -569,8 +558,7 @@ function Theme:AddonList()
     mUI:Skin(AddonList)
     mUI:Skin(AddonListInset)
     mUI:Skin(AddonListInset.NineSlice)
-    mUI:Skin({AddonListBg, AddonListScrollFrameScrollBarTop, AddonListScrollFrameScrollBarMiddle,
-              AddonListScrollFrameScrollBarBottom}, true)
+    mUI:Skin({AddonListBg, AddonListScrollFrameScrollBarTop, AddonListScrollFrameScrollBarMiddle, AddonListScrollFrameScrollBarBottom}, true)
 end
 
 function Theme:Bags()
@@ -597,8 +585,8 @@ function Theme:Bags()
     CharacterBag2SlotNormalTexture.SetVertexColor = Theme.bagsbackup
     CharacterBag3SlotNormalTexture.SetVertexColor = Theme.bagsbackup
 
-    mUI:Skin({MainMenuBarBackpackButtonNormalTexture, CharacterBag0SlotNormalTexture, CharacterBag1SlotNormalTexture,
-              CharacterBag2SlotNormalTexture, CharacterBag3SlotNormalTexture}, true)
+    mUI:Skin({MainMenuBarBackpackButtonNormalTexture, CharacterBag0SlotNormalTexture, CharacterBag1SlotNormalTexture, CharacterBag2SlotNormalTexture,
+              CharacterBag3SlotNormalTexture}, true)
 
     MainMenuBarBackpackButtonNormalTexture.SetVertexColor = function()
     end
@@ -649,16 +637,14 @@ function Theme:Character()
     mUI:Skin(CharacterFrameTab5)
     mUI:Skin(PVPFrame)
 
-    mUI:Skin({CharacterFeetSlotFrame, CharacterHandsSlotFrame, CharacterWaistSlotFrame, CharacterLegsSlotFrame,
-              CharacterFinger0SlotFrame, CharacterFinger1SlotFrame, CharacterTrinket0SlotFrame,
-              CharacterTrinket1SlotFrame, CharacterWristSlotFrame, CharacterTabardSlotFrame, CharacterShirtSlotFrame,
-              CharacterChestSlotFrame, CharacterBackSlotFrame, CharacterShoulderSlotFrame, CharacterNeckSlotFrame,
+    mUI:Skin({CharacterFeetSlotFrame, CharacterHandsSlotFrame, CharacterWaistSlotFrame, CharacterLegsSlotFrame, CharacterFinger0SlotFrame,
+              CharacterFinger1SlotFrame, CharacterTrinket0SlotFrame, CharacterTrinket1SlotFrame, CharacterWristSlotFrame, CharacterTabardSlotFrame,
+              CharacterShirtSlotFrame, CharacterChestSlotFrame, CharacterBackSlotFrame, CharacterShoulderSlotFrame, CharacterNeckSlotFrame,
               CharacterHeadSlotFrame, CharacterMainHandSlotFrame, CharacterSecondaryHandSlotFrame,
               _G.select(CharacterMainHandSlot:GetNumRegions(), CharacterMainHandSlot:GetRegions()),
-              _G.select(CharacterSecondaryHandSlot:GetNumRegions(), CharacterSecondaryHandSlot:GetRegions()),
-              PaperDollInnerBorderLeft, PaperDollInnerBorderRight, PaperDollInnerBorderTop, PaperDollInnerBorderTopLeft,
-              PaperDollInnerBorderTopRight, PaperDollInnerBorderBottom, PaperDollInnerBorderBottomLeft,
-              PaperDollInnerBorderBottomRight, PaperDollInnerBorderBottom2}, true)
+              _G.select(CharacterSecondaryHandSlot:GetNumRegions(), CharacterSecondaryHandSlot:GetRegions()), PaperDollInnerBorderLeft,
+              PaperDollInnerBorderRight, PaperDollInnerBorderTop, PaperDollInnerBorderTopLeft, PaperDollInnerBorderTopRight,
+              PaperDollInnerBorderBottom, PaperDollInnerBorderBottomLeft, PaperDollInnerBorderBottomRight, PaperDollInnerBorderBottom2}, true)
 
     C_Timer.After(0.1, function()
         select(4, PetPaperDollFrameExpBar:GetRegions()):SetVertexColor(0.58, 0, 0.55) -- Reset Background Color
@@ -729,9 +715,8 @@ function Theme:Communities()
     mUI:Skin(ClubFinderCommunityAndGuildFinderFrame.InsetFrame.NineSlice)
     mUI:Skin(ClubFinderCommunityAndGuildFinderFrame.ClubFinderSearchTab)
     mUI:Skin(ClubFinderCommunityAndGuildFinderFrame.ClubFinderPendingTab)
-    mUI:Skin({CommunitiesFrameCommunitiesListListScrollFrameThumbTexture,
-              CommunitiesFrameCommunitiesListListScrollFrameTop, CommunitiesFrameCommunitiesListListScrollFrameMiddle,
-              CommunitiesFrameCommunitiesListListScrollFrameBottom}, true)
+    mUI:Skin({CommunitiesFrameCommunitiesListListScrollFrameThumbTexture, CommunitiesFrameCommunitiesListListScrollFrameTop,
+              CommunitiesFrameCommunitiesListListScrollFrameMiddle, CommunitiesFrameCommunitiesListListScrollFrameBottom}, true)
 end
 
 function Theme:DressUp()
@@ -944,12 +929,10 @@ function Theme:Quest()
     mUI:Skin(QuestDetailScrollFrame)
     mUI:Skin(QuestProgressScrollFrame)
     mUI:Skin(QuestModelScene)
-    mUI:Skin({QuestNPCModelTopBorder, QuestNPCModelRightBorder, QuestNPCModelTopRightCorner,
-              QuestNPCModelBottomRightCorner, QuestNPCModelBottomBorder, QuestNPCModelBottomLeftCorner,
-              QuestNPCModelLeftBorder, QuestNPCModelTopLeftCorner, QuestNPCModelTextTopBorder,
-              QuestNPCModelTextRightBorder, QuestNPCModelTextTopRightCorner, QuestNPCModelTextBottomRightCorner,
-              QuestNPCModelTextBottomBorder, QuestNPCModelTextBottomLeftCorner, QuestNPCModelTextLeftBorder,
-              QuestNPCModelTextTopLeftCorner}, true)
+    mUI:Skin({QuestNPCModelTopBorder, QuestNPCModelRightBorder, QuestNPCModelTopRightCorner, QuestNPCModelBottomRightCorner,
+              QuestNPCModelBottomBorder, QuestNPCModelBottomLeftCorner, QuestNPCModelLeftBorder, QuestNPCModelTopLeftCorner,
+              QuestNPCModelTextTopBorder, QuestNPCModelTextRightBorder, QuestNPCModelTextTopRightCorner, QuestNPCModelTextBottomRightCorner,
+              QuestNPCModelTextBottomBorder, QuestNPCModelTextBottomLeftCorner, QuestNPCModelTextLeftBorder, QuestNPCModelTextTopLeftCorner}, true)
 
     QuestLogQuestTitle:SetTextColor(1, 0.875, 0.25)
     QuestLogDescriptionTitle:SetTextColor(1, 0.875, 0.25)
@@ -1081,8 +1064,7 @@ function Theme:Raidframe()
     mUI:Skin(CompactRaidFrameContainerBorderFrame)
 
     for i = 1, 40 do
-        mUI:Skin({_G["CompactRaidFrame" .. i .. "HorizDivider"], _G["CompactPartyFrameMember" .. i .. "HorizDivider"]},
-            true)
+        mUI:Skin({_G["CompactRaidFrame" .. i .. "HorizDivider"], _G["CompactPartyFrameMember" .. i .. "HorizDivider"]}, true)
     end
 end
 
@@ -1110,63 +1092,25 @@ function Theme:Rewards()
     end
 end
 
-function Theme:ClassBars()
-    -- Class Bars
-    if (playerClass == "WARLOCK") then
-        Theme:ClassBar()
-    elseif (playerClass == "MONK") then
-        Theme:ClassBar()
-    elseif (playerClass == "DEATHKNIGHT") then
-        if (not Theme:IsHooked(RuneFrame, "OnUpdate")) then
-            Theme:SecureHookScript(RuneFrame, "OnUpdate", Theme.ClassBar)
-        end
-    elseif (playerClass == "PALADIN") then
-        Theme:ClassBar()
-    elseif (playerClass == "PRIEST") then
-        Theme:ClassBar()
-    end
-
-    if (playerClass == "SHAMAN" or playerClass == "PALADIN") or playerClass == "DRUID" then
-        -- Totem Bar
-        if (not Theme:IsHooked(TotemFrame, "OnUpdate")) then
-            Theme:SecureHookScript(TotemFrame, "OnUpdate", function(frame)
-                local borderFrame1 = select(2, TotemFrameTotem1:GetChildren())
-                local borderFrame2 = select(2, TotemFrameTotem2:GetChildren())
-                local borderFrame3 = select(2, TotemFrameTotem3:GetChildren())
-
-                mUI:Skin(borderFrame1)
-                mUI:Skin(borderFrame2)
-                mUI:Skin(borderFrame3)
-            end)
-        end
-
-        Theme:ClassBar()
-    end
-end
-
 function Theme:Unitframes()
     -- Unitframes
-    mUI:Skin({PlayerFrameTexture, PlayerFrameVehicleTexture, PetFrameTexture, TargetFrameTextureFrameTexture,
-              FocusFrameTextureFrameTexture, Boss1TargetFrameTextureFrameTexture, Boss2TargetFrameTextureFrameTexture,
-              Boss3TargetFrameTextureFrameTexture, Boss4TargetFrameTextureFrameTexture,
-              Boss5TargetFrameTextureFrameTexture, TargetFrameToTTextureFrameTexture, FocusFrameToTTextureFrameTexture},
-        true)
+    mUI:Skin({PlayerFrameTexture, PlayerFrameVehicleTexture, PetFrameTexture, TargetFrameTextureFrameTexture, FocusFrameTextureFrameTexture,
+              Boss1TargetFrameTextureFrameTexture, Boss2TargetFrameTextureFrameTexture, Boss3TargetFrameTextureFrameTexture,
+              Boss4TargetFrameTextureFrameTexture, Boss5TargetFrameTextureFrameTexture, TargetFrameToTTextureFrameTexture,
+              FocusFrameToTTextureFrameTexture}, true)
     mUI:Skin({PartyFrame.MemberFrame1.PartyMemberOverlay.Texture, PartyFrame.MemberFrame2.PartyMemberOverlay.Texture,
-              PartyFrame.MemberFrame3.PartyMemberOverlay.Texture, PartyFrame.MemberFrame4.PartyMemberOverlay.Texture},
-        true)
+              PartyFrame.MemberFrame3.PartyMemberOverlay.Texture, PartyFrame.MemberFrame4.PartyMemberOverlay.Texture}, true)
     mUI:Skin(PlayerFrameAlternateManaBar)
     mUI:Skin(PlayerFrameGroupIndicator)
 end
 
 function Theme:Castbars()
     -- Castbars
-    mUI:Skin({PlayerCastingBarFrame.Border, TargetFrameSpellBar.Border, TargetFrameSpellBar.BorderShield,
-              FocusFrameSpellBar.Border, FocusFrameSpellBar.BorderShield, Boss1TargetFrameSpellBar.Border,
-              Boss1TargetFrameSpellBar.BorderShield, Boss2TargetFrameSpellBar.Border,
-              Boss2TargetFrameSpellBar.BorderShield, Boss3TargetFrameSpellBar.Border,
-              Boss3TargetFrameSpellBar.BorderShield, Boss4TargetFrameSpellBar.Border,
-              Boss4TargetFrameSpellBar.BorderShield, Boss5TargetFrameSpellBar.Border,
-              Boss5TargetFrameSpellBar.BorderShield}, true)
+    mUI:Skin({PlayerCastingBarFrame.Border, TargetFrameSpellBar.Border, TargetFrameSpellBar.BorderShield, FocusFrameSpellBar.Border,
+              FocusFrameSpellBar.BorderShield, Boss1TargetFrameSpellBar.Border, Boss1TargetFrameSpellBar.BorderShield,
+              Boss2TargetFrameSpellBar.Border, Boss2TargetFrameSpellBar.BorderShield, Boss3TargetFrameSpellBar.Border,
+              Boss3TargetFrameSpellBar.BorderShield, Boss4TargetFrameSpellBar.Border, Boss4TargetFrameSpellBar.BorderShield,
+              Boss5TargetFrameSpellBar.Border, Boss5TargetFrameSpellBar.BorderShield}, true)
 
     -- Castbar Icon Skinning
     for castbar in pairs(Theme.castbarIcons) do

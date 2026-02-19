@@ -2,9 +2,10 @@ local Range = mUI:NewModule("mUI.Modules.Actionbars.Range", "AceHook-3.0")
 
 function Range:OnInitialize()
     Range.updater = CreateFrame("Frame", "mUIRangeUpdater")
-    Range.delay = 0.2
+    Range.elapsed = 0
+    Range.delay = 0.15
     Range.buttonColors = {}
-    Range.buttonsToUpdate = {}
+    Range.actionToButtons = {}
     Range.colors = {
         ["normal"] = {1, 1, 1},
         ["oor"] = {0.8, 0.1, 0.1},
@@ -12,39 +13,47 @@ function Range:OnInitialize()
         ["unusable"] = {0.3, 0.3, 0.3}
     }
 
-    function Range:UpdateButtons()
-        if next(Range.buttonsToUpdate) then
-            for button in pairs(Range.buttonsToUpdate) do
-                Range:UpdateButtonUsable(button)
+    function Range:UpdateAllButtons(force)
+        for action, buttons in pairs(Range.actionToButtons) do
+            for button in pairs(buttons) do
+                if button:IsVisible() then
+                    Range:UpdateButtonUsable(button, force)
+                end
             end
-            return true
         end
-
-        return false
     end
 
-    function Range:OnUpdateRange(elapsed)
-        Range.elapsed = (Range.elapsed or Range.delay) - elapsed
-        if Range.elapsed <= 0 then
-            Range.elapsed = UPDATE_DELAY
-
-            if not Range:UpdateButtons() then
-                Range.updater:Hide()
-            end
+    function Range:OnRangeUpdate(elapsed)
+        Range.elapsed = Range.elapsed + elapsed
+        if Range.elapsed < Range.delay then
+            return
         end
+        Range.elapsed = 0
+        Range:UpdateAllButtons()
+    end
+
+    function Range:OnRangeEvent()
+        Range:UpdateAllButtons(true)
     end
 
     function Range:UpdateButtonStatus(button)
         local action = button.action
-
-        if action and button:IsVisible() and HasAction(action) then
-            Range.buttonsToUpdate[button] = true
-        else
-            Range.buttonsToUpdate[button] = nil
+        if not action then
+            return
         end
 
-        if next(Range.buttonsToUpdate) then
-            Range.updater:Show()
+        if button:IsVisible() and HasAction(action) then
+            if not Range.actionToButtons[action] then
+                Range.actionToButtons[action] = {}
+            end
+            Range.actionToButtons[action][button] = true
+        else
+            if Range.actionToButtons[action] then
+                Range.actionToButtons[action][button] = nil
+                if not next(Range.actionToButtons[action]) then
+                    Range.actionToButtons[action] = nil
+                end
+            end
         end
     end
 
@@ -57,8 +66,7 @@ function Range:OnInitialize()
         local isUsable, notEnoughMana = IsUsableAction(action)
 
         if isUsable then
-            local inRange = IsActionInRange(action)
-            if inRange == false then
+            if IsActionInRange(action) == false then
                 Range:SetButtonColor(button, "oor")
             else
                 Range:SetButtonColor(button, "normal")
@@ -81,45 +89,56 @@ function Range:OnInitialize()
     end
 
     function Range:HookButtons(button)
-        if button and button.Update then
-            if not (Range:IsHooked(button, "Update") and Range:IsHooked(button, "UpdateUsable")) then
-                Range:SecureHook(button, "Update", function(button)
-                    Range:UpdateButtonStatus(button)
-                end)
-                Range:SecureHook(button, "UpdateUsable", function(button)
-                    Range:UpdateButtonUsable(button, true)
-                end)
-            end
-
-            if not (Range:IsHooked(button, "OnShow") and Range:IsHooked(button, "OnHide")) then
-                Range:SecureHookScript(button, "OnShow", function(button)
-                    Range:UpdateButtonStatus(button)
-                end)
-                Range:SecureHookScript(button, "OnHide", function(button)
-                    Range:UpdateButtonStatus(button)
-                end)
-            end
+        if not button or not button.UpdateAction then
+            return
         end
+
+        if not Range:IsHooked("ActionButton_UpdateAction") then
+            Range:SecureHook("ActionButton_UpdateAction", function(button)
+                Range:UpdateButtonStatus(button)
+            end)
+        end
+
+        if not Range:IsHooked(button, "OnShow") then
+            Range:SecureHookScript(button, "OnShow", function(button)
+                Range:UpdateButtonStatus(button)
+            end)
+        end
+
+        if not Range:IsHooked(button, "OnHide") then
+            Range:SecureHookScript(button, "OnHide", function(button)
+                Range:UpdateButtonStatus(button)
+            end)
+        end
+
+        Range:UpdateButtonStatus(button)
     end
 end
 
 function Range:OnEnable()
+    Range.updater:RegisterEvent("PLAYER_TARGET_CHANGED")
+    Range.updater:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
+    Range.updater:RegisterEvent("ACTIONBAR_UPDATE_USABLE")
+    Range.updater:RegisterEvent("ACTIONBAR_UPDATE_STATE")
+
     for i = 1, NUM_ACTIONBAR_BUTTONS do
         Range:HookButtons(_G["ActionButton" .. i])
         Range:HookButtons(_G["MultiBarBottomLeftButton" .. i])
         Range:HookButtons(_G["MultiBarBottomRightButton" .. i])
         Range:HookButtons(_G["MultiBarRightButton" .. i])
         Range:HookButtons(_G["MultiBarLeftButton" .. i])
-        Range:HookButtons(_G["MultiBar5Button" .. i])
-        Range:HookButtons(_G["MultiBar6Button" .. i])
-        Range:HookButtons(_G["MultiBar7Button" .. i])
     end
 
-    Range:SecureHookScript(Range.updater, "OnUpdate", function(_, elapsed)
-        Range:OnUpdateRange(elapsed)
+    Range.updater:SetScript("OnUpdate", function(_, elapsed)
+        Range:OnRangeUpdate(elapsed)
+    end)
+    Range.updater:SetScript("OnEvent", function()
+        Range:OnRangeEvent()
     end)
 end
 
 function Range:OnDisable()
+    Range.updater:SetScript("OnUpdate", nil)
+    Range.updater:UnregisterAllEvents()
     Range:UnhookAll()
 end

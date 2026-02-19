@@ -10,7 +10,7 @@ function Theme:ClassBar()
                 mUI:Skin({child.ChargedFrameActive}, true)
             end
         end
-        for _, child in pairs({ClassNameplateBarRogueFrame:GetChildren()}) do
+        for _, child in pairs({prdClassFrame:GetChildren()}) do
             mUI:Skin({child.BGActive, child.BGInactive, child.BGShadow}, true)
             if (child.isCharged) then
                 mUI:Skin({child.ChargedFrameActive}, true)
@@ -70,9 +70,8 @@ function Theme:ClassBar()
         end
     elseif (playerClass == "PALADIN") then
         -- Paladin
-        mUI:Skin({PaladinPowerBarFrame.Background, PaladinPowerBarFrame.ActiveTexture,
-                  ClassNameplateBarPaladinFrame.Background, ClassNameplateBarPaladinFrame.ActiveTexture,
-                  prdClassFrame.Background, prdClassFrame.ActiveTexture}, true)
+        mUI:Skin({PaladinPowerBarFrame.Background, PaladinPowerBarFrame.ActiveTexture, ClassNameplateBarPaladinFrame.Background,
+                  ClassNameplateBarPaladinFrame.ActiveTexture, prdClassFrame.Background, prdClassFrame.ActiveTexture}, true)
     end
     if (playerClass == "SHAMAN" or playerClass == "PALADIN" or playerClass == "PRIEST" or playerClass == "DRUID") then
         for totem, _ in TotemFrame.totemPool:EnumerateActive() do

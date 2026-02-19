@@ -9,7 +9,11 @@ function UF_Textures:OnInitialize()
 
     -- Create Frame
     UF_Textures.textures = CreateFrame("Frame")
-    UF_Textures.lastUpdate = 0
+    UF_Textures.textures:RegisterEvent("PLAYER_ENTERING_WORLD")
+    UF_Textures.textures:RegisterEvent("UNIT_HEALTH")
+    UF_Textures.textures:RegisterEvent("UNIT_TARGET")
+    UF_Textures.textures:RegisterEvent("PLAYER_TARGET_CHANGED")
+    UF_Textures.textures:RegisterEvent("PLAYER_FOCUS_CHANGED")
 
     -- Tables
     UF_Textures.healthbars = {
@@ -116,9 +120,7 @@ function UF_Textures:OnInitialize()
 end
 
 function UF_Textures:OnEnable()
-    UF_Textures:SecureHookScript(UF_Textures.textures, "OnUpdate", function(_, _)
-        UF_Textures:Update()
-    end)
+    UF_Textures:SecureHookScript(UF_Textures.textures, "OnEvent", UF_Textures.Update)
 end
 
 function UF_Textures:OnDisable()

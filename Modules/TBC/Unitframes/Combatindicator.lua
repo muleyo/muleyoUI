@@ -2,27 +2,24 @@ local Combatindicator = mUI:NewModule("mUI.Modules.Unitframes.Combatindicator", 
 
 function Combatindicator:OnInitialize()
     -- Frames
-    local target = CreateFrame("Frame")
-    local focus = CreateFrame("Frame")
+    local target = TargetFrame:CreateTexture(nil, "BORDER")
+    local focus = FocusFrame:CreateTexture(nil, "BORDER")
 
     Combatindicator.target = target
     Combatindicator.focus = focus
     Combatindicator.combatindicator = CreateFrame("Frame")
+    Combatindicator.combatindicator:RegisterEvent("UNIT_FLAGS")
+    Combatindicator.combatindicator:RegisterEvent("PLAYER_TARGET_CHANGED")
+    Combatindicator.combatindicator:RegisterEvent("PLAYER_FOCUS_CHANGED")
 
     target:SetPoint("CENTER", TargetFrame, "RIGHT", 0, 0)
     focus:SetPoint("CENTER", FocusFrame, "RIGHT", 0, 0)
 
-    target:SetSize(25, 25)
-    focus:SetSize(25, 25)
+    target:SetSize(35, 35)
+    focus:SetSize(35, 35)
 
-    target.texture = target:CreateTexture(nil, "BORDER")
-    focus.texture = focus:CreateTexture(nil, "BORDER")
-
-    target.texture:SetAllPoints()
-    focus.texture:SetAllPoints()
-
-    target.texture:SetTexture([[Interface\Icons\ABILITY_DUALWIELD]])
-    focus.texture:SetTexture([[Interface\Icons\ABILITY_DUALWIELD]])
+    target:SetTexture([[Interface\Icons\ABILITY_DUALWIELD]])
+    focus:SetTexture([[Interface\Icons\ABILITY_DUALWIELD]])
 
     target:Hide()
     focus:Hide()
@@ -44,7 +41,7 @@ end
 
 function Combatindicator:OnEnable()
     -- Hook
-    Combatindicator:SecureHookScript(Combatindicator.combatindicator, "OnUpdate", Combatindicator.Update)
+    Combatindicator:SecureHookScript(Combatindicator.combatindicator, "OnEvent", Combatindicator.Update)
 end
 
 function Combatindicator:OnDisable()

@@ -36,6 +36,10 @@ function Style:OnInitialize()
             _G[castbar].Border:SetPoint("CENTER", _G[castbar])
             _G[castbar].Flash:ClearAllPoints()
             _G[castbar].Flash:SetPoint("CENTER", _G[castbar])
+            _G[castbar]:SetMovable(true)
+            _G[castbar]:SetUserPlaced(true)
+            _G[castbar]:ClearAllPoints()
+            _G[castbar]:SetPoint("CENTER", UIParent, 0, -150)
             _G[castbar].Text:ClearAllPoints()
             _G[castbar].Text:SetPoint("TOP", _G[castbar], "TOP", 0, 2)
             _G[castbar].Text:SetFont(Style.font, 12, "OUTLINE")
@@ -99,87 +103,51 @@ function Style:OnEnable()
     -- Enable Style
     Style:Update()
 
-    Style:SecureHookScript(PlayerCastingBarFrame, "OnUpdate", function(self)
-        if not UnitIsUnit("player", self.unit) then
+    Style.castEventFrame = Style.castEventFrame or CreateFrame("Frame")
+
+    local unitToCastbar = {
+        player = PlayerCastingBarFrame,
+        target = TargetFrameSpellBar,
+        focus = FocusFrameSpellBar
+    }
+
+    local function UpdateCastbarColor(unit)
+        local castbar = unitToCastbar[unit]
+        if not castbar then
             return
         end
 
-        local _, _, _, _, _, _, _, notInterruptibleCast = UnitCastingInfo("player")
-        local _, _, _, _, _, _, notInterruptibleChannel = UnitChannelInfo("player")
+        local _, _, _, _, _, _, _, notInterruptibleCast = UnitCastingInfo(unit)
+        local _, _, _, _, _, _, notInterruptibleChannel = UnitChannelInfo(unit)
 
         if notInterruptibleCast or notInterruptibleChannel then
-            self:SetStatusBarColor(0.7, 0.7, 0.7)
+            castbar:SetStatusBarColor(0.7, 0.7, 0.7)
         else
-            local color
-            local isChannel = UnitChannelInfo("player")
-
-            if isChannel then
-                color = self.startChannelColor
-            else
-                color = self.startCastColor
+            local isChannel = UnitChannelInfo(unit)
+            local color = isChannel and castbar.startChannelColor or castbar.startCastColor
+            if color then
+                castbar:SetStatusBarColor(color.r, color.g, color.b)
             end
-
-            self:SetStatusBarColor(color.r, color.g, color.b)
         end
+    end
 
-        Style:EnableStyle("player", "PlayerCastingBarFrame")
-    end)
+    Style.castEventFrame:RegisterEvent("UNIT_SPELLCAST_START")
+    Style.castEventFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
+    Style.castEventFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE")
+    Style.castEventFrame:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE")
 
-    Style:SecureHookScript(TargetFrameSpellBar, "OnUpdate", function(self)
-        if not UnitIsUnit("target", self.unit) then
-            return
+    Style.castEventFrame:SetScript("OnEvent", function(_, event, unit)
+        if unitToCastbar[unit] then
+            UpdateCastbarColor(unit)
         end
-
-        local _, _, _, _, _, _, _, notInterruptibleCast = UnitCastingInfo("target")
-        local _, _, _, _, _, _, notInterruptibleChannel = UnitChannelInfo("target")
-
-        if notInterruptibleCast or notInterruptibleChannel then
-            self:SetStatusBarColor(0.7, 0.7, 0.7)
-        else
-            local color
-            local isChannel = UnitChannelInfo("target")
-
-            if isChannel then
-                color = self.startChannelColor
-            else
-                color = self.startCastColor
-            end
-
-            self:SetStatusBarColor(color.r, color.g, color.b)
-        end
-    end)
-
-    Style:SecureHookScript(FocusFrameSpellBar, "OnUpdate", function(self)
-        if not UnitIsUnit("focus", self.unit) then
-            return
-        end
-
-        local _, _, _, _, _, _, _, notInterruptibleCast = UnitCastingInfo("focus")
-        local _, _, _, _, _, _, notInterruptibleChannel = UnitChannelInfo("focus")
-
-        if notInterruptibleCast or notInterruptibleChannel then
-            self:SetStatusBarColor(0.7, 0.7, 0.7)
-        else
-            local color
-            local isChannel = UnitChannelInfo("focus")
-
-            if isChannel then
-                color = self.startChannelColor
-            else
-                color = self.startCastColor
-            end
-
-            self:SetStatusBarColor(color.r, color.g, color.b)
-        end
-    end)
-
-    Style:SecureHookScript(EditModeManagerFrame, "OnHide", function()
-        Style:Update()
     end)
 end
 
 function Style:OnDisable()
     -- Disable Style
+    if Style.castEventFrame then
+        Style.castEventFrame:UnregisterAllEvents()
+    end
     Style:UnhookAll()
     Style:DisableStyle()
 end

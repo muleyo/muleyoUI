@@ -3,8 +3,8 @@ local Safequeue = mUI:NewModule("mUI.Modules.Misc.Safequeue", "AceHook-3.0")
 function Safequeue:OnInitialize()
     -- Create Frame
     Safequeue.frame = CreateFrame("Frame")
-    Safequeue.timer = TOOLTIP_UPDATE_TIME
     Safequeue.queues = {}
+    Safequeue.ticker = nil
 
     -- Tables
     Safequeue.colors = {
@@ -16,6 +16,11 @@ function Safequeue:OnInitialize()
     -- Functions
     function Safequeue:SetExpiresText()
         if not Safequeue.battlefieldID then
+            return
+        end
+
+        if GetBattlefieldStatus(Safequeue.battlefieldID) ~= "confirm" then
+            Safequeue:StopTimer()
             return
         end
 
@@ -38,20 +43,23 @@ function Safequeue:OnInitialize()
         end
     end
 
-    function Safequeue:Update()
-        if not Safequeue.battlefieldID then
+    function Safequeue:StartTimer()
+        if Safequeue.ticker then
             return
         end
 
-        Safequeue.timer = Safequeue.timer - elapsed
-        if Safequeue.timer <= 0 then
-            if GetBattlefieldStatus(Safequeue.battlefieldID) ~= "confirm" then
-                Safequeue.battlefieldID = nil
-                return
-            end
-
+        Safequeue:SetExpiresText()
+        Safequeue.ticker = C_Timer.NewTicker(1, function()
             Safequeue:SetExpiresText()
+        end)
+    end
+
+    function Safequeue:StopTimer()
+        if Safequeue.ticker then
+            Safequeue.ticker:Cancel()
+            Safequeue.ticker = nil
         end
+        Safequeue.battlefieldID = nil
     end
 
     function Safequeue:ReadyDialog(id)
@@ -66,7 +74,7 @@ function Safequeue:OnInitialize()
         PVPReadyDialog.enterButton:SetPoint("BOTTOM", PVPReadyDialog, "BOTTOM", 0, 25)
         Safequeue.battlefieldID = id
 
-        Safequeue:SetExpiresText()
+        Safequeue:StartTimer()
     end
 
     function Safequeue:Popped()
@@ -76,14 +84,14 @@ function Safequeue:OnInitialize()
                 Safequeue.queues[i] = Safequeue.queues[i] or GetTime() - (GetBattlefieldTimeWaited(i) / 1000)
             elseif status == "confirm" then
                 if Safequeue.queues[i] then
-                    local secs = GetTime() - self.queues[i]
+                    local secs = GetTime() - Safequeue.queues[i]
                     if secs < 1 then
                         mUI:Debug("Queue popped instantly!")
                     else
                         mUI:Debug("Queue popped after " .. SecondsToTime(secs))
                     end
 
-                    self.queues[i] = nil
+                    Safequeue.queues[i] = nil
                 end
             end
         end
@@ -93,21 +101,19 @@ end
 function Safequeue:OnEnable()
     PVPReadyDialog.label:SetWidth(250)
 
-    Safequeue:SecureHookScript(Safequeue.frame, "OnUpdate", function(_, elapsed)
-        Safequeue:SetExpiresText(_, elapsed)
-    end)
-
     Safequeue:SecureHook("PVPReadyDialog_Display", function(_, id)
         Safequeue:ReadyDialog(id)
     end)
 
     Safequeue.frame:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
-    Safequeue:SecureHookScript(Safequeue.frame, "OnEvent", function()
+    Safequeue.frame:SetScript("OnEvent", function()
         Safequeue:Popped()
     end)
 end
 
 function Safequeue:OnDisable()
     PVPReadyDialog.label:SetWidth(200)
+    Safequeue:StopTimer()
+    Safequeue.frame:UnregisterAllEvents()
     Safequeue:UnhookAll()
 end

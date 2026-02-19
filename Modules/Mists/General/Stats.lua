@@ -61,25 +61,25 @@ function Stats:OnInitialize()
         end
     end
 
-    function Stats:Update(frame, elapsed)
-        Stats.lastUpdate = Stats.lastUpdate + elapsed
-        if Stats.lastUpdate > 1 then
-            Stats.lastUpdate = 0
-            mUI.statsFrame.text:SetText(Stats:Stats())
-            frame:SetWidth(mUI.statsFrame.text:GetStringWidth())
-            frame:SetHeight(mUI.statsFrame.text:GetStringHeight())
-        end
+    function Stats:Update()
+        mUI.statsFrame.text:SetText(Stats:Stats())
+        mUI.statsFrame:SetWidth(mUI.statsFrame.text:GetStringWidth())
+        mUI.statsFrame:SetHeight(mUI.statsFrame.text:GetStringHeight())
     end
 end
 
 function Stats:OnEnable()
     mUI.statsFrame:Show()
-    Stats:SecureHookScript(mUI.statsFrame, "OnUpdate", function(frame, elapsed)
-        Stats:Update(frame, elapsed)
+    Stats:Update()
+    Stats.ticker = C_Timer.NewTicker(0.5, function()
+        Stats:Update()
     end)
 end
 
 function Stats:OnDisable()
     mUI.statsFrame:Hide()
-    Stats:UnhookAll()
+    if Stats.ticker then
+        Stats.ticker:Cancel()
+        Stats.ticker = nil
+    end
 end

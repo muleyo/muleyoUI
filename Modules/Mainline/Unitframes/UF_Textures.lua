@@ -9,7 +9,11 @@ function UF_Textures:OnInitialize()
 
     -- Create Frame
     UF_Textures.textures = CreateFrame("Frame")
-    UF_Textures.lastUpdate = 0
+    UF_Textures.textures:RegisterEvent("PLAYER_ENTERING_WORLD")
+    UF_Textures.textures:RegisterEvent("UNIT_HEALTH")
+    UF_Textures.textures:RegisterEvent("UNIT_TARGET")
+    UF_Textures.textures:RegisterEvent("PLAYER_TARGET_CHANGED")
+    UF_Textures.textures:RegisterEvent("PLAYER_FOCUS_CHANGED")
 
     -- Tables
     UF_Textures.healthbars = {
@@ -224,8 +228,8 @@ function UF_Textures:OnInitialize()
                     powerbar:GetStatusBarTexture():SetAtlas(UF_Textures.defaultPowerTextures[name][powerbar.powerType])
                     powerbar:SetStatusBarColor(1, 1, 1)
                 else
-                    if not (powerbar.powerType == 8 or powerbar.powerType == 11 or powerbar.powerType == 13 or
-                        powerbar.powerType == 17 or powerbar.powerType == 18) then
+                    if not (powerbar.powerType == 8 or powerbar.powerType == 11 or powerbar.powerType == 13 or powerbar.powerType == 17 or
+                        powerbar.powerType == 18) then
                         powerbar.texture:SetTexture(texture)
 
                         if powerbar.powerType == 0 then
@@ -241,8 +245,7 @@ function UF_Textures:OnInitialize()
         if AlternatePowerBar and AlternatePowerBar.powerType then
             powerColor = PowerBarColor[AlternatePowerBar.powerType]
             if UF_Textures.db.textures.unitframes == "None" then
-                AlternatePowerBar:GetStatusBarTexture():SetAtlas(
-                    UF_Textures.defaultPowerTextures["classresource"][AlternatePowerBar.powerType])
+                AlternatePowerBar:GetStatusBarTexture():SetAtlas(UF_Textures.defaultPowerTextures["classresource"][AlternatePowerBar.powerType])
                 AlternatePowerBar:SetStatusBarColor(1, 1, 1)
             else
                 select(6, AlternatePowerBar:GetRegions()):SetTexture(texture)
@@ -258,9 +261,7 @@ function UF_Textures:OnInitialize()
 end
 
 function UF_Textures:OnEnable()
-    UF_Textures:SecureHookScript(UF_Textures.textures, "OnUpdate", function(_, _)
-        UF_Textures:Update()
-    end)
+    UF_Textures:SecureHookScript(UF_Textures.textures, "OnEvent", UF_Textures.Update)
 end
 
 function UF_Textures:OnDisable()

@@ -24,73 +24,33 @@ function Casttime:OnInitialize()
             _G[castbar].timer = _G[castbar]:CreateFontString(nil)
             _G[castbar].timer:SetFont(Casttime.font, 14, "OUTLINE")
             _G[castbar].timer:SetPoint("LEFT", _G[castbar], "RIGHT", 5, 0)
-            _G[castbar].update = 0.1
         else
             _G[castbar].timer = _G[castbar]:CreateFontString(nil)
             _G[castbar].timer:SetFont(Casttime.font, 11, "OUTLINE")
             _G[castbar].timer:SetPoint("LEFT", _G[castbar], "RIGHT", 4, 0)
-            _G[castbar].update = 0.1
         end
     end
 
-    function Casttime:Update(frame, elapsed)
-        if frame.update and frame.update < elapsed then
-            if frame.casting then
-                local duration = UnitCastingDuration(frame.unit)
-                if duration then
-                    frame.timer:SetText(format("%.1f", duration:GetRemainingDuration()))
-                else
-                    frame.timer:SetText("")
-                end
-            elseif frame.channeling then
-                local duration = UnitChannelDuration(frame.unit)
-                if duration then
-                    frame.timer:SetText(format("%.1f", duration:GetRemainingDuration()))
-                else
-                    frame.timer:SetText("")
-                end
-            else
-                frame.timer:SetText("")
-            end
-            frame.update = 0.1
+    function Casttime:Update(frame)
+        if frame.casting then
+            frame.timer:SetText(format("%.1f", max(frame.maxValue - frame.value, 0)))
+        elseif frame.channeling then
+            frame.timer:SetText(format("%.1f", max(frame.value, 0)))
         else
-            frame.update = frame.update - elapsed
+            frame.timer:SetText("")
         end
     end
 end
 
 function Casttime:OnEnable()
-    Casttime:SecureHookScript(PlayerCastingBarFrame, "OnUpdate", function(frame, elapsed)
-        Casttime:Update(frame, elapsed)
-    end)
-
-    Casttime:SecureHookScript(TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
-        Casttime:Update(frame, elapsed)
-    end)
-
-    Casttime:SecureHookScript(FocusFrameSpellBar, "OnUpdate", function(frame, elapsed)
-        Casttime:Update(frame, elapsed)
-    end)
-
-    Casttime:SecureHookScript(Boss1TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
-        Casttime:Update(frame, elapsed)
-    end)
-
-    Casttime:SecureHookScript(Boss2TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
-        Casttime:Update(frame, elapsed)
-    end)
-
-    Casttime:SecureHookScript(Boss3TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
-        Casttime:Update(frame, elapsed)
-    end)
-
-    Casttime:SecureHookScript(Boss4TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
-        Casttime:Update(frame, elapsed)
-    end)
-
-    Casttime:SecureHookScript(Boss5TargetFrameSpellBar, "OnUpdate", function(frame, elapsed)
-        Casttime:Update(frame, elapsed)
-    end)
+    for _, castbar in pairs(Casttime.castbars) do
+        local frame = _G[castbar]
+        if frame then
+            Casttime:SecureHookScript(frame, "OnUpdate", function(frame)
+                Casttime:Update(frame)
+            end)
+        end
+    end
 end
 
 function Casttime:OnDisable()
