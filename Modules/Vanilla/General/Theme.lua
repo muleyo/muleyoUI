@@ -32,10 +32,9 @@ function Theme:OnEnable()
         end)
 
         Theme:SecureHook("TargetFrame_UpdateAuraPositions",
-            function(aura, auraName, numAuras, numOppositeAuras, largeAuraList, updateFunc, maxRowWidth, offsetX,
-                mirrorAurasVertically)
-                Theme:UpdateUnitframeAuraPositions(aura, auraName, numAuras, numOppositeAuras, largeAuraList,
-                    updateFunc, maxRowWidth, offsetX, mirrorAurasVertically)
+            function(aura, auraName, numAuras, numOppositeAuras, largeAuraList, updateFunc, maxRowWidth, offsetX, mirrorAurasVertically)
+                Theme:UpdateUnitframeAuraPositions(aura, auraName, numAuras, numOppositeAuras, largeAuraList, updateFunc, maxRowWidth, offsetX,
+                    mirrorAurasVertically)
             end)
     end
 
@@ -48,8 +47,9 @@ function Theme:OnEnable()
     end)
 
     -- Update ActionButtons
-    Theme:SecureHookScript(ActionButton1, "OnUpdate", function()
-        Theme:Actionbars()
+    Theme:Actionbars()
+    Theme:SecureHook("ActionButton_OnUpdate", function(button)
+        Theme:StyleButton(button, "Actionbar")
     end)
 
     -- Mirror Timer

@@ -36,10 +36,9 @@ function Theme:OnEnable()
         end)
 
         Theme:SecureHook(TargetFrame, "UpdateAuraPositions",
-            function(aura, auraName, numAuras, numOppositeAuras, largeAuraList, updateFunc, maxRowWidth, offsetX,
-                mirrorAurasVertically)
-                Theme:UpdateUnitframeAuraPositions(aura, auraName, numAuras, numOppositeAuras, largeAuraList,
-                    updateFunc, maxRowWidth, offsetX, mirrorAurasVertically)
+            function(aura, auraName, numAuras, numOppositeAuras, largeAuraList, updateFunc, maxRowWidth, offsetX, mirrorAurasVertically)
+                Theme:UpdateUnitframeAuraPositions(aura, auraName, numAuras, numOppositeAuras, largeAuraList, updateFunc, maxRowWidth, offsetX,
+                    mirrorAurasVertically)
             end)
 
         -- Focus Frame
@@ -48,10 +47,9 @@ function Theme:OnEnable()
         end)
 
         Theme:SecureHook(FocusFrame, "UpdateAuraPositions",
-            function(aura, auraName, numAuras, numOppositeAuras, largeAuraList, updateFunc, maxRowWidth, offsetX,
-                mirrorAurasVertically)
-                Theme:UpdateUnitframeAuraPositions(aura, auraName, numAuras, numOppositeAuras, largeAuraList,
-                    updateFunc, maxRowWidth, offsetX, mirrorAurasVertically)
+            function(aura, auraName, numAuras, numOppositeAuras, largeAuraList, updateFunc, maxRowWidth, offsetX, mirrorAurasVertically)
+                Theme:UpdateUnitframeAuraPositions(aura, auraName, numAuras, numOppositeAuras, largeAuraList, updateFunc, maxRowWidth, offsetX,
+                    mirrorAurasVertically)
             end)
 
         if mUI.db.profile.unitframes.raidframes.skinicons then
@@ -90,9 +88,7 @@ function Theme:OnEnable()
     end)
 
     -- Update ActionButtons
-    Theme:SecureHookScript(ActionButton1, "OnUpdate", function()
-        Theme:Actionbars()
-    end)
+    Theme:Actionbars()
 
     -- Mirror Timer
     Theme:SecureHookScript(MirrorTimer1, "OnEvent", function(frame)

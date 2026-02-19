@@ -102,57 +102,50 @@ function Style:OnEnable()
     -- Enable Style
     Style:Update()
 
-    Style:SecureHookScript(CastingBarFrame, "OnUpdate", function(self)
-        if not UnitIsUnit("player", self.unit) then
+    Style.castEventFrame = Style.castEventFrame or CreateFrame("Frame")
+
+    local unitToCastbar = {
+        player = CastingBarFrame,
+        target = TargetFrameSpellBar
+    }
+
+    local function UpdateCastbarColor(unit)
+        local castbar = unitToCastbar[unit]
+        if not castbar then
             return
         end
 
-        local _, _, _, _, _, _, _, notInterruptibleCast = UnitCastingInfo("player")
-        local _, _, _, _, _, _, notInterruptibleChannel = UnitChannelInfo("player")
+        local _, _, _, _, _, _, _, notInterruptibleCast = UnitCastingInfo(unit)
+        local _, _, _, _, _, _, notInterruptibleChannel = UnitChannelInfo(unit)
 
         if notInterruptibleCast or notInterruptibleChannel then
-            self:SetStatusBarColor(0.7, 0.7, 0.7)
+            castbar:SetStatusBarColor(0.7, 0.7, 0.7)
         else
-            local color
-            local isChannel = UnitChannelInfo("player")
-
-            if isChannel then
-                color = self.startChannelColor
-            else
-                color = self.startCastColor
+            local isChannel = UnitChannelInfo(unit)
+            local color = isChannel and castbar.startChannelColor or castbar.startCastColor
+            if color then
+                castbar:SetStatusBarColor(color.r, color.g, color.b)
             end
-
-            self:SetStatusBarColor(color.r, color.g, color.b)
         end
-    end)
+    end
 
-    Style:SecureHookScript(TargetFrameSpellBar, "OnUpdate", function(self)
-        if not UnitIsUnit("target", self.unit) then
-            return
-        end
+    Style.castEventFrame:RegisterEvent("UNIT_SPELLCAST_START")
+    Style.castEventFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
+    Style.castEventFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE")
+    Style.castEventFrame:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE")
 
-        local _, _, _, _, _, _, _, notInterruptibleCast = UnitCastingInfo("target")
-        local _, _, _, _, _, _, notInterruptibleChannel = UnitChannelInfo("target")
-
-        if notInterruptibleCast or notInterruptibleChannel then
-            self:SetStatusBarColor(0.7, 0.7, 0.7)
-        else
-            local color
-            local isChannel = UnitChannelInfo("target")
-
-            if isChannel then
-                color = self.startChannelColor
-            else
-                color = self.startCastColor
-            end
-
-            self:SetStatusBarColor(color.r, color.g, color.b)
+    Style.castEventFrame:SetScript("OnEvent", function(_, event, unit)
+        if unitToCastbar[unit] then
+            UpdateCastbarColor(unit)
         end
     end)
 end
 
 function Style:OnDisable()
     -- Disable Style
+    if Style.castEventFrame then
+        Style.castEventFrame:UnregisterAllEvents()
+    end
     Style:UnhookAll()
     Style:DisableStyle()
 end

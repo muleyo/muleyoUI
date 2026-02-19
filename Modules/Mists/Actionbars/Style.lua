@@ -17,13 +17,12 @@ Style.frame:RegisterEvent("UNIT_EXITED_VEHICLE")
 
 -- Tables
 Style.stanceButtons = {}
-Style.defaultActionButtons = {"ActionButton", "MultiBarBottomLeftButton", "MultiBarBottomRightButton",
-                              "MultiBarRightButton", "MultiBarLeftButton", "StanceButton", "PetActionButton"}
-Style.microButtons = {"CharacterMicroButton", "SpellbookMicroButton", "TalentMicroButton", "AchievementMicroButton",
-                      "QuestLogMicroButton", "GuildMicroButton", "PVPMicroButton", "LFGMicroButton",
-                      "CollectionsMicroButton", "EJMicroButton", "StoreMicroButton", "MainMenuMicroButton"}
-Style.bagButtons = {"CharacterBag3Slot", "CharacterBag2Slot", "CharacterBag1Slot", "CharacterBag0Slot",
-                    "MainMenuBarBackpackButton"}
+Style.defaultActionButtons = {"ActionButton", "MultiBarBottomLeftButton", "MultiBarBottomRightButton", "MultiBarRightButton", "MultiBarLeftButton",
+                              "StanceButton", "PetActionButton"}
+Style.microButtons = {"CharacterMicroButton", "SpellbookMicroButton", "TalentMicroButton", "AchievementMicroButton", "QuestLogMicroButton",
+                      "GuildMicroButton", "PVPMicroButton", "LFGMicroButton", "CollectionsMicroButton", "EJMicroButton", "StoreMicroButton",
+                      "MainMenuMicroButton"}
+Style.bagButtons = {"CharacterBag3Slot", "CharacterBag2Slot", "CharacterBag1Slot", "CharacterBag0Slot", "MainMenuBarBackpackButton"}
 
 function Style:FetchActiveBar()
     if (HasBonusActionBar() or HasOverrideActionBar() or HasVehicleActionBar() or HasTempShapeshiftActionBar()) then
@@ -160,8 +159,8 @@ function Style:CreateActionbars()
 
     -- Use State Driver
     RegisterStateDriver(Style.bar1, "page",
-        "[vehicleui] v; " .. "[overridebar] o; " .. "[possessbar] p; " .. "[actionbar:2] 2; " .. "[actionbar:3] 3; " ..
-            "[actionbar:4] 4; " .. "[bonusbar:1,stealth] 1s; " .. -- cat stealth
+        "[vehicleui] v; " .. "[overridebar] o; " .. "[possessbar] p; " .. "[actionbar:2] 2; " .. "[actionbar:3] 3; " .. "[actionbar:4] 4; " ..
+            "[bonusbar:1,stealth] 1s; " .. -- cat stealth
         "[bonusbar:1] 1; " .. -- cat
         "[bonusbar:2] 2; " .. -- bear
         "[bonusbar:3] 3; " .. -- moonkin/tree
@@ -369,8 +368,7 @@ function Style:UpdateExpBar()
         Style.expbar.rested:Hide()
 
         -- Set Exp Bar Text
-        Style.expbar.text:SetText(mUI:abbrNum(currentXP) .. " / " .. mUI:abbrNum(maxXP) .. " XP - " ..
-                                      string.format("%.1f%%", percent))
+        Style.expbar.text:SetText(mUI:abbrNum(currentXP) .. " / " .. mUI:abbrNum(maxXP) .. " XP - " .. string.format("%.1f%%", percent))
     end
 
     Style.expbar:SetValue(percent)
@@ -392,8 +390,7 @@ function Style:UpdateBorders(bar, button)
     -- Create Icon Mask
     if not button.mask then
         button.mask = button:CreateMaskTexture()
-        button.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]], "CLAMPTOBLACKADDITIVE",
-            "CLAMPTOBLACKADDITIVE")
+        button.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]], "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
         button.mask:SetAllPoints(button.icon)
         button.icon:AddMaskTexture(button.mask)
 
@@ -654,7 +651,11 @@ Style:SecureHookScript(Style.frame, "OnEvent", function(_, event, cvar)
     if event == "PLAYER_LOGIN" then
         -- Create Stance Buttons
         Style:CreateStanceButtons()
-        Style:SecureHookScript(mUIStanceButton1, "OnUpdate", Style.UpdateStanceButtons)
+
+        -- Register stance events for updates
+        Style.frame:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
+        Style.frame:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+        Style.frame:RegisterEvent("UPDATE_SHAPESHIFT_COOLDOWN")
     elseif event == "ADDON_LOADED" then
         if not Style.loaded then
             -- Create Actionbars
@@ -669,8 +670,14 @@ Style:SecureHookScript(Style.frame, "OnEvent", function(_, event, cvar)
             -- Hide default frames
             Style:HideDefaultFrames()
 
-            -- Update Action Buttons
+            -- Update Action Buttons (one-time setup)
+            Style.skinnedButtons = {}
             Style:SecureHook("ActionButton_OnUpdate", function(button)
+                if Style.skinnedButtons[button] then
+                    return
+                end
+                Style.skinnedButtons[button] = true
+
                 if button:GetName():find("OverrideActionBar") then
                     Style:UpdateBorders("OverrideActionBar", button)
                 else
@@ -681,14 +688,9 @@ Style:SecureHookScript(Style.frame, "OnEvent", function(_, event, cvar)
             end)
 
             -- Update Pet Actionbar
-            Style:SecureHookScript(PetActionButton1, "OnUpdate", function()
-                for i = 1, NUM_PET_ACTION_SLOTS do
-                    Style:UpdateBorders("PetActionButton", _G["PetActionButton" .. i])
-                    _G["PetActionButton" .. i .. "AutoCastable"]:Hide()
-
-                    mUI:Skin({_G["PetActionButton" .. i .. "NormalTexture2"]}, true)
-                end
-            end)
+            Style.petBarSkinned = false
+            Style.frame:RegisterEvent("PET_BAR_UPDATE")
+            Style.frame:RegisterEvent("PET_BAR_UPDATE_COOLDOWN")
 
             -- Update Experience Bar
             Style:SecureHookScript(Style.expbar, "OnEvent", function(_, event)
@@ -704,8 +706,8 @@ Style:SecureHookScript(Style.frame, "OnEvent", function(_, event, cvar)
 
                 if point then
                     MainMenuBarVehicleLeaveButton:ClearAllPoints()
-                    MainMenuBarVehicleLeaveButton:SetPoint(point.position.point, UIParent, point.position.relativePoint,
-                        point.position.x, point.position.y)
+                    MainMenuBarVehicleLeaveButton:SetPoint(point.position.point, UIParent, point.position.relativePoint, point.position.x,
+                        point.position.y)
                 else
                     MainMenuBarVehicleLeaveButton:ClearAllPoints()
                     MainMenuBarVehicleLeaveButton:SetPoint("BOTTOM", UIParent, "BOTTOM", 260, 100)
@@ -719,6 +721,14 @@ Style:SecureHookScript(Style.frame, "OnEvent", function(_, event, cvar)
             end)
 
             Style.loaded = true
+        end
+    elseif event == "UPDATE_SHAPESHIFT_FORMS" or event == "UPDATE_SHAPESHIFT_FORM" or event == "UPDATE_SHAPESHIFT_COOLDOWN" then
+        Style:UpdateStanceButtons()
+    elseif event == "PET_BAR_UPDATE" or event == "PET_BAR_UPDATE_COOLDOWN" then
+        for i = 1, NUM_PET_ACTION_SLOTS do
+            Style:UpdateBorders("PetActionButton", _G["PetActionButton" .. i])
+            _G["PetActionButton" .. i .. "AutoCastable"]:Hide()
+            mUI:Skin({_G["PetActionButton" .. i .. "NormalTexture2"]}, true)
         end
     elseif event == "CVAR_UPDATE" and cvar == "enableMultiActionBars" then
         Style:UpdateActionBarVisibility()

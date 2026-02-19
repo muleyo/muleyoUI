@@ -172,8 +172,8 @@ function Theme:Calendar()
         mUI:Skin(CalendarClassButton12)
         mUI:Skin(CalendarClassButton13)
         mUI:Skin(CalendarClassTotalsButton)
-        mUI:Skin({CalendarCreateEventDivider, CalendarCreateEventFrameButtonBackground,
-                  CalendarCreateEventMassInviteButtonBorder, CalendarCreateEventCreateButtonBorder}, true)
+        mUI:Skin({CalendarCreateEventDivider, CalendarCreateEventFrameButtonBackground, CalendarCreateEventMassInviteButtonBorder,
+                  CalendarCreateEventCreateButtonBorder}, true)
     end
 end
 
@@ -225,8 +225,7 @@ function Theme:Collections()
         mUI:Skin(MountJournal.BottomLeftInset.NineSlice)
         mUI:Skin(MountJournal.RightInset.NineSlice)
         mUI:Skin(MountJournal.BottomLeftInset.SlotButton)
-        mUI:Skin({MountJournal.ToggleDynamicFlightFlyoutButton.Border,
-                  MountJournal.SummonRandomFavoriteSpellFrame.Button.Border}, true)
+        mUI:Skin({MountJournal.ToggleDynamicFlightFlyoutButton.Border, MountJournal.SummonRandomFavoriteSpellFrame.Button.Border}, true)
 
         -- ToyBox
         mUI:Skin(ToyBox)
@@ -264,18 +263,16 @@ function Theme:Collections()
         mUI:Skin(WardrobeCollectionFrame)
         mUI:Skin(WardrobeCollectionFrame.NineSlice)
         mUI:Skin({WardrobeCollectionFrameScrollFrameScrollBarBottom, WardrobeCollectionFrameScrollFrameScrollBarMiddle,
-                  WardrobeCollectionFrameScrollFrameScrollBarTop,
-                  WardrobeCollectionFrameScrollFrameScrollBarThumbTexture}, true)
+                  WardrobeCollectionFrameScrollFrameScrollBarTop, WardrobeCollectionFrameScrollFrameScrollBarThumbTexture}, true)
 
         -- Campsites
         mUI:Skin(WarbandSceneJournal)
         mUI:Skin(WarbandSceneJournal.IconsFrame.NineSlice)
 
         -- Specific Frames
-        mUI:Skin({CollectionsJournalBg, MountJournalListScrollFrameScrollBarThumbTexture,
-                  MountJournalListScrollFrameScrollBarTop, MountJournalListScrollFrameScrollBarMiddle,
-                  MountJournalListScrollFrameScrollBarBottom, PetJournalListScrollFrameScrollBarThumbTexture,
-                  PetJournalListScrollFrameScrollBarTop, PetJournalListScrollFrameScrollBarMiddle,
+        mUI:Skin({CollectionsJournalBg, MountJournalListScrollFrameScrollBarThumbTexture, MountJournalListScrollFrameScrollBarTop,
+                  MountJournalListScrollFrameScrollBarMiddle, MountJournalListScrollFrameScrollBarBottom,
+                  PetJournalListScrollFrameScrollBarThumbTexture, PetJournalListScrollFrameScrollBarTop, PetJournalListScrollFrameScrollBarMiddle,
                   PetJournalListScrollFrameScrollBarBottom}, true)
         mUI:Skin({WarbandSceneJournal.IconsFrame.BackgroundTile}, true)
 
@@ -353,14 +350,12 @@ function Theme:Inspect()
         mUI:Skin(InspectPaperDollItemsFrame)
         mUI:Skin(InspectPaperDollItemsFrame.InspectTalents)
         mUI:Skin(InspectPVPFrame)
-        mUI:Skin({InspectModelFrameBorderLeft, InspectModelFrameBorderRight, InspectModelFrameBorderTop,
-                  InspectModelFrameBorderTopLeft, InspectModelFrameBorderTopRight, InspectModelFrameBorderBottom,
-                  InspectModelFrameBorderBottomLeft, InspectModelFrameBorderBottomRight, InspectModelFrameBorderBottom2,
-                  InspectFeetSlotFrame, InspectHandsSlotFrame, InspectWaistSlotFrame, InspectLegsSlotFrame,
-                  InspectFinger0SlotFrame, InspectFinger1SlotFrame, InspectTrinket0SlotFrame, InspectTrinket1SlotFrame,
-                  InspectWristSlotFrame, InspectTabardSlotFrame, InspectShirtSlotFrame, InspectChestSlotFrame,
-                  InspectBackSlotFrame, InspectShoulderSlotFrame, InspectNeckSlotFrame, InspectHeadSlotFrame,
-                  InspectSecondaryHandSlotFrame}, true)
+        mUI:Skin({InspectModelFrameBorderLeft, InspectModelFrameBorderRight, InspectModelFrameBorderTop, InspectModelFrameBorderTopLeft,
+                  InspectModelFrameBorderTopRight, InspectModelFrameBorderBottom, InspectModelFrameBorderBottomLeft,
+                  InspectModelFrameBorderBottomRight, InspectModelFrameBorderBottom2, InspectFeetSlotFrame, InspectHandsSlotFrame,
+                  InspectWaistSlotFrame, InspectLegsSlotFrame, InspectFinger0SlotFrame, InspectFinger1SlotFrame, InspectTrinket0SlotFrame,
+                  InspectTrinket1SlotFrame, InspectWristSlotFrame, InspectTabardSlotFrame, InspectShirtSlotFrame, InspectChestSlotFrame,
+                  InspectBackSlotFrame, InspectShoulderSlotFrame, InspectNeckSlotFrame, InspectHeadSlotFrame, InspectSecondaryHandSlotFrame}, true)
         mUI:Skin(InspectFrameTab1)
         mUI:Skin(InspectFrameTab2)
         mUI:Skin(InspectFrameTab3)
@@ -477,8 +472,8 @@ function Theme:Macros()
         mUI:Skin(MacroPopupFrame.BorderBox)
         mUI:Skin(MacroFrameTab1)
         mUI:Skin(MacroFrameTab2)
-        mUI:Skin({MacroButtonScrollFrameTop, MacroButtonScrollFrameMiddle, MacroButtonScrollFrameBottom,
-                  MacroButtonScrollFrameScrollBarThumbTexture}, true)
+        mUI:Skin({MacroButtonScrollFrameTop, MacroButtonScrollFrameMiddle, MacroButtonScrollFrameBottom, MacroButtonScrollFrameScrollBarThumbTexture},
+            true)
     end
 end
 
@@ -504,9 +499,8 @@ function Theme:ProfessionsBook()
 
         mUI:Skin({ProfessionsBookPage1, ProfessionsBookPage2}, true)
         for i, v in pairs({PrimaryProfession1.missingText, PrimaryProfession2.missingText, SecondaryProfession1Missing,
-                           SecondaryProfession1.missingText, SecondaryProfession2Missing,
-                           SecondaryProfession2.missingText, SecondaryProfession3Missing,
-                           SecondaryProfession3.missingText}) do
+                           SecondaryProfession1.missingText, SecondaryProfession2Missing, SecondaryProfession2.missingText,
+                           SecondaryProfession3Missing, SecondaryProfession3.missingText}) do
             v:SetVertexColor(0.8, 0.8, 0.8)
         end
     end
@@ -578,8 +572,7 @@ function Theme:Talents()
         if GlyphFrame then
             mUI:Skin(GlyphFrameSideInset)
             mUI:Skin(GlyphFrameSideInset.NineSlice)
-            mUI:Skin({GlyphFrameScrollFrameScrollBarTop, GlyphFrameScrollFrameScrollBarMiddle,
-                      GlyphFrameScrollFrameScrollBarBottom}, true)
+            mUI:Skin({GlyphFrameScrollFrameScrollBarTop, GlyphFrameScrollFrameScrollBarMiddle, GlyphFrameScrollFrameScrollBarBottom}, true)
         end
 
         PlayerTalentFrameSpecializationLearnButton_LeftSeparator:Hide()
@@ -810,16 +803,14 @@ function Theme:Character()
     mUI:Skin(CharacterFrameTab2)
     mUI:Skin(CharacterFrameTab3)
 
-    mUI:Skin({CharacterFeetSlotFrame, CharacterHandsSlotFrame, CharacterWaistSlotFrame, CharacterLegsSlotFrame,
-              CharacterFinger0SlotFrame, CharacterFinger1SlotFrame, CharacterTrinket0SlotFrame,
-              CharacterTrinket1SlotFrame, CharacterWristSlotFrame, CharacterTabardSlotFrame, CharacterShirtSlotFrame,
-              CharacterChestSlotFrame, CharacterBackSlotFrame, CharacterShoulderSlotFrame, CharacterNeckSlotFrame,
+    mUI:Skin({CharacterFeetSlotFrame, CharacterHandsSlotFrame, CharacterWaistSlotFrame, CharacterLegsSlotFrame, CharacterFinger0SlotFrame,
+              CharacterFinger1SlotFrame, CharacterTrinket0SlotFrame, CharacterTrinket1SlotFrame, CharacterWristSlotFrame, CharacterTabardSlotFrame,
+              CharacterShirtSlotFrame, CharacterChestSlotFrame, CharacterBackSlotFrame, CharacterShoulderSlotFrame, CharacterNeckSlotFrame,
               CharacterHeadSlotFrame, CharacterMainHandSlotFrame, CharacterSecondaryHandSlotFrame,
               _G.select(CharacterMainHandSlot:GetNumRegions(), CharacterMainHandSlot:GetRegions()),
-              _G.select(CharacterSecondaryHandSlot:GetNumRegions(), CharacterSecondaryHandSlot:GetRegions()),
-              PaperDollInnerBorderLeft, PaperDollInnerBorderRight, PaperDollInnerBorderTop, PaperDollInnerBorderTopLeft,
-              PaperDollInnerBorderTopRight, PaperDollInnerBorderBottom, PaperDollInnerBorderBottomLeft,
-              PaperDollInnerBorderBottomRight, PaperDollInnerBorderBottom2}, true)
+              _G.select(CharacterSecondaryHandSlot:GetNumRegions(), CharacterSecondaryHandSlot:GetRegions()), PaperDollInnerBorderLeft,
+              PaperDollInnerBorderRight, PaperDollInnerBorderTop, PaperDollInnerBorderTopLeft, PaperDollInnerBorderTopRight,
+              PaperDollInnerBorderBottom, PaperDollInnerBorderBottomLeft, PaperDollInnerBorderBottomRight, PaperDollInnerBorderBottom2}, true)
 end
 
 function Theme:Chat()
@@ -884,9 +875,8 @@ function Theme:Communities()
     mUI:Skin(ClubFinderCommunityAndGuildFinderFrame.InsetFrame.NineSlice)
     mUI:Skin(ClubFinderCommunityAndGuildFinderFrame.ClubFinderSearchTab)
     mUI:Skin(ClubFinderCommunityAndGuildFinderFrame.ClubFinderPendingTab)
-    mUI:Skin({CommunitiesFrameCommunitiesListListScrollFrameThumbTexture,
-              CommunitiesFrameCommunitiesListListScrollFrameTop, CommunitiesFrameCommunitiesListListScrollFrameMiddle,
-              CommunitiesFrameCommunitiesListListScrollFrameBottom}, true)
+    mUI:Skin({CommunitiesFrameCommunitiesListListScrollFrameThumbTexture, CommunitiesFrameCommunitiesListListScrollFrameTop,
+              CommunitiesFrameCommunitiesListListScrollFrameMiddle, CommunitiesFrameCommunitiesListListScrollFrameBottom}, true)
 end
 
 function Theme:DressUp()
@@ -1012,8 +1002,7 @@ function Theme:LFG()
     mUI:Skin(PVEFrameTab2)
     mUI:Skin(PVEFrameTab3)
     mUI:Skin(PVEFrameTab4)
-    mUI:Skin({LFDQueueFrameBackground, LFDParentFrameRoleBackground, PVEFrameTopFiligree, PVEFrameBottomFiligree,
-              PVEFrameBlueBg}, true)
+    mUI:Skin({LFDQueueFrameBackground, LFDParentFrameRoleBackground, PVEFrameTopFiligree, PVEFrameBottomFiligree, PVEFrameBlueBg}, true)
 end
 
 function Theme:Loot()
@@ -1083,8 +1072,7 @@ function Theme:Map()
     mUI:Skin(QuestMapFrame.QuestsFrame.DetailsFrame.BorderFrame)
     mUI:Skin(QuestMapFrame.QuestsFrame.DetailsFrame.BackFrame)
     mUI:Skin(QuestMapFrame.QuestsFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame)
-    mUI:Skin({QuestMapFrame.QuestsTab.Background, QuestMapFrame.EventsTab.Background,
-              QuestMapFrame.MapLegendTab.Background}, true)
+    mUI:Skin({QuestMapFrame.QuestsTab.Background, QuestMapFrame.EventsTab.Background, QuestMapFrame.MapLegendTab.Background}, true)
 
     -- Minimap
     mUI:Skin({MinimapCompassTexture}, true)
@@ -1157,12 +1145,10 @@ function Theme:Quest()
     mUI:Skin(WorldQuestObjectiveTracker.Header)
     mUI:Skin(InitiativeTasksObjectiveTracker)
     mUI:Skin(InitiativeTasksObjectiveTracker.Header)
-    mUI:Skin({QuestNPCModelTopBorder, QuestNPCModelRightBorder, QuestNPCModelTopRightCorner,
-              QuestNPCModelBottomRightCorner, QuestNPCModelBottomBorder, QuestNPCModelBottomLeftCorner,
-              QuestNPCModelLeftBorder, QuestNPCModelTopLeftCorner, QuestNPCModelTextTopBorder,
-              QuestNPCModelTextRightBorder, QuestNPCModelTextTopRightCorner, QuestNPCModelTextBottomRightCorner,
-              QuestNPCModelTextBottomBorder, QuestNPCModelTextBottomLeftCorner, QuestNPCModelTextLeftBorder,
-              QuestNPCModelTextTopLeftCorner}, true)
+    mUI:Skin({QuestNPCModelTopBorder, QuestNPCModelRightBorder, QuestNPCModelTopRightCorner, QuestNPCModelBottomRightCorner,
+              QuestNPCModelBottomBorder, QuestNPCModelBottomLeftCorner, QuestNPCModelLeftBorder, QuestNPCModelTopLeftCorner,
+              QuestNPCModelTextTopBorder, QuestNPCModelTextRightBorder, QuestNPCModelTextTopRightCorner, QuestNPCModelTextBottomRightCorner,
+              QuestNPCModelTextBottomBorder, QuestNPCModelTextBottomLeftCorner, QuestNPCModelTextLeftBorder, QuestNPCModelTextTopLeftCorner}, true)
 end
 
 function Theme:DamageMeter()
@@ -1219,57 +1205,65 @@ function Theme:Rewards()
 end
 
 function Theme:ClassBars()
-    -- Class Bars
-    if (playerClass == "ROGUE") then
-        if (not Theme:IsHooked(RogueComboPointBarFrame, "OnUpdate")) then
-            Theme:SecureHookScript(RogueComboPointBarFrame, "OnUpdate", Theme.ClassBar)
+    local classBarFrames = {
+        ROGUE = {
+            frame = RogueComboPointBarFrame,
+            hook = "UpdatePower",
+            hookType = "method"
+        },
+        MAGE = {
+            frame = MageArcaneChargesFrame,
+            hook = "UpdatePower",
+            hookType = "method"
+        },
+        WARLOCK = {
+            frame = WarlockPowerFrame,
+            hook = "UpdatePower",
+            hookType = "method"
+        },
+        DRUID = {
+            frame = DruidComboPointBarFrame,
+            hook = "UpdatePower",
+            hookType = "method"
+        },
+        MONK = {
+            frame = MonkHarmonyBarFrame,
+            hook = "UpdatePower",
+            hookType = "method"
+        },
+        DEATHKNIGHT = {
+            frame = RuneFrame,
+            hook = "UpdateRunes",
+            hookType = "method",
+            skipClassBar = true
+        },
+        EVOKER = {
+            frame = EssencePlayerFrame,
+            hook = "UpdatePower",
+            hookType = "method"
+        }
+    }
+
+    local info = classBarFrames[playerClass]
+    if info then
+        if not Theme:IsHooked(info.frame, info.hook) then
+            if info.hookType == "script" then
+                Theme:SecureHookScript(info.frame, info.hook, Theme.ClassBar)
+            else
+                Theme:SecureHook(info.frame, info.hook, Theme.ClassBar)
+            end
         end
 
-        Theme:ClassBar()
-    elseif (playerClass == "MAGE") then
-        if (not Theme:IsHooked(MageArcaneChargesFrame, "OnUpdate")) then
-            Theme:SecureHookScript(MageArcaneChargesFrame, "OnUpdate", Theme.ClassBar)
+        if not info.skipClassBar then
+            Theme:ClassBar()
         end
-
-        Theme:ClassBar()
-    elseif (playerClass == "WARLOCK") then
-        if (not Theme:IsHooked(WarlockPowerFrame, "OnUpdate")) then
-            Theme:SecureHookScript(WarlockPowerFrame, "OnUpdate", Theme.ClassBar)
-        end
-
-        Theme:ClassBar()
-    elseif (playerClass == "DRUID") then
-        if (not Theme:IsHooked(DruidComboPointBarFrame, "OnUpdate")) then
-            Theme:SecureHookScript(DruidComboPointBarFrame, "OnUpdate", Theme.ClassBar)
-        end
-
-        Theme:ClassBar()
-    elseif (playerClass == "MONK") then
-        if (not Theme:IsHooked(MonkHarmonyBarFrame, "OnUpdate")) then
-            Theme:SecureHookScript(MonkHarmonyBarFrame, "OnUpdate", Theme.ClassBar)
-        end
-
-        Theme:ClassBar()
-    elseif (playerClass == "DEATHKNIGHT") then
-        if (not Theme:IsHooked(RuneFrame, "OnUpdate")) then
-            Theme:SecureHookScript(RuneFrame, "OnUpdate", Theme.ClassBar)
-        end
-    elseif (playerClass == "EVOKER") then
-        if (not Theme:IsHooked(EssencePlayerFrame, "OnUpdate")) then
-            Theme:SecureHookScript(EssencePlayerFrame, "OnUpdate", Theme.ClassBar)
-        end
-
-        Theme:ClassBar()
-    elseif (playerClass == "PALADIN") then
-        Theme:ClassBar()
-    elseif (playerClass == "PRIEST") then
+    elseif playerClass == "PALADIN" or playerClass == "PRIEST" then
         Theme:ClassBar()
     end
 
-    if (playerClass == "SHAMAN" or playerClass == "PALADIN" or playerClass == "PRIEST" or playerClass == "DRUID") then
-        -- Totem Bar
-        if (not Theme:IsHooked(TotemFrame, "OnUpdate")) then
-            Theme:SecureHookScript(TotemFrame, "OnUpdate", function(frame)
+    if playerClass == "SHAMAN" or playerClass == "PALADIN" or playerClass == "PRIEST" or playerClass == "DRUID" then
+        if not Theme:IsHooked(TotemFrame, "OnEvent") then
+            Theme:SecureHookScript(TotemFrame, "OnEvent", function(frame)
                 for totem, _ in frame.totemPool:EnumerateActive() do
                     mUI:Skin({totem.Border}, true)
                 end
@@ -1296,12 +1290,11 @@ end
 
 function Theme:Castbars()
     -- Castbars
-    mUI:Skin({PlayerCastingBarFrame.Background, TargetFrameSpellBar.Background, TargetFrameSpellBar.Border,
-              FocusFrameSpellBar.Background, FocusFrameSpellBar.Border, Boss1TargetFrameSpellBar.Background,
-              Boss1TargetFrameSpellBar.Border, Boss2TargetFrameSpellBar.Background, Boss2TargetFrameSpellBar.Border,
-              Boss3TargetFrameSpellBar.Background, Boss3TargetFrameSpellBar.Border, Boss4TargetFrameSpellBar.Background,
-              Boss4TargetFrameSpellBar.Border, Boss5TargetFrameSpellBar.Background, Boss5TargetFrameSpellBar.Border},
-        true)
+    mUI:Skin({PlayerCastingBarFrame.Background, TargetFrameSpellBar.Background, TargetFrameSpellBar.Border, FocusFrameSpellBar.Background,
+              FocusFrameSpellBar.Border, Boss1TargetFrameSpellBar.Background, Boss1TargetFrameSpellBar.Border, Boss2TargetFrameSpellBar.Background,
+              Boss2TargetFrameSpellBar.Border, Boss3TargetFrameSpellBar.Background, Boss3TargetFrameSpellBar.Border,
+              Boss4TargetFrameSpellBar.Background, Boss4TargetFrameSpellBar.Border, Boss5TargetFrameSpellBar.Background,
+              Boss5TargetFrameSpellBar.Border}, true)
 
     -- Castbar Icon Skinning
     for castbar in pairs(Theme.castbarIcons) do
@@ -1383,9 +1376,8 @@ function Theme:Frames()
     mUI:Skin(StaticPopup1.BG)
     mUI:Skin(StaticPopup2.BG)
     mUI:Skin(StaticPopup3.BG)
-    mUI:Skin({StaticPopup1EditBoxLeft, StaticPopup1EditBoxMid, StaticPopup1EditBoxRight, StaticPopup2EditBoxLeft,
-              StaticPopup2EditBoxMid, StaticPopup2EditBoxRight, StaticPopup3EditBoxLeft, StaticPopup3EditBoxMid,
-              StaticPopup3EditBoxRight}, true)
+    mUI:Skin({StaticPopup1EditBoxLeft, StaticPopup1EditBoxMid, StaticPopup1EditBoxRight, StaticPopup2EditBoxLeft, StaticPopup2EditBoxMid,
+              StaticPopup2EditBoxRight, StaticPopup3EditBoxLeft, StaticPopup3EditBoxMid, StaticPopup3EditBoxRight}, true)
 
     -- EditMode
     mUI:Skin(EditModeManagerFrame)

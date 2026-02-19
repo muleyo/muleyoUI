@@ -6,6 +6,11 @@ function Classcolor:OnInitialize()
 
     -- Create Frame
     Classcolor.classcolor = CreateFrame("Frame")
+    Classcolor.classcolor:RegisterEvent("PLAYER_ENTERING_WORLD")
+    Classcolor.classcolor:RegisterEvent("UNIT_HEALTH")
+    Classcolor.classcolor:RegisterEvent("UNIT_TARGET")
+    Classcolor.classcolor:RegisterEvent("PLAYER_TARGET_CHANGED")
+    Classcolor.classcolor:RegisterEvent("PLAYER_FOCUS_CHANGED")
 
     -- Create Tables
     -- Variables
@@ -90,9 +95,7 @@ end
 
 function Classcolor:OnEnable()
     -- Hook Frame
-    Classcolor:SecureHookScript(Classcolor.classcolor, "OnUpdate", function()
-        Classcolor:Update()
-    end)
+    Classcolor:SecureHookScript(Classcolor.classcolor, "OnEvent", Classcolor.Update)
 
     -- Update PlayerFrame HealthColor
     local _, playerClass = UnitClass("player")
