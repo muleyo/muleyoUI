@@ -23,12 +23,12 @@ function Range:OnInitialize()
 
     function Range:OnRangeEvent(event, ...)
         if event == "ACTION_RANGE_CHECK_UPDATE" then
-            local actionSlot, isInRange = ...
+            local actionSlot = ...
             local buttons = Range.actionToButtons[actionSlot]
             if buttons then
                 for button in pairs(buttons) do
                     if button:IsVisible() then
-                        Range:UpdateButtonUsable(button, isInRange)
+                        Range:UpdateButtonUsable(button, nil, true)
                     end
                 end
             end
@@ -73,7 +73,7 @@ function Range:OnInitialize()
                 isInRange = IsActionInRange(action)
             end
 
-            if isInRange == false then
+            if isInRange == false and UnitExists("target") then
                 Range:SetButtonColor(button, "oor")
             else
                 Range:SetButtonColor(button, "normal")
