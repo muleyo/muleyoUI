@@ -8,7 +8,9 @@ function Debuffs:OnInitialize()
     Debuffs.debuffs = CreateFrame("Frame")
 
     function Debuffs:HideDebuffs(nameplate)
-        if not nameplate then return end
+        if not nameplate then
+            return
+        end
 
         if not Debuffs.db.debuffs then
             nameplate.BuffFrame.UpdateBuffs = Debuffs.updatebuffs
@@ -20,8 +22,10 @@ function Debuffs:OnInitialize()
                 Debuffs.updatebuffs = nameplate.BuffFrame.UpdateBuffs
                 Debuffs.show = nameplate.BuffFrame.Show
             end
-            nameplate.BuffFrame.UpdateBuffs = function() end
-            nameplate.BuffFrame.Show = function() end
+            nameplate.BuffFrame.UpdateBuffs = function()
+            end
+            nameplate.BuffFrame.Show = function()
+            end
             nameplate.BuffFrame:Hide()
             nameplate.BuffFrame:SetAlpha(0)
         end

@@ -26,8 +26,7 @@ function Casttime:OnInitialize()
 
         -- Set Icon Mask
         parent.mUIBorder.mask = parent:CreateMaskTexture()
-        parent.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]],
-            "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+        parent.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]], "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
         parent.mUIBorder.mask:SetAllPoints(icon)
         parent.mUIBorder:SetDrawLayer("OVERLAY", 1)
         icon:AddMaskTexture(parent.mUIBorder.mask)

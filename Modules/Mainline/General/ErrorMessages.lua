@@ -2,8 +2,16 @@ local ErrorMessages = mUI:NewModule("mUI.Modules.General.ErrorMessages", "AceHoo
 
 function ErrorMessages:OnInitialize()
     local colors = {
-        UI_INFO_MESSAGE = { r = 1.0, g = 1.0, b = 0.0 },
-        UI_ERROR_MESSAGE = { r = 1.0, g = 0.1, b = 0.1 },
+        UI_INFO_MESSAGE = {
+            r = 1.0,
+            g = 1.0,
+            b = 0.0
+        },
+        UI_ERROR_MESSAGE = {
+            r = 1.0,
+            g = 0.1,
+            b = 0.1
+        }
     }
 
     local originalOnEvent = UIErrorsFrame:GetScript("OnEvent")

@@ -19,9 +19,8 @@ Theme.backdrop = {
     }
 }
 
-Theme.tooltips = {GameTooltip, ShoppingTooltip1, ShoppingTooltip2, ItemRefTooltip, ItemRefShoppingTooltip1,
-                  ItemRefShoppingTooltip2, WorldMapTooltip, WorldMapCompareTooltip1, WorldMapCompareTooltip2,
-                  ConquestTooltip}
+Theme.tooltips = {GameTooltip, ShoppingTooltip1, ShoppingTooltip2, ItemRefTooltip, ItemRefShoppingTooltip1, ItemRefShoppingTooltip2, WorldMapTooltip,
+                  WorldMapCompareTooltip1, WorldMapCompareTooltip2, ConquestTooltip}
 
 function Theme:StyleTooltip(frame)
     if frame then

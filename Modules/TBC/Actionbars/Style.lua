@@ -45,8 +45,7 @@ function Style:OnInitialize()
         -- Create Icon Mask
         if not button.mask then
             button.mask = button:CreateMaskTexture()
-            button.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]], "CLAMPTOBLACKADDITIVE",
-                "CLAMPTOBLACKADDITIVE")
+            button.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]], "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
             button.mask:SetAllPoints(button.icon)
             button.icon:AddMaskTexture(button.mask)
 

@@ -405,16 +405,14 @@ do
         end
 
         -- Handle |Hchannel:channel:...|h[number. Trade (Services) - Zone]|h -> |Hchannel:channel:...|h[Services]|h
-        text = text:gsub("(|Hchannel:channel:[^|]-|h)%[%d+%. Trade %(([^%)]+)%)%s*%-%s*[^%]]+%](|h)",
-            function(prefix, name, suffix)
-                return prefix .. "[" .. trim(name) .. "]" .. suffix
-            end)
+        text = text:gsub("(|Hchannel:channel:[^|]-|h)%[%d+%. Trade %(([^%)]+)%)%s*%-%s*[^%]]+%](|h)", function(prefix, name, suffix)
+            return prefix .. "[" .. trim(name) .. "]" .. suffix
+        end)
 
         -- Handle |Hchannel:channel:...|h[number. ChannelName - Zone]|h -> |Hchannel:channel:...|h[ChannelName]|h
-        text = text:gsub("(|Hchannel:channel:[^|]-|h)%[%d+%. ([^%-%]]+)%s*%-%s*[^%]]+%](|h)",
-            function(prefix, name, suffix)
-                return prefix .. "[" .. trim(name) .. "]" .. suffix
-            end)
+        text = text:gsub("(|Hchannel:channel:[^|]-|h)%[%d+%. ([^%-%]]+)%s*%-%s*[^%]]+%](|h)", function(prefix, name, suffix)
+            return prefix .. "[" .. trim(name) .. "]" .. suffix
+        end)
 
         -- Abbreviate Instance/Instance Leader -> [I]
         text = text:gsub("(|Hchannel:INSTANCE_CHAT|h)%[.-%](|h)", "%1[I]%2")
@@ -616,8 +614,7 @@ do
             if data.fadeTimer > 0 then
                 data.initAlpha = data.initAlpha or object:GetAlpha()
 
-                object:SetAlpha(
-                    outCubic(data.fadeTimer, data.initAlpha, data.finalAlpha - data.initAlpha, data.duration))
+                object:SetAlpha(outCubic(data.fadeTimer, data.initAlpha, data.finalAlpha - data.initAlpha, data.duration))
 
                 if data.fadeTimer >= data.duration then
                     remove(object)

@@ -4,7 +4,9 @@ function Sell:OnInitialize()
     Sell.sell = CreateFrame("Frame")
 
     function Sell:Update(event)
-        if not event == "MERCHANT_SHOW" then return end
+        if not event == "MERCHANT_SHOW" then
+            return
+        end
 
         local bag, slot
         for bag = 0, 4 do

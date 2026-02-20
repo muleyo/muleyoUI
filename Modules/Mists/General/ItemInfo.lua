@@ -86,11 +86,10 @@ function ItemInfo:OnInitialize()
         [INVSLOT_OFFHAND] = "center"
     }
 
-    ItemInfo.characterSlots = {"CharacterHeadSlot", "CharacterNeckSlot", "CharacterShoulderSlot", "CharacterChestSlot",
-                               "CharacterWaistSlot", "CharacterLegsSlot", "CharacterFeetSlot", "CharacterWristSlot",
-                               "CharacterHandsSlot", "CharacterFinger0Slot", "CharacterFinger1Slot",
-                               "CharacterTrinket0Slot", "CharacterTrinket1Slot", "CharacterBackSlot",
-                               "CharacterMainHandSlot", "CharacterSecondaryHandSlot"}
+    ItemInfo.characterSlots = {"CharacterHeadSlot", "CharacterNeckSlot", "CharacterShoulderSlot", "CharacterChestSlot", "CharacterWaistSlot",
+                               "CharacterLegsSlot", "CharacterFeetSlot", "CharacterWristSlot", "CharacterHandsSlot", "CharacterFinger0Slot",
+                               "CharacterFinger1Slot", "CharacterTrinket0Slot", "CharacterTrinket1Slot", "CharacterBackSlot", "CharacterMainHandSlot",
+                               "CharacterSecondaryHandSlot"}
 
     ItemInfo.gemsWeCareAbout = {192991, -- Increased Primary Stat and Versatility
     192985, -- Increased Primary Stat and Haste
@@ -176,14 +175,13 @@ function ItemInfo:OnInitialize()
                     local startsWithPlus = string.find(text, "^%+")
                     local r, g, b, a = fontString:GetTextColor()
                     -- nice red blizzard
-                    if (r == 1 and
-                        (string.format("%.3f", g) == "0.125" and string.format("%.3f", b) == "0.125" and a == 1)) then
+                    if (r == 1 and (string.format("%.3f", g) == "0.125" and string.format("%.3f", b) == "0.125" and a == 1)) then
                         if (startsWithPlus) then
                             return nil, ItemInfo:ProcessEnchantText(text)
                         end
                     elseif (r == 0 and g == 1 and b == 0 and a == 1) then
-                        if (not string.find(text, "<") and not string.find(text, "Equip: ") and
-                            not string.find(text, "Socket Bonus:") and not string.find(text, "Use: ")) then
+                        if (not string.find(text, "<") and not string.find(text, "Equip: ") and not string.find(text, "Socket Bonus:") and
+                            not string.find(text, "Use: ")) then
                             if (startsWithPlus) then
                                 return nil, ItemInfo:ProcessEnchantText(text)
                             elseif ((slot == INVSLOT_MAINHAND or slot == INVSLOT_OFFHAND or slot == INVSLOT_BACK)) then
@@ -420,8 +418,7 @@ function ItemInfo:OnInitialize()
             local canEnchant = ItemInfo:CanEnchantSlot(unit, slot)
 
             if (not enchantText) then
-                local shouldDisplayEchantMissingText = canEnchant and itemLink and
-                                                           IsLevelAtEffectiveMaxLevel(UnitLevel(unit))
+                local shouldDisplayEchantMissingText = canEnchant and itemLink and IsLevelAtEffectiveMaxLevel(UnitLevel(unit))
                 additionalFrame.enchantDisplay:SetText(shouldDisplayEchantMissingText and "|cffff0000No Enchant|r" or "")
             else
                 -- trim size
@@ -455,8 +452,7 @@ function ItemInfo:OnInitialize()
                 else
                     local expansion = GetExpansionForLevel(UnitLevel(unit))
                     local expansionSocketRequirement = expansion and ItemInfo.expansionRequiredSockets[expansion]
-                    if (expansionSocketRequirement and expansionSocketRequirement[slot] and i <=
-                        expansionSocketRequirement[slot]) then
+                    if (expansionSocketRequirement and expansionSocketRequirement[slot] and i <= expansionSocketRequirement[slot]) then
                         socketTexture:SetTexture("Interface\\ItemSocketingFrame\\UI-EmptySocket-Red")
                         socketTexture:SetVertexColor(1, 0, 0)
                         socketTexture:Show()
@@ -506,9 +502,9 @@ function ItemInfo:OnInitialize()
         local itemCount = 0
 
         -- Define the slots to check (same as character sheet)
-        local slotsToCheck = {INVSLOT_HEAD, INVSLOT_NECK, INVSLOT_SHOULDER, INVSLOT_CHEST, INVSLOT_WAIST, INVSLOT_LEGS,
-                              INVSLOT_FEET, INVSLOT_WRIST, INVSLOT_HAND, INVSLOT_FINGER1, INVSLOT_FINGER2,
-                              INVSLOT_TRINKET1, INVSLOT_TRINKET2, INVSLOT_BACK, INVSLOT_MAINHAND, INVSLOT_OFFHAND}
+        local slotsToCheck = {INVSLOT_HEAD, INVSLOT_NECK, INVSLOT_SHOULDER, INVSLOT_CHEST, INVSLOT_WAIST, INVSLOT_LEGS, INVSLOT_FEET, INVSLOT_WRIST,
+                              INVSLOT_HAND, INVSLOT_FINGER1, INVSLOT_FINGER2, INVSLOT_TRINKET1, INVSLOT_TRINKET2, INVSLOT_BACK, INVSLOT_MAINHAND,
+                              INVSLOT_OFFHAND}
 
         for _, slot in pairs(slotsToCheck) do
             local itemLink = GetInventoryItemLink(unit, slot)

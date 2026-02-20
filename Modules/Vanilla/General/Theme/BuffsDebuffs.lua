@@ -68,8 +68,7 @@ function Theme:ButtonDefault(button, isDebuff)
 
     -- Create Border Mask
     button.mUIBorder.mask = button:CreateMaskTexture()
-    button.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask.png]], "CLAMPTOBLACKADDITIVE",
-        "CLAMPTOBLACKADDITIVE")
+    button.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask.png]], "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     button.mUIBorder.mask:SetAllPoints(button.Icon)
     button.Icon:AddMaskTexture(button.mUIBorder.mask)
 
@@ -101,8 +100,7 @@ function Theme:ApplySkin(button, icon, unit, isDebuff)
 
     -- Set Icon Mask
     button.mUIBorder.mask = button:CreateMaskTexture()
-    button.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]],
-        "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    button.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]], "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     button.mUIBorder.mask:SetAllPoints(icon)
     icon:AddMaskTexture(button.mUIBorder.mask)
 
@@ -258,8 +256,7 @@ function Theme:UpdateUnitframeAuras(frame)
         end
 
         if _G["TargetFrameBuff" .. i] and _G["TargetFrameBuff" .. i].mUIBorder then
-            _G["TargetFrameBuff" .. i].mUIBorder:SetSize(_G["TargetFrameBuff" .. i]:GetWidth() + 2,
-                _G["TargetFrameBuff" .. i]:GetHeight() + 1)
+            _G["TargetFrameBuff" .. i].mUIBorder:SetSize(_G["TargetFrameBuff" .. i]:GetWidth() + 2, _G["TargetFrameBuff" .. i]:GetHeight() + 1)
 
             _G["TargetFrameBuff" .. i].mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
         end
@@ -279,15 +276,14 @@ function Theme:UpdateUnitframeAuras(frame)
             else
                 _G["TargetFrameDebuff" .. i].mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
             end
-            _G["TargetFrameDebuff" .. i].mUIBorder:SetSize(_G["TargetFrameDebuff" .. i]:GetWidth() + 2,
-                _G["TargetFrameDebuff" .. i]:GetHeight() + 1)
+            _G["TargetFrameDebuff" .. i].mUIBorder:SetSize(_G["TargetFrameDebuff" .. i]:GetWidth() + 2, _G["TargetFrameDebuff" .. i]:GetHeight() + 1)
             _G["TargetFrameDebuff" .. i .. "Border"]:Hide()
         end
     end
 end
 
-function Theme:UpdateUnitframeAuraPositions(aura, auraName, numAuras, numOppositeAuras, largeAuraList, updateFunc,
-    maxRowWidth, offsetX, mirrorAurasVertically)
+function Theme:UpdateUnitframeAuraPositions(aura, auraName, numAuras, numOppositeAuras, largeAuraList, updateFunc, maxRowWidth, offsetX,
+    mirrorAurasVertically)
     local LARGE_AURA_SIZE = mUI.db.profile.unitframes.buffsdebuffs.buffsize
     local SMALL_AURA_SIZE = mUI.db.profile.unitframes.buffsdebuffs.debuffsize
     local AURA_OFFSET_Y = 3
@@ -312,8 +308,7 @@ function Theme:UpdateUnitframeAuraPositions(aura, auraName, numAuras, numOpposit
             rowWidth = rowWidth + size + offsetX
         end
         if (rowWidth > maxRowWidth) then
-            updateFunc(aura, auraName, i, numOppositeAuras, firstBuffOnRow, size, offsetX, offsetY,
-                mirrorAurasVertically)
+            updateFunc(aura, auraName, i, numOppositeAuras, firstBuffOnRow, size, offsetX, offsetY, mirrorAurasVertically)
             rowWidth = size
             aura.auraRows = aura.auraRows + 1
             firstBuffOnRow = i

@@ -184,8 +184,7 @@ function Style:OnInitialize()
 
         -- Current Target
         if UnitExists(unit .. "target") then
-            GameTooltip:AddDoubleLine(("|c%s%s|r"):format(Style.cfg.targetColorHex, "Target"),
-                Style:GetTarget(unit .. "target"))
+            GameTooltip:AddDoubleLine(("|c%s%s|r"):format(Style.cfg.targetColorHex, "Target"), Style:GetTarget(unit .. "target"))
         end
     end
 
@@ -261,8 +260,7 @@ function Style:OnInitialize()
             end
 
             if itemLink then
-                local azerite = C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or
-                                    C_AzeriteItem.IsAzeriteItemByID(itemLink) or false
+                local azerite = C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or C_AzeriteItem.IsAzeriteItemByID(itemLink) or false
                 local _, _, itemRarity = C_Item.GetItemInfo(itemLink)
 
                 if itemRarity and itemRarity >= 2 then

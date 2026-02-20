@@ -24,8 +24,7 @@ function Theme:CreateCastbarIcons(unit, castbar)
 
         -- Set Icon Mask
         castbar.mUIBorder.mask = castbar:CreateMaskTexture()
-        castbar.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask.png]], "CLAMPTOBLACKADDITIVE",
-            "CLAMPTOBLACKADDITIVE")
+        castbar.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask.png]], "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
         castbar.mUIBorder.mask:SetAllPoints(castbar.Icon)
         castbar.mUIBorder:SetDrawLayer("OVERLAY", 7)
         castbar.Icon:AddMaskTexture(castbar.mUIBorder.mask)

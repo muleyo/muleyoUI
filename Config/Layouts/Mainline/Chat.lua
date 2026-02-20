@@ -432,8 +432,7 @@ function Chat:OnInitialize()
                     for i = 1, 10 do
                         Chat.Module.Style:ForChatFrame(i, "SetFading", val)
                         if val then
-                            Chat.Module.Style:ForChatFrame(i, "SetTimeVisible",
-                                mUI.db.profile.chat.settings.fade.out_delay)
+                            Chat.Module.Style:ForChatFrame(i, "SetTimeVisible", mUI.db.profile.chat.settings.fade.out_delay)
                         end
                     end
                 end,

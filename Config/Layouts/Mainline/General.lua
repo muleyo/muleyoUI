@@ -96,8 +96,8 @@ function General:OnInitialize()
                     end
                 end,
                 get = function()
-                    return mUI.db.profile.general.color[1], mUI.db.profile.general.color[2],
-                        mUI.db.profile.general.color[3], mUI.db.profile.general.color[4]
+                    return mUI.db.profile.general.color[1], mUI.db.profile.general.color[2], mUI.db.profile.general.color[3],
+                        mUI.db.profile.general.color[4]
                 end,
                 order = 4
             },

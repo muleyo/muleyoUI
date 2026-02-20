@@ -37,11 +37,10 @@ function ItemInfo:OnInitialize()
         [INVSLOT_OFFHAND] = "center"
     }
 
-    ItemInfo.characterSlots = {"CharacterHeadSlot", "CharacterNeckSlot", "CharacterShoulderSlot", "CharacterChestSlot",
-                               "CharacterWaistSlot", "CharacterLegsSlot", "CharacterFeetSlot", "CharacterWristSlot",
-                               "CharacterHandsSlot", "CharacterFinger0Slot", "CharacterFinger1Slot",
-                               "CharacterTrinket0Slot", "CharacterTrinket1Slot", "CharacterBackSlot",
-                               "CharacterMainHandSlot", "CharacterSecondaryHandSlot"}
+    ItemInfo.characterSlots = {"CharacterHeadSlot", "CharacterNeckSlot", "CharacterShoulderSlot", "CharacterChestSlot", "CharacterWaistSlot",
+                               "CharacterLegsSlot", "CharacterFeetSlot", "CharacterWristSlot", "CharacterHandsSlot", "CharacterFinger0Slot",
+                               "CharacterFinger1Slot", "CharacterTrinket0Slot", "CharacterTrinket1Slot", "CharacterBackSlot", "CharacterMainHandSlot",
+                               "CharacterSecondaryHandSlot"}
 
     function ItemInfo:ColorGradient(perc, ...)
         if perc >= 1 then
@@ -195,9 +194,9 @@ function ItemInfo:OnInitialize()
         local itemCount = 0
 
         -- Define the slots to check (same as character sheet)
-        local slotsToCheck = {INVSLOT_HEAD, INVSLOT_NECK, INVSLOT_SHOULDER, INVSLOT_CHEST, INVSLOT_WAIST, INVSLOT_LEGS,
-                              INVSLOT_FEET, INVSLOT_WRIST, INVSLOT_HAND, INVSLOT_FINGER1, INVSLOT_FINGER2,
-                              INVSLOT_TRINKET1, INVSLOT_TRINKET2, INVSLOT_BACK, INVSLOT_MAINHAND, INVSLOT_OFFHAND}
+        local slotsToCheck = {INVSLOT_HEAD, INVSLOT_NECK, INVSLOT_SHOULDER, INVSLOT_CHEST, INVSLOT_WAIST, INVSLOT_LEGS, INVSLOT_FEET, INVSLOT_WRIST,
+                              INVSLOT_HAND, INVSLOT_FINGER1, INVSLOT_FINGER2, INVSLOT_TRINKET1, INVSLOT_TRINKET2, INVSLOT_BACK, INVSLOT_MAINHAND,
+                              INVSLOT_OFFHAND}
 
         for _, slot in pairs(slotsToCheck) do
             local itemLink = GetInventoryItemLink(unit, slot)

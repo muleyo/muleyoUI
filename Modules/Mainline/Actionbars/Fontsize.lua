@@ -8,8 +8,8 @@ function Fontsize:OnInitialize()
     }
 
     -- Tables
-    Fontsize.Bars = {_G["MultiBarBottomLeft"], _G["MultiBarBottomRight"], _G["MultiBarRight"], _G["MultiBarLeft"],
-                     _G["MultiBar5"], _G["MultiBar6"], _G["MultiBar7"]}
+    Fontsize.Bars = {_G["MultiBarBottomLeft"], _G["MultiBarBottomRight"], _G["MultiBarRight"], _G["MultiBarLeft"], _G["MultiBar5"], _G["MultiBar6"],
+                     _G["MultiBar7"]}
 
     -- Functions
     function Fontsize:Update()
@@ -32,15 +32,11 @@ function Fontsize:OnInitialize()
 
         for i = 1, 12 do
             if Fontsize.db.general.font ~= "None" then
-                _G["ActionButton" .. i .. "HotKey"]:SetFont(Fontsize.db.general.fontpath,
-                    Fontsize.db.actionbars.fontsize, "OUTLINE")
-                _G["ActionButton" .. i .. "Count"]:SetFont(Fontsize.db.general.fontpath,
-                    Fontsize.db.actionbars.fontsize, "OUTLINE")
+                _G["ActionButton" .. i .. "HotKey"]:SetFont(Fontsize.db.general.fontpath, Fontsize.db.actionbars.fontsize, "OUTLINE")
+                _G["ActionButton" .. i .. "Count"]:SetFont(Fontsize.db.general.fontpath, Fontsize.db.actionbars.fontsize, "OUTLINE")
             else
-                _G["ActionButton" .. i .. "HotKey"]:SetFont(STANDARD_TEXT_FONT, Fontsize.db.actionbars.fontsize,
-                    "OUTLINE")
-                _G["ActionButton" .. i .. "Count"]:SetFont(STANDARD_TEXT_FONT, Fontsize.db.actionbars.fontsize,
-                    "OUTLINE")
+                _G["ActionButton" .. i .. "HotKey"]:SetFont(STANDARD_TEXT_FONT, Fontsize.db.actionbars.fontsize, "OUTLINE")
+                _G["ActionButton" .. i .. "Count"]:SetFont(STANDARD_TEXT_FONT, Fontsize.db.actionbars.fontsize, "OUTLINE")
             end
         end
     end

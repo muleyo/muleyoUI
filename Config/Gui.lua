@@ -4,14 +4,6 @@ function Gui:OnInitialize()
     -- Initialize Database
     Gui.db = mUI.db.profile.gui
 
-    -- Apply skinning
-    -- mUI:SkinCheckboxes()
-    -- mUI:SkinInlineGroups()
-    -- mUI:SkinDropdowns()
-    -- mUI:SkinSlider()
-    -- mUI:SkinEditBoxes()
-    -- mUI:SkinButtons()
-
     -- Libraries
     local AceGUI = LibStub("AceGUI-3.0")
     local ACD = LibStub("AceConfigDialog-3.0-mUI")

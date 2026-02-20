@@ -7,9 +7,13 @@ function Invite:OnInitialize()
     Invite.invite = CreateFrame("Frame")
     function Invite:Invite(_, event, _, _, _, _, _, _, guid)
         if event == 'PARTY_INVITE_REQUEST' then
-            if not guid or guid == '' or IsInGroup() then return end
+            if not guid or guid == '' or IsInGroup() then
+                return
+            end
 
-            if QueueStatusButton and QueueStatusButton:IsShown() then return end
+            if QueueStatusButton and QueueStatusButton:IsShown() then
+                return
+            end
 
             if C_BattleNet.GetAccountInfoByGUID(guid) or C_FriendList.IsFriend(guid) or IsGuildMember(guid) then
                 hideStatic = true

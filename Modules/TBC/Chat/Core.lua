@@ -193,8 +193,7 @@ do
             if data.fadeTimer > 0 then
                 data.initAlpha = data.initAlpha or object:GetAlpha()
 
-                object:SetAlpha(
-                    outCubic(data.fadeTimer, data.initAlpha, data.finalAlpha - data.initAlpha, data.duration))
+                object:SetAlpha(outCubic(data.fadeTimer, data.initAlpha, data.finalAlpha - data.initAlpha, data.duration))
 
                 if data.fadeTimer >= data.duration then
                     remove(object)
