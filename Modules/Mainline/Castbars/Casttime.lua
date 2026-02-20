@@ -33,9 +33,13 @@ function Casttime:OnInitialize()
 
     function Casttime:Update(frame)
         if frame.casting then
-            frame.timer:SetText(format("%.1f", max(frame.maxValue - frame.value, 0)))
+            local duration = UnitCastingDuration(frame.unit)
+            local remaining = duration:GetRemainingDuration()
+            frame.timer:SetText(format("%.1f", remaining))
         elseif frame.channeling then
-            frame.timer:SetText(format("%.1f", max(frame.value, 0)))
+            local duration = UnitChannelDuration(frame.unit)
+            local remaining = duration:GetRemainingDuration()
+            frame.timer:SetText(format("%.1f", remaining, 0))
         else
             frame.timer:SetText("")
         end
