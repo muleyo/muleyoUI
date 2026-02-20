@@ -13,9 +13,6 @@ function Theme:OnEnable()
     -- Load Blacklist
     Theme:Blacklist()
 
-    -- Update Theme
-    Theme:Update()
-
     -- Buffs & Debuffs
     if not C_AddOns.IsAddOnLoaded("BlizzBuffsFacade") then
         -- not working as of now
@@ -60,6 +57,9 @@ function Theme:OnEnable()
                 if name and name:match("^Compact") then
                     if frame.CenterDefensiveBuff then
                         Theme:UpdateRaidframeAuras(frame.CenterDefensiveBuff)
+                        frame.CenterDefensiveBuff:SetSize(25, 25)
+                        frame.CenterDefensiveBuff:ClearAllPoints()
+                        frame.CenterDefensiveBuff:SetPoint("TOP", frame, 0, 0)
                     end
                     if frame.debuffFrames then
                         for i = 1, #frame.debuffFrames do
@@ -163,6 +163,9 @@ function Theme:OnEnable()
             Theme:Housing()
         end
     end)
+
+    -- Update Theme
+    C_Timer.After(0, Theme.Update)
 end
 
 function Theme:OnDisable()
