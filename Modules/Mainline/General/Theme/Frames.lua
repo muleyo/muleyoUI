@@ -1234,8 +1234,7 @@ function Theme:ClassBars()
         DEATHKNIGHT = {
             frame = RuneFrame,
             hook = "UpdateRunes",
-            hookType = "method",
-            skipClassBar = true
+            hookType = "method"
         },
         EVOKER = {
             frame = EssencePlayerFrame,
@@ -1254,9 +1253,7 @@ function Theme:ClassBars()
             end
         end
 
-        if not info.skipClassBar then
-            Theme:ClassBar()
-        end
+        Theme:ClassBar()
     elseif playerClass == "PALADIN" or playerClass == "PRIEST" then
         Theme:ClassBar()
     end
