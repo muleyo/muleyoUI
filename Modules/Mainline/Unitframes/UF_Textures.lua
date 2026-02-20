@@ -10,7 +10,6 @@ function UF_Textures:OnInitialize()
     -- Create Frame
     UF_Textures.textures = CreateFrame("Frame")
     UF_Textures.textures:RegisterEvent("PLAYER_ENTERING_WORLD")
-    UF_Textures.textures:RegisterEvent("UNIT_HEALTH")
     UF_Textures.textures:RegisterEvent("UNIT_TARGET")
     UF_Textures.textures:RegisterEvent("PLAYER_TARGET_CHANGED")
     UF_Textures.textures:RegisterEvent("PLAYER_FOCUS_CHANGED")
@@ -261,6 +260,7 @@ function UF_Textures:OnInitialize()
 end
 
 function UF_Textures:OnEnable()
+    UF_Textures:SecureHook("UnitFrameManaBar_Update", UF_Textures.Update)
     UF_Textures:SecureHookScript(UF_Textures.textures, "OnEvent", UF_Textures.Update)
 end
 
