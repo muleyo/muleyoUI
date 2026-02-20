@@ -1,7 +1,7 @@
 local Theme = mUI:GetModule("mUI.Modules.General.Theme")
 
-Theme.Bars = {_G["MultiBarBottomLeft"], _G["MultiBarBottomRight"], _G["MultiBarRight"], _G["MultiBarLeft"],
-              _G["MultiBar5"], _G["MultiBar6"], _G["MultiBar7"]}
+Theme.Bars = {_G["MultiBarBottomLeft"], _G["MultiBarBottomRight"], _G["MultiBarRight"], _G["MultiBarLeft"], _G["MultiBar5"], _G["MultiBar6"],
+              _G["MultiBar7"]}
 Theme.backup = ActionButton1NormalTexture.SetVertexColor
 
 -- Style ActionButton

@@ -10,7 +10,12 @@ function Copy:OnInitialize()
         edgeSize = 16,
         tile = true,
         tileSize = 16,
-        insets = { left = 3, right = 3, top = 3, bottom = 3 }
+        insets = {
+            left = 3,
+            right = 3,
+            top = 3,
+            bottom = 3
+        }
     })
     Copy.frame:SetBackdropColor(0, 0, 0)
     Copy.frame:Hide()
@@ -42,7 +47,9 @@ function Copy:OnInitialize()
     Copy.editbox:SetFontObject("ChatFontNormal")
     Copy.editbox:SetSize(Copy.frame:GetWidth() - 40, Copy.frame:GetHeight() - 60)
     Copy.editbox:SetAutoFocus(false)
-    Copy.editbox:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+    Copy.editbox:SetScript("OnEscapePressed", function(self)
+        self:ClearFocus()
+    end)
     Copy.scroll:SetScrollChild(Copy.editbox)
     Copy.editbox:SetScript("OnEscapePressed", function()
         Copy.frame:Hide()

@@ -4,9 +4,8 @@ function Tabbinder:OnInitialize()
     Tabbinder.frame = CreateFrame("Frame")
 
     function Tabbinder:Update(event, ...)
-        if event == "ZONE_CHANGED_NEW_AREA" or event == "PLAYER_ENTERING_WORLD" or
-            (event == "PLAYER_REGEN_ENABLED" and Tabbinder.Fail) or event == "DUEL_REQUESTED" or event ==
-            "DUEL_FINISHED" then
+        if event == "ZONE_CHANGED_NEW_AREA" or event == "PLAYER_ENTERING_WORLD" or (event == "PLAYER_REGEN_ENABLED" and Tabbinder.Fail) or event ==
+            "DUEL_REQUESTED" or event == "DUEL_FINISHED" then
             local bindSet = GetCurrentBindingSet()
             local PVPType = C_PvP.GetZonePVPInfo()
             local _, zoneType = IsInInstance()

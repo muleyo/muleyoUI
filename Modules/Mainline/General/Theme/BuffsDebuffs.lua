@@ -50,8 +50,7 @@ function Theme:ButtonDefault(button, isDebuff)
 
     -- Create Border Mask
     button.mUIBorder.mask = button:CreateMaskTexture()
-    button.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask.png]], "CLAMPTOBLACKADDITIVE",
-        "CLAMPTOBLACKADDITIVE")
+    button.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask.png]], "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     button.mUIBorder.mask:SetAllPoints(button.Icon)
     button.Icon:AddMaskTexture(button.mUIBorder.mask)
 
@@ -83,8 +82,7 @@ function Theme:ApplySkin(button, icon, unit, isDebuff)
 
     -- Set Icon Mask
     button.mUIBorder.mask = button:CreateMaskTexture()
-    button.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]],
-        "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    button.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border_mask.png]], "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     button.mUIBorder.mask:SetAllPoints(icon)
     icon:AddMaskTexture(button.mUIBorder.mask)
 
@@ -169,8 +167,7 @@ function Theme:UpdateUnitframeAuras(aura, isDebuff, unit)
 
         -- Set Icon Mask
         aura.mUIBorder.mask = aura:CreateMaskTexture()
-        aura.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask.png]], "CLAMPTOBLACKADDITIVE",
-            "CLAMPTOBLACKADDITIVE")
+        aura.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask.png]], "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
         aura.mUIBorder.mask:SetAllPoints(aura.Icon)
         aura.Icon:AddMaskTexture(aura.mUIBorder.mask)
 
@@ -221,8 +218,7 @@ function Theme:UpdateRaidframeAuras(aura)
 
         -- Mask
         aura.mask = aura:CreateMaskTexture()
-        aura.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask.png]], "CLAMPTOBLACKADDITIVE",
-            "CLAMPTOBLACKADDITIVE")
+        aura.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask.png]], "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
         aura.mask:SetAllPoints(aura.icon)
         aura.icon:AddMaskTexture(aura.mask)
 

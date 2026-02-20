@@ -5,12 +5,12 @@ function Export:OnInitialize()
     Export.LibDeflate = LibStub:GetLibrary("LibDeflate")
 
     function Export:ExportProfile()
-        --AceSerialize
+        -- AceSerialize
         local serialized_profile = Export:Serialize(mUI.db.profile)
 
-        --LibDeflate
+        -- LibDeflate
         local compressed_profile = Export.LibDeflate:CompressZlib(serialized_profile)
-        local encoded_profile    = Export.LibDeflate:EncodeForPrint(compressed_profile)
+        local encoded_profile = Export.LibDeflate:EncodeForPrint(compressed_profile)
         return encoded_profile
     end
 end

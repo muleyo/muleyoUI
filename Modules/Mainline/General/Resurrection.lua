@@ -4,7 +4,9 @@ function Resurrection:OnInitialize()
     Resurrection.resurrection = CreateFrame("Frame")
 
     function Resurrection:Update(event, name)
-        if not event == "RESURRECT_REQUEST" then return end
+        if not event == "RESURRECT_REQUEST" then
+            return
+        end
         if not UnitAffectingCombat(name) then
             AcceptResurrect()
             StaticPopup_Hide("RESURRECT_NO_TIMER")

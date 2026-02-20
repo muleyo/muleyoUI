@@ -4,7 +4,9 @@ function Delete:OnInitialize()
     Delete.delete = CreateFrame("Frame")
 
     function Delete:Update(event)
-        if not event == "DELETE_ITEM_CONFIRM" then return end
+        if not event == "DELETE_ITEM_CONFIRM" then
+            return
+        end
 
         if StaticPopup1EditBox:IsVisible() then
             StaticPopup1EditBox:SetText(DELETE_ITEM_CONFIRM_STRING)

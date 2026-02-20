@@ -7,7 +7,9 @@ function Interrupt:OnInitialize()
     function Interrupt:Announce()
         -- Get Event Data
         local _, event, _, sourceGUID, _, _, _, _, destName, _, _, _, _, _, spellID = CombatLogGetCurrentEventInfo()
-        if not (event == "SPELL_INTERRUPT" and sourceGUID == UnitGUID("player")) then return end
+        if not (event == "SPELL_INTERRUPT" and sourceGUID == UnitGUID("player")) then
+            return
+        end
 
         if IsInGroup() then
             SendChatMessage("Interrupted " .. C_Spell.GetSpellLink(spellID) .. "!", "PARTY")

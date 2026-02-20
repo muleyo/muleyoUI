@@ -3,7 +3,9 @@ local Release = mUI:NewModule("mUI.Modules.General.Release", "AceHook-3.0")
 function Release:OnInitialize()
     Release.release = CreateFrame("Frame")
     function Release:Update(event)
-        if not event == "PLAYER_DEAD" then return end
+        if not event == "PLAYER_DEAD" then
+            return
+        end
         RepopMe()
     end
 end

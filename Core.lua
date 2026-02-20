@@ -100,8 +100,8 @@ end
 
 function Core:OnEnable()
     if (Core.modules.nameplates:IsEnabled()) and
-        (C_AddOns.IsAddOnLoaded("Plater") or C_AddOns.IsAddOnLoaded("TidyPlates_ThreatPlates") or
-            C_AddOns.IsAddOnLoaded("TidyPlates") or C_AddOns.IsAddOnLoaded("Kui_Nameplates")) then
+        (C_AddOns.IsAddOnLoaded("Plater") or C_AddOns.IsAddOnLoaded("TidyPlates_ThreatPlates") or C_AddOns.IsAddOnLoaded("TidyPlates") or
+            C_AddOns.IsAddOnLoaded("Kui_Nameplates")) then
         Core.db.nameplates.enabled = false
         Core.modules.nameplates:Disable()
         mUI:Debug("Nameplates Module disabled because another Nameplates AddOn is active.")

@@ -188,8 +188,7 @@ function Style:OnInitialize()
 
         -- Current Target (not working during combat in current Alpha Build)
         if (UnitExists(unit .. "target")) then
-            GameTooltip:AddDoubleLine(("|c%s%s|r"):format(Style.cfg.targetColorHex, "Target"),
-                Style:GetTarget(unit .. "target"))
+            GameTooltip:AddDoubleLine(("|c%s%s|r"):format(Style.cfg.targetColorHex, "Target"), Style:GetTarget(unit .. "target"))
         end
     end
 
@@ -251,8 +250,7 @@ function Style:OnInitialize()
             local _, itemLink = tooltip:GetItem()
 
             if itemLink then
-                local azerite = C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or
-                                    C_AzeriteItem.IsAzeriteItemByID(itemLink) or false
+                local azerite = C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or C_AzeriteItem.IsAzeriteItemByID(itemLink) or false
                 local _, _, itemRarity = GetItemInfo(itemLink)
                 local r, g, b = 0.1, 0.1, 0.1
                 if itemRarity then
@@ -325,8 +323,7 @@ function Style:OnEnable()
     end)
 
     Style:SecureHook(GameTooltip, "SetUnitAura", function(tooltip, unit, index, filter)
-        local _, _, _, _, _, _, _, _, _, spellID = AuraUtil.UnpackAuraData(
-            C_UnitAuras.GetAuraDataByIndex(unit, index, filter))
+        local _, _, _, _, _, _, _, _, _, spellID = AuraUtil.UnpackAuraData(C_UnitAuras.GetAuraDataByIndex(unit, index, filter))
         Style:OnTooltipSetSpell(tooltip, spellID)
     end)
 

@@ -92,8 +92,7 @@ local function createMessageLine(pool, parent, id)
 
     counters[pool] = counters[pool] + 1
 
-    local frame = Mixin(CreateFrame("Frame", "$parentMessageLine" .. counters[pool], parent, "mUIHyperlinkPropagator"),
-        message_line_proto)
+    local frame = Mixin(CreateFrame("Frame", "$parentMessageLine" .. counters[pool], parent, "mUIHyperlinkPropagator"), message_line_proto)
     frame:SetSize(width, config.font.size + config.y_padding * 2)
     frame:SetID(0)
     frame:Hide()

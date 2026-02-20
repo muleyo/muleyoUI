@@ -135,8 +135,8 @@ function Totemicons:OnInitialize()
     end
 
     function Totemicons:COMBAT_LOG_EVENT_UNFILTERED(event, unit)
-        local timestamp, eventType, hideCaster, srcGUID, srcName, srcFlags, srcFlags2, dstGUID, dstName, dstFlags,
-            dstFlags2 = CombatLogGetCurrentEventInfo()
+        local timestamp, eventType, hideCaster, srcGUID, srcName, srcFlags, srcFlags2, dstGUID, dstName, dstFlags, dstFlags2 =
+            CombatLogGetCurrentEventInfo()
 
         if eventType == "SPELL_SUMMON" then
             local npcID = Totemicons:GetNPCIDByGUID(dstGUID)

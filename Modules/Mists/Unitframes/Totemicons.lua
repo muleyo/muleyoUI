@@ -6,7 +6,8 @@ end
 
 function Totemicons:OnEnable()
     TotemFrame:Hide()
-    TotemFrame.Show = function() end
+    TotemFrame.Show = function()
+    end
 end
 
 function Totemicons:OnDisable()

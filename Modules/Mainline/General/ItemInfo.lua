@@ -86,11 +86,10 @@ function ItemInfo:OnInitialize()
         [INVSLOT_OFFHAND] = "center"
     }
 
-    ItemInfo.characterSlots = {"CharacterHeadSlot", "CharacterNeckSlot", "CharacterShoulderSlot", "CharacterChestSlot",
-                               "CharacterWaistSlot", "CharacterLegsSlot", "CharacterFeetSlot", "CharacterWristSlot",
-                               "CharacterHandsSlot", "CharacterFinger0Slot", "CharacterFinger1Slot",
-                               "CharacterTrinket0Slot", "CharacterTrinket1Slot", "CharacterBackSlot",
-                               "CharacterMainHandSlot", "CharacterSecondaryHandSlot"}
+    ItemInfo.characterSlots = {"CharacterHeadSlot", "CharacterNeckSlot", "CharacterShoulderSlot", "CharacterChestSlot", "CharacterWaistSlot",
+                               "CharacterLegsSlot", "CharacterFeetSlot", "CharacterWristSlot", "CharacterHandsSlot", "CharacterFinger0Slot",
+                               "CharacterFinger1Slot", "CharacterTrinket0Slot", "CharacterTrinket1Slot", "CharacterBackSlot", "CharacterMainHandSlot",
+                               "CharacterSecondaryHandSlot"}
 
     ItemInfo.gemsWeCareAbout = {192991, -- Increased Primary Stat and Versatility
     192985, -- Increased Primary Stat and Haste
@@ -267,8 +266,7 @@ function ItemInfo:OnInitialize()
                 if (line.gemIcon) then
                     table.insert(textures, line.gemIcon)
                 else
-                    table.insert(textures,
-                        string.format("Interface\\ItemSocketingFrame\\UI-EmptySocket-%s", line.socketType))
+                    table.insert(textures, string.format("Interface\\ItemSocketingFrame\\UI-EmptySocket-%s", line.socketType))
                 end
             end
         end
@@ -494,8 +492,7 @@ function ItemInfo:OnInitialize()
             local canEnchant = ItemInfo:CanEnchantSlot(unit, slot)
 
             if (not enchantText) then
-                local shouldDisplayEchantMissingText = canEnchant and itemLink and
-                                                           IsLevelAtEffectiveMaxLevel(UnitLevel(unit))
+                local shouldDisplayEchantMissingText = canEnchant and itemLink and IsLevelAtEffectiveMaxLevel(UnitLevel(unit))
                 additionalFrame.enchantDisplay:SetText(shouldDisplayEchantMissingText and "|cffff0000No Enchant|r" or "")
             else
                 -- trim size
@@ -529,8 +526,7 @@ function ItemInfo:OnInitialize()
                 else
                     local expansion = GetExpansionForLevel(UnitLevel(unit))
                     local expansionSocketRequirement = expansion and ItemInfo.expansionRequiredSockets[expansion]
-                    if (expansionSocketRequirement and expansionSocketRequirement[slot] and i <=
-                        expansionSocketRequirement[slot]) then
+                    if (expansionSocketRequirement and expansionSocketRequirement[slot] and i <= expansionSocketRequirement[slot]) then
                         socketTexture:SetTexture("Interface\\ItemSocketingFrame\\UI-EmptySocket-Red")
                         socketTexture:SetVertexColor(1, 0, 0)
                         socketTexture:Show()
@@ -580,9 +576,9 @@ function ItemInfo:OnInitialize()
         local itemCount = 0
 
         -- Define the slots to check (same as character sheet)
-        local slotsToCheck = {INVSLOT_HEAD, INVSLOT_NECK, INVSLOT_SHOULDER, INVSLOT_CHEST, INVSLOT_WAIST, INVSLOT_LEGS,
-                              INVSLOT_FEET, INVSLOT_WRIST, INVSLOT_HAND, INVSLOT_FINGER1, INVSLOT_FINGER2,
-                              INVSLOT_TRINKET1, INVSLOT_TRINKET2, INVSLOT_BACK, INVSLOT_MAINHAND, INVSLOT_OFFHAND}
+        local slotsToCheck = {INVSLOT_HEAD, INVSLOT_NECK, INVSLOT_SHOULDER, INVSLOT_CHEST, INVSLOT_WAIST, INVSLOT_LEGS, INVSLOT_FEET, INVSLOT_WRIST,
+                              INVSLOT_HAND, INVSLOT_FINGER1, INVSLOT_FINGER2, INVSLOT_TRINKET1, INVSLOT_TRINKET2, INVSLOT_BACK, INVSLOT_MAINHAND,
+                              INVSLOT_OFFHAND}
 
         for _, slot in pairs(slotsToCheck) do
             local itemLink = GetInventoryItemLink(unit, slot)

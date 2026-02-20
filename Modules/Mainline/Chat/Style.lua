@@ -88,8 +88,7 @@ function Style:OnEnable()
 
                 Style:HandleChatTab(_G[chatFrame:GetName() .. "Tab"])
                 Style:HandleEditBox(_G[chatFrame:GetName() .. "EditBox"])
-                Style:HandleMinimizeButton(_G[chatFrame:GetName() .. "ButtonFrameMinimizeButton"],
-                    _G[chatFrame:GetName() .. "Tab"])
+                Style:HandleMinimizeButton(_G[chatFrame:GetName() .. "ButtonFrameMinimizeButton"], _G[chatFrame:GetName() .. "Tab"])
                 Style:HideDefaultScrollbar(chatFrame)
                 Style:HideChatFrameBackground(chatFrame)
                 Style:AddChatFrameBackground(chatFrame)
@@ -113,15 +112,14 @@ function Style:OnEnable()
 
                 -- Setup hyperlink tooltips for temporary frames
                 if not chatFrame.mUIHyperlinkHooked then
-                    chatFrame:SetScript("OnHyperlinkEnter",
-                        function(self, link, text, region, left, bottom, width, height)
-                            if not Style.db.tooltips then
-                                return
-                            end
-                            GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-                            GameTooltip:SetHyperlink(link)
-                            GameTooltip:Show()
-                        end)
+                    chatFrame:SetScript("OnHyperlinkEnter", function(self, link, text, region, left, bottom, width, height)
+                        if not Style.db.tooltips then
+                            return
+                        end
+                        GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                        GameTooltip:SetHyperlink(link)
+                        GameTooltip:Show()
+                    end)
 
                     chatFrame:SetScript("OnHyperlinkLeave", function(self)
                         if not Style.db.tooltips then
@@ -236,8 +234,7 @@ local function isMouseOverDockOrTabs()
     -- Check if mouse is over any button frame
     for i = 1, Constants.ChatFrameConstants.MaxChatWindows do
         local chatFrame = _G["ChatFrame" .. i]
-        if chatFrame and chatFrame.buttonFrame and chatFrame.buttonFrame:IsShown() and
-            chatFrame.buttonFrame:IsMouseOver() then
+        if chatFrame and chatFrame.buttonFrame and chatFrame.buttonFrame:IsShown() and chatFrame.buttonFrame:IsMouseOver() then
             return true
         end
     end

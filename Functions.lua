@@ -143,8 +143,7 @@ function Functions:OnInitialize()
     function mUI:ReceiveVersion(_, version, _, sender)
         if not Functions.db.new_version then
             if (version > currentVersion) then
-                mUI:Debug(
-                    "A newer version is available. If you experience any errors or bugs, updating is highly recommended.")
+                mUI:Debug("A newer version is available. If you experience any errors or bugs, updating is highly recommended.")
                 Functions.db.new_version = version
             end
         elseif (Functions.db.new_version == currentVersion) or (Functions.db.new_version <= currentVersion) then
@@ -208,8 +207,7 @@ function Functions:OnInitialize()
     function mUI:Reload(module)
         StaticPopupDialogs["mUIReloadPopup"] = nil -- Clear Popup before creating a new one
         StaticPopupDialogs["mUIReloadPopup"] = {
-            text = "|cff009cffmuleyo|r|cffffd100UI|r\n\n|cffffcc00Your UI requires a reload.\n\nReason: " .. module ..
-                "|r",
+            text = "|cff009cffmuleyo|r|cffffd100UI|r\n\n|cffffcc00Your UI requires a reload.\n\nReason: " .. module .. "|r",
             button1 = "Reload UI",
             whileDead = true,
             hideOnEscape = false,

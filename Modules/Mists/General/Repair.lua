@@ -4,7 +4,9 @@ function Repair:OnInitialize()
     Repair.repair = CreateFrame("Frame")
 
     function Repair:Update(event)
-        if not event == "MERCHANT_SHOW" then return end
+        if not event == "MERCHANT_SHOW" then
+            return
+        end
 
         Repair.db = mUI.db.profile.general.automation
         if CanMerchantRepair() then
@@ -12,7 +14,8 @@ function Repair:OnInitialize()
             if repairCost > 0 then
                 local formattedCost = string.format("%.1fg", repairCost * 0.0001)
                 if IsInGuild() and CanGuildBankRepair() and Repair.db.repair == "Guild" then
-                    if (GetGuildBankWithdrawMoney() > 0) and (GetGuildBankWithdrawMoney() > GetGuildBankMoney()) and (GetGuildBankMoney() > repairCost) then
+                    if (GetGuildBankWithdrawMoney() > 0) and (GetGuildBankWithdrawMoney() > GetGuildBankMoney()) and
+                        (GetGuildBankMoney() > repairCost) then
                         RepairAllItems(1)
                         mUI:Debug("|cffead000Repair cost covered by Guild Bank: " .. formattedCost .. "|r")
                     else

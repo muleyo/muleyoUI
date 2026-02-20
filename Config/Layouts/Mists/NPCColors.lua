@@ -113,8 +113,7 @@ function NPCColors:OnInitialize()
         for npcID, npcData in pairs(NPCColors.db.npccolors) do
             local show = true
             if NPCColors.searchQuery and NPCColors.searchQuery ~= "" then
-                show = string.find(npcData.name:lower(), NPCColors.searchQuery:lower()) or
-                           string.find(tostring(npcID), NPCColors.searchQuery)
+                show = string.find(npcData.name:lower(), NPCColors.searchQuery:lower()) or string.find(tostring(npcID), NPCColors.searchQuery)
             end
 
             if show then

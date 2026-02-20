@@ -50,8 +50,7 @@ function Textures:OnInitialize()
                         if Textures.nameplates[nameplate] == "Focus" then
                             return
                         end
-                        nameplate.healthBar:SetStatusBarTexture(
-                            [[Interface\AddOns\mUI\Media\Textures\Nameplates\focusTexture]])
+                        nameplate.healthBar:SetStatusBarTexture([[Interface\AddOns\mUI\Media\Textures\Nameplates\focusTexture]])
 
                         Textures.nameplates[nameplate] = "Focus"
                     else
@@ -78,8 +77,7 @@ function Textures:OnInitialize()
                             return
                         end
 
-                        nameplate.healthBar:SetStatusBarTexture(
-                            [[Interface\AddOns\mUI\Media\Textures\Nameplates\focusTexture]])
+                        nameplate.healthBar:SetStatusBarTexture([[Interface\AddOns\mUI\Media\Textures\Nameplates\focusTexture]])
 
                         Textures.nameplates[nameplate] = "Focus"
                     else

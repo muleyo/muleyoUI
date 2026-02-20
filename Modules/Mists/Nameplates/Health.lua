@@ -41,12 +41,10 @@ function Health:OnInitialize()
                     healthBar.text = healthBar:CreateFontString(nil, "ARTWORK", nil)
                     healthBar.text:SetPoint("CENTER")
                     healthBar.text:SetFont(Health.font, 8, 'OUTLINE')
-                    healthBar.text:SetText(string.format("%." .. Health.db.nameplates.decimals .. "f",
-                        (currentHealth / maxHealth) * 100) .. "%")
+                    healthBar.text:SetText(string.format("%." .. Health.db.nameplates.decimals .. "f", (currentHealth / maxHealth) * 100) .. "%")
                     Health.healthtexts[healthBar.text] = true
                 else
-                    healthBar.text:SetText(string.format("%." .. Health.db.nameplates.decimals .. "f",
-                        (currentHealth / maxHealth) * 100) .. "%")
+                    healthBar.text:SetText(string.format("%." .. Health.db.nameplates.decimals .. "f", (currentHealth / maxHealth) * 100) .. "%")
                 end
 
                 mUI:Skin(nameplate.healthBar.border)
@@ -71,14 +69,12 @@ function Health:OnInitialize()
             local _, _, _, _, _, id = strsplit("-", UnitGUID(nameplate.unit) or "")
             local _, status = UnitDetailedThreatSituation("player", nameplate.unit)
             local rColor = FACTION_BAR_COLORS[UnitReaction(nameplate.unit, "player")]
-            local color = Health.db.nameplates.npccolors[tonumber(id)] and
-                              Health.db.nameplates.npccolors[tonumber(id)].color or {
+            local color = Health.db.nameplates.npccolors[tonumber(id)] and Health.db.nameplates.npccolors[tonumber(id)].color or {
                 r = 0,
                 g = 1,
                 b = 0.6
             }
-            local nColor = Health.db.nameplates.npccolors[tonumber(id)] and
-                               Health.db.nameplates.npccolors[tonumber(id)].color or {
+            local nColor = Health.db.nameplates.npccolors[tonumber(id)] and Health.db.nameplates.npccolors[tonumber(id)].color or {
                 r = 1,
                 g = 0,
                 b = 0.3

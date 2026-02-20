@@ -21,7 +21,7 @@ function Theme:ClassBar()
         for _, child in pairs({MageArcaneChargesFrame:GetChildren()}) do
             mUI:Skin({child.ArcaneBG, child.ArcaneBGShadow}, true)
         end
-        for _, child in pairs({ClassNameplateBarMageFrame:GetChildren()}) do
+        for _, child in pairs({prdClassFrame:GetChildren()}) do
             mUI:Skin({child.ArcaneBG, child.ArcaneBGShadow}, true)
         end
     elseif (playerClass == "WARLOCK") then
@@ -29,7 +29,7 @@ function Theme:ClassBar()
         for _, child in pairs({WarlockPowerFrame:GetChildren()}) do
             mUI:Skin({child.Background}, true)
         end
-        for _, child in pairs({ClassNameplateBarWarlockFrame:GetChildren()}) do
+        for _, child in pairs({prdClassFrame:GetChildren()}) do
             mUI:Skin({child.Background}, true)
         end
     elseif (playerClass == "DRUID") then
@@ -37,7 +37,7 @@ function Theme:ClassBar()
         for _, child in pairs({DruidComboPointBarFrame:GetChildren()}) do
             mUI:Skin({child.BG_Active, child.BG_Inactive, child.BG_Shadow}, true)
         end
-        for _, child in pairs({ClassNameplateBarFeralDruidFrame:GetChildren()}) do
+        for _, child in pairs({prdClassFrame:GetChildren()}) do
             mUI:Skin({child.BG_Active, child.BG_Inactive, child.BG_Shadow}, true)
         end
     elseif (playerClass == "MONK") then
@@ -45,7 +45,7 @@ function Theme:ClassBar()
         for _, child in pairs({MonkHarmonyBarFrame:GetChildren()}) do
             mUI:Skin({child.Chi_BG, child.Chi_BG_Active}, true)
         end
-        for _, child in pairs({ClassNameplateBarWindwalkerMonkFrame:GetChildren()}) do
+        for _, child in pairs({prdClassFrame:GetChildren()}) do
             mUI:Skin({child.Chi_BG, child.Chi_BG_Active}, true)
         end
     elseif (playerClass == "DEATHKNIGHT") then
@@ -53,7 +53,7 @@ function Theme:ClassBar()
         for _, child in pairs({RuneFrame:GetChildren()}) do
             mUI:Skin({child.BG_Active, child.BG_Inactive, child.BG_Shadow}, true)
         end
-        for _, child in pairs({DeathKnightResourceOverlayFrame:GetChildren()}) do
+        for _, child in pairs({prdClassFrame:GetChildren()}) do
             mUI:Skin({child.BG_Active, child.BG_Inactive, child.BG_Shadow}, true)
         end
     elseif (playerClass == "EVOKER") then
@@ -65,13 +65,12 @@ function Theme:ClassBar()
             mUI:Skin({child.EssenceFillDone.CircBG, child.EssenceFillDone.CircBGActive}, true)
         end
 
-        for _, child in pairs({ClassNameplateBarDracthyrFrame:GetChildren()}) do
+        for _, child in pairs({prdClassFrame:GetChildren()}) do
             mUI:Skin({child.EssenceFillDone.CircBG, child.EssenceFillDone.CircBGActive}, true)
         end
     elseif (playerClass == "PALADIN") then
         -- Paladin
-        mUI:Skin({PaladinPowerBarFrame.Background, PaladinPowerBarFrame.ActiveTexture, ClassNameplateBarPaladinFrame.Background,
-                  ClassNameplateBarPaladinFrame.ActiveTexture, prdClassFrame.Background, prdClassFrame.ActiveTexture}, true)
+        mUI:Skin({PaladinPowerBarFrame.Background, PaladinPowerBarFrame.ActiveTexture, prdClassFrame.Background, prdClassFrame.ActiveTexture}, true)
     end
     if (playerClass == "SHAMAN" or playerClass == "PALADIN" or playerClass == "PRIEST" or playerClass == "DRUID") then
         for totem, _ in TotemFrame.totemPool:EnumerateActive() do

@@ -25,8 +25,7 @@ function Style:OnEnable()
 
             pcall(Style.HandleChatTab, Style, _G["ChatFrame" .. i .. "Tab"])
             pcall(Style.HandleEditBox, Style, _G["ChatFrame" .. i .. "EditBox"])
-            pcall(Style.HandleMinimizeButton, Style, _G["ChatFrame" .. i .. "MinimizeButton"],
-                _G["ChatFrame" .. i .. "Tab"])
+            pcall(Style.HandleMinimizeButton, Style, _G["ChatFrame" .. i .. "MinimizeButton"], _G["ChatFrame" .. i .. "Tab"])
         end
 
         if i == 1 then
@@ -52,8 +51,7 @@ function Style:OnEnable()
     end)
 
     Style:SecureHook("FCF_OpenTemporaryWindow", function(chatType, chatTarget)
-        local chatFrame = chatTarget and (expectedChatFrames[chatType] and expectedChatFrames[chatType][chatTarget]) or
-                              expectedChatFrames[chatType]
+        local chatFrame = chatTarget and (expectedChatFrames[chatType] and expectedChatFrames[chatType][chatTarget]) or expectedChatFrames[chatType]
         if chatFrame then
             local frame = Style:HandleChatFrame(chatFrame, 1)
             if frame then

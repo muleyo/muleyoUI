@@ -9,14 +9,12 @@ function Style:CreateFonts()
     for i = 1, 10 do
         local messageFont = CreateFont("mUIMessageFont" .. i)
         messageFont:CopyFontObject(ChatFontNormal)
-        messageFont:SetFont(LSM:Fetch("font", mUI.db.profile.general.font), Style.db.chat.font.size,
-            Style.db.chat.font.outline and "OUTLINE" or "")
+        messageFont:SetFont(LSM:Fetch("font", mUI.db.profile.general.font), Style.db.chat.font.size, Style.db.chat.font.outline and "OUTLINE" or "")
 
         local mFont = messageFont:GetFont()
         if not mFont then
             -- a corrupt, missing, or misplaced font was supplied, reset it
-            messageFont:SetFont("Fonts\\ARIALN.TTF", Style.db.chat.font.size,
-                Style.db.chat.font.outline and "OUTLINE" or "")
+            messageFont:SetFont("Fonts\\ARIALN.TTF", Style.db.chat.font.size, Style.db.chat.font.outline and "OUTLINE" or "")
         end
 
         messageFont:SetShadowColor(0, 0, 0, 1)
@@ -33,8 +31,7 @@ function Style:CreateFonts()
 
     local editBoxFont = CreateFont("mUIEditBoxFont")
     editBoxFont:CopyFontObject(GameFontNormalSmall)
-    editBoxFont:SetFont(LSM:Fetch("font", mUI.db.profile.general.font), Style.db.edit.font.size,
-        Style.db.edit.font.outline and "OUTLINE" or "")
+    editBoxFont:SetFont(LSM:Fetch("font", mUI.db.profile.general.font), Style.db.edit.font.size, Style.db.edit.font.outline and "OUTLINE" or "")
 
     local ebFont = editBoxFont:GetFont()
     if not ebFont then
@@ -55,8 +52,7 @@ end
 
 function Style:UpdateMessageFont(id)
     local messageFont = _G["mUIMessageFont" .. id]
-    messageFont:SetFont(LSM:Fetch("font", mUI.db.profile.general.font), Style.db.chat.font.size,
-        Style.db.chat.font.outline and "OUTLINE" or "")
+    messageFont:SetFont(LSM:Fetch("font", mUI.db.profile.general.font), Style.db.chat.font.size, Style.db.chat.font.outline and "OUTLINE" or "")
 
     local font = messageFont:GetFont()
     if not font then
@@ -81,13 +77,11 @@ function Style:UpdateMessageFonts()
 end
 
 function Style:UpdateEditBoxFont()
-    mUIEditBoxFont:SetFont(LSM:Fetch("font", mUI.db.profile.general.font), Style.db.edit.font.size,
-        Style.db.edit.font.outline and "OUTLINE" or "")
+    mUIEditBoxFont:SetFont(LSM:Fetch("font", mUI.db.profile.general.font), Style.db.edit.font.size, Style.db.edit.font.outline and "OUTLINE" or "")
 
     local font = mUIEditBoxFont:GetFont()
     if not font then
-        mUIEditBoxFont:SetFont("Fonts\\ARIALN.TTF", Style.db.edit.font.size,
-            Style.db.edit.font.outline and "OUTLINE" or "")
+        mUIEditBoxFont:SetFont("Fonts\\ARIALN.TTF", Style.db.edit.font.size, Style.db.edit.font.outline and "OUTLINE" or "")
     end
 
     if Style.db.edit.font.shadow then

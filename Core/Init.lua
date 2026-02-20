@@ -1,5 +1,4 @@
-mUI = LibStub("AceAddon-3.0"):NewAddon("mUI", "AceConsole-3.0", "AceTimer-3.0", "AceEvent-3.0", "AceComm-3.0",
-    "AceSerializer-3.0", "AceHook-3.0")
+mUI = LibStub("AceAddon-3.0"):NewAddon("mUI", "AceConsole-3.0", "AceTimer-3.0", "AceEvent-3.0", "AceComm-3.0", "AceSerializer-3.0", "AceHook-3.0")
 
 -- Set Modules Default State
 mUI:SetDefaultModuleState(false)

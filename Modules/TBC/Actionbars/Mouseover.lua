@@ -50,12 +50,11 @@ function Mouseover:OnInitialize()
         stancebar = "StanceButton"
     }
 
-    Mouseover.MICRO_BUTTONS = {"CharacterMicroButton", "SpellbookMicroButton", "TalentMicroButton",
-                               "QuestLogMicroButton", "SocialsMicroButton", "GuildMicroButton", "WorldMapMicroButton",
-                               "MainMenuMicroButton", "HelpMicroButton"}
+    Mouseover.MICRO_BUTTONS = {"CharacterMicroButton", "SpellbookMicroButton", "TalentMicroButton", "QuestLogMicroButton", "SocialsMicroButton",
+                               "GuildMicroButton", "WorldMapMicroButton", "MainMenuMicroButton", "HelpMicroButton"}
 
-    Mouseover.BAG_BUTTONS = {"MainMenuBarBackpackButton", "CharacterBag0Slot", "CharacterBag1Slot", "CharacterBag2Slot",
-                             "CharacterBag3Slot", "KeyRingButton"}
+    Mouseover.BAG_BUTTONS = {"MainMenuBarBackpackButton", "CharacterBag0Slot", "CharacterBag1Slot", "CharacterBag2Slot", "CharacterBag3Slot",
+                             "KeyRingButton"}
 
     -- Frames
     Mouseover.mouseover = CreateFrame("Frame")
@@ -186,8 +185,7 @@ function Mouseover:OnInitialize()
             end
         elseif bar == "bagbuttons" then
             for i = 1, #Mouseover.BAG_BUTTONS do
-                if not (Mouseover:IsHooked(_G[Mouseover.BAG_BUTTONS[i]], "OnEnter") and
-                    Mouseover:IsHooked(_G[Mouseover.BAG_BUTTONS[i]], "OnLeave")) then
+                if not (Mouseover:IsHooked(_G[Mouseover.BAG_BUTTONS[i]], "OnEnter") and Mouseover:IsHooked(_G[Mouseover.BAG_BUTTONS[i]], "OnLeave")) then
                     Mouseover:SecureHookScript(_G[Mouseover.BAG_BUTTONS[i]], "OnEnter", function()
                         Mouseover:CancelTimer(Mouseover.func[bar])
                         Mouseover:SetAlpha(bar, 1)
@@ -238,16 +236,14 @@ function Mouseover:OnInitialize()
     function Mouseover:UnhookBars(bar)
         if bar == "micromenu" then
             for i = 1, #Mouseover.MICRO_BUTTONS do
-                if Mouseover:IsHooked(_G[Mouseover.MICRO_BUTTONS[i]], "OnEnter") and
-                    Mouseover:IsHooked(_G[Mouseover.MICRO_BUTTONS[i]], "OnLeave") then
+                if Mouseover:IsHooked(_G[Mouseover.MICRO_BUTTONS[i]], "OnEnter") and Mouseover:IsHooked(_G[Mouseover.MICRO_BUTTONS[i]], "OnLeave") then
                     Mouseover:Unhook(_G[Mouseover.MICRO_BUTTONS[i]], "OnEnter")
                     Mouseover:Unhook(_G[Mouseover.MICRO_BUTTONS[i]], "OnLeave")
                 end
             end
         elseif bar == "bagbuttons" then
             for i = 1, #Mouseover.BAG_BUTTONS do
-                if Mouseover:IsHooked(_G[Mouseover.BAG_BUTTONS[i]], "OnEnter") and
-                    Mouseover:IsHooked(_G[Mouseover.BAG_BUTTONS[i]], "OnLeave") then
+                if Mouseover:IsHooked(_G[Mouseover.BAG_BUTTONS[i]], "OnEnter") and Mouseover:IsHooked(_G[Mouseover.BAG_BUTTONS[i]], "OnLeave") then
                     Mouseover:Unhook(_G[Mouseover.BAG_BUTTONS[i]], "OnEnter")
                     Mouseover:Unhook(_G[Mouseover.BAG_BUTTONS[i]], "OnLeave")
                 end
