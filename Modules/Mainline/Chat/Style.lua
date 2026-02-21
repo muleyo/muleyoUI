@@ -3,7 +3,6 @@ local Style = mUI:GetModule("mUI.Modules.Chat.Style")
 -- Store chat frame references at module level for config updates
 local chatFrames = {}
 local tempChatFrames = {}
-local pendingTempFrame = nil
 
 function Style:UpdateAllScrollButtons()
     -- Update scroll buttons on all static chat frames
@@ -62,8 +61,62 @@ function Style:OnEnable()
     end
 
     -- temporary chat frames
+    -- Skin directly in FCF_SetTemporaryWindowType: this hook always fires with the
+    -- actual chatFrame regardless of whether FCF_OpenTemporaryWindow reuses an
+    -- existing window or creates a new one, avoiding the old pendingTempFrame race.
     Style:SecureHook("FCF_SetTemporaryWindowType", function(chatFrame, chatType, chatTarget)
-        pendingTempFrame = chatFrame
+        -- Set fading based on config
+        chatFrame:SetFading(Style.db.fade.enabled)
+        if Style.db.fade.enabled then
+            chatFrame:SetTimeVisible(Style.db.fade.out_delay)
+        end
+
+        Style:HandleChatTab(_G[chatFrame:GetName() .. "Tab"])
+        Style:HandleEditBox(_G[chatFrame:GetName() .. "EditBox"])
+        Style:HandleMinimizeButton(_G[chatFrame:GetName() .. "ButtonFrameMinimizeButton"], _G[chatFrame:GetName() .. "Tab"])
+        Style:HideDefaultScrollbar(chatFrame)
+        Style:HideChatFrameBackground(chatFrame)
+        Style:AddChatFrameBackground(chatFrame)
+
+        -- Setup or update scroll buttons
+        if not chatFrame.mUIScrollButtonsSetup then
+            Style:SetupScrollButtons(chatFrame)
+        else
+            -- Buttons already exist, just update their visibility
+            if chatFrame.ToggleScrollButtons then
+                chatFrame:ToggleScrollButtons()
+            end
+        end
+
+        -- Apply fonts to temporary windows
+        Style:ApplyChatFrameFont(chatFrame)
+        local editBox = _G[chatFrame:GetName() .. "EditBox"]
+        if editBox then
+            Style:ApplyEditBoxFont(editBox)
+        end
+
+        -- Setup hyperlink tooltips for temporary frames
+        if not chatFrame.mUIHyperlinkHooked then
+            chatFrame:SetScript("OnHyperlinkEnter", function(self, link, text, region, left, bottom, width, height)
+                if not Style.db.tooltips then
+                    return
+                end
+                GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                GameTooltip:SetHyperlink(link)
+                GameTooltip:Show()
+            end)
+
+            chatFrame:SetScript("OnHyperlinkLeave", function(self)
+                if not Style.db.tooltips then
+                    return
+                end
+                GameTooltip:Hide()
+            end)
+
+            chatFrame.mUIHyperlinkHooked = true
+        end
+
+        tempChatFrames[chatFrame] = true
     end)
 
     -- Disable font size change from right-click menu
@@ -72,68 +125,6 @@ function Style:OnEnable()
         C_Timer.After(0, function()
             Style:UpdateMessageFonts()
         end)
-    end)
-
-    Style:SecureHook("FCF_OpenTemporaryWindow", function(chatType, chatTarget)
-        local chatFrame = pendingTempFrame
-        pendingTempFrame = nil
-        if chatFrame then
-            local frame = chatFrame
-            if frame then
-                -- Set fading based on config
-                frame:SetFading(Style.db.fade.enabled)
-                if Style.db.fade.enabled then
-                    frame:SetTimeVisible(Style.db.fade.out_delay)
-                end
-
-                Style:HandleChatTab(_G[chatFrame:GetName() .. "Tab"])
-                Style:HandleEditBox(_G[chatFrame:GetName() .. "EditBox"])
-                Style:HandleMinimizeButton(_G[chatFrame:GetName() .. "ButtonFrameMinimizeButton"], _G[chatFrame:GetName() .. "Tab"])
-                Style:HideDefaultScrollbar(chatFrame)
-                Style:HideChatFrameBackground(chatFrame)
-                Style:AddChatFrameBackground(chatFrame)
-
-                -- Setup or update scroll buttons
-                if not chatFrame.mUIScrollButtonsSetup then
-                    Style:SetupScrollButtons(chatFrame)
-                else
-                    -- Buttons already exist, just update their visibility
-                    if chatFrame.ToggleScrollButtons then
-                        chatFrame:ToggleScrollButtons()
-                    end
-                end
-
-                -- Apply fonts to temporary windows - suppress font message
-                Style:ApplyChatFrameFont(chatFrame)
-                local editBox = _G[chatFrame:GetName() .. "EditBox"]
-                if editBox then
-                    Style:ApplyEditBoxFont(editBox)
-                end
-
-                -- Setup hyperlink tooltips for temporary frames
-                if not chatFrame.mUIHyperlinkHooked then
-                    chatFrame:SetScript("OnHyperlinkEnter", function(self, link, text, region, left, bottom, width, height)
-                        if not Style.db.tooltips then
-                            return
-                        end
-                        GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-                        GameTooltip:SetHyperlink(link)
-                        GameTooltip:Show()
-                    end)
-
-                    chatFrame:SetScript("OnHyperlinkLeave", function(self)
-                        if not Style.db.tooltips then
-                            return
-                        end
-                        GameTooltip:Hide()
-                    end)
-
-                    chatFrame.mUIHyperlinkHooked = true
-                end
-
-                tempChatFrames[frame] = true
-            end
-        end
     end)
 
     Style:SecureHook("FCF_MinimizeFrame", function(chatFrame)
