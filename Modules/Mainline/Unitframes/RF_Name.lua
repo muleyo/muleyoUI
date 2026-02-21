@@ -58,6 +58,11 @@ function RF_Name:OnInitialize()
 
                     local scaleFactor = math.min(frameWidth / 100, frameHeight / 40)
                     local fontSize = math.max(8, math.min(13, 13 * scaleFactor))
+
+                    if not RF_Name.db.roleicons then
+                        fontSize = fontSize * 0.85
+                    end
+
                     frame.name:SetFont(STANDARD_TEXT_FONT, fontSize, "OUTLINE")
 
                     if RF_Name.db.roleicons then
