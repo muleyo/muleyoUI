@@ -1,6 +1,7 @@
 local Theme = mUI:GetModule("mUI.Modules.General.Theme")
 
 local _, playerClass = UnitClass("player")
+Theme.LSM = LibStub("LibSharedMedia-3.0")
 
 function Theme:Achievements()
     -- Achievements Frame
@@ -1152,17 +1153,40 @@ function Theme:Quest()
 end
 
 function Theme:DamageMeter()
-    if not Theme:IsHooked(DamageMeter, "GetSessionWindow") then
-        Theme:SecureHook(DamageMeter, "GetSessionWindow", function(self)
-            for i = 1, 3 do
-                if self.windowDataList[i] and self.windowDataList[i].sessionWindow then
-                    if not self.windowDataList[i].sessionWindow.isSkinned then
-                        mUI:Skin({self.windowDataList[i].sessionWindow.Header}, true)
-                    end
-                end
-            end
-        end)
+    local function updateDamageMeter(frame, ...)
+        for _, bar in frame:EnumerateEntryFrames() do
+            mUI:Skin({bar.StatusBar.BackgroundEdge}, true)
+            bar.StatusBar.Background:SetAlpha(0)
+            bar.StatusBar.BackgroundEdge:Show()
+            bar:GetStatusBarTexture():SetTexture(Theme.LSM:Fetch('statusbar', mUI.db.profile.unitframes.textures.unitframes))
+            bar:GetStatusBarTexture():SetDrawLayer("BORDER")
+        end
     end
+
+    local function updateDamageWindows()
+        for i = 1, 3 do
+            local frame = _G["DamageMeterSessionWindow" .. i]
+            if frame then
+                if not frame.isSkinned then
+                    mUI:Skin({frame.Header}, true)
+                end
+
+                if not Theme:IsHooked(frame, "OnEvent") and not Theme:IsHooked(frame, "OnShow") then
+                    Theme:SecureHookScript(frame, "OnEvent", updateDamageMeter)
+
+                    Theme:SecureHookScript(frame, "OnShow", updateDamageMeter)
+                end
+
+                updateDamageMeter(frame)
+            end
+        end
+    end
+
+    if not Theme:IsHooked(DamageMeter, "GetSessionWindow") then
+        Theme:SecureHook(DamageMeter, "GetSessionWindow", updateDamageWindows)
+    end
+
+    updateDamageWindows()
 end
 
 function Theme:Settings()
