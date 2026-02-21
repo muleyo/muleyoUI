@@ -126,7 +126,7 @@ local defaults = {
                 solo = false,
                 skinicons = true,
                 defensive = {
-                    position = "TOPCENTER",
+                    position = "TOP",
                     size = 25
                 }
             }
