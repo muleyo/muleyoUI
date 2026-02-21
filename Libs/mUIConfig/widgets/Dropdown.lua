@@ -7,7 +7,7 @@ local AGSMW = LibStub("AceGUISharedMediaWidgets-1.0-mUI")
 
 do
     local widgetType = "mUI_Dropdown"
-    local widgetVersion = 13
+    local widgetVersion = 14
 
     local contentFrameCache = {}
     local function ReturnSelf(self)
@@ -74,7 +74,7 @@ do
 
     local function SetValue(self, value) -- Set the value to an item in the List.
         if self.list then
-            self:SetText(value or "")
+            self:SetText(self.list[value] or value or "")
         end
         self.value = value
     end
@@ -84,14 +84,11 @@ do
     end
 
     local function SetList(self, list) -- Set the list of values for the dropdown (key => value pairs)
-        self.list = list or Media:HashTable("font")
+        self.list = list or {}
     end
 
     local function SetText(self, text) -- Set the text displayed in the box.
         self.frame.text:SetText(text or "")
-        local font = self.list[text] ~= text and self.list[text] or Media:Fetch('font', text)
-        local _, size, outline = self.frame.text:GetFont()
-        self.frame.text:SetFont(font, size, outline)
     end
 
     local function SetLabel(self, text) -- Set the text for the label.
@@ -144,17 +141,11 @@ do
                 }
             end
             table.sort(sortedlist, function(a, b)
-                local displayA = type(a.key) == "number" and a.value or a.key
-                local displayB = type(b.key) == "number" and b.value or b.key
-                return string.upper(displayA) < string.upper(displayB)
+                return string.upper(a.value) < string.upper(b.value)
             end)
             for i, entry in ipairs(sortedlist) do
                 local f = GetContentLine()
-                local _, size, outline = f.text:GetFont()
-                local displayName = type(entry.key) == "number" and entry.value or entry.key
-                local font = entry.value ~= entry.key and entry.value or Media:Fetch('font', displayName)
-                f.text:SetFont(font, size, outline)
-                f.text:SetText(displayName)
+                f.text:SetText(entry.value)
                 f.key = entry.key
                 if entry.key == self.value then
                     f.check:Show()
