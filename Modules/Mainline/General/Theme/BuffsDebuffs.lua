@@ -234,8 +234,10 @@ function Theme:UpdateRaidframeAuras(aura)
             aura.mUIBorder:SetVertexColor(r, g, b, 1)
             aura.border:Hide()
 
-            -- Resize non-important debuffs (boss/role debuffs are 1.5x baseSize)
-            local isImportant = aura.baseSize and (aura:GetWidth() > aura.baseSize * 1.1)
+            -- Resize non-important debuffs (boss/role debuffs are scaled up via isBossAura or IsRoleAura)
+            local unit = aura:GetParent() and aura:GetParent().displayedUnit
+            local auraData = (unit and aura.auraInstanceID) and C_UnitAuras.GetAuraDataByAuraInstanceID(unit, aura.auraInstanceID) or nil
+            local isImportant = auraData and (aura.isHealerRoleAura or aura.isBossAura)
             if not isImportant then
                 local auraSize
 
