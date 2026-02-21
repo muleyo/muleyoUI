@@ -1,20 +1,17 @@
-local Focuspos = mUI:NewModule("mUI.Modules.Castbars.Focuspos")
+local Focuspos = mUI:NewModule("mUI.Modules.Castbars.Focuspos", "AceHook-3.0")
 
 function Focuspos:OnInitialize()
-    Focuspos.func = FocusFrameSpellBar.SetPoint
-
     function Focuspos:Update()
         FocusFrameSpellBar:ClearAllPoints()
         FocusFrameSpellBar:SetPoint("TOPLEFT", FocusFrame, "TOPLEFT", 47.5, 10)
-        FocusFrameSpellBar.SetPoint = function()
-        end
     end
 end
 
 function Focuspos:OnEnable()
-    Focuspos:Update()
+    Focuspos:SecureHookScript(FocusFrameSpellBar, "OnShow", Focuspos.Update)
+    Focuspos:SecureHook(FocusFrameSpellBar, "AdjustPosition", Focuspos.Update)
 end
 
 function Focuspos:OnDisable()
-    FocusFrameSpellBar.SetPoint = Focuspos.func
+    Focuspos:UnhookAll()
 end
