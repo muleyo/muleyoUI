@@ -229,37 +229,31 @@ function Theme:UpdateRaidframeAuras(aura)
         aura.count:ClearAllPoints()
         aura.count:SetPoint("BOTTOMRIGHT", aura.icon, "BOTTOMRIGHT", -1.5, 2.5)
     else
+        local frameHeight
+
+        if IsInRaid() then
+            frameHeight = EditModeManagerFrame:GetRaidFrameHeight(Enum.EditModeUnitFrameSystemIndices.Raid, 36)
+        else
+            frameHeight = EditModeManagerFrame:GetRaidFrameHeight(Enum.EditModeUnitFrameSystemIndices.Party, 36)
+        end
+
         if aura.border then
             local r, g, b = aura.border:GetVertexColor()
             aura.mUIBorder:SetVertexColor(r, g, b, 1)
             aura.border:Hide()
 
-            -- Resize non-important debuffs (boss/role debuffs are scaled up via isBossAura or IsRoleAura)
             local unit = aura:GetParent() and aura:GetParent().displayedUnit
-            local auraData = (unit and aura.auraInstanceID) and C_UnitAuras.GetAuraDataByAuraInstanceID(unit, aura.auraInstanceID) or nil
-            local isImportant = auraData and (aura.isHealerRoleAura or aura.isBossAura)
-            if not isImportant then
-                local auraSize
+            local isDispellable = (unit and aura.auraInstanceID) and
+                                      not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, aura.auraInstanceID, "HARMFUL|RAID_PLAYER_DISPELLABLE")
 
-                if IsInRaid() then
-                    auraSize = mUI.db.profile.unitframes.raidframes.debuffsizeRaid
-                else
-                    auraSize = mUI.db.profile.unitframes.raidframes.debuffsizeParty
-                end
-
+            if isDispellable then
+                local auraSize = frameHeight * 0.55
                 aura:SetSize(auraSize, auraSize)
             end
         else
             aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
 
-            local auraSize
-
-            if IsInRaid() then
-                auraSize = mUI.db.profile.unitframes.raidframes.aurasizeRaid
-            else
-                auraSize = mUI.db.profile.unitframes.raidframes.aurasizeParty
-            end
-
+            local auraSize = frameHeight * 0.33
             aura:SetSize(auraSize, auraSize)
         end
     end
