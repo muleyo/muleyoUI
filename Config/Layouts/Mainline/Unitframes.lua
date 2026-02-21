@@ -697,6 +697,56 @@ function Unitframes:OnInitialize()
                     return mUI.db.profile.unitframes.raidframes.debuffsizeRaid
                 end,
                 order = 37
+            },
+            defensiveSize = {
+                name = "Defensive Buff Size",
+                desc = "Set the Size of Defensive Buffs on Raidframes\n\n|cffffff00Info:|r Requires Reload",
+                type = "range",
+                min = 0,
+                max = 50,
+                step = 1,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.defensive.size = val
+
+                    if not Unitframes.Module:IsEnabled() then
+                        return
+                    end
+
+                    Unitframes.Module.RF_Defensive:Update(nil, nil, val)
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.defensive.size
+                end,
+                order = 38
+            },
+            defensivePosition = {
+                name = "Defensive Buff Position",
+                desc = "Set the Position of Defensive Buffs on Raidframes\n\n|cffffff00Info:|r Requires Reload",
+                type = "select",
+                values = {
+                    ["TOP"] = "Top Center",
+                    ["TOPLEFT"] = "Top Left",
+                    ["TOPRIGHT"] = "Top Right",
+                    ["CENTER"] = "Center",
+                    ["LEFT"] = "Left",
+                    ["RIGHT"] = "Right",
+                    ["BOTTOM"] = "Bottom Center",
+                    ["BOTTOMLEFT"] = "Bottom Left",
+                    ["BOTTOMRIGHT"] = "Bottom Right"
+                },
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.defensive.position = val
+
+                    if not Unitframes.Module:IsEnabled() then
+                        return
+                    end
+
+                    Unitframes.Module.RF_Defensive:Update(nil, val)
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.defensive.position
+                end,
+                order = 39
             }
         }
     }

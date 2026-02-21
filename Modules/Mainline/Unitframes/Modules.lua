@@ -7,6 +7,7 @@ function Modules:OnInitialize()
     Modules.RF_Name = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Name")
     Modules.RF_RoleIcons = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_RoleIcons")
     Modules.RF_Solo = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Solo")
+    Modules.RF_Defensive = mUI:GetModule("mUI.Modules.Unitframes.RF_Defensive")
     Modules.UF_Textures = mUI:GetModule("mUI.Modules.Unitframes.Unitframes_Textures")
     Modules.Color = mUI:GetModule("mUI.Modules.Unitframes.Color")
     Modules.BuffsDebuffs = mUI:GetModule("mUI.Modules.Unitframes.BuffsDebuffs")
@@ -94,6 +95,7 @@ function Modules:OnEnable()
     if Modules.db.overshields then
         Modules.Overshields:Enable()
     end
+    Modules.RF_Defensive:Enable()
 end
 
 function Modules:OnDisable()
