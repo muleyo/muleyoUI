@@ -1,7 +1,7 @@
 local Elitecolor = mUI:NewModule("mUI.Modules.Unitframes.Elitecolor")
 
 function Elitecolor:OnEnable()
-    C_Timer.After(0, function()
+    C_Timer.After(0.1, function()
         if select(5, TargetFrame.TargetFrameContainer:GetRegions()) then
             select(5, TargetFrame.TargetFrameContainer:GetRegions()):SetDesaturated(false)
             select(5, TargetFrame.TargetFrameContainer:GetRegions()):SetVertexColor(1, 1, 1)
