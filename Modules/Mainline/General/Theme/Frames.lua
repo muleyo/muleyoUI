@@ -1154,11 +1154,21 @@ end
 
 function Theme:DamageMeter()
     local function updateDamageMeter(frame)
-        mUI:Skin({frame.StatusBar.BackgroundEdge}, true)
-        frame.StatusBar.Background:SetAlpha(0)
-        frame.StatusBar.BackgroundEdge:Show()
-        frame:GetStatusBarTexture():SetTexture(Theme.LSM:Fetch('statusbar', mUI.db.profile.unitframes.textures.unitframes))
-        frame:GetStatusBarTexture():SetDrawLayer("BORDER")
+        mUI:Skin({frame.StatusBar.BackgroundEdge, frame.StatusBar.Background}, true)
+
+        local texture = mUI.db.profile.unitframes.textures.unitframes
+        local defaultTexture
+
+        if not defaultTexture then
+            defaultTexture = frame:GetStatusBarTexture():GetTexture()
+        end
+
+        if texture ~= "None" then
+            frame.StatusBar.Background:SetAlpha(0)
+            frame.StatusBar.BackgroundEdge:Show()
+            frame:GetStatusBarTexture():SetTexture(Theme.LSM:Fetch('statusbar', mUI.db.profile.unitframes.textures.unitframes))
+            frame:GetStatusBarTexture():SetDrawLayer("BORDER")
+        end
     end
 
     local function updateDamageWindows()

@@ -124,7 +124,11 @@ local defaults = {
                 names = false,
                 roleicons = false,
                 solo = false,
-                skinicons = true
+                skinicons = true,
+                defensive = {
+                    position = "TOPCENTER",
+                    size = 25
+                }
             }
         },
         castbars = {

@@ -5,6 +5,7 @@
     <Include file="RF_Name.lua" />
     <Include file="RF_RoleIcons.lua" />
     <Include file="RF_Solo.lua" />
+    <Include file="RF_Defensive.lua" />
 
     <!-- Unitframes -->
     <Include file="UF_Textures.lua" />

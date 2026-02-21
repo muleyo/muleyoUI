@@ -91,9 +91,6 @@ function Theme:OnEnable()
                 if name and name:match("^Compact") then
                     if frame.CenterDefensiveBuff then
                         Theme:UpdateRaidframeAuras(frame.CenterDefensiveBuff)
-                        frame.CenterDefensiveBuff:SetSize(25, 25)
-                        frame.CenterDefensiveBuff:ClearAllPoints()
-                        frame.CenterDefensiveBuff:SetPoint("TOP", frame, 0, 0)
                     end
                     if frame.debuffFrames then
                         for i = 1, #frame.debuffFrames do
