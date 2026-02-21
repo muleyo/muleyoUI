@@ -19,7 +19,7 @@ function RF_Defensive:OnInitialize()
                            "RaidGroup7Member1", "RaidGroup7Member2", "RaidGroup7Member3", "RaidGroup7Member4", "RaidGroup7Member5",
                            "RaidGroup8Member1", "RaidGroup8Member2", "RaidGroup8Member3", "RaidGroup8Member4", "RaidGroup8Member5"}
 
-    function RF_Defensive:Update(frame, position, size)
+    function RF_Defensive:Update(frame)
         if (not frame) or frame:IsForbidden() then
             return
         end
@@ -55,44 +55,17 @@ function RF_Defensive:OnInitialize()
                 end
             end
         end
+    end
 
-        if position or size then
-            for _, name in pairs(RF_Defensive.frames) do
-                local frame = _G["Compact" .. name]
+    function RF_Defensive:UpdateSizePos()
+        for _, name in pairs(RF_Defensive.frames) do
+            local frame = _G["Compact" .. name]
 
-                if frame and frame:IsForbidden() then
-                    return
-                end
-
-                if frame and frame.CenterDefensiveBuff then
-                    if size then
-                        frame.CenterDefensiveBuff:SetSize(size, size)
-                        frame.CenterDefensiveBuff:ClearAllPoints()
-                    end
-
-                    if position then
-                        if position == "TOPCENTER" then
-                            frame.CenterDefensiveBuff:SetPoint("TOP", frame, "CENTER", 0, 0)
-                        elseif position == "TOPLEFT" then
-                            frame.CenterDefensiveBuff:SetPoint("LEFT", frame, "TOP", 0, 0)
-                        elseif position == "TOPRIGHT" then
-                            frame.CenterDefensiveBuff:SetPoint("RIGHT", frame, "TOP", 0, 0)
-                        elseif position == "CENTER" then
-                            frame.CenterDefensiveBuff:SetPoint("CENTER", frame, "CENTER", 0, 0)
-                        elseif position == "LEFT" then
-                            frame.CenterDefensiveBuff:SetPoint("LEFT", frame, "CENTER", 0, 0)
-                        elseif position == "RIGHT" then
-                            frame.CenterDefensiveBuff:SetPoint("RIGHT", frame, "CENTER", 0, 0)
-                        elseif position == "BOTTOMCENTER" then
-                            frame.CenterDefensiveBuff:SetPoint("BOTTOM", frame, "CENTER", 0, 0)
-                        elseif position == "BOTTOMLEFT" then
-                            frame.CenterDefensiveBuff:SetPoint("LEFT", frame, "BOTTOM", 0, 0)
-                        elseif position == "BOTTOMRIGHT" then
-                            frame.CenterDefensiveBuff:SetPoint("RIGHT", frame, "BOTTOM", 0, 0)
-                        end
-                    end
-                end
+            if (not frame) or frame:IsForbidden() then
+                return
             end
+
+            RF_Defensive:Update(frame)
         end
     end
 end

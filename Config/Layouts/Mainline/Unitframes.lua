@@ -660,7 +660,7 @@ function Unitframes:OnInitialize()
                         return
                     end
 
-                    Unitframes.Module.RF_Defensive:Update(nil, val)
+                    Unitframes.Module.RF_Defensive:UpdateSizePos()
                 end,
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.defensive.position
@@ -681,7 +681,7 @@ function Unitframes:OnInitialize()
                         return
                     end
 
-                    Unitframes.Module.RF_Defensive:Update(nil, nil, val)
+                    Unitframes.Module.RF_Defensive:UpdateSizePos()
                 end,
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.defensive.size
