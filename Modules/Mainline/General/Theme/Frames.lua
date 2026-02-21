@@ -1153,14 +1153,12 @@ function Theme:Quest()
 end
 
 function Theme:DamageMeter()
-    local function updateDamageMeter(frame, ...)
-        for _, bar in frame:EnumerateEntryFrames() do
-            mUI:Skin({bar.StatusBar.BackgroundEdge}, true)
-            bar.StatusBar.Background:SetAlpha(0)
-            bar.StatusBar.BackgroundEdge:Show()
-            bar:GetStatusBarTexture():SetTexture(Theme.LSM:Fetch('statusbar', mUI.db.profile.unitframes.textures.unitframes))
-            bar:GetStatusBarTexture():SetDrawLayer("BORDER")
-        end
+    local function updateDamageMeter(frame)
+        mUI:Skin({frame.StatusBar.BackgroundEdge}, true)
+        frame.StatusBar.Background:SetAlpha(0)
+        frame.StatusBar.BackgroundEdge:Show()
+        frame:GetStatusBarTexture():SetTexture(Theme.LSM:Fetch('statusbar', mUI.db.profile.unitframes.textures.unitframes))
+        frame:GetStatusBarTexture():SetDrawLayer("BORDER")
     end
 
     local function updateDamageWindows()
@@ -1171,13 +1169,9 @@ function Theme:DamageMeter()
                     mUI:Skin({frame.Header}, true)
                 end
 
-                if not Theme:IsHooked(frame, "OnEvent") and not Theme:IsHooked(frame, "OnShow") then
-                    Theme:SecureHookScript(frame, "OnEvent", updateDamageMeter)
-
-                    Theme:SecureHookScript(frame, "OnShow", updateDamageMeter)
+                for _, bar in frame:EnumerateEntryFrames() do
+                    updateDamageMeter(bar)
                 end
-
-                updateDamageMeter(frame)
             end
         end
     end
@@ -1186,6 +1180,11 @@ function Theme:DamageMeter()
         Theme:SecureHook(DamageMeter, "GetSessionWindow", updateDamageWindows)
     end
 
+    if not Theme:IsHooked(DamageMeterEntryMixin, "Init") then
+        Theme:SecureHook(DamageMeterEntryMixin, "Init", updateDamageMeter)
+    end
+
+    -- Update Windows and Bars on Player Login
     updateDamageWindows()
 end
 

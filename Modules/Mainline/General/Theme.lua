@@ -6,12 +6,46 @@ function Theme:OnInitialize()
 
     -- Create Frames
     Theme.auras = CreateFrame("Frame")
-    Theme.addons = CreateFrame("Frame")
+    Theme.events = CreateFrame("Frame")
 end
 
 function Theme:OnEnable()
     -- Load Blacklist
     Theme:Blacklist()
+
+    -- Blizzard AddOns
+    Theme.addons = {
+        ["Blizzard_InspectUI"] = Theme.Inspect,
+        ["Blizzard_AchievementUI"] = Theme.Achievements,
+        ["Blizzard_ProfessionsCustomerOrders"] = Theme.CraftingOrders,
+        ["Blizzard_AuctionHouseUI"] = Theme.AuctionHouse,
+        ["Blizzard_AlliedRacesUI"] = Theme.AlliedRaces,
+        ["Blizzard_ArchaeologyUI"] = Theme.Archaeology,
+        ["Blizzard_Calendar"] = Theme.Calendar,
+        ["Blizzard_ChallengesUI"] = Theme.Challenges,
+        ["Blizzard_ItemSocketingUI"] = Theme.Socketing,
+        ["Blizzard_TrainerUI"] = Theme.Trainer,
+        ["Blizzard_Collections"] = Theme.Collections,
+        ["Blizzard_EncounterJournal"] = Theme.EncounterJournal,
+        ["Blizzard_FlightMap"] = Theme.FlightMap,
+        ["Blizzard_GarrisonUI"] = Theme.Garrison,
+        ["Blizzard_GuildBankUI"] = Theme.GuildBank,
+        ["Blizzard_Professions"] = Theme.Professions,
+        ["Blizzard_IslandsQueueUI"] = Theme.Islands,
+        ["Blizzard_PVPUI"] = Theme.PVP,
+        ["Blizzard_MacroUI"] = Theme.Macros,
+        ["Blizzard_ScrappingMachineUI"] = Theme.Scrapping,
+        ["Blizzard_ProfessionsBook"] = Theme.ProfessionsBook,
+        ["Blizzard_PlayerSpells"] = Theme.PlayerSpells,
+        ["Blizzard_TalentUI"] = Theme.Talents,
+        ["Blizzard_GlyphUI"] = Theme.Talents,
+        ["Blizzard_TimeManager"] = Theme.TimeManager,
+        ["Blizzard_WeeklyRewards"] = Theme.Rewards,
+        ["Blizzard_ItemUpgradeUI"] = Theme.ItemUpgrade,
+        ["Blizzard_ReforgingUI"] = Theme.Reforging,
+        ["Blizzard_Transmog"] = Theme.Transmog,
+        ["Blizzard_HousingDashboard"] = Theme.Housing
+    }
 
     -- Buffs & Debuffs
     if not C_AddOns.IsAddOnLoaded("BlizzBuffsFacade") then
@@ -99,68 +133,11 @@ function Theme:OnEnable()
         end
     end)
 
-    Theme.addons:RegisterEvent("ADDON_LOADED")
-    Theme:SecureHookScript(Theme.addons, "OnEvent", function(_, _, addon)
-        if (addon == "Blizzard_InspectUI") then
-            Theme:Inspect()
-        elseif (addon == "Blizzard_AchievementUI") then
-            Theme:Achievements()
-        elseif (addon == "Blizzard_ProfessionsCustomerOrders") then
-            Theme:CraftingOrders()
-        elseif (addon == "Blizzard_AuctionHouseUI") then
-            Theme:AuctionHouse()
-        elseif (addon == "Blizzard_AlliedRacesUI") then
-            Theme:AlliedRaces()
-        elseif (addon == "Blizzard_ArchaeologyUI") then
-            Theme:Archaeology()
-        elseif (addon == "Blizzard_Calendar") then
-            Theme:Calendar()
-        elseif (addon == "Blizzard_ChallengesUI") then
-            Theme:Challenges()
-        elseif (addon == "Blizzard_ItemSocketingUI") then
-            Theme:Socketing()
-        elseif (addon == "Blizzard_TrainerUI") then
-            Theme:Trainer()
-        elseif (addon == "Blizzard_Collections") then
-            Theme:Collections()
-        elseif (addon == "Blizzard_EncounterJournal") then
-            Theme:EncounterJournal()
-        elseif (addon == "Blizzard_FlightMap") then
-            Theme:FlightMap()
-        elseif (addon == "Blizzard_GarrisonUI") then
-            Theme:Garrison()
-        elseif (addon == "Blizzard_GuildBankUI") then
-            Theme:GuildBank()
-        elseif (addon == "Blizzard_Professions") then
-            Theme:Professions()
-        elseif (addon == "Blizzard_IslandsQueueUI") then
-            Theme:Islands()
-        elseif (addon == "Blizzard_PVPUI") then
-            Theme:PVP()
-        elseif (addon == "Blizzard_MacroUI") then
-            Theme:Macros()
-        elseif (addon == "Blizzard_ScrappingMachineUI") then
-            Theme:Scrapping()
-        elseif (addon == "Blizzard_ProfessionsBook") then
-            Theme:ProfessionsBook()
-        elseif (addon == "Blizzard_PlayerSpells") then
-            Theme:PlayerSpells()
-        elseif (addon == "Blizzard_TalentUI" or addon == "Blizzard_GlyphUI") then
-            Theme:Talents()
-        elseif (addon == "Blizzard_TimeManager") then
-            Theme:TimeManager()
-        elseif (addon == "Blizzard_TradeSkillUI") then
-            Theme:TradeSkill()
-        elseif (addon == "Blizzard_WeeklyRewards") then
-            Theme:Rewards()
-        elseif (addon == "Blizzard_ItemUpgradeUI") then
-            Theme:ItemUpgrade()
-        elseif (addon == "Blizzard_ReforgingUI") then
-            Theme:Reforging()
-        elseif (addon == "Blizzard_Transmog") then
-            Theme:Transmog()
-        elseif (addon == "Blizzard_HousingDashboard") then
-            Theme:Housing()
+    -- Skin Blizzard AddOns when they are loaded
+    Theme.events:RegisterEvent("ADDON_LOADED")
+    Theme:SecureHookScript(Theme.events, "OnEvent", function(_, _, addon)
+        if Theme.addons[addon] then
+            Theme.addons[addon]()
         end
     end)
 
