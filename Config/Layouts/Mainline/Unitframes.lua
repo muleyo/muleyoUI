@@ -638,87 +638,6 @@ function Unitframes:OnInitialize()
                 end,
                 order = 33
             },
-            aurasizeParty = {
-                name = "Buff Size (Party)",
-                desc = "Set the Size of Buffs on Raidframes",
-                type = "range",
-                min = 0,
-                max = 30,
-                step = 1,
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.aurasizeParty = val
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.aurasizeParty
-                end,
-                order = 34
-            },
-            aurasizeRaid = {
-                name = "Buff Size (Raid)",
-                desc = "Set the Size of Buffs on Raidframes",
-                type = "range",
-                min = 0,
-                max = 30,
-                step = 1,
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.aurasizeRaid = val
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.aurasizeRaid
-                end,
-                order = 35
-            },
-            debuffsizeParty = {
-                name = "Debuff Size (Party)",
-                desc = "Set the Size of Debuffs on Raidframes",
-                type = "range",
-                min = 0,
-                max = 30,
-                step = 1,
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.debuffsizeParty = val
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.debuffsizeParty
-                end,
-                order = 36
-            },
-            debuffsizeRaid = {
-                name = "Debuff Size (Raid)",
-                desc = "Set the Size of Debuffs on Raidframes",
-                type = "range",
-                min = 0,
-                max = 30,
-                step = 1,
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.debuffsizeRaid = val
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.debuffsizeRaid
-                end,
-                order = 37
-            },
-            defensiveSize = {
-                name = "Defensive Buff Size",
-                desc = "Set the Size of Defensive Buffs on Raidframes\n\n|cffffff00Info:|r Requires Reload",
-                type = "range",
-                min = 0,
-                max = 50,
-                step = 1,
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.defensive.size = val
-
-                    if not Unitframes.Module:IsEnabled() then
-                        return
-                    end
-
-                    Unitframes.Module.RF_Defensive:Update(nil, nil, val)
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.defensive.size
-                end,
-                order = 38
-            },
             defensivePosition = {
                 name = "Defensive Buff Position",
                 desc = "Set the Position of Defensive Buffs on Raidframes\n\n|cffffff00Info:|r Requires Reload",
@@ -745,6 +664,27 @@ function Unitframes:OnInitialize()
                 end,
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.defensive.position
+                end,
+                order = 38
+            },
+            defensiveSize = {
+                name = "Defensive Buff Size",
+                desc = "Set the Size of Defensive Buffs on Raidframes\n\n|cffffff00Info:|r Requires Reload",
+                type = "range",
+                min = 0,
+                max = 50,
+                step = 1,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.defensive.size = val
+
+                    if not Unitframes.Module:IsEnabled() then
+                        return
+                    end
+
+                    Unitframes.Module.RF_Defensive:Update(nil, nil, val)
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.defensive.size
                 end,
                 order = 39
             }
