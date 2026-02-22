@@ -687,6 +687,25 @@ function Unitframes:OnInitialize()
                     return mUI.db.profile.unitframes.raidframes.defensive.size
                 end,
                 order = 39
+            },
+            buffSize = {
+                name = "Buff Size",
+                desc = "Set the Size of Buffs on Raidframes\n\n|cffffff00Info:|r Requires Reload",
+                type = "range",
+                min = 10,
+                max = 50,
+                step = 1,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.buffsize = val
+
+                    if not Unitframes.Module:IsEnabled() then
+                        return
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.buffsize
+                end,
+                order = 40
             }
         }
     }

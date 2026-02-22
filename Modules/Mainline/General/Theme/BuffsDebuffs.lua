@@ -245,15 +245,17 @@ function Theme:UpdateRaidframeAuras(aura)
             local unit = aura:GetParent() and aura:GetParent().displayedUnit
             local isDispellable = (unit and aura.auraInstanceID) and
                                       not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, aura.auraInstanceID, "HARMFUL|RAID_PLAYER_DISPELLABLE")
+            local isCrowdControl = (unit and aura.auraInstanceID) and
+                                       not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, aura.auraInstanceID, "HARMFUL|CROWD_CONTROL")
 
-            if isDispellable then
+            if isDispellable or isCrowdControl then
                 local auraSize = frameHeight * 0.55
                 aura:SetSize(auraSize, auraSize)
             end
         else
             aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
 
-            local auraSize = frameHeight * 0.33
+            local auraSize = frameHeight * (mUI.db.profile.unitframes.raidframes.buffsize / 100)
             aura:SetSize(auraSize, auraSize)
         end
     end

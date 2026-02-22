@@ -121,6 +121,7 @@ local defaults = {
                 roleicons = false,
                 solo = false,
                 skinicons = true,
+                buffsize = 33,
                 defensive = {
                     position = "TOP",
                     size = 25

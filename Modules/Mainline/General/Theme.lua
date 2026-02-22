@@ -130,6 +130,20 @@ function Theme:OnEnable()
         end
     end)
 
+    Theme:SecureHookScript(MirrorTimerContainer, "OnEvent", function(frame)
+        for i = 1, #frame.mirrorTimers do
+            local frame = frame.mirrorTimers[i]
+            if frame then
+                frame:SetSize(209, 18)
+                frame.TextBorder:Hide()
+                frame.Border:Hide()
+                frame.Text:ClearAllPoints()
+                frame.Text:SetPoint("CENTER", frame, "CENTER", 0, 0)
+                frame.Text:SetFont(Theme.LSM:Fetch('font', mUI.db.profile.general.font), 12, "OUTLINE")
+            end
+        end
+    end)
+
     -- Skin Blizzard AddOns when they are loaded
     Theme.events:RegisterEvent("ADDON_LOADED")
     Theme:SecureHookScript(Theme.events, "OnEvent", function(_, _, addon)
