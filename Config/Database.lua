@@ -118,6 +118,7 @@ local defaults = {
                 health = false,
                 healthcolor = false,
                 names = false,
+                hidenames = false,
                 roleicons = false,
                 solo = false,
                 skinicons = true,

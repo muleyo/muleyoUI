@@ -83,7 +83,7 @@ function Modules:OnEnable()
     if Modules.db.raidframes.health or Modules.db.raidframes.healthcolor then
         Modules.RF_Health:Enable()
     end
-    if Modules.db.raidframes.names then
+    if Modules.db.raidframes.names or Modules.db.raidframes.hidenames then
         Modules.RF_Name:Enable()
     end
     if Modules.db.raidframes.solo then
