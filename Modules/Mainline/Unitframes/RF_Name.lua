@@ -37,12 +37,6 @@ function RF_Name:OnInitialize()
                     RF_Name.backup[4], RF_Name.backup[5], RF_Name.backup[6] = frame.name:GetTextColor()
                 end
 
-                if RF_Name.db.hidenames then
-                    frame.name:SetAlpha(0)
-                else
-                    frame.name:SetAlpha(1)
-                end
-
                 if RF_Name.db.names and color then
                     frame.name:SetText(unitName)
                     frame.name:SetTextColor(color.r, color.g, color.b)
@@ -111,6 +105,7 @@ end
 
 function RF_Name:OnDisable()
     RF_Name:UnhookAll()
+    RF_Name:Update()
     RF_Name:Restore()
 
     EditModeManagerFrame:Show()

@@ -610,9 +610,9 @@ function Unitframes:OnInitialize()
                     end
 
                     if val then
-                        Unitframes.Module.RF_Name:Enable()
+                        Unitframes.Module.RF_HideNames:Enable()
                     else
-                        Unitframes.Module.RF_Name:Disable()
+                        Unitframes.Module.RF_HideNames:Disable()
                     end
                 end,
                 get = function()

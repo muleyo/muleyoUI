@@ -1157,9 +1157,9 @@ function Theme:Frames()
     mUI:Skin(GameMenuFrame.Border)
 
     -- StaticPopups
-    mUI:Skin(StaticPopup1)
-    mUI:Skin(StaticPopup2)
-    mUI:Skin(StaticPopup3)
+    mUI:Skin(StaticPopup1.BG)
+    mUI:Skin(StaticPopup2.BG)
+    mUI:Skin(StaticPopup3.BG)
     mUI:Skin({StaticPopup1EditBoxLeft, StaticPopup1EditBoxMid, StaticPopup1EditBoxRight, StaticPopup2EditBoxLeft, StaticPopup2EditBoxMid,
               StaticPopup2EditBoxRight, StaticPopup3EditBoxLeft, StaticPopup3EditBoxMid, StaticPopup3EditBoxRight}, true)
 
