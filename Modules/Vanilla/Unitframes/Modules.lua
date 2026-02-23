@@ -7,6 +7,7 @@ function Modules:OnInitialize()
     Modules.RF_Colors = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Colors")
     Modules.RF_Health = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Health")
     Modules.RF_Name = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Name")
+    Modules.RF_HideNames = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_HideNames")
     Modules.RF_RoleIcons = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_RoleIcons")
     Modules.UF_Textures = mUI:GetModule("mUI.Modules.Unitframes.Unitframes_Textures")
     Modules.Color = mUI:GetModule("mUI.Modules.Unitframes.Color")
@@ -64,6 +65,9 @@ function Modules:OnEnable()
     if Modules.db.raidframes.names then
         Modules.RF_Name:Enable()
     end
+    if Modules.db.raidframes.hidenames then
+        Modules.RF_HideNames:Enable()
+    end
 end
 
 function Modules:OnDisable()
@@ -82,4 +86,5 @@ function Modules:OnDisable()
     Modules.RF_Colors:Disable()
     Modules.RF_Health:Disable()
     Modules.RF_Name:Disable()
+    Modules.RF_HideNames:Disable()
 end

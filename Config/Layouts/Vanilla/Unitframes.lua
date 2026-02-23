@@ -493,6 +493,28 @@ function Unitframes:OnInitialize()
                     return mUI.db.profile.unitframes.raidframes.names
                 end,
                 order = 30
+            },
+            hidenames = {
+                name = "Hide Names",
+                desc = "Hide Names on Party/Raidframes",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.hidenames = val
+
+                    if not Unitframes.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Unitframes.Module.RF_HideNames:Enable()
+                    else
+                        Unitframes.Module.RF_HideNames:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.hidenames
+                end,
+                order = 31
             }
         }
     }

@@ -5,6 +5,7 @@ function Modules:OnInitialize()
     Modules.RF_Textures = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Textures")
     Modules.RF_Health = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Health")
     Modules.RF_Name = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Name")
+    Modules.RF_HideNames = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_HideNames")
     Modules.RF_RoleIcons = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_RoleIcons")
     Modules.RF_Solo = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Solo")
     Modules.RF_Defensive = mUI:GetModule("mUI.Modules.Unitframes.RF_Defensive")
@@ -86,6 +87,9 @@ function Modules:OnEnable()
     if Modules.db.raidframes.names or Modules.db.raidframes.hidenames then
         Modules.RF_Name:Enable()
     end
+    if Modules.db.raidframes.hidenames then
+        Modules.RF_HideNames:Enable()
+    end
     if Modules.db.raidframes.solo then
         Modules.RF_Solo:Enable()
     end
@@ -118,6 +122,7 @@ function Modules:OnDisable()
     Modules.RF_RoleIcons:Disable()
     Modules.RF_Health:Disable()
     Modules.RF_Name:Disable()
+    Modules.RF_HideNames:Disable()
     Modules.RF_Solo:Disable()
     Modules.Smooth:Disable()
     Modules.Overshields:Disable()
