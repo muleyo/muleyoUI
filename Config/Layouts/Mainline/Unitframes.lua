@@ -598,6 +598,28 @@ function Unitframes:OnInitialize()
                 end,
                 order = 31
             },
+            hidenames = {
+                name = "Hide Names",
+                desc = "Hide Names on Party/Raidframes",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.hidenames = val
+
+                    if not Unitframes.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Unitframes.Module.RF_Name:Enable()
+                    else
+                        Unitframes.Module.RF_Name:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.hidenames
+                end,
+                order = 32
+            },
             solo = {
                 name = "Solo Partyframes",
                 desc = "Show Partyframes even when not in a group",
@@ -618,7 +640,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.solo
                 end,
-                order = 32
+                order = 33
             },
             skinicons = {
                 name = "Skin Aura Icons",
@@ -636,7 +658,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.skinicons
                 end,
-                order = 33
+                order = 34
             },
             defensivePosition = {
                 name = "Defensive Buff Position",
@@ -665,7 +687,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.defensive.position
                 end,
-                order = 38
+                order = 35
             },
             defensiveSize = {
                 name = "Defensive Buff Size",
@@ -686,7 +708,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.defensive.size
                 end,
-                order = 39
+                order = 36
             },
             buffSize = {
                 name = "Buff Size",
@@ -705,7 +727,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.buffsize
                 end,
-                order = 40
+                order = 37
             }
         }
     }
