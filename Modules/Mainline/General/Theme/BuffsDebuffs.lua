@@ -243,14 +243,22 @@ function Theme:UpdateRaidframeAuras(aura)
             aura.border:Hide()
 
             local unit = aura:GetParent() and aura:GetParent().displayedUnit
+            local inPvPCombat = (unit) and (IsActiveBattlefieldArena() or C_PvP.IsInBattleground() or UnitIsPVP("player"))
             local isDispellable = (unit and aura.auraInstanceID) and
                                       not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, aura.auraInstanceID, "HARMFUL|RAID_PLAYER_DISPELLABLE")
-            local isCrowdControl = (unit and aura.auraInstanceID) and
+            local isCrowdControl = inPvPCombat and (unit and aura.auraInstanceID) and
                                        not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, aura.auraInstanceID, "HARMFUL|CROWD_CONTROL")
 
-            if isDispellable or isCrowdControl then
-                local auraSize = frameHeight * 0.55
-                aura:SetSize(auraSize, auraSize)
+            if inPvPCombat then
+                if isCrowdControl then
+                    local auraSize = frameHeight * 0.55
+                    aura:SetSize(auraSize, auraSize)
+                end
+            else
+                if isDispellable then
+                    local auraSize = frameHeight * 0.55
+                    aura:SetSize(auraSize, auraSize)
+                end
             end
         else
             aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
