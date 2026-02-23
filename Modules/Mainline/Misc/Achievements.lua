@@ -4,9 +4,9 @@ function Achievements:OnInitialize()
     Achievements.frame = CreateFrame("Frame")
     -- Current Achievement IDs
     Achievements.ids = {
-        gladiator = 41049,
-        shuffle = 42023,
-        blitz = 42024
+        gladiator = 61188,
+        shuffle = 61190,
+        blitz = 61194
     }
 
     function Achievements:CreateButton(name, parent, label, yOffset)
