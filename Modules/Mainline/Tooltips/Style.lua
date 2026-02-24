@@ -53,13 +53,16 @@ function Style:OnInitialize()
         end
     end
 
-    function Style:GetTarget(unit)
+    function Style:GetTarget(guid)
         if not Style.db.style == "mUI" then
             return
         end
 
-        -- UnitIsPlayer alternative
-        -- GameTooltipTextLeft3:GetText():find("%(" .. PLAYER .. "%)")
+        if issecretvalue(guid) then
+            return
+        end
+
+        local unit = UnitTokenFromGUID(guid) .. "target"
 
         if UnitIsUnit(unit, "player") then
             return ("|cffff0000%s|r"):format("<YOU>")
@@ -73,17 +76,71 @@ function Style:OnInitialize()
         return ("|cffffffff%s|r"):format(UnitName(unit))
     end
 
-    function Style:OnTooltipSetUnit(frame)
+    function Style:OnTooltipSetPlayer(frame, guid)
         if not Style.db.style == "mUI" then
             return
         end
         if not frame or frame ~= _G.GameTooltip then
             return
         end
+        local unit = UnitTokenFromGUID(guid)
 
-        -- Get Unit
-        local _, unit = frame:GetUnit()
-        if not unit then
+        for i = 2, GameTooltip:NumLines() do
+            local line = _G["GameTooltipTextLeft" .. i]
+            if line then
+                if not line == 4 then
+                    line:SetTextColor(unpack(Style.cfg.textColor))
+                end
+            end
+        end
+
+        -- Get Class Color
+        local _, unitClass = UnitClass(unit)
+        local color = RAID_CLASS_COLORS[unitClass]
+        Style.cfg.barColor = color or {
+            r = 0,
+            g = 0.8,
+            b = 0
+        }
+
+        local barTexture = GameTooltipStatusBar:GetStatusBarTexture()
+        if barTexture then
+            barTexture:SetVertexColor(color.r, color.g, color.b)
+        end
+        GameTooltipTextLeft1:SetTextColor(color.r, color.g, color.b)
+
+        local guildName, guildRank = GetGuildInfo(unit)
+        if guildName then
+            GameTooltipTextLeft2:SetText("<" .. guildName .. "> [" .. guildRank .. "]")
+            GameTooltipTextLeft2:SetTextColor(unpack(Style.cfg.guildColor))
+        end
+
+        local levelLine = guildName and GameTooltipTextLeft3 or GameTooltipTextLeft2
+        local level = UnitLevel(unit)
+        local color = GetCreatureDifficultyColor((level > 0) and level or 999)
+        levelLine:SetTextColor(color.r, color.g, color.b)
+
+        -- Unit is AFK
+        if UnitIsAFK(unit) then
+            frame:AppendText((" |c%s<AFK>|r"):format(Style.cfg.afkColorHex))
+        end
+
+        -- Unit is dead
+        if UnitIsDeadOrGhost(unit) then
+            GameTooltipTextLeft1:SetTextColor(unpack(Style.cfg.deadColor))
+        end
+
+        -- Current Target
+        if UnitExists(unit .. "target") then
+            GameTooltip:AddDoubleLine(("|c%s%s|r"):format(Style.cfg.targetColorHex, "Target"), Style:GetTarget(guid))
+        end
+    end
+
+    function Style:OnTooltipSetUnit(frame, guid)
+        if not Style.db.style == "mUI" then
+            return
+        end
+        if not frame or frame ~= _G.GameTooltip then
             return
         end
         for i = 2, GameTooltip:NumLines() do
@@ -95,53 +152,21 @@ function Style:OnInitialize()
             end
         end
 
-        -- Unit is Player
-        if UnitIsPlayer(unit) then
-            -- Get Class Color
-            local _, unitClass = UnitClass(unit)
-            local color = RAID_CLASS_COLORS[unitClass]
-            Style.cfg.barColor = color or {
-                r = 0,
-                g = 0.8,
-                b = 0
-            }
-            local barTexture = GameTooltipStatusBar:GetStatusBarTexture()
-            if barTexture then
-                barTexture:SetVertexColor(color.r, color.g, color.b)
-            end
-            GameTooltipTextLeft1:SetTextColor(color.r, color.g, color.b)
+        -- Get Unit
+        local unit = UnitTokenFromGUID(guid)
 
-            -- NEEDS TESTING
-            local guildName, guildRank = GetGuildInfo(unit)
-            if guildName then
-                GameTooltipTextLeft2:SetText("<" .. guildName .. "> [" .. guildRank .. "]")
-                GameTooltipTextLeft2:SetTextColor(unpack(Style.cfg.guildColor))
-            end
-
-            local levelLine = guildName and GameTooltipTextLeft3 or GameTooltipTextLeft2
-            local level = UnitLevel(unit)
-            local color = GetCreatureDifficultyColor((level > 0) and level or 999)
-            levelLine:SetTextColor(color.r, color.g, color.b)
-
-            if UnitIsAFK(unit) then
-                frame:AppendText((" |c%s<AFK>|r"):format(Style.cfg.afkColorHex))
-            end
-        else -- Unit is NPC
-            -- Get Reaction Color
+        -- Get Level Line of GameTooltip
+        if not issecretvalue(guid) then
             local reaction = UnitReaction(unit, "player")
             if reaction then
                 local color = FACTION_BAR_COLORS[reaction]
                 if color then
                     Style.cfg.barColor = color
-                    local barTexture = GameTooltipStatusBar:GetStatusBarTexture()
-                    if barTexture then
-                        barTexture:SetVertexColor(color.r, color.g, color.b)
-                    end
+                    GameTooltipStatusBar:SetStatusBarColor(color.r, color.g, color.b)
                     GameTooltipTextLeft1:SetTextColor(color.r, color.g, color.b)
                 end
             end
 
-            -- Get Level Line of GameTooltip
             local levelLine
 
             if string.find(GameTooltipTextLeft2:GetText() or "empty", "%a%s%d") then
@@ -170,21 +195,30 @@ function Style:OnInitialize()
                 frame:AppendText(" |cffff6666[E]|r")
             end
 
-            -- Get NPC ID (only works outside of combat)
-            local _, _, _, _, _, id = strsplit("-", UnitGUID(unit) or "")
+            -- Get NPC ID
+            local _, _, _, _, _, id = strsplit("-", guid or "")
             if id then
                 frame:AddDoubleLine("|cff0099ffID|r", id)
             end
-        end
 
-        -- Unit is dead
-        if UnitIsDeadOrGhost(unit) then
-            GameTooltipTextLeft1:SetTextColor(unpack(Style.cfg.deadColor))
-        end
+            -- Unit is dead
+            if UnitIsDeadOrGhost(unit) then
+                GameTooltipTextLeft1:SetTextColor(unpack(Style.cfg.deadColor))
+            end
 
-        -- Current Target
-        if UnitExists(unit .. "target") then
-            GameTooltip:AddDoubleLine(("|c%s%s|r"):format(Style.cfg.targetColorHex, "Target"), Style:GetTarget(unit .. "target"))
+            -- Current Target
+            if UnitExists(unit .. "target") then
+                GameTooltip:AddDoubleLine(("|c%s%s|r"):format(Style.cfg.targetColorHex, "Target"), Style:GetTarget(guid))
+            end
+        else
+            -- Get Reaction Color
+            local r, g, b = GameTooltipTextLeft1:GetTextColor()
+            Style.cfg.barColor = {
+                r = r,
+                g = g,
+                b = b
+            }
+            GameTooltipStatusBar:SetStatusBarColor(r, g, b)
         end
     end
 
@@ -334,14 +368,14 @@ function Style:OnInitialize()
         end
     end
 
-    function Style:FixTooltipTextures()
+    --[[function Style:FixTooltipTextures()
         for i = 1, 30 do
             local frame = _G["GameTooltipTexture" .. i]
             if frame and frame:IsShown() then
                 frame:SetDrawLayer("BACKGROUND", 1)
             end
         end
-    end
+    end]]
 end
 
 function Style:OnEnable()
@@ -377,14 +411,20 @@ function Style:OnEnable()
 
         -- Units
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, function(frame, data)
-            xpcall(Style.OnTooltipSetUnit, nop, Style, frame)
+            -- xpcall(Style.OnTooltipSetUnit, nop, Style, frame)
+
+            local _, isPlayer = GetPlayerInfoByGUID(data.guid)
+            if isPlayer then
+                xpcall(Style.OnTooltipSetPlayer, nop, Style, frame, data.guid)
+            else
+                xpcall(Style.OnTooltipSetUnit, nop, Style, frame, data.guid)
+            end
         end)
 
         -- Items
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function(tooltip)
             xpcall(Style.OnTooltipSetItem, nop, Style, tooltip)
             xpcall(Style.OnItemTooltipSetColor, nop, Style, tooltip)
-            xpcall(Style.FixTooltipTextures, nop, Style)
         end)
 
         Style.hooked = true
