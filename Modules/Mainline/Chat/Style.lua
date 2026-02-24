@@ -61,41 +61,22 @@ function Style:OnEnable()
     end
 
     -- temporary chat frames
-    -- Skin directly in FCF_SetTemporaryWindowType: this hook always fires with the
-    -- actual chatFrame regardless of whether FCF_OpenTemporaryWindow reuses an
-    -- existing window or creates a new one, avoiding the old pendingTempFrame race.
+    -- FCF_SetTemporaryWindowType always fires with the actual chatFrame, so we hook
+    -- it instead of the old two-hook pendingTempFrame relay.
+    --
+    -- IMPORTANT: FCF_OpenTemporaryWindow calls FCF_DockFrame() AFTER
+    -- FCF_SetTemporaryWindowType returns, which triggers FCFDock_UpdateTabs →
+    -- FCFTab_UpdateColors + PanelTemplates_TabResize and resets the tab visuals on
+    -- top of whatever we applied synchronously. We therefore defer all visual
+    -- skinning one frame with C_Timer.After(0) so it always runs AFTER the full
+    -- FCF_OpenTemporaryWindow call stack has finished.
     Style:SecureHook("FCF_SetTemporaryWindowType", function(chatFrame, chatType, chatTarget)
-        -- Set fading based on config
+        -- Non-visual setup can happen immediately.
         chatFrame:SetFading(Style.db.fade.enabled)
         if Style.db.fade.enabled then
             chatFrame:SetTimeVisible(Style.db.fade.out_delay)
         end
 
-        Style:HandleChatTab(_G[chatFrame:GetName() .. "Tab"])
-        Style:HandleEditBox(_G[chatFrame:GetName() .. "EditBox"])
-        Style:HandleMinimizeButton(_G[chatFrame:GetName() .. "ButtonFrameMinimizeButton"], _G[chatFrame:GetName() .. "Tab"])
-        Style:HideDefaultScrollbar(chatFrame)
-        Style:HideChatFrameBackground(chatFrame)
-        Style:AddChatFrameBackground(chatFrame)
-
-        -- Setup or update scroll buttons
-        if not chatFrame.mUIScrollButtonsSetup then
-            Style:SetupScrollButtons(chatFrame)
-        else
-            -- Buttons already exist, just update their visibility
-            if chatFrame.ToggleScrollButtons then
-                chatFrame:ToggleScrollButtons()
-            end
-        end
-
-        -- Apply fonts to temporary windows
-        Style:ApplyChatFrameFont(chatFrame)
-        local editBox = _G[chatFrame:GetName() .. "EditBox"]
-        if editBox then
-            Style:ApplyEditBoxFont(editBox)
-        end
-
-        -- Setup hyperlink tooltips for temporary frames
         if not chatFrame.mUIHyperlinkHooked then
             chatFrame:SetScript("OnHyperlinkEnter", function(self, link, text, region, left, bottom, width, height)
                 if not Style.db.tooltips then
@@ -117,6 +98,35 @@ function Style:OnEnable()
         end
 
         tempChatFrames[chatFrame] = true
+
+        -- Defer visual skinning so it runs after FCF_DockFrame (and its
+        -- FCFDock_UpdateTabs call) has finished overwriting tab state.
+        C_Timer.After(0, function()
+            if not chatFrame:GetName() then
+                return
+            end
+
+            Style:HandleChatTab(_G[chatFrame:GetName() .. "Tab"])
+            Style:HandleEditBox(_G[chatFrame:GetName() .. "EditBox"])
+            Style:HandleMinimizeButton(_G[chatFrame:GetName() .. "ButtonFrameMinimizeButton"], _G[chatFrame:GetName() .. "Tab"])
+            Style:HideDefaultScrollbar(chatFrame)
+            Style:HideChatFrameBackground(chatFrame)
+            Style:AddChatFrameBackground(chatFrame)
+
+            if not chatFrame.mUIScrollButtonsSetup then
+                Style:SetupScrollButtons(chatFrame)
+            else
+                if chatFrame.ToggleScrollButtons then
+                    chatFrame:ToggleScrollButtons()
+                end
+            end
+
+            Style:ApplyChatFrameFont(chatFrame)
+            local editBox = _G[chatFrame:GetName() .. "EditBox"]
+            if editBox then
+                Style:ApplyEditBoxFont(editBox)
+            end
+        end)
     end)
 
     -- Disable font size change from right-click menu
