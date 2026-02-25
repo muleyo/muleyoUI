@@ -167,6 +167,8 @@ function Theme:OnEnable()
             Theme:ItemUpgrade()
         elseif (addon == "Blizzard_ReforgingUI") then
             Theme:Reforging()
+        elseif (addon == "Blizzard_GroupFinder_VanillaStyle") then
+            Theme:LFG()
         end
     end)
 end

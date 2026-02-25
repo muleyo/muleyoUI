@@ -69,23 +69,21 @@ function Font:OnInitialize()
         PetFrameManaBar.RightText:SetFont(Font.db.fontpath, 9, "THINOUTLINE")
         PetFrameManaBar.TextString:SetFont(Font.db.fontpath, 9, "THINOUTLINE")
 
-        if C_AddOns.IsAddOnLoaded("ModernTargetFrame") then
-            -- Target Status Texts
-            TargetFrameHealthBar.LeftText:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
-            TargetFrameHealthBar.RightText:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
-            TargetFrameHealthBar.TextString:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
-            TargetFrameManaBar.LeftText:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
-            TargetFrameManaBar.RightText:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
-            TargetFrameManaBar.TextString:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+        -- Target Status Texts
+        TargetFrameHealthBar.LeftText:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+        TargetFrameHealthBar.RightText:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+        TargetFrameHealthBar.TextString:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+        TargetFrameManaBar.LeftText:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+        TargetFrameManaBar.RightText:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+        TargetFrameManaBar.TextString:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
 
-            -- Focus Status Texts
-            FocusFrameTextureFrame.HealthBarTextLeft:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
-            FocusFrameTextureFrame.HealthBarTextRight:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
-            FocusFrameTextureFrame.HealthBarText:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
-            FocusFrameTextureFrame.ManaBarTextLeft:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
-            FocusFrameTextureFrame.ManaBarTextRight:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
-            FocusFrameTextureFrame.ManaBarText:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
-        end
+        -- Focus Status Texts
+        FocusFrameTextureFrame.HealthBarTextLeft:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+        FocusFrameTextureFrame.HealthBarTextRight:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+        FocusFrameTextureFrame.HealthBarText:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+        FocusFrameTextureFrame.ManaBarTextLeft:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+        FocusFrameTextureFrame.ManaBarTextRight:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
+        FocusFrameTextureFrame.ManaBarText:SetFont(Font.db.fontpath, 11, "THINOUTLINE")
     end
 
     if Font.db.font ~= "None" then

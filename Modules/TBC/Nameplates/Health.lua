@@ -47,7 +47,7 @@ function Health:OnInitialize()
                     healthBar.text:SetText(string.format("%." .. Health.db.nameplates.decimals .. "f", (currentHealth / maxHealth) * 100) .. "%")
                 end
 
-                mUI:Skin(nameplate.healthBar.border)
+                mUI:Skin(nameplate.HealthBarsContainer.border)
                 -- mUI:Skin({nameplate.CastBar.Border, nameplate.CastBar.BorderShield}, true)
             end
         end
