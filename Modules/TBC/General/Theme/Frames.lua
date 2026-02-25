@@ -798,6 +798,16 @@ function Theme:Item()
     mUI:Skin(ItemTextFrameInset.NineSlice)
 end
 
+function Theme:LFG()
+    -- LFG
+    mUI:Skin(LFGListingFrame)
+    mUI:Skin(LFGBrowseFrame)
+    mUI:Skin(LFGParentFrameTab1)
+    mUI:Skin(LFGParentFrameTab2)
+    mUI:Skin(LFGBrowseFrameTab1)
+    mUI:Skin(LFGBrowseFrameTab2)
+end
+
 function Theme:Loot()
     -- Loot
     mUI:Skin(LootFrame)
