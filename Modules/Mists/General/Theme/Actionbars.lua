@@ -10,7 +10,9 @@ function Theme:StyleButton(Button, Type)
     local Icon = _G[Name .. "Icon"]
     local Cooldown = _G[Name .. "Cooldown"]
 
-    Icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+    if Icon then
+        Icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+    end
 
     if Type == "StanceOrPet" then
         mUI:Skin({_G[Name .. "NormalTexture2"]}, true)

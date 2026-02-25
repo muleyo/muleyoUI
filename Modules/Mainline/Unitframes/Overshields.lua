@@ -1,119 +1,212 @@
 local Overshields = mUI:NewModule("mUI.Modules.Unitframes.Overshields", "AceHook-3.0")
 
-function Overshields:OnInitialize()
-    Overshields.calculator = CreateUnitHealPredictionCalculator()
+local containers = {}
 
-    -- Curve that returns 1 when health is below 100%, and 0 when at 100%
-    -- X is health percentage (0-1), Y is the alpha value
-    Overshields.curve = C_CurveUtil.CreateCurve()
-    Overshields.curve:SetType(Enum.LuaCurveType.Linear)
-    Overshields.curve:AddPoint(0.98, 0) -- At 99% health, hide (alpha = 0)
-    Overshields.curve:AddPoint(1, 1) -- At 100% health, show (alpha = 1)
+local function ReanchorOverAbsorbGlow(container)
+    local overAbsorbGlow = container.OverAbsorbGlow
+    local texture = container.Absorb:GetStatusBarTexture()
 
-    function Overshields:CreateAbsorbBar(frame)
-        if frame.mUIAbsorbBar then
-            return frame.mUIAbsorbBar
-        end
+    overAbsorbGlow:ClearAllPoints()
+    overAbsorbGlow:SetPoint("TOP", texture, "TOP", 0, 0)
+    overAbsorbGlow:SetPoint("BOTTOM", texture, "BOTTOM", 0, 0)
+    overAbsorbGlow:SetPoint("LEFT", texture, "LEFT", -7, 0)
+end
 
-        -- Create a real StatusBar - it can handle secret values internally
-        local absorbBar = CreateFrame("StatusBar", nil, frame)
-        local texture = absorbBar:CreateTexture(nil, "BORDER")
-        texture:SetTexture("Interface\\RaidFrame\\Shield-Overlay", true, true)
-        texture:SetAllPoints()
-        absorbBar:SetStatusBarTexture(texture)
-        absorbBar:GetStatusBarTexture():SetHorizTile(true)
-        absorbBar:GetStatusBarTexture():SetVertTile(true)
-        absorbBar:SetStatusBarColor(1, 1, 1, 1)
-
-        frame.mUIAbsorbBar = absorbBar
-
-        return absorbBar
+local function EnsureContainer(unitFrame, healthBar, overAbsorbGlow)
+    if containers[unitFrame] then
+        return containers[unitFrame]
     end
 
-    function Overshields:Update(frame)
-        if not frame or frame:IsForbidden() then
-            return
-        end
+    local absorb = CreateFrame("StatusBar", nil, healthBar)
+    absorb:SetAllPoints(healthBar)
+    absorb:SetReverseFill(true)
+    absorb:SetStatusBarTexture("Interface\\RaidFrame\\Shield-Overlay")
+    -- Don't draw above the health bar
+    absorb:SetFrameLevel(healthBar:GetFrameLevel())
 
-        if not frame:GetName() or not frame.displayedUnit then
-            return
-        end
+    -- Handle potentially secret frame strata
+    local strata = healthBar:GetFrameStrata()
+    if type(strata) ~= "string" then
+        strata = "LOW"
+    end
 
-        local name = frame:GetName()
-        if not name:match("^Compact") then
-            return
-        end
+    absorb:SetFrameStrata(strata)
+    absorb:SetStatusBarColor(1, 1, 1, 0.5)
+    absorb:Hide()
 
-        local unit = frame.unit
-        local healthBar = frame.healthBar
+    local texture = absorb:GetStatusBarTexture()
+    texture:SetTexture("Interface\\RaidFrame\\Shield-Overlay", "REPEAT", "REPEAT")
+    texture:SetHorizTile(true)
+    texture:SetVertTile(true)
+    -- Draw behind other artifacts such as the frame selection border
+    texture:SetDrawLayer("ARTWORK", 1)
 
-        if not healthBar or not UnitExists(unit) then
-            return
-        end
+    local container = {
+        UnitFrame = unitFrame,
+        HealthBar = healthBar,
+        Absorb = absorb,
+        OverAbsorbGlow = overAbsorbGlow
+    }
+    containers[unitFrame] = container
 
-        -- Create absorb bar if needed
-        local absorbBar = Overshields:CreateAbsorbBar(frame)
+    if overAbsorbGlow then
+        ReanchorOverAbsorbGlow(container)
+    end
 
-        -- Hide the default overabsorb glow
-        if frame.overAbsorbGlow then
-            frame.overAbsorbGlow:Hide()
-        end
+    return container
+end
 
-        -- Get health max value for the bar scale
-        local _, maxHealth = healthBar:GetMinMaxValues()
+local function Update(container, unit)
+    local absorb = container.Absorb
+    local healthBar = container.HealthBar
+    local _, maxHealth = healthBar:GetMinMaxValues()
 
-        -- Use UnitGetDetailedHealPrediction to populate the calculator
-        UnitGetDetailedHealPrediction(unit, nil, Overshields.calculator)
+    -- Use calculator to get absorb amount
+    UnitGetDetailedHealPrediction(unit, nil, Overshields.calculator)
+    Overshields.calculator:SetDamageAbsorbClampMode(Enum.UnitDamageAbsorbClampMode.MaximumHealth)
+    local absorbAmount = Overshields.calculator:GetDamageAbsorbs()
 
-        -- Get absorb amount from the calculator
-        Overshields.calculator:SetDamageAbsorbClampMode(Enum.UnitDamageAbsorbClampMode.MaximumHealth)
-        local absorbAmount = Overshields.calculator:GetDamageAbsorbs()
+    absorb:SetMinMaxValues(0, maxHealth)
+    absorb:SetValue(absorbAmount, 1)
 
-        -- Use curve to get alpha value (1 if health < 100%, 0 if health = 100%)
-        local alpha = UnitHealthPercent(unit, true, Overshields.curve)
+    -- Use curve to get alpha (1 at full health, 0 below ~99%)
+    local alpha = UnitHealthPercent(unit, true, Overshields.curve)
+    absorb:SetAlpha(alpha)
 
-        -- Configure the StatusBar - it handles secret values internally
-        absorbBar:SetOrientation("HORIZONTAL")
-        absorbBar:SetReverseFill(true) -- Fill from right to left
-        absorbBar:SetMinMaxValues(0, maxHealth) -- Pass secret value directly, no arithmetic!
-        absorbBar:SetValue(absorbAmount, 1) -- Pass absorb amount directly
-        absorbBar:SetAlpha(alpha) -- Hide when at 100% health
+    local glow = container.OverAbsorbGlow
 
-        -- Anchor the LEFT side to the RIGHT edge of health, so it grows rightward
-        local defaultWidth = 72
-        local frameWidth = EditModeManagerFrame:GetRaidFrameWidth(Enum.EditModeUnitFrameSystemIndices.Party, defaultWidth) - 2
-        absorbBar:ClearAllPoints()
-        absorbBar:SetPoint("TOPRIGHT", healthBar:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
-        absorbBar:SetPoint("BOTTOMRIGHT", healthBar:GetStatusBarTexture(), "BOTTOMLEFT", 0, 0)
-        absorbBar:SetWidth(frameWidth)
+    if not glow then
+        absorb:Show()
+        return
+    end
 
-        absorbBar:Show()
-
-        absorbBar:SetAlpha(alpha)
+    -- If the glow is visible then we know there is an overshield
+    if glow:IsVisible() then
+        absorb:Show()
+    else
+        absorb:Hide()
     end
 end
 
+local function GetBlizzardUnitHealthBar(unit)
+    if unit == "player" then
+        if PlayerFrame and PlayerFrame.healthbar then
+            return PlayerFrame, PlayerFrame.healthbar, PlayerFrame.overAbsorbGlow
+        end
+        if PlayerFrame and PlayerFrame.PlayerFrameContent and PlayerFrame.PlayerFrameContent.PlayerFrameContentMain and
+            PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBar then
+            return PlayerFrame, PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBar, PlayerFrame.overAbsorbGlow
+        end
+    elseif unit == "target" then
+        if TargetFrame and TargetFrame.healthbar then
+            return TargetFrame, TargetFrame.healthbar, TargetFrame.overAbsorbGlow
+        end
+        if TargetFrame and TargetFrame.TargetFrameContent and TargetFrame.TargetFrameContent.TargetFrameContentMain and
+            TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBar then
+            return TargetFrame, TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBar, TargetFrame.overAbsorbGlow
+        end
+    elseif unit == "focus" then
+        if FocusFrame and FocusFrame.healthbar then
+            return FocusFrame, FocusFrame.healthbar, FocusFrame.overAbsorbGlow
+        end
+        if FocusFrame and FocusFrame.TargetFrameContent and FocusFrame.TargetFrameContent.TargetFrameContentMain and
+            FocusFrame.TargetFrameContent.TargetFrameContentMain.HealthBar then
+            return FocusFrame, FocusFrame.TargetFrameContent.TargetFrameContentMain.HealthBar, FocusFrame.overAbsorbGlow
+        end
+    end
+
+    return nil, nil, nil
+end
+
+local function UpdateBlizzardUnitFrame(unit)
+    local unitFrame, healthBar, overAbsorbGlow = GetBlizzardUnitHealthBar(unit)
+
+    if not unitFrame or not healthBar then
+        return
+    end
+
+    local container = EnsureContainer(unitFrame, healthBar, overAbsorbGlow)
+    Update(container, unit)
+end
+
+local function UpdateCompactFrame(frame)
+    if not frame or frame:IsForbidden() or not frame.healthBar or not frame.unit then
+        return
+    end
+
+    local unit = frame.unit
+
+    local container = EnsureContainer(frame, frame.healthBar, frame.overAbsorbGlow)
+    Update(container, unit)
+
+    if container.OverAbsorbGlow then
+        ReanchorOverAbsorbGlow(container)
+
+        if frame.UpdateAnchors and not frame.mUIOvershieldsHooked then
+            hooksecurefunc(frame, "UpdateAnchors", function()
+                ReanchorOverAbsorbGlow(container)
+            end)
+            frame.mUIOvershieldsHooked = true
+        end
+    end
+end
+
+function Overshields:OnInitialize()
+    Overshields.calculator = CreateUnitHealPredictionCalculator()
+
+    -- Curve that returns 1 when health is at 100%, and 0 when below
+    Overshields.curve = C_CurveUtil.CreateCurve()
+    Overshields.curve:SetType(Enum.LuaCurveType.Linear)
+    Overshields.curve:AddPoint(0.98, 0) -- Below ~99% health, hide (alpha = 0)
+    Overshields.curve:AddPoint(1, 1) -- At 100% health, show (alpha = 1)
+end
+
 function Overshields:OnEnable()
+    -- Hook compact unit frames (raid/party)
     Overshields:SecureHook("CompactUnitFrame_UpdateHealPrediction", function(frame)
-        Overshields:Update(frame)
+        UpdateCompactFrame(frame)
     end)
 
-    -- Also hook absorb amount changes to update immediately
     Overshields:SecureHook("CompactUnitFrame_UpdateAll", function(frame)
-        if frame and not frame:IsForbidden() then
-            Overshields:Update(frame)
-        end
+        UpdateCompactFrame(frame)
     end)
+
+    -- Create events frame for player/target/focus unit frames
+    if not Overshields.eventsFrame then
+        Overshields.eventsFrame = CreateFrame("Frame")
+    end
+
+    local eventsFrame = Overshields.eventsFrame
+    eventsFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+    eventsFrame:RegisterEvent("PLAYER_FOCUS_CHANGED")
+    eventsFrame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "player", "target", "focus")
+    eventsFrame:RegisterUnitEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED", "player", "target", "focus")
+
+    eventsFrame:SetScript("OnEvent", function()
+        UpdateBlizzardUnitFrame("player")
+        UpdateBlizzardUnitFrame("target")
+        UpdateBlizzardUnitFrame("focus")
+    end)
+
+    -- Run an initial update for the Blizzard unit frames
+    UpdateBlizzardUnitFrame("player")
+    UpdateBlizzardUnitFrame("target")
+    UpdateBlizzardUnitFrame("focus")
 end
 
 function Overshields:OnDisable()
     Overshields:UnhookAll()
 
-    -- Hide all custom absorb bars
-    for i = 1, 40 do
-        local frame = _G["CompactRaidFrame" .. i]
-        if frame and frame.mUIAbsorbBar then
-            frame.mUIAbsorbBar:Hide()
+    -- Unregister events
+    if Overshields.eventsFrame then
+        Overshields.eventsFrame:UnregisterAllEvents()
+        Overshields.eventsFrame:SetScript("OnEvent", nil)
+    end
+
+    -- Hide all absorb bars
+    for _, container in pairs(containers) do
+        if container.Absorb then
+            container.Absorb:Hide()
         end
     end
 end
