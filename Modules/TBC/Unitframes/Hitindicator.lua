@@ -1,25 +1,16 @@
-local Hitindicator = mUI:NewModule("mUI.Modules.Unitframes.Hitindicator")
+local Hitindicator = mUI:NewModule("mUI.Modules.Unitframes.Hitindicator", "AceHook-3.0")
 
 function Hitindicator:OnInitialize()
-    -- Backup original function
-    Hitindicator.pet = PetHitIndicator.SetText
-    Hitindicator.player = PlayerHitIndicator.SetText
+    function Hitindicator:Update()
+        PlayerHitIndicator:Hide()
+        PetHitIndicator:Hide()
+    end
 end
 
 function Hitindicator:OnEnable()
-    -- Hide PlayerFrame Hit Indicator
-    PlayerHitIndicator:SetText(nil)
-    PlayerHitIndicator.SetText = function()
-    end
-
-    -- Hide PetFrame Hit Indicator
-    PetHitIndicator:SetText(nil)
-    PetHitIndicator.SetText = function()
-    end
+    Hitindicator:SecureHook("CombatFeedback_OnCombatEvent", Hitindicator.Update)
 end
 
 function Hitindicator:OnDisable()
-    -- Restore functionality
-    PlayerHitIndicator.SetText = Hitindicator.player
-    PetHitIndicator.SetText = Hitindicator.pet
+    Hitindicator:UnhookAll()
 end
