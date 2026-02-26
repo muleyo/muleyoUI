@@ -530,6 +530,28 @@ function Chat:OnInitialize()
                     return mUI.db.profile.chat.copy
                 end,
                 order = 27
+            },
+            whisperalert = {
+                name = "Whisper Alert",
+                desc = "Enable / Disable Whisper Alerts",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.chat.whisperalert = val
+
+                    if not Chat.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Chat.Module.WhisperAlert:Enable()
+                    else
+                        Chat.Module.WhisperAlert:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.chat.whisperalert
+                end,
+                order = 28
             }
         }
     }

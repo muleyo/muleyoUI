@@ -5,6 +5,7 @@ function Modules:OnInitialize()
     Modules.Style = mUI:GetModule("mUI.Modules.Chat.Style")
     Modules.Link = mUI:GetModule("mUI.Modules.Chat.Link")
     Modules.Copy = mUI:GetModule("mUI.Modules.Chat.Copy")
+    Modules.WhisperAlert = mUI:GetModule("mUI.Modules.Chat.WhisperAlert")
 end
 
 function Modules:OnEnable()
@@ -19,6 +20,9 @@ function Modules:OnEnable()
     if Modules.db.copy then
         Modules.Copy:Enable()
     end
+    if Modules.db.whisperalert then
+        Modules.WhisperAlert:Enable()
+    end
 end
 
 function Modules:OnDisable()
@@ -26,4 +30,5 @@ function Modules:OnDisable()
     Modules.Style:Disable()
     Modules.Link:Disable()
     Modules.Copy:Disable()
+    Modules.WhisperAlert:Disable()
 end
