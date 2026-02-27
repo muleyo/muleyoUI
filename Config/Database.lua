@@ -24,7 +24,8 @@ local defaults = {
                 cinematic = true,
                 talkinghead = true,
                 rolecheck = false,
-                quests = false
+                quests = false,
+                gossip = false
             },
             display = {
                 iteminfo = true,
