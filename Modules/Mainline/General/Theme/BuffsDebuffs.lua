@@ -243,10 +243,10 @@ function Theme:UpdateRaidframeAuras(aura)
             aura.border:Hide()
 
             local unit = aura:GetParent() and aura:GetParent().displayedUnit
-            local PvP = (unit) and (C_PvP.IsMatchActive() or UnitIsPVP("player"))
+            local PvP = C_PvP.IsMatchActive() or UnitIsPVP("player")
             local isDispellable = (unit and aura.auraInstanceID) and
                                       not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, aura.auraInstanceID, "HARMFUL|RAID_PLAYER_DISPELLABLE")
-            local isCrowdControl = PvP and (unit and aura.auraInstanceID) and
+            local isCrowdControl = (PvP and unit and aura.auraInstanceID) and
                                        not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, aura.auraInstanceID, "HARMFUL|CROWD_CONTROL")
 
             if PvP then

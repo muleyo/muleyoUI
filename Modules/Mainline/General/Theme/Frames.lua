@@ -1205,6 +1205,7 @@ function Theme:Settings()
     mUI:Skin(SettingsPanel.NineSlice)
     mUI:Skin(SettingsPanel.GameTab)
     mUI:Skin(SettingsPanel.AddOnsTab)
+    Theme:StyleTooltip(SettingsTooltip)
 end
 
 function Theme:Raidframe()
