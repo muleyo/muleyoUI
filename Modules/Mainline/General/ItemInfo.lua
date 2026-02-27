@@ -28,10 +28,19 @@ function ItemInfo:OnInitialize()
     }
 
     ItemInfo.expansionEnchantableSlots = {
+        [11] = {
+            [INVSLOT_HEAD] = true,
+            [INVSLOT_SHOULDER] = true,
+            [INVSLOT_CHEST] = true,
+            [INVSLOT_LEGS] = true,
+            [INVSLOT_FEET] = true,
+            [INVSLOT_MAINHAND] = true,
+            [INVSLOT_FINGER1] = true,
+            [INVSLOT_FINGER2] = true
+        },
         [10] = {
             [INVSLOT_BACK] = true,
             [INVSLOT_CHEST] = true,
-            [INVSLOT_WRIST] = true,
             [INVSLOT_WRIST] = true,
             [INVSLOT_LEGS] = true,
             [INVSLOT_FEET] = true,
@@ -476,7 +485,7 @@ function ItemInfo:OnInitialize()
                 local ilvl = C_Item.GetDetailedItemLevelInfo(itemLink)
                 local quality = GetInventoryItemQuality(unit, slot)
                 if (quality) then
-                    local hex = select(4, GetItemQualityColor(quality))
+                    local hex = select(4, C_Item.GetItemQualityColor(quality))
                     itemiLvlText = "|c" .. hex .. ilvl .. "|r"
                 else
                     itemiLvlText = ilvl
