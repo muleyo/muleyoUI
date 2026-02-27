@@ -12,7 +12,7 @@ function ItemInfo:OnInitialize()
     ItemInfo.scanningTooltip = CreateFrame("GameTooltip", "mUIScanningTooltip", nil, "GameTooltipTemplate")
     ItemInfo.scanningTooltip:SetOwner(UIParent, "ANCHOR_NONE")
     ItemInfo.buttons = {}
-    ItemInfo.LEGENDARY_ITEM_LEVEL = 483
+    ItemInfo.LEGENDARY_ITEM_LEVEL = 285
     ItemInfo.STEP_ITEM_LEVEL = 17
     ItemInfo.levelThresholds = {}
     ItemInfo.NUM_SOCKET_TEXTURES = 4
@@ -582,7 +582,10 @@ function ItemInfo:OnInitialize()
 
     function ItemInfo:CalculatePreciseInspectItemLevel(unit)
         local totalItemLevel = 0
-        local itemCount = 0
+        local mainHandItemLevel = 0
+        local hasOffhand = false
+        local mainHandIs2H = false
+        local NUM_SLOTS = 16
 
         -- Define the slots to check (same as character sheet)
         local slotsToCheck = {INVSLOT_HEAD, INVSLOT_NECK, INVSLOT_SHOULDER, INVSLOT_CHEST, INVSLOT_WAIST, INVSLOT_LEGS, INVSLOT_FEET, INVSLOT_WRIST,
@@ -595,13 +598,27 @@ function ItemInfo:OnInitialize()
                 local itemLevel = C_Item.GetDetailedItemLevelInfo(itemLink)
                 if itemLevel and itemLevel > 0 then
                     totalItemLevel = totalItemLevel + itemLevel
-                    itemCount = itemCount + 1
+
+                    if slot == INVSLOT_MAINHAND then
+                        mainHandItemLevel = itemLevel
+                        local _, _, _, _, _, _, _, _, equipSlot = GetItemInfo(itemLink)
+                        if equipSlot == "INVTYPE_2HWEAPON" or equipSlot == "INVTYPE_RANGED" or equipSlot == "INVTYPE_RANGEDRIGHT" then
+                            mainHandIs2H = true
+                        end
+                    elseif slot == INVSLOT_OFFHAND then
+                        hasOffhand = true
+                    end
                 end
             end
         end
 
-        if itemCount > 0 then
-            return totalItemLevel / itemCount
+        -- 2H weapons count for both mainhand and offhand slots
+        if mainHandIs2H and not hasOffhand and mainHandItemLevel > 0 then
+            totalItemLevel = totalItemLevel + mainHandItemLevel
+        end
+
+        if totalItemLevel > 0 then
+            return totalItemLevel / NUM_SLOTS
         else
             return 0
         end
