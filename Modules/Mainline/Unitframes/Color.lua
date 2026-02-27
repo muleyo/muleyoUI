@@ -9,8 +9,12 @@ function Classcolor:OnInitialize()
     Classcolor.classcolor:RegisterEvent("PLAYER_ENTERING_WORLD")
     Classcolor.classcolor:RegisterEvent("UNIT_HEALTH")
     Classcolor.classcolor:RegisterEvent("UNIT_TARGET")
+    Classcolor.classcolor:RegisterEvent("UNIT_FACTION")
     Classcolor.classcolor:RegisterEvent("PLAYER_TARGET_CHANGED")
     Classcolor.classcolor:RegisterEvent("PLAYER_FOCUS_CHANGED")
+    Classcolor.classcolor:RegisterEvent("GROUP_ROSTER_UPDATE")
+    Classcolor.classcolor:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
+    Classcolor.classcolor:RegisterEvent("UNIT_TARGETABLE_CHANGED")
 
     -- Create Tables
     -- Variables
@@ -49,33 +53,37 @@ function Classcolor:OnInitialize()
 
     function Classcolor:SetColor(frame, unit)
         local unitframe = Classcolor.frames[unit]
+        local tex = frame:GetStatusBarTexture()
+        if not tex then
+            return
+        end
         if UnitIsPlayer(unit) and UnitIsConnected(unit) and UnitClass(unit) then
             local _, class = UnitClass(unit)
             local color = RAID_CLASS_COLORS[class]
-            frame:SetStatusBarDesaturated(true)
-            frame:SetStatusBarColor(color.r, color.g, color.b)
+            tex:SetDesaturated(true)
+            tex:SetVertexColor(color.r, color.g, color.b)
             if unitframe and unitframe.ReputationColor then
                 unitframe.ReputationColor:SetVertexColor(color.r, color.g, color.b)
             end
         elseif UnitIsPlayer(unit) and (not UnitIsConnected(unit)) then
-            frame:SetStatusBarDesaturated(true)
-            frame:SetStatusBarColor(0.5, 0.5, 0.5)
+            tex:SetDesaturated(true)
+            tex:SetVertexColor(0.5, 0.5, 0.5)
             if unitframe and unitframe.ReputationColor then
                 unitframe.ReputationColor:SetVertexColor(0.5, 0.5, 0.5)
             end
         else
             if UnitExists(unit) then
                 if (UnitIsTapDenied(unit)) and not UnitPlayerControlled(unit) then
-                    frame:SetStatusBarDesaturated(true)
-                    frame:SetStatusBarColor(0.5, 0.5, 0.5)
+                    tex:SetDesaturated(true)
+                    tex:SetVertexColor(0.5, 0.5, 0.5)
                     if unitframe and unitframe.ReputationColor then
                         unitframe.ReputationColor:SetVertexColor(0.5, 0.5, 0.5)
                     end
                 elseif (not UnitIsTapDenied(unit)) then
                     local reaction = FACTION_BAR_COLORS[UnitReaction(unit, "player")]
                     if reaction then
-                        frame:SetStatusBarDesaturated(true)
-                        frame:SetStatusBarColor(reaction.r, reaction.g, reaction.b)
+                        tex:SetDesaturated(true)
+                        tex:SetVertexColor(reaction.r, reaction.g, reaction.b)
 
                         if unitframe and unitframe.ReputationColor then
                             unitframe.ReputationColor:SetVertexColor(reaction.r, reaction.g, reaction.b)
@@ -96,13 +104,19 @@ end
 function Classcolor:OnEnable()
     -- Hook Frame
     Classcolor:SecureHookScript(Classcolor.classcolor, "OnEvent", Classcolor.Update)
+    Classcolor:SecureHook(TargetFrameMixin, "Update", function(frame, unit)
+        print("yo")
+    end)
 
     -- Update PlayerFrame HealthColor
     local _, playerClass = UnitClass("player")
     local color = RAID_CLASS_COLORS[playerClass]
     Classcolor.playerFrame.ReputationColor:SetVertexColor(color.r, color.g, color.b)
-    Classcolor.playerFrame.HealthBarsContainer.HealthBar:SetStatusBarDesaturated(true)
-    Classcolor.playerFrame.HealthBarsContainer.HealthBar:SetStatusBarColor(color.r, color.g, color.b)
+    local playerTex = Classcolor.playerFrame.HealthBarsContainer.HealthBar:GetStatusBarTexture()
+    if playerTex then
+        playerTex:SetDesaturated(true)
+        playerTex:SetVertexColor(color.r, color.g, color.b)
+    end
 end
 
 function Classcolor:OnDisable()
@@ -113,12 +127,18 @@ function Classcolor:OnDisable()
     Classcolor.playerFrame.ReputationColor:SetVertexColor(0, 0, 1)
     if Classcolor.db.textures.unitframes == "None" then
         for _, frame in pairs(Classcolor.frames) do
-            frame.HealthBarsContainer.HealthBar:SetStatusBarDesaturated(false)
-            frame.HealthBarsContainer.HealthBar:SetStatusBarColor(1, 1, 1)
+            local tex = frame.HealthBarsContainer.HealthBar:GetStatusBarTexture()
+            if tex then
+                tex:SetDesaturated(false)
+                tex:SetVertexColor(1, 1, 1)
+            end
         end
     else
         for _, frame in pairs(Classcolor.frames) do
-            frame.HealthBarsContainer.HealthBar.unitFrame.healthbar:SetStatusBarColor(0, 1, 0)
+            local tex = frame.HealthBarsContainer.HealthBar.unitFrame.healthbar:GetStatusBarTexture()
+            if tex then
+                tex:SetVertexColor(0, 1, 0)
+            end
         end
     end
 end

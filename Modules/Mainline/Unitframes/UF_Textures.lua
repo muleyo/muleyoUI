@@ -186,18 +186,25 @@ function UF_Textures:OnInitialize()
 
         -- Healthbar Texture
         for name, healthbar in pairs(UF_Textures.healthbars) do
+            local hbTex = healthbar:GetStatusBarTexture()
             if UF_Textures.db.textures.unitframes == "None" then
                 if not UF_Textures.db.color then
-                    healthbar:SetStatusBarDesaturated(false)
-                    healthbar:SetStatusBarColor(1, 1, 1)
+                    if hbTex then
+                        hbTex:SetDesaturated(false)
+                        hbTex:SetVertexColor(1, 1, 1)
+                    end
                 end
-                healthbar:GetStatusBarTexture():SetAtlas(UF_Textures.defaultHealthTextures[name])
+                if hbTex then
+                    hbTex:SetAtlas(UF_Textures.defaultHealthTextures[name])
+                end
             else
                 if name == "player" then
                     select(4, healthbar:GetRegions()):SetTexture(texture)
 
                     if not UF_Textures.db.color then
-                        healthbar:SetStatusBarColor(0, 1, 0)
+                        if hbTex then
+                            hbTex:SetVertexColor(0, 1, 0)
+                        end
                     end
                 elseif name == "pet" then
                     select(7, healthbar:GetRegions()):SetTexture(texture)
@@ -224,17 +231,26 @@ function UF_Textures:OnInitialize()
             if powerbar and powerbar.powerType then
                 powerColor = PowerBarColor[powerbar.powerType]
                 if UF_Textures.db.textures.unitframes == "None" then
-                    powerbar:GetStatusBarTexture():SetAtlas(UF_Textures.defaultPowerTextures[name][powerbar.powerType])
-                    powerbar:SetStatusBarColor(1, 1, 1)
+                    local pbTex = powerbar:GetStatusBarTexture()
+                    if pbTex then
+                        pbTex:SetAtlas(UF_Textures.defaultPowerTextures[name][powerbar.powerType])
+                        pbTex:SetVertexColor(1, 1, 1)
+                    end
                 else
                     if not (powerbar.powerType == 8 or powerbar.powerType == 11 or powerbar.powerType == 13 or powerbar.powerType == 17 or
                         powerbar.powerType == 18) then
                         powerbar.texture:SetTexture(texture)
 
                         if powerbar.powerType == 0 then
-                            powerbar:SetStatusBarColor(0, 0.5, 1)
+                            local pbTex2 = powerbar:GetStatusBarTexture()
+                            if pbTex2 then
+                                pbTex2:SetVertexColor(0, 0.5, 1)
+                            end
                         else
-                            powerbar:SetStatusBarColor(powerColor.r, powerColor.g, powerColor.b)
+                            local pbTex2 = powerbar:GetStatusBarTexture()
+                            if pbTex2 then
+                                pbTex2:SetVertexColor(powerColor.r, powerColor.g, powerColor.b)
+                            end
                         end
                     end
                 end
@@ -244,11 +260,17 @@ function UF_Textures:OnInitialize()
         if AlternatePowerBar and AlternatePowerBar.powerType then
             powerColor = PowerBarColor[AlternatePowerBar.powerType]
             if UF_Textures.db.textures.unitframes == "None" then
-                AlternatePowerBar:GetStatusBarTexture():SetAtlas(UF_Textures.defaultPowerTextures["classresource"][AlternatePowerBar.powerType])
-                AlternatePowerBar:SetStatusBarColor(1, 1, 1)
+                local apTex = AlternatePowerBar:GetStatusBarTexture()
+                if apTex then
+                    apTex:SetAtlas(UF_Textures.defaultPowerTextures["classresource"][AlternatePowerBar.powerType])
+                    apTex:SetVertexColor(1, 1, 1)
+                end
             else
                 if AlternatePowerBar.powerType == 0 then
-                    AlternatePowerBar:SetStatusBarColor(0, 0.5, 1)
+                    local apTex = AlternatePowerBar:GetStatusBarTexture()
+                    if apTex then
+                        apTex:SetVertexColor(0, 0.5, 1)
+                    end
                     select(6, AlternatePowerBar:GetRegions()):SetTexture(texture)
                 end
             end
