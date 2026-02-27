@@ -380,10 +380,32 @@ function General:OnInitialize()
                 end,
                 order = 17
             },
+            gossip = {
+                name = "Gossip",
+                desc = "Select the first gossip option automatically",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.general.automation.gossip = val
+
+                    if not General.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        General.Module.Gossip:Enable()
+                    else
+                        General.Module.Gossip:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.general.automation.gossip
+                end,
+                order = 18
+            },
             header3 = {
                 name = "Display",
                 type = "header",
-                order = 18
+                order = 19
             },
             iteminfo = {
                 name = "Item Info",
@@ -405,7 +427,7 @@ function General:OnInitialize()
                 get = function()
                     return mUI.db.profile.general.display.iteminfo
                 end,
-                order = 19
+                order = 20
             },
             stats = {
                 name = "Stats",
@@ -427,7 +449,7 @@ function General:OnInitialize()
                 get = function()
                     return mUI.db.profile.general.display.stats
                 end,
-                order = 20
+                order = 21
             },
             movementspeed = {
                 name = "Speed",
@@ -439,7 +461,7 @@ function General:OnInitialize()
                 get = function()
                     return mUI.db.profile.general.display.movementspeed
                 end,
-                order = 21
+                order = 22
             },
             errormessages = {
                 name = "Error Messages",
@@ -461,7 +483,7 @@ function General:OnInitialize()
                 get = function()
                     return mUI.db.profile.general.display.errormessages
                 end,
-                order = 22
+                order = 23
             },
             friendlist = {
                 name = "Friends Class Colors",
@@ -483,7 +505,7 @@ function General:OnInitialize()
                 get = function()
                     return mUI.db.profile.general.display.friendlist
                 end,
-                order = 23
+                order = 24
             }
         }
     }

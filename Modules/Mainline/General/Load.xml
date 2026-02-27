@@ -21,6 +21,7 @@
     <Include file="TalkingHead.lua" />
     <Include file="RoleCheck.lua" />
     <Include file="Quests.lua" />
+    <Include file="Gossip.lua" />
     <Include file="ItemInfo.lua" />
     <Include file="Stats.lua" />
     <Include file="ErrorMessages.lua" />
