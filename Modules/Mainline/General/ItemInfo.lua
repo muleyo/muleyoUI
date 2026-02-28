@@ -13,7 +13,7 @@ function ItemInfo:OnInitialize()
     ItemInfo.scanningTooltip:SetOwner(UIParent, "ANCHOR_NONE")
     ItemInfo.buttons = {}
     ItemInfo.LEGENDARY_ITEM_LEVEL = 285
-    ItemInfo.STEP_ITEM_LEVEL = 17
+    ItemInfo.STEP_ITEM_LEVEL = 20
     ItemInfo.levelThresholds = {}
     ItemInfo.NUM_SOCKET_TEXTURES = 4
     ItemInfo.expansionRequiredSockets = {
