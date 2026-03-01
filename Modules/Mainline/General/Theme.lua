@@ -44,7 +44,9 @@ function Theme:OnEnable()
         ["Blizzard_ItemUpgradeUI"] = Theme.ItemUpgrade,
         ["Blizzard_ReforgingUI"] = Theme.Reforging,
         ["Blizzard_Transmog"] = Theme.Transmog,
-        ["Blizzard_HousingDashboard"] = Theme.Housing
+        ["Blizzard_HousingDashboard"] = Theme.Housing,
+        ["Blizzard_HousingModelPreview"] = Theme.Housing,
+        ["Blizzard_ItemInteractionUI"] = Theme.Catalyst
     }
 
     -- Buffs & Debuffs
@@ -101,6 +103,21 @@ function Theme:OnEnable()
                     if frame.buffFrames then
                         for i = 1, #frame.buffFrames do
                             Theme:UpdateRaidframeAuras(frame.buffFrames[i])
+                        end
+                    end
+                end
+            end)
+
+            Theme:SecureHook("CompactUnitFrame_UpdatePrivateAuras", function(frame)
+                if frame.PrivateAuraAnchors then
+                    local desiredSize = 24 -- your custom size
+                    for _, anchor in ipairs(frame.PrivateAuraAnchors) do
+                        anchor:SetSize(desiredSize, desiredSize)
+                        -- Re-register with new size
+                        if anchor.unit and anchor.anchorID then
+                            C_UnitAuras.RemovePrivateAuraAnchor(anchor.anchorID)
+                            anchor.anchorID = nil
+                            anchor:SetUnit(anchor.unit, true)
                         end
                     end
                 end

@@ -1366,6 +1366,21 @@ function Theme:Housing()
             mUI:Skin(HousingDashboardFrame.HouseInfoContent.ContentFrame.TabSystem.tabs[2])
         end)
     end
+
+    if HousingModelPreviewFrame then
+        mUI:Skin(HousingModelPreviewFrame)
+        mUI:Skin(HousingModelPreviewFrame.NineSlice)
+    end
+end
+
+function Theme:Catalyst()
+    if ItemInteractionFrame then
+        mUI:Skin(ItemInteractionFrame)
+        mUI:Skin(ItemInteractionFrame.NineSlice)
+        mUI:Skin(ItemInteractionFrame.Inset)
+        mUI:Skin(ItemInteractionFrame.Inset.NineSlice)
+        mUI:Skin(ItemInteractionFrame.ButtonFrame)
+    end
 end
 
 function Theme:GameMenu(frame)
@@ -1556,6 +1571,7 @@ function Theme:Update()
     Theme:Transmog()
     Theme:Housing()
     Theme:DamageMeter()
+    Theme:Catalyst()
 
     -- Tooltips
     for _, tooltip in next, Theme.tooltips do
