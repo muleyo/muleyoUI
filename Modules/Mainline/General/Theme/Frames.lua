@@ -1345,14 +1345,6 @@ function Theme:Auras()
     end
 end
 
-function Theme:PrivateAuras()
-    if PrivateAurasTooltip then
-        Theme:SecureHookScript(PrivateAurasTooltip, "OnShow", function()
-            Theme:StyleTooltip(PrivateAurasTooltip)
-        end)
-    end
-end
-
 function Theme:ExpansionLandingPage()
     if not Theme:IsHooked(ExpansionLandingPage, "OnShow") then
         Theme:SecureHookScript(ExpansionLandingPage, "OnShow", function()
@@ -1580,7 +1572,6 @@ function Theme:Update()
     Theme:Housing()
     Theme:DamageMeter()
     Theme:Catalyst()
-    Theme:PrivateAuras()
 
     -- Tooltips
     for _, tooltip in next, Theme.tooltips do

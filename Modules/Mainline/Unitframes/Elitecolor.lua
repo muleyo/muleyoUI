@@ -3,12 +3,7 @@ local Elitecolor = mUI:NewModule("mUI.Modules.Unitframes.Elitecolor")
 function Elitecolor:OnEnable()
     Elitecolor.frames = {
         target = TargetFrame.TargetFrameContainer,
-        focus = FocusFrame.TargetFrameContainer,
-        boss1 = Boss1TargetFrame.TargetFrameContainer,
-        boss2 = Boss2TargetFrame.TargetFrameContainer,
-        boss3 = Boss3TargetFrame.TargetFrameContainer,
-        boss4 = Boss4TargetFrame.TargetFrameContainer,
-        boss5 = Boss5TargetFrame.TargetFrameContainer
+        focus = FocusFrame.TargetFrameContainer
     }
 
     C_Timer.After(0.1, function()

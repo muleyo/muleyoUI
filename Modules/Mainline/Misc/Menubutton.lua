@@ -2,6 +2,10 @@ local Menubutton = mUI:NewModule("mUI.Modules.Misc.Menubutton", "AceHook-3.0")
 
 function Menubutton:OnInitialize()
     function Menubutton:Add()
+        if InCombatLockdown() then
+            return
+        end
+
         GameMenuFrame:AddSection()
         GameMenuFrame:AddButton("|cff009cffmuleyo|r|cffffd100UI|r", mUI:GUI(true))
     end

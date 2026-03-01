@@ -243,6 +243,11 @@ function Theme:UpdateRaidframeAuras(aura)
             aura.border:Hide()
 
             local unit = aura:GetParent() and aura:GetParent().displayedUnit
+            -- C_UnitAuras does not accept compound unit tokens (e.g. "boss1target"),
+            -- so resolve to a base token via UnitGUID + UnitTokenFromGUID.
+            if unit and UnitGUID(unit) then
+                unit = UnitTokenFromGUID(UnitGUID(unit)) or unit
+            end
             local PvP = C_PvP.IsMatchActive() or UnitIsPVP("player")
             local isDispellable = (unit and aura.auraInstanceID) and
                                       not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, aura.auraInstanceID, "HARMFUL|RAID_PLAYER_DISPELLABLE")
