@@ -44,7 +44,10 @@ function Theme:OnEnable()
         ["Blizzard_ItemUpgradeUI"] = Theme.ItemUpgrade,
         ["Blizzard_ReforgingUI"] = Theme.Reforging,
         ["Blizzard_Transmog"] = Theme.Transmog,
-        ["Blizzard_HousingDashboard"] = Theme.Housing
+        ["Blizzard_HousingDashboard"] = Theme.Housing,
+        ["Blizzard_HousingModelPreview"] = Theme.Housing,
+        ["Blizzard_PrivateAurasUI"] = Theme.PrivateAuras,
+        ["Blizzard_ItemInteractionUI"] = Theme.Catalyst
     }
 
     -- Buffs & Debuffs

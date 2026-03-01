@@ -1345,6 +1345,14 @@ function Theme:Auras()
     end
 end
 
+function Theme:PrivateAuras()
+    if PrivateAurasTooltip then
+        Theme:SecureHookScript(PrivateAurasTooltip, "OnShow", function()
+            Theme:StyleTooltip(PrivateAurasTooltip)
+        end)
+    end
+end
+
 function Theme:ExpansionLandingPage()
     if not Theme:IsHooked(ExpansionLandingPage, "OnShow") then
         Theme:SecureHookScript(ExpansionLandingPage, "OnShow", function()
@@ -1365,6 +1373,21 @@ function Theme:Housing()
             mUI:Skin(HousingDashboardFrame.HouseInfoContent.ContentFrame.TabSystem.tabs[1])
             mUI:Skin(HousingDashboardFrame.HouseInfoContent.ContentFrame.TabSystem.tabs[2])
         end)
+    end
+
+    if HousingModelPreviewFrame then
+        mUI:Skin(HousingModelPreviewFrame)
+        mUI:Skin(HousingModelPreviewFrame.NineSlice)
+    end
+end
+
+function Theme:Catalyst()
+    if ItemInteractionFrame then
+        mUI:Skin(ItemInteractionFrame)
+        mUI:Skin(ItemInteractionFrame.NineSlice)
+        mUI:Skin(ItemInteractionFrame.Inset)
+        mUI:Skin(ItemInteractionFrame.Inset.NineSlice)
+        mUI:Skin(ItemInteractionFrame.ButtonFrame)
     end
 end
 
@@ -1556,6 +1579,8 @@ function Theme:Update()
     Theme:Transmog()
     Theme:Housing()
     Theme:DamageMeter()
+    Theme:Catalyst()
+    Theme:PrivateAuras()
 
     -- Tooltips
     for _, tooltip in next, Theme.tooltips do
