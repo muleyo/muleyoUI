@@ -109,16 +109,33 @@ function Theme:OnEnable()
             end)
 
             Theme:SecureHook("CompactUnitFrame_UpdatePrivateAuras", function(frame)
-                if frame.PrivateAuraAnchors then
-                    local desiredSize = 24 -- your custom size
-                    for _, anchor in ipairs(frame.PrivateAuraAnchors) do
-                        anchor:SetSize(desiredSize, desiredSize)
-                        -- Re-register with new size
-                        if anchor.unit and anchor.anchorID then
-                            C_UnitAuras.RemovePrivateAuraAnchor(anchor.anchorID)
-                            anchor.anchorID = nil
-                            anchor:SetUnit(anchor.unit, true)
-                        end
+                if not frame.PrivateAuraAnchors then
+                    return
+                end
+
+                local frameHeight
+                if IsInRaid() then
+                    frameHeight = EditModeManagerFrame:GetRaidFrameHeight(Enum.EditModeUnitFrameSystemIndices.Raid, 36)
+                else
+                    frameHeight = EditModeManagerFrame:GetRaidFrameHeight(Enum.EditModeUnitFrameSystemIndices.Party, 36)
+                end
+
+                local desiredSize = frameHeight * 0.45
+                -- The anchors are sized to privateAuraSize (roughly 16.5 at default)
+                -- Scale factor = desired / current anchor size
+                local currentSize = frame.PrivateAuraAnchors[1]:GetWidth()
+                if currentSize == 0 then
+                    return
+                end
+                local scaleFactor = desiredSize / currentSize
+
+                local spacing = 2 -- extra gap between icons (in anchor-local coords)
+                for i, anchor in ipairs(frame.PrivateAuraAnchors) do
+                    anchor:SetScale(scaleFactor)
+                    if i > 1 then
+                        local prev = frame.PrivateAuraAnchors[i - 1]
+                        anchor:ClearAllPoints()
+                        anchor:SetPoint("LEFT", prev, "RIGHT", spacing, 0)
                     end
                 end
             end)
