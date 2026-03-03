@@ -61,6 +61,7 @@ function Unitframes:OnInitialize()
                         Unitframes.Module.UF_Textures:Update()
                     else
                         Unitframes.Module.UF_Textures:Enable()
+                        Unitframes.Module.UF_Textures:Update()
                     end
                 end,
                 get = function()

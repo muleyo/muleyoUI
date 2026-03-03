@@ -509,10 +509,11 @@ function Theme:ProfessionsBook()
         mUI:Skin(ProfessionsBookFrame.NineSlice)
         mUI:Skin(ProfessionsBookFrameInset)
         mUI:Skin(ProfessionsBookFrameInset.NineSlice)
-        mUI:Skin({PrimaryProfession1SpellButtonBottomNameFrame, PrimaryProfession2SpellButtonBottomNameFrame,
-                  SecondaryProfession1SpellButtonLeftNameFrame, SecondaryProfession1SpellButtonRightNameFrame,
-                  SecondaryProfession2SpellButtonLeftNameFrame, SecondaryProfession2SpellButtonRightNameFrame,
-                  SecondaryProfession3SpellButtonLeftNameFrame, SecondaryProfession3SpellButtonRightNameFrame}, true)
+        mUI:Skin({PrimaryProfession1SpellButtonTopNameFrame, PrimaryProfession2SpellButtonTopNameFrame, PrimaryProfession1SpellButtonBottomNameFrame,
+                  PrimaryProfession2SpellButtonBottomNameFrame, SecondaryProfession1SpellButtonLeftNameFrame,
+                  SecondaryProfession1SpellButtonRightNameFrame, SecondaryProfession2SpellButtonLeftNameFrame,
+                  SecondaryProfession2SpellButtonRightNameFrame, SecondaryProfession3SpellButtonLeftNameFrame,
+                  SecondaryProfession3SpellButtonRightNameFrame}, true)
 
         mUI:Skin({ProfessionsBookPage1, ProfessionsBookPage2}, true)
         for i, v in pairs({PrimaryProfession1.missingText, PrimaryProfession2.missingText, SecondaryProfession1Missing,
@@ -1191,9 +1192,7 @@ function Theme:DamageMeter()
         for i = 1, 3 do
             local frame = _G["DamageMeterSessionWindow" .. i]
             if frame then
-                if not frame.isSkinned then
-                    mUI:Skin({frame.Header}, true)
-                end
+                mUI:Skin({frame.Header}, true)
 
                 for _, bar in frame:EnumerateEntryFrames() do
                     updateDamageMeter(bar)
