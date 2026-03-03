@@ -245,58 +245,6 @@ function Chat:OnInitialize()
                 end,
                 order = 12
             },
-            hpadding = {
-                name = "Horizontal Padding",
-                desc = "Set the Horizontal Padding for the Chat\n\n|cffffff00Info:|r Requires mUI Style",
-                type = "range",
-                min = 0,
-                max = 10,
-                step = 1,
-                set = function(_, val)
-                    if mUI.db.profile.chat.settings.chat.x_padding == val then
-                        return
-                    end
-                    mUI.db.profile.chat.settings.chat.x_padding = val
-
-                    if not (mUI.db.profile.chat.style == "mUI" or Chat.Module:IsEnabled()) then
-                        return
-                    end
-
-                    for i = 1, 10 do
-                        Chat.Module.Style:ForMessageLinePool(i, "UpdatePadding")
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.chat.settings.chat.x_padding
-                end,
-                order = 13
-            },
-            vpadding = {
-                name = "Vertical Padding",
-                desc = "Set the Vertical Padding for the Chat\n\n|cffffff00Info:|r Requires mUI Style",
-                type = "range",
-                min = 0,
-                max = 10,
-                step = 1,
-                set = function(_, val)
-                    if mUI.db.profile.chat.settings.chat.y_padding == val then
-                        return
-                    end
-                    mUI.db.profile.chat.settings.chat.y_padding = val
-
-                    if not (mUI.db.profile.chat.style == "mUI" or Chat.Module:IsEnabled()) then
-                        return
-                    end
-
-                    for i = 1, 10 do
-                        Chat.Module.Style:ForMessageLinePool(i, "UpdatePadding")
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.chat.settings.chat.y_padding
-                end,
-                order = 14
-            },
             chatfontsize = {
                 name = "Chat Font Size",
                 desc = "Set the Font Size for the Chat\n\n|cffffff00Info:|r Requires mUI Style",
@@ -326,12 +274,12 @@ function Chat:OnInitialize()
                 get = function()
                     return mUI.db.profile.chat.settings.chat.font.size
                 end,
-                order = 15
+                order = 13
             },
             spacer = {
                 name = " ",
                 type = "description",
-                order = 16
+                order = 14
             },
             chatfontoutline = {
                 name = "Font Outline",
@@ -354,7 +302,7 @@ function Chat:OnInitialize()
                 get = function()
                     return mUI.db.profile.chat.settings.chat.font.outline
                 end,
-                order = 17
+                order = 15
             },
             chatfontshadow = {
                 name = "Font Shadow",
@@ -377,7 +325,7 @@ function Chat:OnInitialize()
                 get = function()
                     return mUI.db.profile.chat.settings.chat.font.shadow
                 end,
-                order = 18
+                order = 16
             },
             tooltips = {
                 name = "Mouseover Tooltips",
@@ -389,7 +337,7 @@ function Chat:OnInitialize()
                 get = function()
                     return mUI.db.profile.chat.settings.tooltips
                 end,
-                order = 19
+                order = 17
             },
             scroll = {
                 name = "Scroll Buttons",
@@ -410,12 +358,12 @@ function Chat:OnInitialize()
                 get = function()
                     return mUI.db.profile.chat.settings.buttons.up_and_down
                 end,
-                order = 20
+                order = 18
             },
             header4 = {
                 name = "Fading",
                 type = "header",
-                order = 21
+                order = 19
             },
             fading = {
                 name = "Message Fading",
@@ -439,7 +387,7 @@ function Chat:OnInitialize()
                 get = function()
                     return mUI.db.profile.chat.settings.fade.enabled
                 end,
-                order = 22
+                order = 20
             },
             fadetabs = {
                 name = "Tabs & Buttons Fading",
@@ -457,7 +405,7 @@ function Chat:OnInitialize()
                 get = function()
                     return mUI.db.profile.chat.settings.dock.fade.enabled
                 end,
-                order = 23
+                order = 21
             },
             fadingtime = {
                 name = "Fade Out Delay",
@@ -483,12 +431,12 @@ function Chat:OnInitialize()
                 get = function()
                     return mUI.db.profile.chat.settings.fade.out_delay
                 end,
-                order = 24
+                order = 22
             },
             header5 = {
                 name = "Options",
                 type = "header",
-                order = 25
+                order = 23
             },
             link = {
                 name = "Link Copy",
@@ -510,7 +458,7 @@ function Chat:OnInitialize()
                 get = function()
                     return mUI.db.profile.chat.link
                 end,
-                order = 26
+                order = 24
             },
             copy = {
                 name = "Copy Chat",
@@ -532,7 +480,7 @@ function Chat:OnInitialize()
                 get = function()
                     return mUI.db.profile.chat.copy
                 end,
-                order = 27
+                order = 25
             },
             whisperalert = {
                 name = "Whisper Alert",
@@ -554,7 +502,7 @@ function Chat:OnInitialize()
                 get = function()
                     return mUI.db.profile.chat.whisperalert
                 end,
-                order = 28
+                order = 26
             }
         }
     }

@@ -472,7 +472,10 @@ function Theme:Actionbars()
               MainStatusTrackingBarContainer.MainMenuBarFrameTexture3, MainStatusTrackingBarContainer.MainMenuBarFrameTexture4,
               MainStatusTrackingBarContainer.MainMenuBarFrameTexture5, MainStatusTrackingBarContainer.StandaloneFrameTexture1,
               MainStatusTrackingBarContainer.StandaloneFrameTexture2, MainStatusTrackingBarContainer.StandaloneFrameTexture3,
-              MainStatusTrackingBarContainer.StandaloneFrameTexture4, MainStatusTrackingBarContainer.StandaloneFrameTexture5}, true)
+              MainStatusTrackingBarContainer.StandaloneFrameTexture4, MainStatusTrackingBarContainer.StandaloneFrameTexture5,
+              SecondaryStatusTrackingBarContainer.StandaloneFrameTexture1, SecondaryStatusTrackingBarContainer.StandaloneFrameTexture2,
+              SecondaryStatusTrackingBarContainer.StandaloneFrameTexture3, SecondaryStatusTrackingBarContainer.StandaloneFrameTexture4,
+              SecondaryStatusTrackingBarContainer.StandaloneFrameTexture5}, true)
 
     -- Actionbars
     for j = 1, #Theme.Bars do

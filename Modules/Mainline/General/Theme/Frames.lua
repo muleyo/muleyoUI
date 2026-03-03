@@ -56,6 +56,14 @@ function Theme:AuctionHouse()
         mUI:Skin(AuctionHouseFrame.MoneyFrameInset.NineSlice)
         mUI:Skin(AuctionHouseFrame.CategoriesList)
         mUI:Skin(AuctionHouseFrame.CategoriesList.NineSlice)
+        mUI:Skin(AuctionHouseFrame.CommoditiesBuyFrame.BuyDisplay)
+        mUI:Skin(AuctionHouseFrame.CommoditiesBuyFrame.BuyDisplay.NineSlice)
+        mUI:Skin(AuctionHouseFrame.CommoditiesBuyFrame.ItemList)
+        mUI:Skin(AuctionHouseFrame.CommoditiesBuyFrame.ItemList.NineSlice)
+        mUI:Skin(AuctionHouseFrame.ItemBuyFrame.ItemDisplay)
+        mUI:Skin(AuctionHouseFrame.ItemBuyFrame.ItemDisplay.NineSlice)
+        mUI:Skin(AuctionHouseFrame.ItemBuyFrame.ItemList)
+        mUI:Skin(AuctionHouseFrame.ItemBuyFrame.ItemList.NineSlice)
         mUI:Skin(AuctionHouseFrameBuyTab)
         mUI:Skin(AuctionHouseFrameSellTab)
         mUI:Skin(AuctionHouseFrameAuctionsTab)
@@ -68,6 +76,14 @@ function Theme:AuctionHouse()
         mUI:Skin(AuctionHouseFrame.ItemSellList.NineSlice)
         mUI:Skin(AuctionHouseFrame.ItemSellFrame)
         mUI:Skin(AuctionHouseFrame.ItemSellFrame.NineSlice)
+        mUI:Skin(AuctionHouseFrameAuctionsFrame.ItemDisplay)
+        mUI:Skin(AuctionHouseFrameAuctionsFrame.ItemDisplay.NineSlice)
+        mUI:Skin(AuctionHouseFrameAuctionsFrame.CommoditiesList)
+        mUI:Skin(AuctionHouseFrameAuctionsFrame.CommoditiesList.NineSlice)
+        mUI:Skin(AuctionHouseFrameAuctionsFrame.ItemList)
+        mUI:Skin(AuctionHouseFrameAuctionsFrame.ItemList.NineSlice)
+        mUI:Skin(AuctionHouseFrameAuctionsFrame.BidsList)
+        mUI:Skin(AuctionHouseFrameAuctionsFrame.BidsList.NineSlice)
         mUI:Skin(AuctionHouseFrameAuctionsFrame.AllAuctionsList)
         mUI:Skin(AuctionHouseFrameAuctionsFrame.AllAuctionsList.NineSlice)
         mUI:Skin(AuctionHouseFrameAuctionsFrame.SummaryList)
@@ -493,10 +509,11 @@ function Theme:ProfessionsBook()
         mUI:Skin(ProfessionsBookFrame.NineSlice)
         mUI:Skin(ProfessionsBookFrameInset)
         mUI:Skin(ProfessionsBookFrameInset.NineSlice)
-        mUI:Skin({PrimaryProfession1SpellButtonBottomNameFrame, PrimaryProfession2SpellButtonBottomNameFrame,
-                  SecondaryProfession1SpellButtonLeftNameFrame, SecondaryProfession1SpellButtonRightNameFrame,
-                  SecondaryProfession2SpellButtonLeftNameFrame, SecondaryProfession2SpellButtonRightNameFrame,
-                  SecondaryProfession3SpellButtonLeftNameFrame, SecondaryProfession3SpellButtonRightNameFrame}, true)
+        mUI:Skin({PrimaryProfession1SpellButtonTopNameFrame, PrimaryProfession2SpellButtonTopNameFrame, PrimaryProfession1SpellButtonBottomNameFrame,
+                  PrimaryProfession2SpellButtonBottomNameFrame, SecondaryProfession1SpellButtonLeftNameFrame,
+                  SecondaryProfession1SpellButtonRightNameFrame, SecondaryProfession2SpellButtonLeftNameFrame,
+                  SecondaryProfession2SpellButtonRightNameFrame, SecondaryProfession3SpellButtonLeftNameFrame,
+                  SecondaryProfession3SpellButtonRightNameFrame}, true)
 
         mUI:Skin({ProfessionsBookPage1, ProfessionsBookPage2}, true)
         for i, v in pairs({PrimaryProfession1.missingText, PrimaryProfession2.missingText, SecondaryProfession1Missing,
@@ -1175,9 +1192,7 @@ function Theme:DamageMeter()
         for i = 1, 3 do
             local frame = _G["DamageMeterSessionWindow" .. i]
             if frame then
-                if not frame.isSkinned then
-                    mUI:Skin({frame.Header}, true)
-                end
+                mUI:Skin({frame.Header}, true)
 
                 for _, bar in frame:EnumerateEntryFrames() do
                     updateDamageMeter(bar)

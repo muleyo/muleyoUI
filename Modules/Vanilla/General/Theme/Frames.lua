@@ -464,7 +464,9 @@ function Theme:Actionbars()
     mUI:Skin(StanceBarFrame)
     mUI:Skin(PetActionBarFrame)
     mUI:Skin({OverrideActionBarHealthBarOverlay, OverrideActionBarPowerBarOverlay, MainMenuXPBarTexture0, MainMenuXPBarTexture1,
-              MainMenuXPBarTexture2, MainMenuXPBarTexture3, ExhaustionTickNormal, ExhaustionTickHighlight}, true)
+              MainMenuXPBarTexture2, MainMenuXPBarTexture3, ReputationWatchBar.StatusBar.WatchBarTexture0,
+              ReputationWatchBar.StatusBar.WatchBarTexture1, ReputationWatchBar.StatusBar.WatchBarTexture2,
+              ReputationWatchBar.StatusBar.WatchBarTexture3, ExhaustionTickNormal, ExhaustionTickHighlight}, true)
     mUI:Skin(OverrideActionBar)
     mUI:Skin({OverrideActionBarLeaveFrameDivider3}, true)
 
