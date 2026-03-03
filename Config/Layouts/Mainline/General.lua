@@ -382,7 +382,7 @@ function General:OnInitialize()
             },
             gossip = {
                 name = "Gossip",
-                desc = "Select the first gossip option automatically",
+                desc = "Select the first gossip option automatically\n\n|cffffff00Info:|r Hold CTRL or ALT while interacting to skip auto-gossip",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.general.automation.gossip = val

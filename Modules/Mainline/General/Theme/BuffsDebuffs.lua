@@ -249,10 +249,14 @@ function Theme:UpdateRaidframeAuras(aura)
                 unit = UnitTokenFromGUID(UnitGUID(unit)) or unit
             end
             local PvP = C_PvP.IsMatchActive() or UnitIsPVP("player")
-            local isDispellable = (unit and aura.auraInstanceID) and
-                                      not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, aura.auraInstanceID, "HARMFUL|RAID_PLAYER_DISPELLABLE")
-            local isCrowdControl = (PvP and unit and aura.auraInstanceID) and
-                                       not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, aura.auraInstanceID, "HARMFUL|CROWD_CONTROL")
+            local isDispellable = false
+            local isCrowdControl = false
+            if unit and aura.auraInstanceID and not issecretvalue(unit) and not issecretvalue(aura.auraInstanceID) then
+                isDispellable = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, aura.auraInstanceID, "HARMFUL|RAID_PLAYER_DISPELLABLE")
+                if PvP then
+                    isCrowdControl = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, aura.auraInstanceID, "HARMFUL|CROWD_CONTROL")
+                end
+            end
 
             if PvP then
                 if isCrowdControl then
