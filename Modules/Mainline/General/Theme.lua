@@ -113,31 +113,30 @@ function Theme:OnEnable()
                     return
                 end
 
-                local frameHeight
-                if IsInRaid() then
-                    frameHeight = EditModeManagerFrame:GetRaidFrameHeight(Enum.EditModeUnitFrameSystemIndices.Raid, 36)
-                else
-                    frameHeight = EditModeManagerFrame:GetRaidFrameHeight(Enum.EditModeUnitFrameSystemIndices.Party, 36)
-                end
-
-                local desiredSize = frameHeight * 0.45
-                -- The anchors are sized to privateAuraSize (roughly 16.5 at default)
-                -- Scale factor = desired / current anchor size
-                local currentSize = frame.PrivateAuraAnchors[1]:GetWidth()
-                if currentSize == 0 then
-                    return
-                end
-                local scaleFactor = desiredSize / currentSize
-
-                local spacing = 2 -- extra gap between icons (in anchor-local coords)
-                for i, anchor in ipairs(frame.PrivateAuraAnchors) do
-                    anchor:SetScale(scaleFactor)
-                    if i > 1 then
-                        local prev = frame.PrivateAuraAnchors[i - 1]
-                        anchor:ClearAllPoints()
-                        anchor:SetPoint("LEFT", prev, "RIGHT", spacing, 0)
+                xpcall(function()
+                    local frameHeight
+                    if IsInRaid() then
+                        frameHeight = EditModeManagerFrame:GetRaidFrameHeight(Enum.EditModeUnitFrameSystemIndices.Raid, 36)
+                    else
+                        frameHeight = EditModeManagerFrame:GetRaidFrameHeight(Enum.EditModeUnitFrameSystemIndices.Party, 36)
                     end
-                end
+
+                    local desiredSize = frameHeight * 0.45
+                    -- The anchors are sized to privateAuraSize (roughly 16.5 at default)
+                    -- Scale factor = desired / current anchor size
+                    local currentSize = frame.PrivateAuraAnchors[1]:GetWidth()
+                    local scaleFactor = desiredSize / currentSize
+
+                    local spacing = 2 -- extra gap between icons (in anchor-local coords)
+                    for i, anchor in ipairs(frame.PrivateAuraAnchors) do
+                        anchor:SetScale(scaleFactor)
+                        if i > 1 then
+                            local prev = frame.PrivateAuraAnchors[i - 1]
+                            anchor:ClearAllPoints()
+                            anchor:SetPoint("LEFT", prev, "RIGHT", spacing, 0)
+                        end
+                    end
+                end, nop)
             end)
         end
 

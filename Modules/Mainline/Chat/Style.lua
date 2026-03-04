@@ -178,6 +178,18 @@ function Style:OnEnable()
         end
     end)
 
+    -- Re-skin tabs after Blizzard resets their visuals via FCFTab_UpdateColors
+    -- (called by FCFDock_UpdateTabs on tab click, dock changes, etc.)
+    local isReskinning = false
+    Style:SecureHook("FCFTab_UpdateColors", function(tab)
+        if isReskinning then
+            return
+        end
+        isReskinning = true
+        Style:HandleChatTab(tab)
+        isReskinning = false
+    end)
+
     Style:EnableDispatcher()
     Style:EnableDragHook()
     Style:EnableAlerts()

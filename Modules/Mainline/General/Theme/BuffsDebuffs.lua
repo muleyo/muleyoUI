@@ -251,10 +251,17 @@ function Theme:UpdateRaidframeAuras(aura)
             local PvP = C_PvP.IsMatchActive() or UnitIsPVP("player")
             local isDispellable = false
             local isCrowdControl = false
-            if unit and aura.auraInstanceID and not issecretvalue(unit) and not issecretvalue(aura.auraInstanceID) then
-                isDispellable = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, aura.auraInstanceID, "HARMFUL|RAID_PLAYER_DISPELLABLE")
+            if unit and aura.auraInstanceID then
+                local ok, result =
+                    xpcall(C_UnitAuras.IsAuraFilteredOutByInstanceID, nop, unit, aura.auraInstanceID, "HARMFUL|RAID_PLAYER_DISPELLABLE")
+                if ok then
+                    isDispellable = not result
+                end
                 if PvP then
-                    isCrowdControl = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, aura.auraInstanceID, "HARMFUL|CROWD_CONTROL")
+                    local ok2, result2 = xpcall(C_UnitAuras.IsAuraFilteredOutByInstanceID, nop, unit, aura.auraInstanceID, "HARMFUL|CROWD_CONTROL")
+                    if ok2 then
+                        isCrowdControl = not result2
+                    end
                 end
             end
 
