@@ -126,8 +126,7 @@ function Theme:OnEnable()
                 end
 
                 local desiredSize = frameHeight * 0.45
-                local currentSize = frame.PrivateAuraAnchors[1]:GetWidth()
-                local scaleFactor = desiredSize / currentSize
+                local scaleFactor = desiredSize / 22
 
                 local spacing = 2 -- extra gap between icons (in anchor-local coords)
                 for i, anchor in ipairs(frame.PrivateAuraAnchors) do
