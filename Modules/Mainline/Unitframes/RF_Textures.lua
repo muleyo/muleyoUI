@@ -33,51 +33,64 @@ function RF_Textures:OnInitialize()
     }
 
     function RF_Textures:SetTextures(frame)
-        if frame and frame:IsForbidden() then
+        if not frame then
             return
         end
 
-        if frame and frame:GetName() then
-            local name = frame:GetName()
-            if name and name:match("^Compact") then
-                local texture = RF_Textures.LSM:Fetch('statusbar', RF_Textures.db.raidframes)
-                if RF_Textures.db.raidframes ~= "None" then
-                    frame.healthBar:SetStatusBarTexture(texture)
-                    frame.powerBar:SetStatusBarTexture(texture)
-                    frame.myHealPrediction:SetTexture(texture)
-                    frame.otherHealPrediction:SetTexture(texture)
-
-                    frame.healthBar:GetStatusBarTexture():SetDrawLayer("BORDER")
-                    frame.powerBar:GetStatusBarTexture():SetDrawLayer("BORDER")
-                else
-                    frame.healthBar:SetStatusBarTexture(RF_Textures.defaultTextures.health)
-                    frame.powerBar:SetStatusBarTexture(RF_Textures.defaultTextures.power)
-                    frame.myHealPrediction:SetTexture(RF_Textures.defaultTextures.health)
-                    frame.otherHealPrediction:SetTexture(RF_Textures.defaultTextures.health)
-                end
-
-                -- Use custom selection highlight texture
-                frame.selectionHighlight:SetTexture([[Interface\AddOns\mUI\Media\Textures\Raidframes\border.png]])
-                frame.aggroHighlight:SetTexture([[Interface\AddOns\mUI\Media\Textures\Raidframes\border.png]])
-            end
+        local ok, forbidden = pcall(frame.IsForbidden, frame)
+        if not ok or forbidden then
+            return
         end
+
+        local name = frame:GetName()
+        if not name or not name:match("^Compact") then
+            return
+        end
+
+        local texture = RF_Textures.LSM:Fetch('statusbar', RF_Textures.db.raidframes)
+        if RF_Textures.db.raidframes ~= "None" then
+            frame.healthBar:SetStatusBarTexture(texture)
+            frame.powerBar:SetStatusBarTexture(texture)
+            frame.myHealPrediction:SetTexture(texture)
+            frame.otherHealPrediction:SetTexture(texture)
+
+            frame.healthBar:GetStatusBarTexture():SetDrawLayer("BORDER")
+            frame.powerBar:GetStatusBarTexture():SetDrawLayer("BORDER")
+        else
+            frame.healthBar:SetStatusBarTexture(RF_Textures.defaultTextures.health)
+            frame.powerBar:SetStatusBarTexture(RF_Textures.defaultTextures.power)
+            frame.myHealPrediction:SetTexture(RF_Textures.defaultTextures.health)
+            frame.otherHealPrediction:SetTexture(RF_Textures.defaultTextures.health)
+        end
+
+        -- Use custom selection highlight texture
+        frame.selectionHighlight:SetTexture([[Interface\AddOns\mUI\Media\Textures\Raidframes\border.png]])
+        frame.aggroHighlight:SetTexture([[Interface\AddOns\mUI\Media\Textures\Raidframes\border.png]])
     end
 
     function RF_Textures:UpdatePowerColor(frame)
-        if frame and frame:IsForbidden() then
+        if not frame then
             return
         end
 
-        if frame and frame:GetName() then
-            local name = frame:GetName()
-            if name and name:match("^Compact") then
-                local _, powerType = UnitPowerType(frame.unit)
-                local color = PowerBarColor[powerType]
+        local ok, forbidden = pcall(frame.IsForbidden, frame)
+        if not ok or forbidden then
+            return
+        end
 
-                if powerType == "MANA" and color then
-                    frame.powerBar:SetStatusBarColor(0, 0.50196081399918, 1, 1)
-                end
-            end
+        local name = frame:GetName()
+        if not name or not name:match("^Compact") then
+            return
+        end
+
+        local _, powerType = UnitPowerType(frame.unit)
+        if type(powerType) ~= "string" then
+            return
+        end
+
+        local color = PowerBarColor[powerType]
+        if powerType == "MANA" and color then
+            frame.powerBar:SetStatusBarColor(0, 0.50196081399918, 1, 1)
         end
     end
 
