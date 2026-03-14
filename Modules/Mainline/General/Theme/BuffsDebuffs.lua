@@ -138,7 +138,7 @@ function Theme:UpdatePlayerDebuffs()
         end
 
         if frame.DebuffBorder then
-            frame.DebuffBorder:Hide()
+            frame.DebuffBorder:SetAlpha(0)
 
             local auraData = C_UnitAuras.GetDebuffDataByIndex("player", index)
 
@@ -195,7 +195,7 @@ function Theme:UpdateUnitframeAuras(aura, isDebuff, unit)
     if aura.Border and mUI.db.profile.unitframes.buffsdebuffs.debuffcolors then
         local r, g, b = aura.Border:GetVertexColor()
         aura.mUIBorder:SetVertexColor(r, g, b, 1)
-        aura.Border:Hide()
+        aura.Border:SetAlpha(0)
     else
         aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
     end
@@ -211,7 +211,7 @@ function Theme:UpdateRaidframeAuras(aura)
         if aura.border then
             local r, g, b = aura.border:GetVertexColor()
             aura.mUIBorder:SetVertexColor(r, g, b, 1)
-            aura.border:Hide()
+            aura.border:SetAlpha(0)
         else
             aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
         end
@@ -240,7 +240,7 @@ function Theme:UpdateRaidframeAuras(aura)
         if aura.border then
             local r, g, b = aura.border:GetVertexColor()
             aura.mUIBorder:SetVertexColor(r, g, b, 1)
-            aura.border:Hide()
+            aura.border:SetAlpha(0)
 
             local unit = aura:GetParent() and aura:GetParent().displayedUnit
             -- C_UnitAuras does not accept compound unit tokens (e.g. "boss1target"),

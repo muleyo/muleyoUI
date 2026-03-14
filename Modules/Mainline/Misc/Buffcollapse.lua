@@ -1,15 +1,16 @@
 local Buffcollapse = mUI:NewModule("mUI.Modules.Misc.Buffcollapse", "AceHook-3.0")
 
-function Buffcollapse:OnInitialize()
-    Buffcollapse.func = BuffFrame.CollapseAndExpandButton.Show
-end
-
 function Buffcollapse:OnEnable()
-    BuffFrame.CollapseAndExpandButton:Hide()
-    Buffcollapse:SecureHookScript(BuffFrame.CollapseAndExpandButton, "OnShow", BuffFrame.CollapseAndExpandButton.Hide)
+    BuffFrame.CollapseAndExpandButton:SetAlpha(0)
+    BuffFrame.CollapseAndExpandButton:EnableMouse(false)
+    Buffcollapse:SecureHookScript(BuffFrame.CollapseAndExpandButton, "OnShow", function(self)
+        self:SetAlpha(0)
+        self:EnableMouse(false)
+    end)
 end
 
 function Buffcollapse:OnDisable()
     Buffcollapse:UnhookAll()
-    BuffFrame.CollapseAndExpandButton:Show()
+    BuffFrame.CollapseAndExpandButton:SetAlpha(1)
+    BuffFrame.CollapseAndExpandButton:EnableMouse(true)
 end

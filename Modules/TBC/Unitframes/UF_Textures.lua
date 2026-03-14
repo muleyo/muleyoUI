@@ -9,6 +9,7 @@ function UF_Textures:OnInitialize()
 
     -- Create Frame
     UF_Textures.textures = CreateFrame("Frame")
+    UF_Textures.textures:RegisterEvent("PLAYER_LOGIN")
     UF_Textures.textures:RegisterEvent("PLAYER_ENTERING_WORLD")
     UF_Textures.textures:RegisterEvent("UNIT_HEALTH")
     UF_Textures.textures:RegisterEvent("UNIT_TARGET")
