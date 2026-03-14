@@ -104,9 +104,6 @@ end
 function Classcolor:OnEnable()
     -- Hook Frame
     Classcolor:SecureHookScript(Classcolor.classcolor, "OnEvent", Classcolor.Update)
-    Classcolor:SecureHook(TargetFrameMixin, "Update", function(frame, unit)
-        print("yo")
-    end)
 
     -- Update PlayerFrame HealthColor
     local _, playerClass = UnitClass("player")

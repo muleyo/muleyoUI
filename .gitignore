@@ -1,4 +1,5 @@
 .vscode/settings.json
+.venv
 Libs/AceAddon-3.0/**
 Libs/AceBucket-3.0/**
 Libs/AceComm-3.0/**

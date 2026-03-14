@@ -118,13 +118,8 @@ function Style:HandleChatTab(frame)
     end
 
     -- reset the tab
-    local point, relativeTo, relativePoint, offsetX, offsetY = frame:GetPoint()
-    if point then
-        if relativeTo and type(relativeTo) == "table" then
-            frame:SetPoint(point, relativeTo, relativePoint, offsetX or 0, offsetY or 0)
-        else
-            frame:SetPoint(point, offsetX or 0, offsetY or 0)
-        end
+    if frame:GetNumPoints() > 0 then
+        frame:SetPoint(frame:GetPoint())
     end
 
     if not frame.selectedColorTable then
