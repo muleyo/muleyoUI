@@ -1,18 +1,12 @@
 local Classbar = mUI:NewModule("mUI.Modules.Unitframes.Classbar", "AceHook-3.0")
 
+local function HideFrame(frame)
+    frame:Hide()
+end
+
 function Classbar:OnInitialize()
     -- Load Database
     Classbar.db = mUI.db.profile.unitframes
-
-    -- Backup functions
-    Classbar.Paladin = PaladinPowerBarFrame.Show
-    Classbar.Monk = MonkHarmonyBarFrame.Show
-    Classbar.Druid = DruidComboPointBarFrame.Show
-    Classbar.Evoker = EssencePlayerFrame.Show
-    Classbar.DK = RuneFrame.Show
-    Classbar.Warlock = WarlockPowerFrame.Show
-    Classbar.Mage = MageArcaneChargesFrame.Show
-    Classbar.Rogue = RogueComboPointBarFrame.Show
 
     function Classbar:Update(isEnabled)
         local _, class = UnitClass("player")
@@ -20,13 +14,11 @@ function Classbar:OnInitialize()
         if class == "PALADIN" then
             if isEnabled then
                 PaladinPowerBarFrame:Hide()
-                Classbar:SecureHookScript(PaladinPowerBarFrame, "OnShow", function()
-                    PaladinPowerBarFrame:Hide()
-                    PaladinPowerBarFrame.Show = function()
-                    end
-                end)
+                if not Classbar:IsHooked(PaladinPowerBarFrame, "Show") then
+                    Classbar:SecureHook(PaladinPowerBarFrame, "Show", HideFrame)
+                end
             else
-                PaladinPowerBarFrame.Show = Classbar.Paladin
+                Classbar:Unhook(PaladinPowerBarFrame, "Show")
                 PaladinPowerBarFrame:Show()
             end
         end
@@ -34,13 +26,11 @@ function Classbar:OnInitialize()
         if class == "MONK" then
             if isEnabled then
                 MonkHarmonyBarFrame:Hide()
-                Classbar:SecureHookScript(MonkHarmonyBarFrame, "OnShow", function()
-                    MonkHarmonyBarFrame:Hide()
-                    MonkHarmonyBarFrame.Show = function()
-                    end
-                end)
+                if not Classbar:IsHooked(MonkHarmonyBarFrame, "Show") then
+                    Classbar:SecureHook(MonkHarmonyBarFrame, "Show", HideFrame)
+                end
             else
-                MonkHarmonyBarFrame.Show = Classbar.Monk
+                Classbar:Unhook(MonkHarmonyBarFrame, "Show")
                 MonkHarmonyBarFrame:Show()
             end
         end
@@ -48,13 +38,11 @@ function Classbar:OnInitialize()
         if class == "DEATHKNIGHT" then
             if isEnabled then
                 RuneFrame:Hide()
-                Classbar:SecureHookScript(RuneFrame, "OnShow", function()
-                    RuneFrame:Hide()
-                    RuneFrame.Show = function()
-                    end
-                end)
+                if not Classbar:IsHooked(RuneFrame, "Show") then
+                    Classbar:SecureHook(RuneFrame, "Show", HideFrame)
+                end
             else
-                RuneFrame.Show = Classbar.DK
+                Classbar:Unhook(RuneFrame, "Show")
                 RuneFrame:Show()
             end
         end
@@ -62,28 +50,23 @@ function Classbar:OnInitialize()
         if class == "WARLOCK" then
             if isEnabled then
                 WarlockPowerFrame:Hide()
-                Classbar:SecureHookScript(WarlockPowerFrame, "OnShow", function()
-                    WarlockPowerFrame:Hide()
-                    WarlockPowerFrame.Show = function()
-                    end
-                end)
+                if not Classbar:IsHooked(WarlockPowerFrame, "Show") then
+                    Classbar:SecureHook(WarlockPowerFrame, "Show", HideFrame)
+                end
             else
-                WarlockPowerFrame.Show = Classbar.Warlock
+                Classbar:Unhook(WarlockPowerFrame, "Show")
                 WarlockPowerFrame:Show()
             end
-            WarlockPowerFrame:Hide()
         end
 
         if class == "MAGE" then
             if isEnabled then
                 MageArcaneChargesFrame:Hide()
-                Classbar:SecureHookScript(MageArcaneChargesFrame, "OnShow", function()
-                    MageArcaneChargesFrame:Hide()
-                    MageArcaneChargesFrame.Show = function()
-                    end
-                end)
+                if not Classbar:IsHooked(MageArcaneChargesFrame, "Show") then
+                    Classbar:SecureHook(MageArcaneChargesFrame, "Show", HideFrame)
+                end
             else
-                MageArcaneChargesFrame.Show = Classbar.Mage
+                Classbar:Unhook(MageArcaneChargesFrame, "Show")
                 MageArcaneChargesFrame:Show()
             end
         end
@@ -91,13 +74,11 @@ function Classbar:OnInitialize()
         if class == "DRUID" then
             if isEnabled then
                 DruidComboPointBarFrame:Hide()
-                Classbar:SecureHookScript(DruidComboPointBarFrame, "OnShow", function()
-                    DruidComboPointBarFrame:Hide()
-                    DruidComboPointBarFrame.Show = function()
-                    end
-                end)
+                if not Classbar:IsHooked(DruidComboPointBarFrame, "Show") then
+                    Classbar:SecureHook(DruidComboPointBarFrame, "Show", HideFrame)
+                end
             else
-                DruidComboPointBarFrame.Show = Classbar.Druid
+                Classbar:Unhook(DruidComboPointBarFrame, "Show")
                 DruidComboPointBarFrame:Show()
             end
         end
@@ -105,13 +86,11 @@ function Classbar:OnInitialize()
         if class == "EVOKER" then
             if isEnabled then
                 EssencePlayerFrame:Hide()
-                Classbar:SecureHookScript(EssencePlayerFrame, "OnShow", function()
-                    EssencePlayerFrame:Hide()
-                    EssencePlayerFrame.Show = function()
-                    end
-                end)
+                if not Classbar:IsHooked(EssencePlayerFrame, "Show") then
+                    Classbar:SecureHook(EssencePlayerFrame, "Show", HideFrame)
+                end
             else
-                EssencePlayerFrame.Show = Classbar.Evoker
+                Classbar:Unhook(EssencePlayerFrame, "Show")
                 EssencePlayerFrame:Show()
             end
         end
@@ -119,13 +98,11 @@ function Classbar:OnInitialize()
         if class == "ROGUE" then
             if isEnabled then
                 RogueComboPointBarFrame:Hide()
-                Classbar:SecureHookScript(RogueComboPointBarFrame, "OnShow", function()
-                    RogueComboPointBarFrame:Hide()
-                    RogueComboPointBarFrame.Show = function()
-                    end
-                end)
+                if not Classbar:IsHooked(RogueComboPointBarFrame, "Show") then
+                    Classbar:SecureHook(RogueComboPointBarFrame, "Show", HideFrame)
+                end
             else
-                RogueComboPointBarFrame.Show = Classbar.Rogue
+                Classbar:Unhook(RogueComboPointBarFrame, "Show")
                 RogueComboPointBarFrame:Show()
             end
         end
