@@ -65,13 +65,14 @@ function RF_Name:OnInitialize()
 
                     frame.name:SetFont(STANDARD_TEXT_FONT, fontSize, "OUTLINE")
 
+                    frame.name:ClearAllPoints()
                     if RF_Name.db.roleicons then
-                        frame.name:ClearAllPoints()
-                        frame.name:SetPoint("TOPLEFT", frame, 5, -3)
+                        frame.name:SetPoint("TOPLEFT", frame, "TOPLEFT", 5, -3)
                     else
-                        frame.name:ClearAllPoints()
-                        frame.name:SetPoint("TOPLEFT", frame, 20, -3)
+                        frame.name:SetPoint("TOPLEFT", frame, "TOPLEFT", 20, -3)
                     end
+                    frame.name:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
+                    frame.name:SetWordWrap(false)
                 end
             end
         end
