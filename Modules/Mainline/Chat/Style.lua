@@ -82,9 +82,17 @@ function Style:OnEnable()
                 if not Style.db.tooltips then
                     return
                 end
+                local linkType = LinkUtil.SplitLinkData(link)
+                if linkType == "trade" then
+                    return
+                end
                 GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-                GameTooltip:SetHyperlink(link)
-                GameTooltip:Show()
+                local isOK = pcall(GameTooltip.SetHyperlink, GameTooltip, link)
+                if not isOK then
+                    GameTooltip:Hide()
+                else
+                    GameTooltip:Show()
+                end
             end)
 
             chatFrame:SetScript("OnHyperlinkLeave", function(self)
@@ -475,9 +483,17 @@ function Style:EnableHyperlinkTooltips()
                 if not Style.db.tooltips then
                     return
                 end
+                local linkType = LinkUtil.SplitLinkData(link)
+                if linkType == "trade" then
+                    return
+                end
                 GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-                GameTooltip:SetHyperlink(link)
-                GameTooltip:Show()
+                local isOK = pcall(GameTooltip.SetHyperlink, GameTooltip, link)
+                if not isOK then
+                    GameTooltip:Hide()
+                else
+                    GameTooltip:Show()
+                end
             end)
 
             chatFrame:SetScript("OnHyperlinkLeave", function(self)

@@ -190,7 +190,9 @@ function Copy:Chatlog()
         -- Let the editbox compute its own content height after text is set
         C_Timer.After(0, function()
             local scrollHeight = Copy.scroll:GetHeight()
-            local contentHeight = Copy.editbox:GetStringHeight() + 20
+            local _, fontHeight = Copy.editbox:GetFont()
+            local numLines = Copy.editbox:GetNumLetters() > 0 and select(2, Copy.editbox:GetText():gsub("\n", "\n")) + 1 or 1
+            local contentHeight = numLines * (fontHeight + 2) + 20
             Copy.editbox:SetHeight(math.max(contentHeight, scrollHeight, 1))
             Copy.scroll:SetVerticalScroll(0)
         end)
