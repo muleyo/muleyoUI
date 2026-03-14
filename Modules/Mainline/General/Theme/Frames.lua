@@ -781,6 +781,40 @@ function Theme:Bags()
     mUI:Skin(ContainerFrame5.Bg)
     mUI:Skin(ContainerFrame6.NineSlice)
     mUI:Skin(ContainerFrame6.Bg)
+
+    for i = 1, 13 do
+        local container = _G["ContainerFrame" .. i]
+
+        -- Only proceed if container exists
+        if container then
+            -- Bag Slots - only hook if Update method exists
+            if container.Update then
+                if not Theme:IsHooked(container, "Update") then
+                    Theme:SecureHook(container, "Update", function(self)
+                        if self.itemButtonPool then
+                            for button, _ in self.itemButtonPool:EnumerateActive() do
+                                if button.NormalTexture then
+                                    button.NormalTexture:SetVertexColor(unpack(mUI:Color(0.15)))
+                                end
+                            end
+                        end
+                    end)
+                end
+            end
+        end
+    end
+
+    if not Theme:IsHooked(ContainerFrameCombinedBags, "Update") then
+        Theme:SecureHook(ContainerFrameCombinedBags, "Update", function(self)
+            if self.itemButtonPool then
+                for button, _ in self.itemButtonPool:EnumerateActive() do
+                    if button.NormalTexture then
+                        button.NormalTexture:SetVertexColor(unpack(mUI:Color(0.15)))
+                    end
+                end
+            end
+        end)
+    end
 end
 
 function Theme:Bank()
