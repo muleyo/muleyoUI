@@ -246,6 +246,9 @@ function ItemInfo:OnInitialize()
     function ItemInfo:GetItemEnchantAsText(unit, slot)
 
         local data = C_TooltipInfo.GetInventoryItem(unit, slot)
+        if not data then
+            return nil, nil
+        end
         for _, line in ipairs(data.lines) do
             local text = line.leftText
             local enchantText = string.match(text, ItemInfo.enchantPattern)
@@ -269,6 +272,9 @@ function ItemInfo:OnInitialize()
     function ItemInfo:GetSocketTextures(unit, slot)
 
         local data = C_TooltipInfo.GetInventoryItem(unit, slot)
+        if not data then
+            return {}
+        end
         local textures = {}
         for i, line in ipairs(data.lines) do
             if line.type == 3 then
