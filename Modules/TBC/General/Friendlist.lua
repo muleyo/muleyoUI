@@ -70,6 +70,9 @@ function Friendlist:OnInitialize()
     end
 
     function Friendlist:PackageFriendBNetCharacter(data, id)
+        if not data then
+            return
+        end
         for i = 1, C_BattleNet.GetFriendNumGameAccounts(id) do
             local temp = Friendlist:BNGetFriendGameAccountInfo(id, i)
             if temp and temp.clientProgram == BNET_CLIENT_WOW then
