@@ -109,12 +109,16 @@ function Theme:OnEnable()
             end)
 
             Theme:SecureHook("CompactUnitFrame_UpdatePrivateAuras", function(frame)
-                if not frame or not frame.PrivateAuraAnchors then
+                if not frame then
                     return
                 end
 
-                local ok, forbidden = pcall(frame.IsForbidden, frame)
+                local ok, forbidden = pcall(function() return frame:IsForbidden() end)
                 if not ok or forbidden then
+                    return
+                end
+
+                if not frame.PrivateAuraAnchors then
                     return
                 end
 

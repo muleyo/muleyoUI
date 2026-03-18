@@ -188,14 +188,19 @@ function Style:OnEnable()
 
     -- Re-skin tabs after Blizzard resets their visuals via FCFTab_UpdateColors
     -- (called by FCFDock_UpdateTabs on tab click, dock changes, etc.)
+    -- Deferred via C_Timer.After(0) to break the secure-hook taint chain;
+    -- otherwise GetNumPoints / GetPoint return secret values that cannot
+    -- be compared or passed along.
     local isReskinning = false
     Style:SecureHook("FCFTab_UpdateColors", function(tab)
         if isReskinning then
             return
         end
-        isReskinning = true
-        Style:HandleChatTab(tab)
-        isReskinning = false
+        C_Timer.After(0, function()
+            isReskinning = true
+            Style:HandleChatTab(tab)
+            isReskinning = false
+        end)
     end)
 
     Style:EnableDispatcher()
