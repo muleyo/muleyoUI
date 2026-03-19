@@ -2561,12 +2561,28 @@ function EditMode:OnInitialize()
         QueueStatusButton:SetParent(EditMode.QueueStatus)
         QueueStatusButton:ClearAllPoints()
         QueueStatusButton:SetPoint("CENTER", EditMode.QueueStatus)
+        -- Keep button centered when Blizzard tries to reposition it
+        local ignoringPointHook = false
         EditMode:SecureHook(QueueStatusButton, "SetPoint", function()
-            QueueStatusButton:SetAllPoints(EditMode.QueueStatus)
+            if ignoringPointHook then return end
+            ignoringPointHook = true
+            QueueStatusButton:ClearAllPoints()
+            QueueStatusButton:SetPoint("CENTER", EditMode.QueueStatus)
+            ignoringPointHook = false
+        end)
+
+        -- Desired scale for QueueStatusButton; updated by layout callback and slider.
+        -- The SetScale hook below ensures Blizzard can never override this.
+        local queueDesiredScale = 0.8
+        EditMode:SecureHook(QueueStatusButton, "SetScale", function(self, scale)
+            if scale ~= queueDesiredScale then
+                self:SetScale(queueDesiredScale)
+            end
         end)
 
         -- Stats Frame
         function EditMode:StatsFrame(layout, point, x, y)
+            if not EditMode.db[layout].statsframe then EditMode.db[layout].statsframe = {} end
             EditMode.db[layout].statsframe.point = point
             EditMode.db[layout].statsframe.x = x
             EditMode.db[layout].statsframe.y = y
@@ -2574,6 +2590,7 @@ function EditMode:OnInitialize()
 
         -- QueueStatusButton
         function EditMode:QueueIcon(layout, point, x, y)
+            if not EditMode.db[layout].queueicon then EditMode.db[layout].queueicon = {} end
             EditMode.db[layout].queueicon.point = point
             EditMode.db[layout].queueicon.x = x
             EditMode.db[layout].queueicon.y = y
@@ -2584,42 +2601,73 @@ function EditMode:OnInitialize()
 
         EditMode.LEM:RegisterCallback('layout', function(layout)
             if not EditMode.db[layout] then
-                EditMode.db[layout] = {
-                    ["statsframe"] = {
-                        ["point"] = "BOTTOMLEFT",
-                        ["x"] = 0,
-                        ["y"] = 0
-                    },
-                    ["queueicon"] = {
-                        ["point"] = "TOPRIGHT",
-                        ["x"] = -166.668701171875,
-                        ["y"] = -164.1666259765625
-                    }
+                EditMode.db[layout] = {}
+            end
+            if not EditMode.db[layout].statsframe then
+                EditMode.db[layout].statsframe = {
+                    point = "BOTTOMLEFT",
+                    x = 0,
+                    y = 0
+                }
+            end
+            if not EditMode.db[layout].queueicon then
+                EditMode.db[layout].queueicon = {
+                    point = "TOPRIGHT",
+                    x = -166.668701171875,
+                    y = -164.1666259765625
                 }
             end
 
             mUI.statsFrame:ClearAllPoints()
             mUI.statsFrame:SetPoint(EditMode.db[layout].statsframe.point, EditMode.db[layout].statsframe.x, EditMode.db[layout].statsframe.y)
 
+            -- Apply stats frame text size
+            local textSize = EditMode.db[layout].statsframe.textsize or 13
+            local Stats = mUI:GetModule("mUI.Modules.General.Stats")
+            local fontPath = Stats and Stats.db and Stats.db.general.font ~= "None" and Stats.db.general.fontpath or STANDARD_TEXT_FONT
+            mUI.statsFrame.text:SetFont(fontPath, textSize, "OUTLINE")
+
             EditMode.QueueStatus:ClearAllPoints()
             EditMode.QueueStatus:SetPoint(EditMode.db[layout].queueicon.point, EditMode.db[layout].queueicon.x, EditMode.db[layout].queueicon.y)
 
-            if not EditMode:IsHooked(QueueStatusButton, "OnShow") then
-                EditMode:SecureHookScript(QueueStatusButton, "OnShow", function()
-                    QueueStatusButton:SetScale(EditMode.db[layout].queueicon.scale or 0.8)
-                end)
-            end
+            -- Apply QueueStatusButton scale
+            queueDesiredScale = EditMode.db[layout].queueicon.scale or 0.8
+            QueueStatusButton:SetScale(queueDesiredScale)
         end)
+
+        EditMode.LEM:AddFrameSettings(mUI.statsFrame, {{
+            name = 'Text Size',
+            kind = EditMode.LEM.SettingType.Slider,
+            default = 13,
+            get = function(layout)
+                return EditMode.db[layout].statsframe and EditMode.db[layout].statsframe.textsize or 13
+            end,
+            set = function(layout, value)
+                if not EditMode.db[layout].statsframe then EditMode.db[layout].statsframe = {} end
+                EditMode.db[layout].statsframe.textsize = value
+                local Stats = mUI:GetModule("mUI.Modules.General.Stats")
+                local fontPath = Stats and Stats.db and Stats.db.general.font ~= "None" and Stats.db.general.fontpath or STANDARD_TEXT_FONT
+                mUI.statsFrame.text:SetFont(fontPath, value, "OUTLINE")
+            end,
+            minValue = 6,
+            maxValue = 32,
+            valueStep = 1,
+            formatter = function(value)
+                return tostring(value)
+            end
+        }})
 
         EditMode.LEM:AddFrameSettings(EditMode.QueueStatus, {{
             name = 'Button Size',
             kind = EditMode.LEM.SettingType.Slider,
-            default = 1,
+            default = 0.8,
             get = function(layout)
-                return EditMode.db[layout].queueicon.scale
+                return EditMode.db[layout].queueicon and EditMode.db[layout].queueicon.scale or 0.8
             end,
             set = function(layout, value)
+                if not EditMode.db[layout].queueicon then EditMode.db[layout].queueicon = {} end
                 EditMode.db[layout].queueicon.scale = value
+                queueDesiredScale = value
                 QueueStatusButton:SetScale(value)
             end,
             minValue = 0.1,
