@@ -55,18 +55,46 @@ local function CreateThinScrollBar(scrollFrame)
     return scrollbar
 end
 
--- Collect messages from a chat frame into a single string
+-- Collect messages from a chat frame by temporarily shrinking the font
+-- so all messages fit as visible FontStrings, then reading their text.
 local function GetChatText(chatFrame)
     if not chatFrame then
         return ""
     end
+
+    local fontFile, fontSize, fontFlags = chatFrame:GetFont()
+    if not fontFile or not fontSize then
+        return ""
+    end
+
+    -- Shrink font so the C++ engine renders all history as FontStrings
+    chatFrame:SetFont(fontFile, 0.01, fontFlags)
+
     local lines = {}
-    for i = 1, chatFrame:GetNumMessages() do
-        local message = chatFrame:GetMessageInfo(i)
-        if message then
-            lines[#lines + 1] = message
+
+    -- Read from FontStringContainer (modern retail) or frame regions
+    local container = chatFrame.FontStringContainer
+    local regions
+    if container then
+        regions = {container:GetRegions()}
+    else
+        regions = {chatFrame:GetRegions()}
+    end
+
+    -- Iterate in reverse so messages are in chronological order (oldest first)
+    for i = #regions, 1, -1 do
+        local region = regions[i]
+        if region and region:GetObjectType() == "FontString" then
+            local text = region:GetText()
+            if text and text ~= "" then
+                lines[#lines + 1] = text
+            end
         end
     end
+
+    -- Restore original font
+    chatFrame:SetFont(fontFile, fontSize, fontFlags)
+
     return table.concat(lines, "\n")
 end
 
@@ -166,16 +194,20 @@ function Copy:OnInitialize()
     editbox:SetMultiLine(true)
     editbox:SetFontObject("ChatFontNormal")
     editbox:SetAutoFocus(false)
+    editbox:EnableMouse(true)
     editbox:SetWidth(560)
     editbox:SetHeight(400)
     editbox:SetScript("OnEscapePressed", function()
         frame:Hide()
     end)
-    editbox:SetScript("OnCursorChanged", function(self, _, y, _, h)
-        local needed = math.abs(y) + h + 20
-        if needed > self:GetHeight() then
-            self:SetHeight(needed)
-        end
+    editbox:SetScript("OnEditFocusGained", function(self)
+        self:HighlightText()
+    end)
+    editbox:SetScript("OnCursorChanged", function(self, x, y, w, h)
+        ScrollingEdit_OnCursorChanged(self, x, y, w, h)
+    end)
+    editbox:SetScript("OnUpdate", function(self, elapsed)
+        ScrollingEdit_OnUpdate(self, elapsed, scroll)
     end)
     editbox:EnableMouseWheel(true)
     editbox:SetScript("OnMouseWheel", function(_, delta)
