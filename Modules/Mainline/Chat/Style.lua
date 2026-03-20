@@ -206,7 +206,6 @@ function Style:OnEnable()
     Style:EnableDispatcher()
     Style:EnableDragHook()
     Style:EnableAlerts()
-    Style:EnableTextProcessing()
 
     -- Apply font settings immediately and after a delay to catch initial messages
     Style:UpdateMessageFonts()
