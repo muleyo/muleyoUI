@@ -26,6 +26,9 @@ function Link:LinkifyURLs(msg)
     if type(msg) ~= "string" then
         return msg
     end
+    if canaccessvalue and not canaccessvalue(msg) then
+        return msg
+    end
     for _, pattern in pairs(Link.patterns) do
         msg = string.gsub(msg, pattern, "|cff0394ff|Hurl:%1|h[%1]|h|r")
     end
