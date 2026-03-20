@@ -886,6 +886,7 @@ function Theme:Chat()
     mUI:Skin(ChatConfigBackgroundFrame.NineSlice)
     mUI:Skin(ChatConfigCategoryFrame)
     mUI:Skin(ChatConfigCategoryFrame.NineSlice)
+    Theme:StyleTooltip(GeneralDockManagerOverflowButtonList)
 end
 
 function Theme:Communities()
