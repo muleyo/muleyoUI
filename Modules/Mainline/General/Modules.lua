@@ -20,6 +20,7 @@ function Modules:OnInitialize()
     Modules.Stats = mUI:GetModule("mUI.Modules.General.Stats")
     Modules.ErrorMessages = mUI:GetModule("mUI.Modules.General.ErrorMessages")
     Modules.Friendlist = mUI:GetModule("mUI.Modules.General.Friendlist")
+    Modules.MouseCursor = mUI:GetModule("mUI.Modules.General.MouseCursor")
 end
 
 function Modules:OnEnable()
@@ -79,6 +80,9 @@ function Modules:OnEnable()
     if Modules.db.display.friendlist then
         Modules.Friendlist:Enable()
     end
+    if Modules.db.display.mousecursor then
+        Modules.MouseCursor:Enable()
+    end
 end
 
 function Modules:OnDisable()
@@ -100,4 +104,5 @@ function Modules:OnDisable()
     Modules.Stats:Disable()
     Modules.ErrorMessages:Disable()
     Modules.Friendlist:Disable()
+    Modules.MouseCursor:Disable()
 end

@@ -506,6 +506,28 @@ function General:OnInitialize()
                     return mUI.db.profile.general.display.friendlist
                 end,
                 order = 24
+            },
+            mousecursor = {
+                name = "Mouse Cursor",
+                desc = "Display a circle around the mouse cursor for better visibility",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.general.display.mousecursor = val
+
+                    if not General.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        General.Module.MouseCursor:Enable()
+                    else
+                        General.Module.MouseCursor:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.general.display.mousecursor
+                end,
+                order = 25
             }
         }
     }
