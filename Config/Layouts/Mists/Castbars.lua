@@ -16,7 +16,7 @@ function Castbars:OnInitialize()
                         return "|cFFFF0000Disabled|r"
                     end
                 end,
-                desc = "Enable / Disable Module|cffffff00Info:|r Requires Reload",
+                desc = "Enable / Disable Module\n\n|cffffff00Info:|r Requires Reload",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.castbars.enabled = val

@@ -4,7 +4,7 @@ function Gossip:OnInitialize()
     Gossip.frame = CreateFrame("Frame")
     Gossip.frame:RegisterEvent("GOSSIP_SHOW")
     function Gossip:Automate()
-        if IsControlKeyDown() or IsAltKeyDown() then
+        if IsModifierKeyDown() then
             return
         end
         local options = C_GossipInfo.GetOptions()
