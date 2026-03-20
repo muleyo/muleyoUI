@@ -408,29 +408,29 @@ do
     local function applyFormatStringOverrides()
         -- Guild -> [G]
         CHAT_GUILD_GET = "|Hchannel:GUILD|h[G]|h %s:\32"
-        CHAT_GUILD_SEND = "|Hchannel:GUILD|h[G]|h %s:\32"
+        CHAT_GUILD_SEND = "[G]:\32"
         -- Officer -> [G]
         CHAT_OFFICER_GET = "|Hchannel:OFFICER|h[G]|h %s:\32"
-        CHAT_OFFICER_SEND = "|Hchannel:OFFICER|h[G]|h %s:\32"
+        CHAT_OFFICER_SEND = "[O]:\32"
         -- Party -> [P]
         CHAT_PARTY_GET = "|Hchannel:PARTY|h[P]|h %s:\32"
-        CHAT_PARTY_SEND = "|Hchannel:PARTY|h[P]|h %s:\32"
+        CHAT_PARTY_SEND = "[P]:\32"
         CHAT_PARTY_LEADER_GET = "|Hchannel:PARTY|h[P]|h %s:\32"
-        CHAT_PARTY_LEADER_SEND = "|Hchannel:PARTY|h[P]|h %s:\32"
+        CHAT_PARTY_LEADER_SEND = "[P]:\32"
         CHAT_PARTY_GUIDE_GET = "|Hchannel:PARTY|h[P]|h %s:\32"
-        CHAT_PARTY_GUIDE_SEND = "|Hchannel:PARTY|h[P]|h %s:\32"
+        CHAT_PARTY_GUIDE_SEND = "[P]:\32"
         -- Raid -> [R]
         CHAT_RAID_GET = "|Hchannel:RAID|h[R]|h %s:\32"
-        CHAT_RAID_SEND = "|Hchannel:RAID|h[R]|h %s:\32"
+        CHAT_RAID_SEND = "[R]:\32"
         CHAT_RAID_LEADER_GET = "|Hchannel:RAID|h[R]|h %s:\32"
-        CHAT_RAID_LEADER_SEND = "|Hchannel:RAID|h[R]|h %s:\32"
+        CHAT_RAID_LEADER_SEND = "[R]:\32"
         CHAT_RAID_WARNING_GET = "|Hchannel:RAID|h[R]|h %s:\32"
-        CHAT_RAID_WARNING_SEND = "|Hchannel:RAID|h[R]|h %s:\32"
+        CHAT_RAID_WARNING_SEND = "[RW]:\32"
         -- Instance -> [I]
         CHAT_INSTANCE_CHAT_GET = "|Hchannel:INSTANCE_CHAT|h[I]|h %s:\32"
-        CHAT_INSTANCE_CHAT_SEND = "|Hchannel:INSTANCE_CHAT|h[I]|h %s:\32"
+        CHAT_INSTANCE_CHAT_SEND = "[I]:\32"
         CHAT_INSTANCE_CHAT_LEADER_GET = "|Hchannel:INSTANCE_CHAT|h[I]|h %s:\32"
-        CHAT_INSTANCE_CHAT_LEADER_SEND = "|Hchannel:INSTANCE_CHAT|h[I]|h %s:\32"
+        CHAT_INSTANCE_CHAT_LEADER_SEND = "[I]:\32"
     end
 
     -- 2) Use ChatFrame_AddMessageEventFilter for numbered channels
