@@ -360,7 +360,7 @@ function General:OnInitialize()
             },
             quests = {
                 name = "Accept Quests",
-                desc = "Accept quests automatically",
+                desc = "Accept quests automatically\n\n|cffffff00Info:|r Hold any modifier key while interacting to skip auto-gossip",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.general.automation.quests = val
@@ -382,7 +382,7 @@ function General:OnInitialize()
             },
             gossip = {
                 name = "Gossip",
-                desc = "Select the first gossip option automatically\n\n|cffffff00Info:|r Hold CTRL or ALT while interacting to skip auto-gossip",
+                desc = "Select the first gossip option automatically\n\n|cffffff00Info:|r Hold any modifier key while interacting to skip auto-gossip",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.general.automation.gossip = val
@@ -506,6 +506,28 @@ function General:OnInitialize()
                     return mUI.db.profile.general.display.friendlist
                 end,
                 order = 24
+            },
+            mousecursor = {
+                name = "Mouse Cursor",
+                desc = "Display a circle around the mouse cursor for better visibility",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.general.display.mousecursor = val
+
+                    if not General.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        General.Module.MouseCursor:Enable()
+                    else
+                        General.Module.MouseCursor:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.general.display.mousecursor
+                end,
+                order = 25
             }
         }
     }

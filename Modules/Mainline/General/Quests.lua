@@ -2,10 +2,16 @@ local Quests = mUI:NewModule("mUI.Modules.General.Quests", "AceHook-3.0")
 
 function Quests:OnInitialize()
     function Quests:Accept()
+        if IsModifierKeyDown() then
+            return
+        end
         QuestFrameAcceptButton:Click()
     end
 
     function Quests:Complete()
+        if IsModifierKeyDown() then
+            return
+        end
         QuestFrameCompleteButton:Click()
         if GetNumQuestChoices() <= 1 then
             QuestFrameCompleteQuestButton:Click()

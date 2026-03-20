@@ -32,7 +32,8 @@ local defaults = {
                 stats = true,
                 movementspeed = false,
                 errormessages = true,
-                friendlist = true
+                friendlist = true,
+                mousecursor = false
             }
         },
         actionbars = {

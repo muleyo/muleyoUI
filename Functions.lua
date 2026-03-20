@@ -257,7 +257,7 @@ function Functions:OnInitialize()
         end
     end
 
-    function mUI:Skin(frame, isTable, isGui)
+    function mUI:Skin(frame, isTable)
         -- Update Custom Color & Theme
         customColor = mUI.db.profile.general.color or {0, 0, 0, 1}
         themes["Custom"] = {customColor[1], customColor[2], customColor[3], customColor[4]}
@@ -274,16 +274,7 @@ function Functions:OnInitialize()
         end
 
         if frame then
-            if isGui then
-                for _, v in pairs({frame:GetRegions()}) do
-                    if v:GetObjectType() == "Texture" then
-                        if v.SetDesaturated then
-                            v:SetDesaturated(true)
-                        end
-                        v:SetVertexColor(0.15, 0.15, 0.15, 1)
-                    end
-                end
-            elseif not isTable then
+            if not isTable then
                 for _, v in pairs({frame:GetRegions()}) do
                     if (not blacklist[v:GetName()]) and (not blacklist[v]) then
                         if v:GetObjectType() == "Texture" then

@@ -118,9 +118,9 @@ function Style:HandleChatTab(frame)
     end
 
     -- reset the tab
-    if frame:GetNumPoints() > 0 then
+    --[[if frame:GetNumPoints() > 0 then
         frame:SetPoint(frame:GetPoint())
-    end
+    end]]
 
     if not frame.selectedColorTable then
         frame.Text:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)

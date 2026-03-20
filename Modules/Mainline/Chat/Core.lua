@@ -397,66 +397,75 @@ end
 --------------------
 
 do
-    local TEXT_PROCESSORS = { -- Shorten channel names by removing zone/city suffixes
-    function(text)
-        -- Helper function to trim whitespace
-        local function trim(s)
-            return s:match("^%s*(.-)%s*$")
+    -- Helper function to trim whitespace
+    local function trim(s)
+        return s:match("^%s*(.-)%s*$")
+    end
+
+    -- 1) Modify global format strings at load time for static channel
+    --    abbreviations. This is taint-free because it happens once, outside
+    --    any event handler.
+    local function applyFormatStringOverrides()
+        -- Guild -> [G]
+        CHAT_GUILD_GET = "|Hchannel:GUILD|h[G]|h %s:\32"
+        CHAT_GUILD_SEND = "|Hchannel:GUILD|h[G]|h %s:\32"
+        -- Officer -> [G]
+        CHAT_OFFICER_GET = "|Hchannel:OFFICER|h[G]|h %s:\32"
+        CHAT_OFFICER_SEND = "|Hchannel:OFFICER|h[G]|h %s:\32"
+        -- Party -> [P]
+        CHAT_PARTY_GET = "|Hchannel:PARTY|h[P]|h %s:\32"
+        CHAT_PARTY_SEND = "|Hchannel:PARTY|h[P]|h %s:\32"
+        CHAT_PARTY_LEADER_GET = "|Hchannel:PARTY|h[P]|h %s:\32"
+        CHAT_PARTY_LEADER_SEND = "|Hchannel:PARTY|h[P]|h %s:\32"
+        CHAT_PARTY_GUIDE_GET = "|Hchannel:PARTY|h[P]|h %s:\32"
+        CHAT_PARTY_GUIDE_SEND = "|Hchannel:PARTY|h[P]|h %s:\32"
+        -- Raid -> [R]
+        CHAT_RAID_GET = "|Hchannel:RAID|h[R]|h %s:\32"
+        CHAT_RAID_SEND = "|Hchannel:RAID|h[R]|h %s:\32"
+        CHAT_RAID_LEADER_GET = "|Hchannel:RAID|h[R]|h %s:\32"
+        CHAT_RAID_LEADER_SEND = "|Hchannel:RAID|h[R]|h %s:\32"
+        CHAT_RAID_WARNING_GET = "|Hchannel:RAID|h[R]|h %s:\32"
+        CHAT_RAID_WARNING_SEND = "|Hchannel:RAID|h[R]|h %s:\32"
+        -- Instance -> [I]
+        CHAT_INSTANCE_CHAT_GET = "|Hchannel:INSTANCE_CHAT|h[I]|h %s:\32"
+        CHAT_INSTANCE_CHAT_SEND = "|Hchannel:INSTANCE_CHAT|h[I]|h %s:\32"
+        CHAT_INSTANCE_CHAT_LEADER_GET = "|Hchannel:INSTANCE_CHAT|h[I]|h %s:\32"
+        CHAT_INSTANCE_CHAT_LEADER_SEND = "|Hchannel:INSTANCE_CHAT|h[I]|h %s:\32"
+    end
+
+    -- 2) Use ChatFrame_AddMessageEventFilter for numbered channels
+    --    (Trade, General, LookingForGroup, etc.) to shorten zone suffixes.
+    --    Filters run inside Blizzard's secure path without tainting it.
+    local function channelFilter(self, event, msg, sender, lang, channelName, ...)
+        if not channelName or channelName == "" then
+            return false
         end
 
-        -- Handle |Hchannel:channel:...|h[number. Trade (Services) - Zone]|h -> |Hchannel:channel:...|h[Services]|h
-        text = text:gsub("(|Hchannel:channel:[^|]-|h)%[%d+%. Trade %(([^%)]+)%)%s*%-%s*[^%]]+%](|h)", function(prefix, name, suffix)
-            return prefix .. "[" .. trim(name) .. "]" .. suffix
-        end)
-
-        -- Handle |Hchannel:channel:...|h[number. ChannelName - Zone]|h -> |Hchannel:channel:...|h[ChannelName]|h
-        text = text:gsub("(|Hchannel:channel:[^|]-|h)%[%d+%. ([^%-%]]+)%s*%-%s*[^%]]+%](|h)", function(prefix, name, suffix)
-            return prefix .. "[" .. trim(name) .. "]" .. suffix
-        end)
-
-        -- Abbreviate Instance/Instance Leader -> [I]
-        text = text:gsub("(|Hchannel:INSTANCE_CHAT|h)%[.-%](|h)", "%1[I]%2")
-
-        -- Abbreviate Raid/Raid Leader -> [R]
-        text = text:gsub("(|Hchannel:RAID|h)%[.-%](|h)", "%1[R]%2")
-
-        -- Abbreviate Party/Party Leader -> [P]
-        text = text:gsub("(|Hchannel:PARTY|h)%[.-%](|h)", "%1[P]%2")
-
-        -- Abbreviate Guild -> [G]
-        text = text:gsub("(|Hchannel:GUILD|h)%[.-%](|h)", "%1[G]%2")
-
-        -- Abbreviate Officer -> [G]
-        text = text:gsub("(|Hchannel:OFFICER|h)%[.-%](|h)", "%1[G]%2")
-
-        return text
-    end}
-
-    function Style:ProcessText(text)
-        for _, processor in ipairs(TEXT_PROCESSORS) do
-            local isOK, val = pcall(processor, text)
-            if isOK then
-                text = val
+        local short = channelName
+        -- "Trade (Services) - Silvermoon" -> "Services"
+        local tradeName = channelName:match("^Trade %((.+)%)%s*%-")
+        if tradeName then
+            short = trim(tradeName)
+        else
+            -- "General - Silvermoon" -> "General"
+            local baseName = channelName:match("^(.-)%s*%-")
+            if baseName then
+                short = trim(baseName)
             end
         end
 
-        return text
+        if short ~= channelName then
+            return false, msg, sender, lang, short, ...
+        end
+        return false
     end
 
     function Style:EnableTextProcessing()
-        -- Hook AddMessage for all chat frames
-        for i = 1, Constants.ChatFrameConstants.MaxChatWindows do
-            local chatFrame = _G["ChatFrame" .. i]
-            if chatFrame and not chatFrame.mUITextProcessingHooked then
-                Style:RawHook(chatFrame, "AddMessage", function(frame, text, ...)
-                    if text and type(text) == "string" then
-                        text = Style:ProcessText(text)
-                    end
-                    return Style.hooks[frame].AddMessage(frame, text, ...)
-                end, true)
-                chatFrame.mUITextProcessingHooked = true
-            end
-        end
+        -- Apply static format string overrides (taint-free, runs once)
+        applyFormatStringOverrides()
+
+        -- Register filter for numbered channel messages
+        ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", channelFilter)
     end
 end
 

@@ -26,5 +26,6 @@
     <Include file="Stats.lua" />
     <Include file="ErrorMessages.lua" />
     <Include file="Friendlist.lua" />
+    <Include file="MouseCursor.lua" />
     <Include file="Modules.lua" />
 </Ui>
