@@ -433,39 +433,35 @@ do
         CHAT_INSTANCE_CHAT_LEADER_SEND = "[I]:\32"
     end
 
-    -- 2) Use ChatFrame_AddMessageEventFilter for numbered channels
-    --    (Trade, General, LookingForGroup, etc.) to shorten zone suffixes.
-    --    Filters run inside Blizzard's secure path without tainting it.
-    local function channelFilter(self, event, msg, sender, lang, channelName, ...)
-        if not channelName or channelName == "" then
-            return false
-        end
-
-        local short = channelName
-        -- "Trade (Services) - Silvermoon" -> "Services"
-        local tradeName = channelName:match("^Trade %((.+)%)%s*%-")
-        if tradeName then
-            short = trim(tradeName)
-        else
+    -- 2) Shorten numbered channel names (Trade, General, LookingForGroup, etc.)
+    --    by hooking the display-level ResolvePrefixedChannelName function.
+    --    This avoids tainting event args which would break ChatHistory_GetToken.
+    local function shortenChannelName(resolved)
+        local prefix, name = resolved:match("^(%d+%.%s*)(.*)")
+        if prefix and name then
+            -- "Trade (Services) - Silvermoon" -> "Services"
+            local tradeName = name:match("^Trade %((.+)%)%s*%-")
+            if tradeName then
+                return prefix .. trim(tradeName)
+            end
             -- "General - Silvermoon" -> "General"
-            local baseName = channelName:match("^(.-)%s*%-")
-            if baseName then
-                short = trim(baseName)
+            local baseName = name:match("^(.-)%s*%-")
+            if baseName and trim(baseName) ~= "" then
+                return prefix .. trim(baseName)
             end
         end
-
-        if short ~= channelName then
-            return false, msg, sender, lang, short, ...
-        end
-        return false
+        return resolved
     end
 
     function Style:EnableTextProcessing()
         -- Apply static format string overrides (taint-free, runs once)
         applyFormatStringOverrides()
 
-        -- Register filter for numbered channel messages
-        ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", channelFilter)
+        -- Hook channel name display to shorten zone suffixes (taint-free)
+        local origResolve = ChatFrameUtil.ResolvePrefixedChannelName
+        ChatFrameUtil.ResolvePrefixedChannelName = function(channelArg)
+            return shortenChannelName(origResolve(channelArg))
+        end
     end
 end
 
