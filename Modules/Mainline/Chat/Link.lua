@@ -35,23 +35,56 @@ function Link:LinkifyURLs(msg)
     return msg
 end
 
--- Hook AddMessage on a single ChatFrame so URLs in the formatted display
--- string are turned into clickable hyperlinks.  This runs AFTER Blizzard's
--- secure ChatHistory_GetAccessID processing, avoiding event-arg taint.
 function Link:HookChatFrame(chatFrame)
     if not chatFrame or self:IsHooked(chatFrame, "AddMessage") then
         return
     end
-    self:RawHook(chatFrame, "AddMessage", function(frame, msg, ...)
-        return self.hooks[frame].AddMessage(frame, Link:LinkifyURLs(msg), ...)
-    end, true)
+    self:SecureHook(chatFrame, "AddMessage", function(frame, msg)
+        if type(msg) ~= "string" then
+            return
+        end
+        if canaccessvalue and not canaccessvalue(msg) then
+            return
+        end
+
+        local hasURL = false
+        for _, pattern in pairs(Link.patterns) do
+            if msg:find(pattern) then
+                hasURL = true
+                break
+            end
+        end
+        if not hasURL then
+            return
+        end
+
+        -- Find the bottom-most visible FontString (just added) and linkify it
+        local container = frame.FontStringContainer
+        if not container then
+            return
+        end
+        local regions = {container:GetRegions()}
+        for i = #regions, 1, -1 do
+            local region = regions[i]
+            if region and region:GetObjectType() == "FontString" and region:IsShown() then
+                local text = region:GetText()
+                if text and text ~= "" then
+                    if canaccessvalue and not canaccessvalue(text) then
+                        return
+                    end
+                    local linkified = Link:LinkifyURLs(text)
+                    if linkified ~= text then
+                        region:SetText(linkified)
+                    end
+                    return
+                end
+            end
+        end
+    end)
 end
 
 function Link:OnEnable()
-    -- Hook AddMessage on all static chat frames for URL linkification.
-    -- Replaces the old ChatFrameUtil.AddMessageEventFilter approach which
-    -- tainted event args and broke ChatHistory_GetToken (strlower on a
-    -- secret/tainted string).
+    -- SecureHook AddMessage on all static chat frames for URL linkification.
     for i = 1, Constants.ChatFrameConstants.MaxChatWindows do
         local chatFrame = _G["ChatFrame" .. i]
         if chatFrame then
