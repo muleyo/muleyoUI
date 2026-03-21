@@ -25,7 +25,10 @@ Theme.tooltips = {GameTooltip, ShoppingTooltip1, ShoppingTooltip2, ItemRefToolti
 function Theme:StyleTooltip(frame)
     if frame then
         mUI:AddMixin(frame)
-        frame:SetBackdrop(Theme.backdrop)
+        local ok = pcall(frame.SetBackdrop, frame, Theme.backdrop)
+        if not ok then
+            return
+        end
         frame:SetBackdropBorderColor(0.1, 0.1, 0.1, 0)
         if Theme.db.theme == "Disabled" then
             frame:SetBackdrop(nil)

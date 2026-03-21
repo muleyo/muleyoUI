@@ -3,6 +3,67 @@ local Link = mUI:NewModule("mUI.Modules.Chat.Link", "AceHook-3.0")
 function Link:OnInitialize()
     Link.patterns = {"(https://%S+%.%S+)", "(http://%S+%.%S+)", "(www%.%S+%.%S+)", "(%d+%.%d+%.%d+%.%d+:?%d*/?%S*)"}
 
+    Link.events = {
+        ["CHAT_MSG_SAY"] = false,
+        ["CHAT_MSG_YELL"] = false,
+        ["CHAT_MSG_WHISPER"] = false,
+        ["CHAT_MSG_WHISPER_INFORM"] = false,
+        ["CHAT_MSG_GUILD"] = false,
+        ["CHAT_MSG_OFFICER"] = false,
+        ["CHAT_MSG_PARTY"] = false,
+        ["CHAT_MSG_PARTY_LEADER"] = false,
+        ["CHAT_MSG_RAID"] = false,
+        ["CHAT_MSG_RAID_LEADER"] = false,
+        ["CHAT_MSG_RAID_WARNING"] = false,
+        ["CHAT_MSG_INSTANCE_CHAT"] = false,
+        ["CHAT_MSG_INSTANCE_CHAT_LEADER"] = false,
+        ["CHAT_MSG_BN_WHISPER"] = false,
+        ["CHAT_MSG_BN_WHISPER_INFORM"] = false,
+        ["CHAT_MSG_CHANNEL"] = false,
+        ["CHAT_MSG_SYSTEM"] = false
+    }
+
+    -- Message event filter callback.  Called by Blizzard's filter system as
+    -- a plain function: filterFunc(chatFrame, event, msg, sender, ...).
+    -- Because Link:URL uses colon syntax the implicit first parameter
+    -- absorbs chatFrame, putting event into 'self' and msg into 'str'.
+    -- Returns (false, modifiedMsg, ...) when a URL is found so the
+    -- hyperlink markup reaches AddMessage and the C++ engine creates
+    -- proper clickable hit regions.  Returns nothing when unmodified so
+    -- Blizzard preserves the original args untouched.
+    function Link:URL(self, str, ...)
+        if type(str) ~= "string" then
+            return
+        end
+        if canaccessvalue and not canaccessvalue(str) then
+            return
+        end
+        for _, pattern in pairs(Link.patterns) do
+            local result, match = string.gsub(str, pattern, "|cff0394ff|Hurl:%1|h[%1]|h|r")
+            if match > 0 then
+                return false, result, ...
+            end
+        end
+    end
+
+    function Link:RegisterEvents()
+        for event in pairs(Link.events) do
+            if not Link.events[event] then
+                ChatFrame_AddMessageEventFilter(event, Link.URL)
+                Link.events[event] = true
+            end
+        end
+    end
+
+    function Link:UnregisterEvents()
+        for event in pairs(Link.events) do
+            if Link.events[event] then
+                ChatFrame_RemoveMessageEventFilter(event, Link.URL)
+                Link.events[event] = false
+            end
+        end
+    end
+
     Link.SetHyperlink = ItemRefTooltip.SetHyperlink
     function Link:EnableHyperlink()
         local SetHyperlink = _G.ItemRefTooltip.SetHyperlink
@@ -20,87 +81,12 @@ function Link:OnInitialize()
     end
 end
 
--- Apply URL patterns to a message string, converting plain-text URLs
--- into clickable |Hurl:...|h hyperlinks.
-function Link:LinkifyURLs(msg)
-    if type(msg) ~= "string" then
-        return msg
-    end
-    if canaccessvalue and not canaccessvalue(msg) then
-        return msg
-    end
-    for _, pattern in pairs(Link.patterns) do
-        msg = string.gsub(msg, pattern, "|cff0394ff|Hurl:%1|h[%1]|h|r")
-    end
-    return msg
-end
-
-function Link:HookChatFrame(chatFrame)
-    if not chatFrame or self:IsHooked(chatFrame, "AddMessage") then
-        return
-    end
-    self:SecureHook(chatFrame, "AddMessage", function(frame, msg)
-        if type(msg) ~= "string" then
-            return
-        end
-        if canaccessvalue and not canaccessvalue(msg) then
-            return
-        end
-
-        local hasURL = false
-        for _, pattern in pairs(Link.patterns) do
-            if msg:find(pattern) then
-                hasURL = true
-                break
-            end
-        end
-        if not hasURL then
-            return
-        end
-
-        -- Find the bottom-most visible FontString (just added) and linkify it
-        local container = frame.FontStringContainer
-        if not container then
-            return
-        end
-        local regions = {container:GetRegions()}
-        for i = #regions, 1, -1 do
-            local region = regions[i]
-            if region and region:GetObjectType() == "FontString" and region:IsShown() then
-                local text = region:GetText()
-                if text and text ~= "" then
-                    if canaccessvalue and not canaccessvalue(text) then
-                        return
-                    end
-                    local linkified = Link:LinkifyURLs(text)
-                    if linkified ~= text then
-                        region:SetText(linkified)
-                    end
-                    return
-                end
-            end
-        end
-    end)
-end
-
 function Link:OnEnable()
-    -- SecureHook AddMessage on all static chat frames for URL linkification.
-    for i = 1, Constants.ChatFrameConstants.MaxChatWindows do
-        local chatFrame = _G["ChatFrame" .. i]
-        if chatFrame then
-            Link:HookChatFrame(chatFrame)
-        end
-    end
-
-    -- Hook temporary chat frames as they are created
-    Link:SecureHook("FCF_SetTemporaryWindowType", function(chatFrame)
-        Link:HookChatFrame(chatFrame)
-    end)
-
+    Link:RegisterEvents()
     Link:EnableHyperlink()
 end
 
 function Link:Disable()
     ItemRefTooltip.SetHyperlink = Link.SetHyperlink
-    Link:UnhookAll()
+    Link:UnregisterEvents()
 end
