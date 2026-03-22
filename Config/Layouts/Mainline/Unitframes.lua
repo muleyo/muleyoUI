@@ -663,7 +663,7 @@ function Unitframes:OnInitialize()
             },
             defensivePosition = {
                 name = "Defensive Buff Position",
-                desc = "Set the Position of Defensive Buffs on Raidframes\n\n|cffffff00Info:|r Requires Reload",
+                desc = "Set the Position of Defensive Buffs on Raidframes\n\n|cffffff00Info:|r Requires Skin Aura Icons",
                 type = "select",
                 values = {
                     ["TOP"] = "Top Center",
@@ -692,7 +692,7 @@ function Unitframes:OnInitialize()
             },
             defensiveSize = {
                 name = "Defensive Buff Size",
-                desc = "Set the Size of Defensive Buffs on Raidframes\n\n|cffffff00Info:|r Requires Reload",
+                desc = "Set the Size of Defensive Buffs on Raidframes\n\n|cffffff00Info:|r Requires Skin Aura Icons",
                 type = "range",
                 min = 0,
                 max = 50,
@@ -713,7 +713,7 @@ function Unitframes:OnInitialize()
             },
             buffSize = {
                 name = "Buff Size",
-                desc = "Set the Size of Buffs on Raidframes\n\n|cffffff00Info:|r Requires Reload",
+                desc = "Set the Size of Buffs on Raidframes\n\n|cffffff00Info:|r Requires Skin Aura Icons",
                 type = "range",
                 min = 10,
                 max = 50,
@@ -732,7 +732,7 @@ function Unitframes:OnInitialize()
             },
             debuffSize = {
                 name = "Debuff Size",
-                desc = "Set the Size of important Debuffs on Raidframes (Dispellable / CC)\n\nPercentage of frame height",
+                desc = "Set the Size of important Debuffs on Raidframes (Dispellable / CC)\n\nPercentage of frame height\n\n|cffffff00Info:|r Requires Skin Aura Icons",
                 type = "range",
                 min = 10,
                 max = 100,
@@ -747,7 +747,7 @@ function Unitframes:OnInitialize()
             },
             privateAuraSize = {
                 name = "Private Aura Size",
-                desc = "Set the Size of Private Auras on Raidframes\n\nPercentage of frame height",
+                desc = "Set the Size of Private Auras on Raidframes\n\nPercentage of frame height\n\n|cffffff00Info:|r Requires Skin Aura Icons",
                 type = "range",
                 min = 10,
                 max = 100,

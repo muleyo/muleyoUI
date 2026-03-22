@@ -210,7 +210,7 @@ function Actionbars:OnInitialize()
             },
             bar1 = {
                 name = "ActionBar 1",
-                desc = "Show Actionbar 1 on Mouseover",
+                desc = "Show Actionbar 1 on Mouseover\n\n|cffffff00Info:|r Requires Mouseover Module",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar1 = val
@@ -236,7 +236,7 @@ function Actionbars:OnInitialize()
             },
             bar2 = {
                 name = "ActionBar 2",
-                desc = "Show Actionbar 2 on Mouseover",
+                desc = "Show Actionbar 2 on Mouseover\n\n|cffffff00Info:|r Requires Mouseover Module",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar2 = val
@@ -262,7 +262,7 @@ function Actionbars:OnInitialize()
             },
             bar3 = {
                 name = "ActionBar 3",
-                desc = "Show Actionbar 3 on Mouseover",
+                desc = "Show Actionbar 3 on Mouseover\n\n|cffffff00Info:|r Requires Mouseover Module",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar3 = val
@@ -288,7 +288,7 @@ function Actionbars:OnInitialize()
             },
             bar4 = {
                 name = "ActionBar 4",
-                desc = "Show Actionbar 4 on Mouseover",
+                desc = "Show Actionbar 4 on Mouseover\n\n|cffffff00Info:|r Requires Mouseover Module",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar4 = val
@@ -314,7 +314,7 @@ function Actionbars:OnInitialize()
             },
             bar5 = {
                 name = "ActionBar 5",
-                desc = "Show Actionbar 5 on Mouseover",
+                desc = "Show Actionbar 5 on Mouseover\n\n|cffffff00Info:|r Requires Mouseover Module",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar5 = val
@@ -340,7 +340,7 @@ function Actionbars:OnInitialize()
             },
             bar6 = {
                 name = "ActionBar 6",
-                desc = "Show Actionbar 6 on Mouseover",
+                desc = "Show Actionbar 6 on Mouseover\n\n|cffffff00Info:|r Requires Mouseover Module",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar6 = val
@@ -366,7 +366,7 @@ function Actionbars:OnInitialize()
             },
             bar7 = {
                 name = "ActionBar 7",
-                desc = "Show Actionbar 7 on Mouseover",
+                desc = "Show Actionbar 7 on Mouseover\n\n|cffffff00Info:|r Requires Mouseover Module",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar7 = val
@@ -392,7 +392,7 @@ function Actionbars:OnInitialize()
             },
             bar8 = {
                 name = "ActionBar 8",
-                desc = "Show Actionbar 8 on Mouseover",
+                desc = "Show Actionbar 8 on Mouseover\n\n|cffffff00Info:|r Requires Mouseover Module",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.bar8 = val
@@ -418,7 +418,7 @@ function Actionbars:OnInitialize()
             },
             petbar = {
                 name = "Pet Actionbar",
-                desc = "Show Pet Actionbar on Mouseover",
+                desc = "Show Pet Actionbar on Mouseover\n\n|cffffff00Info:|r Requires Mouseover Module",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.petbar = val
@@ -444,7 +444,7 @@ function Actionbars:OnInitialize()
             },
             stancebar = {
                 name = "Stance Actionbar",
-                desc = "Show Stance Actionbar on Mouseover",
+                desc = "Show Stance Actionbar on Mouseover\n\n|cffffff00Info:|r Requires Mouseover Module",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.actionbars.mouseover.stancebar = val
@@ -470,7 +470,7 @@ function Actionbars:OnInitialize()
             },
             micromenu = {
                 name = "Micro Menu",
-                desc = "Choose an option",
+                desc = "Choose an option\n\n|cffffff00Info:|r Requires Mouseover Module",
                 type = "select",
                 style = "radio",
                 values = {
@@ -505,7 +505,7 @@ function Actionbars:OnInitialize()
             },
             bagbuttons = {
                 name = "Bag Buttons",
-                desc = "Choose an option",
+                desc = "Choose an option\n\n|cffffff00Info:|r Requires Mouseover Module",
                 type = "select",
                 style = "radio",
                 values = {
