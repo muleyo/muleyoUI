@@ -70,7 +70,10 @@ function PlayerLinks:OnInitialize()
         if contextData.unit then
             name, realm = UnitName(contextData.unit)
             if name then
-                realm = realm and realm ~= "" and realm or GetNormalizedRealmName()
+                if not realm then
+                    realm = GetNormalizedRealmName()
+                end
+
                 realm = RealmSlug(realm)
             end
         end
