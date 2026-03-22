@@ -1,67 +1,39 @@
 local Link = mUI:NewModule("mUI.Modules.Chat.Link", "AceHook-3.0")
 
 function Link:OnInitialize()
-    Link.patterns = {"(https://%S+%.%S+)", "(http://%S+%.%S+)", "(www%.%S+%.%S+)", "(%d+%.%d+%.%d+%.%d+:?%d*/?%S*)"}
+    -- URL patterns – [^|%s] excludes WoW escape-code pipes so we never
+    -- match across |H…|h boundaries in the already-formatted AddMessage text.
+    Link.URL_PATTERNS = {"(https://[^|%s]+%.[^|%s]+)", "(http://[^|%s]+%.[^|%s]+)", "(www%.[^|%s]+%.[^|%s]+)", "(%d+%.%d+%.%d+%.%d+:?%d*/?[^|%s]*)"}
+    Link.URL_REPLACEMENT = "|cff0394ff|Hurl:%1|h[%1]|h|r"
 
-    Link.events = {
-        ["CHAT_MSG_SAY"] = false,
-        ["CHAT_MSG_YELL"] = false,
-        ["CHAT_MSG_WHISPER"] = false,
-        ["CHAT_MSG_WHISPER_INFORM"] = false,
-        ["CHAT_MSG_GUILD"] = false,
-        ["CHAT_MSG_OFFICER"] = false,
-        ["CHAT_MSG_PARTY"] = false,
-        ["CHAT_MSG_PARTY_LEADER"] = false,
-        ["CHAT_MSG_RAID"] = false,
-        ["CHAT_MSG_RAID_LEADER"] = false,
-        ["CHAT_MSG_RAID_WARNING"] = false,
-        ["CHAT_MSG_INSTANCE_CHAT"] = false,
-        ["CHAT_MSG_INSTANCE_CHAT_LEADER"] = false,
-        ["CHAT_MSG_BN_WHISPER"] = false,
-        ["CHAT_MSG_BN_WHISPER_INFORM"] = false,
-        ["CHAT_MSG_CHANNEL"] = false,
-        ["CHAT_MSG_SYSTEM"] = false
-    }
-
-    -- Message event filter callback.  Called by Blizzard's filter system as
-    -- a plain function: filterFunc(chatFrame, event, msg, sender, ...).
-    -- Because Link:URL uses colon syntax the implicit first parameter
-    -- absorbs chatFrame, putting event into 'self' and msg into 'str'.
-    -- Returns (false, modifiedMsg, ...) when a URL is found so the
-    -- hyperlink markup reaches AddMessage and the C++ engine creates
-    -- proper clickable hit regions.  Returns nothing when unmodified so
-    -- Blizzard preserves the original args untouched.
-    function Link:URL(self, str, ...)
-        if type(str) ~= "string" then
-            return
+    function Link.AddMessageHook(self, msg, ...)
+        if msg then
+            msg = Link:TransformURLs(msg)
         end
-        if canaccessvalue and not canaccessvalue(str) then
-            return
-        end
-        for _, pattern in pairs(Link.patterns) do
-            local result, match = string.gsub(str, pattern, "|cff0394ff|Hurl:%1|h[%1]|h|r")
-            if match > 0 then
-                return false, result, ...
-            end
-        end
+        return Link.hooks[self].AddMessage(self, msg, ...)
     end
 
-    function Link:RegisterEvents()
-        for event in pairs(Link.events) do
-            if not Link.events[event] then
-                ChatFrame_AddMessageEventFilter(event, Link.URL)
-                Link.events[event] = true
-            end
+    function Link:TransformURLs(msg)
+        if canaccessvalue and not canaccessvalue(msg) then
+            return msg
         end
-    end
 
-    function Link:UnregisterEvents()
-        for event in pairs(Link.events) do
-            if Link.events[event] then
-                ChatFrame_RemoveMessageEventFilter(event, Link.URL)
-                Link.events[event] = false
+        if type(msg) ~= "string" then
+            return msg
+        end
+
+        -- Skip messages that already contain our URL hyperlinks
+        if msg:find("|Hurl:") then
+            return msg
+        end
+
+        for _, pattern in ipairs(Link.URL_PATTERNS) do
+            local result, count = msg:gsub(pattern, Link.URL_REPLACEMENT)
+            if count > 0 then
+                return result
             end
         end
+        return msg
     end
 
     Link.SetHyperlink = ItemRefTooltip.SetHyperlink
@@ -82,11 +54,24 @@ function Link:OnInitialize()
 end
 
 function Link:OnEnable()
-    Link:RegisterEvents()
+    for i = 1, Constants.ChatFrameConstants.MaxChatWindows do
+        local chatFrame = _G["ChatFrame" .. i]
+        if chatFrame then
+            Link:RawHook(chatFrame, "AddMessage", Link.AddMessageHook, true)
+        end
+    end
+
+    -- Cover temporary chat windows (whisper pop-outs, pet battles, etc.)
+    Link:SecureHook("FCF_SetTemporaryWindowType", function(chatFrame)
+        if chatFrame and not Link:IsHooked(chatFrame, "AddMessage") then
+            Link:RawHook(chatFrame, "AddMessage", Link.AddMessageHook, true)
+        end
+    end)
+
     Link:EnableHyperlink()
 end
 
-function Link:Disable()
+function Link:OnDisable()
     ItemRefTooltip.SetHyperlink = Link.SetHyperlink
-    Link:UnregisterEvents()
+    Link:UnhookAll()
 end
