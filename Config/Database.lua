@@ -165,7 +165,9 @@ local defaults = {
             enabled = true,
             style = "mUI",
             combat = false,
-            mouseanchor = false
+            mouseanchor = false,
+            mythicplus = true,
+            lfgtooltips = true
         },
         map = {
             enabled = true,
