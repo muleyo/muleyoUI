@@ -73,10 +73,54 @@ function Misc:OnInitialize()
                 end,
                 order = 4
             },
+            fastloot = {
+                name = "Fast Loot",
+                desc = "Removes the delay when looting\n\n|cffffff00Info:|r Requires AutoLoot to be enabled",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.misc.fastloot = val
+
+                    if not Misc.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Misc.Module.Fastloot:Enable()
+                    else
+                        Misc.Module.Fastloot:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.misc.fastloot
+                end,
+                order = 5
+            },
+            playerlinks = {
+                name = "Player Links",
+                desc = "Add WarcraftLogs, Raider.io and CheckPVP links to the player right-click menu",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.misc.playerlinks = val
+
+                    if not Misc.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Misc.Module.PlayerLinks:Enable()
+                    else
+                        Misc.Module.PlayerLinks:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.misc.playerlinks
+                end,
+                order = 6
+            },
             header2 = {
                 name = "Hide Frames",
                 type = "header",
-                order = 5
+                order = 7
             },
             statusbar = {
                 name = "XP/Rep/Honor Bar",
@@ -98,7 +142,7 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.statusbar
                 end,
-                order = 6
+                order = 8
             },
             buffcollapse = {
                 name = "Collapse Button",
@@ -120,34 +164,12 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.buffcollapse
                 end,
-                order = 7
-            },
-            fastloot = {
-                name = "Fast Loot",
-                desc = "Removes the delay when looting\n\n|cffffff00Info:|r Requires AutoLoot to be enabled",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.misc.fastloot = val
-
-                    if not Misc.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val then
-                        Misc.Module.Fastloot:Enable()
-                    else
-                        Misc.Module.Fastloot:Disable()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.misc.fastloot
-                end,
-                order = 8
+                order = 9
             },
             header3 = {
                 name = "PvP Options",
                 type = "header",
-                order = 9
+                order = 10
             },
             tabbinder = {
                 name = "Tab Binder",
@@ -169,7 +191,7 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.tabbinder
                 end,
-                order = 10
+                order = 11
             },
             dampening = {
                 name = "Dampening",
@@ -191,7 +213,7 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.dampening
                 end,
-                order = 11
+                order = 12
             },
             surrender = {
                 name = "Surrender",
@@ -213,7 +235,7 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.surrender
                 end,
-                order = 12
+                order = 13
             },
             safequeue = {
                 name = "Safe Queue",
@@ -235,7 +257,7 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.safequeue
                 end,
-                order = 13
+                order = 14
             },
             losecontrol = {
                 name = "LoseControl",
@@ -257,7 +279,7 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.losecontrol
                 end,
-                order = 14
+                order = 15
             },
             achievements = {
                 name = "Track Achievements",
@@ -279,7 +301,7 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.achievements
                 end,
-                order = 15
+                order = 16
             }
         }
     }

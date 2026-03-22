@@ -729,6 +729,36 @@ function Unitframes:OnInitialize()
                     return mUI.db.profile.unitframes.raidframes.buffsize
                 end,
                 order = 37
+            },
+            debuffSize = {
+                name = "Debuff Size",
+                desc = "Set the Size of important Debuffs on Raidframes (Dispellable / CC)\n\nPercentage of frame height",
+                type = "range",
+                min = 10,
+                max = 100,
+                step = 1,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.debuffsize = val
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.debuffsize
+                end,
+                order = 38
+            },
+            privateAuraSize = {
+                name = "Private Aura Size",
+                desc = "Set the Size of Private Auras on Raidframes\n\nPercentage of frame height",
+                type = "range",
+                min = 10,
+                max = 100,
+                step = 1,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.privateaurasize = val
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.privateaurasize
+                end,
+                order = 39
             }
         }
     }

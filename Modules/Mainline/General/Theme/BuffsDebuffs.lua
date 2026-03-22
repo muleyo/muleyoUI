@@ -265,14 +265,15 @@ function Theme:UpdateRaidframeAuras(aura)
                 end
             end
 
+            local debuffMult = (mUI.db.profile.unitframes.raidframes.debuffsize or 55) / 100
             if PvP then
                 if isCrowdControl then
-                    local auraSize = frameHeight * 0.55
+                    local auraSize = frameHeight * debuffMult
                     aura:SetSize(auraSize, auraSize)
                 end
             else
                 if isDispellable then
-                    local auraSize = frameHeight * 0.55
+                    local auraSize = frameHeight * debuffMult
                     aura:SetSize(auraSize, auraSize)
                 end
             end
