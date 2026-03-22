@@ -25,9 +25,6 @@ function Style:OnEnable()
     -- Disable Altkeys for EditBox
     ChatFrame1EditBox:SetAltArrowKeyMode(false)
 
-    -- Create Fonts
-    -- Style:CreateFonts()
-
     -- Handle Dock
     Style:HandleDock(GeneralDockManager)
 
@@ -60,16 +57,6 @@ function Style:OnEnable()
         end
     end
 
-    -- temporary chat frames
-    -- FCF_SetTemporaryWindowType always fires with the actual chatFrame, so we hook
-    -- it instead of the old two-hook pendingTempFrame relay.
-    --
-    -- IMPORTANT: FCF_OpenTemporaryWindow calls FCF_DockFrame() AFTER
-    -- FCF_SetTemporaryWindowType returns, which triggers FCFDock_UpdateTabs →
-    -- FCFTab_UpdateColors + PanelTemplates_TabResize and resets the tab visuals on
-    -- top of whatever we applied synchronously. We therefore defer all visual
-    -- skinning one frame with C_Timer.After(0) so it always runs AFTER the full
-    -- FCF_OpenTemporaryWindow call stack has finished.
     Style:SecureHook("FCF_SetTemporaryWindowType", function(chatFrame, chatType, chatTarget)
         -- Non-visual setup can happen immediately.
         chatFrame:SetFading(Style.db.fade.enabled)
@@ -187,10 +174,6 @@ function Style:OnEnable()
     end)
 
     -- Re-skin tabs after Blizzard resets their visuals via FCFTab_UpdateColors
-    -- (called by FCFDock_UpdateTabs on tab click, dock changes, etc.)
-    -- Deferred via C_Timer.After(0) to break the secure-hook taint chain;
-    -- otherwise GetNumPoints / GetPoint return secret values that cannot
-    -- be compared or passed along.
     local isReskinning = false
     Style:SecureHook("FCFTab_UpdateColors", function(tab)
         if isReskinning then
@@ -199,12 +182,12 @@ function Style:OnEnable()
         C_Timer.After(0, function()
             isReskinning = true
             Style:HandleChatTab(tab)
+            Style:UpdateMessageFonts()
             isReskinning = false
         end)
     end)
 
     Style:EnableDispatcher()
-    Style:EnableDragHook()
     Style:EnableAlerts()
 
     -- Apply font settings immediately and after a delay to catch initial messages
