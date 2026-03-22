@@ -127,7 +127,12 @@ function Style:HandleChatTab(frame)
     end
 
     -- it can be "CENTER" or "LEFT", so just use the index
-    frame.Text:SetPoint(frame.Text:GetPoint())
+    -- GetNumPoints/GetPoint can return tainted (secret) values inside
+    -- secure-hook callbacks, so wrap in pcall to avoid errors.
+    local ok, point, relativeTo, relativePoint, offsetX, offsetY = pcall(frame.Text.GetPoint, frame.Text, 1)
+    if ok and point then
+        frame.Text:SetPoint(point, relativeTo, relativePoint, offsetX or 0, offsetY or 0)
+    end
 end
 
 local handledMiniTabs = {}

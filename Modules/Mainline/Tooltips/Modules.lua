@@ -5,6 +5,8 @@ function Modules:OnInitialize()
     Modules.Style = mUI:GetModule("mUI.Tooltips.Style")
     Modules.Combat = mUI:GetModule("mUI.Tooltips.Combat")
     Modules.Anchor = mUI:GetModule("mUI.Tooltips.Anchor")
+    Modules.MythicPlus = mUI:GetModule("mUI.Tooltips.MythicPlus")
+    Modules.LFGTooltips = mUI:GetModule("mUI.Tooltips.LFGTooltips")
 end
 
 function Modules:OnEnable()
@@ -20,6 +22,12 @@ function Modules:OnEnable()
     if Modules.db.mouseanchor then
         Modules.Anchor:Enable()
     end
+    if Modules.db.mythicplus then
+        Modules.MythicPlus:Enable()
+    end
+    if Modules.db.lfgtooltips then
+        Modules.LFGTooltips:Enable()
+    end
 end
 
 function Modules:OnDisable()
@@ -27,4 +35,6 @@ function Modules:OnDisable()
     Modules.Style:Disable()
     Modules.Combat:Disable()
     Modules.Anchor:Disable()
+    Modules.MythicPlus:Disable()
+    Modules.LFGTooltips:Disable()
 end
