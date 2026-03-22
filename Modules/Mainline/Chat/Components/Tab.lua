@@ -8,60 +8,30 @@ local next = _G.next
 local _, class = UnitClass("player")
 local color = RAID_CLASS_COLORS[class]
 
-local function chatTab_SetPoint(self, _, anchor, _, _, _, shouldIgnore)
-    if anchor == GeneralDockManager.scrollFrame.child and not shouldIgnore then
-        self:ClearAllPoints()
-        self:SetPoint("BOTTOMLEFT", anchor, "BOTTOMLEFT", 0, 0, true)
-    end
-end
-
-local function chatTab_OnDragStart(self)
-    local frame = _G["ChatFrame" .. self:GetID()]
-    if frame then
-        frame.isDragging = true
-    end
-end
-
 local function chatTabText_SetPoint(self, p, anchor, rP, x, y, shouldIgnore)
     if not shouldIgnore then
-        self:SetPoint(p, anchor, rP, p == "LEFT" and 8 or x, p == "CENTER" and 0 or y, true)
+        C_Timer.After(0, function()
+            self:SetPoint(p, anchor, rP, p == "LEFT" and 8 or x, p == "CENTER" and 0 or y, true)
+        end)
     end
 end
 
 local function chatTabText_SetTextColor(self, r, g, b)
     if r == NORMAL_FONT_COLOR.r and g == NORMAL_FONT_COLOR.g and b == NORMAL_FONT_COLOR.b then
-        self:SetTextColor(color.r, color.g, color.b)
+        C_Timer.After(0, function()
+            self:SetTextColor(color.r, color.g, color.b)
+        end)
     end
 end
 
 local handledTabs = {}
-
-local TAB_TEXTURES
-
-TAB_TEXTURES = {"Left", "Middle", "Right" -- "ActiveLeft",
--- "ActiveMiddle",
--- "ActiveRight",
--- "HighlightLeft",
--- "HighlightMiddle",
--- "HighlightRight",
-}
+local TAB_TEXTURES = {"Left", "Middle", "Right"}
 
 function Style:HandleChatTab(frame)
     if not handledTabs[frame] then
         frame.Backdrop = Style:CreateBackdrop(frame, Style.db.dock.alpha)
-
-        Style:SecureHook(frame, "SetPoint", chatTab_SetPoint)
-        Style:SecureHookScript(frame, "OnDragStart", chatTab_OnDragStart)
         Style:SecureHook(frame.Text, "SetPoint", chatTabText_SetPoint)
         Style:SecureHook(frame.Text, "SetTextColor", chatTabText_SetTextColor)
-
-        -- Hook tab click to update fonts when switching tabs
-        Style:SecureHookScript(frame, "OnClick", function(self)
-            C_Timer.After(0, function()
-                Style:UpdateMessageFonts()
-            end)
-        end)
-
         handledTabs[frame] = true
     end
 
@@ -126,13 +96,17 @@ function Style:HandleChatTab(frame)
         frame.Text:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
     end
 
-    -- it can be "CENTER" or "LEFT", so just use the index
-    -- GetNumPoints/GetPoint can return tainted (secret) values inside
-    -- secure-hook callbacks, so wrap in pcall to avoid errors.
-    local ok, point, relativeTo, relativePoint, offsetX, offsetY = pcall(frame.Text.GetPoint, frame.Text, 1)
-    if ok and point then
-        frame.Text:SetPoint(point, relativeTo, relativePoint, offsetX or 0, offsetY or 0)
-    end
+    -- it can be "CENTER" or "LEFT", so just use the index.
+    -- GetPoint / SetPoint can return or reject tainted "secret" values
+    -- from combat-era positioning.  Wrap the whole thing in pcall;
+    -- if anything is tainted the chatTabText_SetPoint hook will fix
+    -- the position the next time Blizzard repositions the text.
+    pcall(function()
+        local point, relativeTo, relativePoint, offsetX, offsetY = frame.Text:GetPoint(1)
+        if point then
+            frame.Text:SetPoint(point, relativeTo, relativePoint, offsetX or 0, offsetY or 0)
+        end
+    end)
 end
 
 local handledMiniTabs = {}
@@ -201,17 +175,4 @@ function Style:UpdateTabAlpha()
     for tab in next, handledTabs do
         tab.Backdrop:UpdateAlpha(alpha)
     end
-end
-
-function Style:EnableDragHook()
-    Style:SecureHook("FCFTab_OnDragStop", function(self)
-        local frame = _G["ChatFrame" .. self:GetID()]
-        if frame then
-            if frame.isMouseOver then
-                frame.isMouseOver = nil
-            end
-
-            frame.isDragging = nil
-        end
-    end)
 end

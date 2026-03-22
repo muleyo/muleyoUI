@@ -131,27 +131,33 @@ function PlayerLinks:OnEnable()
             Menu.ModifyMenu(tag, PlayerLinks.modifyMenuHandler)
         end
 
-        -- Hook MenuUtil.CreateContextMenu for non-tagged menus (LFG applicants)
-        local origCreateContextMenu = MenuUtil.CreateContextMenu
-        MenuUtil.CreateContextMenu = function(owner, generator, ...)
-            if not PlayerLinks:IsEnabled() then
-                return origCreateContextMenu(owner, generator, ...)
+        -- Hook MenuUtil.CreateContextMenu
+        local isRecreating = false
+        hooksecurefunc(MenuUtil, "CreateContextMenu", function(owner, generator, ...)
+            if isRecreating or not PlayerLinks:IsEnabled() then
+                return
             end
 
             local lfgFullName = PlayerLinks.getLFGPlayerName(owner)
-            if lfgFullName then
-                local lfgName, lfgRealm = PlayerLinks.parseNameRealm(lfgFullName)
-                if lfgName and lfgRealm then
-                    local wrappedGenerator = function(ownerInner, rootDescription)
-                        generator(ownerInner, rootDescription)
-                        PlayerLinks.appendLinks(rootDescription, lfgName, lfgRealm)
-                    end
-                    return origCreateContextMenu(owner, wrappedGenerator, ...)
-                end
+            if not lfgFullName then
+                return
             end
 
-            return origCreateContextMenu(owner, generator, ...)
-        end
+            local lfgName, lfgRealm = PlayerLinks.parseNameRealm(lfgFullName)
+            if not lfgName or not lfgRealm then
+                return
+            end
+
+            -- Re-open the menu with our links appended.  The original call
+            -- already ran securely; this replaces it from insecure context
+            -- (fine — it's our addon menu addition, not Blizzard's).
+            isRecreating = true
+            MenuUtil.CreateContextMenu(owner, function(ownerInner, rootDescription)
+                generator(ownerInner, rootDescription)
+                PlayerLinks.appendLinks(rootDescription, lfgName, lfgRealm)
+            end, ...)
+            isRecreating = false
+        end)
 
         PlayerLinks.hooked = true
     end
