@@ -13,6 +13,7 @@ function Modules:OnInitialize()
     Modules.Achievements = mUI:GetModule("mUI.Modules.Misc.Achievements")
     Modules.Fastloot = mUI:GetModule("mUI.Modules.Misc.Fastloot")
     Modules.PlayerLinks = mUI:GetModule("mUI.Modules.Misc.PlayerLinks")
+    Modules.LFGDeclined = mUI:GetModule("mUI.Modules.Misc.LFGDeclined")
 end
 
 function Modules:OnEnable()
@@ -51,6 +52,9 @@ function Modules:OnEnable()
     if Modules.db.playerlinks then
         Modules.PlayerLinks:Enable()
     end
+    if Modules.db.lfgdeclined then
+        Modules.LFGDeclined:Enable()
+    end
 end
 
 function Modules:OnDisable()
@@ -66,4 +70,5 @@ function Modules:OnDisable()
     Modules.Achievements:Disable()
     Modules.Fastloot:Disable()
     Modules.PlayerLinks:Disable()
+    Modules.LFGDeclined:Disable()
 end

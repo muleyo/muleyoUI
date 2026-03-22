@@ -241,6 +241,7 @@ local defaults = {
             achievements = false,
             fastloot = false,
             playerlinks = true,
+            lfgdeclined = true,
             gryphons = false
         },
         edit = {
