@@ -50,6 +50,9 @@ function LFGTooltips:HookApplicantEntry(button)
                         return
                     end
 
+                    itemLevel = tonumber(itemLevel) or 0
+                    dungeonScore = tonumber(dungeonScore) or 0
+
                     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                     local classColor = RAID_CLASS_COLORS[classStr]
                     if classColor then

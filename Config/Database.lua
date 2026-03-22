@@ -125,6 +125,8 @@ local defaults = {
                 solo = false,
                 skinicons = true,
                 buffsize = 33,
+                debuffsize = 55,
+                privateaurasize = 45,
                 defensive = {
                     position = "TOP",
                     size = 25
@@ -238,6 +240,7 @@ local defaults = {
             losecontrol = true,
             achievements = false,
             fastloot = false,
+            playerlinks = true,
             gryphons = false
         },
         edit = {

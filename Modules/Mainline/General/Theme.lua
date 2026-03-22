@@ -113,7 +113,9 @@ function Theme:OnEnable()
                     return
                 end
 
-                local ok, forbidden = pcall(function() return frame:IsForbidden() end)
+                local ok, forbidden = pcall(function()
+                    return frame:IsForbidden()
+                end)
                 if not ok or forbidden then
                     return
                 end
@@ -129,7 +131,8 @@ function Theme:OnEnable()
                     frameHeight = EditModeManagerFrame:GetRaidFrameHeight(Enum.EditModeUnitFrameSystemIndices.Party, 36)
                 end
 
-                local desiredSize = frameHeight * 0.45
+                local privateAuraMult = (mUI.db.profile.unitframes.raidframes.privateaurasize or 45) / 100
+                local desiredSize = frameHeight * privateAuraMult
                 local scaleFactor = desiredSize / 22
 
                 local spacing = 2 -- extra gap between icons (in anchor-local coords)
