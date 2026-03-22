@@ -40,6 +40,9 @@ function LFGDeclined:OnInitialize()
         end
         local key = LFGDeclined:GetGroupKey(searchResultInfo)
         if newStatus == "declined" or newStatus == "declined_delisted" or newStatus == "declined_full" or newStatus == "timedout" then
+            if not LFGListFrame.declines then
+                LFGListFrame.declines = {}
+            end
             LFGListFrame.declines[key] = nil
             LFGListSearchPanel_UpdateResults(LFGListFrame.SearchPanel)
         end
