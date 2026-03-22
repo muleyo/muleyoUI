@@ -10,5 +10,6 @@
     <Include file="Achievements.lua" />
     <Include file="Fastloot.lua" />
     <Include file="PlayerLinks.lua" />
+    <Include file="LFGDeclined.lua" />
     <Include file="Modules.lua" />
 </Ui>

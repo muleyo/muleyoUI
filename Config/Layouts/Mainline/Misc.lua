@@ -117,10 +117,32 @@ function Misc:OnInitialize()
                 end,
                 order = 6
             },
+            lfgdeclined = {
+                name = "LFG Declined",
+                desc = "Allows you to queue up for groups you've been declined before.",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.misc.lfgdeclined = val
+
+                    if not Misc.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Misc.Module.LFGDeclined:Enable()
+                    else
+                        Misc.Module.LFGDeclined:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.misc.lfgdeclined
+                end,
+                order = 7
+            },
             header2 = {
                 name = "Hide Frames",
                 type = "header",
-                order = 7
+                order = 8
             },
             statusbar = {
                 name = "XP/Rep/Honor Bar",
@@ -142,7 +164,7 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.statusbar
                 end,
-                order = 8
+                order = 9
             },
             buffcollapse = {
                 name = "Collapse Button",
@@ -164,12 +186,12 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.buffcollapse
                 end,
-                order = 9
+                order = 10
             },
             header3 = {
                 name = "PvP Options",
                 type = "header",
-                order = 10
+                order = 11
             },
             tabbinder = {
                 name = "Tab Binder",
@@ -191,7 +213,7 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.tabbinder
                 end,
-                order = 11
+                order = 12
             },
             dampening = {
                 name = "Dampening",
@@ -213,7 +235,7 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.dampening
                 end,
-                order = 12
+                order = 13
             },
             surrender = {
                 name = "Surrender",
@@ -235,7 +257,7 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.surrender
                 end,
-                order = 13
+                order = 14
             },
             safequeue = {
                 name = "Safe Queue",
@@ -257,7 +279,7 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.safequeue
                 end,
-                order = 14
+                order = 15
             },
             losecontrol = {
                 name = "LoseControl",
@@ -279,7 +301,7 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.losecontrol
                 end,
-                order = 15
+                order = 16
             },
             achievements = {
                 name = "Track Achievements",
@@ -301,7 +323,7 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.achievements
                 end,
-                order = 16
+                order = 17
             }
         }
     }
