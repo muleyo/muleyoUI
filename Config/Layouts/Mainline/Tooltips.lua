@@ -116,6 +116,50 @@ function Tooltips:OnInitialize()
                     return mUI.db.profile.tooltips.mouseanchor
                 end,
                 order = 6
+            },
+            mythicplus = {
+                name = "Mythic+ Rating",
+                desc = "Show the Mythic+ Rating on Player Tooltips",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.tooltips.mythicplus = val
+
+                    if not Tooltips.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Tooltips.Module.MythicPlus:Enable()
+                    else
+                        Tooltips.Module.MythicPlus:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.tooltips.mythicplus
+                end,
+                order = 7
+            },
+            lfgtooltips = {
+                name = "LFG Tooltips",
+                desc = "Show Tooltips when hovering over players in the Group Finder, allowing non-leaders to read applicant notes",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.tooltips.lfgtooltips = val
+
+                    if not Tooltips.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Tooltips.Module.LFGTooltips:Enable()
+                    else
+                        Tooltips.Module.LFGTooltips:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.tooltips.lfgtooltips
+                end,
+                order = 8
             }
         }
     }

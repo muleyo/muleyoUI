@@ -9,13 +9,13 @@ function Combat:OnInitialize()
 
     function Combat:Update(event)
         if event == "PLAYER_REGEN_DISABLED" then
-            if not mUI:IsHooked(GameTooltip, "OnShow") then
+            if not Combat:IsHooked(GameTooltip, "OnShow") then
                 GameTooltip:Hide()
-                mUI:RawHookScript(GameTooltip, "OnShow", GameTooltip.Hide)
+                Combat:RawHookScript(GameTooltip, "OnShow", GameTooltip.Hide)
             end
         else
-            if mUI:IsHooked(GameTooltip, "OnShow") then
-                mUI:Unhook(GameTooltip, "OnShow")
+            if Combat:IsHooked(GameTooltip, "OnShow") then
+                Combat:Unhook(GameTooltip, "OnShow")
             end
         end
     end

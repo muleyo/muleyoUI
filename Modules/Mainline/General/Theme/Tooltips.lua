@@ -23,32 +23,31 @@ Theme.tooltips = {GameTooltip, ShoppingTooltip1, ShoppingTooltip2, ItemRefToolti
                   WorldMapCompareTooltip1, WorldMapCompareTooltip2, ConquestTooltip}
 
 function Theme:StyleTooltip(frame)
-    if frame then
-        mUI:AddMixin(frame)
-        local ok = pcall(frame.SetBackdrop, frame, Theme.backdrop)
-        if not ok then
-            return
+    if not frame then
+        return
+    end
+
+    mUI:AddMixin(frame)
+
+    if Theme.db.theme == "Disabled" then
+        if frame.NineSlice and frame.NineSlice.SetBorderColor then
+            pcall(frame.NineSlice.SetBorderColor, frame.NineSlice, 1, 1, 1, 1)
         end
-        frame:SetBackdropBorderColor(0.1, 0.1, 0.1, 0)
-        if Theme.db.theme == "Disabled" then
-            frame:SetBackdrop(nil)
+        return
+    end
+
+    local ok = pcall(frame.SetBackdrop, frame, Theme.backdrop)
+    if not ok then
+        return
+    end
+    frame:SetBackdropBorderColor(0.1, 0.1, 0.1, 0)
+    frame:SetBackdropColor(unpack(Theme.backdrop.bgColor))
+
+    if frame.NineSlice and frame.NineSlice.SetBorderColor then
+        if Theme.db.theme == "Dark" then
+            pcall(frame.NineSlice.SetBorderColor, frame.NineSlice, unpack(Theme.backdrop.borderColor))
         else
-            frame:SetBackdropColor(unpack(Theme.backdrop.bgColor))
-        end
-        if frame.NineSlice then
-            if Theme.db.theme == "Dark" then
-                if frame.NineSlice.SetBorderColor then
-                    pcall(frame.NineSlice.SetBorderColor, frame.NineSlice, unpack(Theme.backdrop.borderColor))
-                end
-            elseif Theme.db.theme == "Disabled" then
-                if frame.NineSlice.SetBorderColor then
-                    pcall(frame.NineSlice.SetBorderColor, frame.NineSlice, 1, 1, 1, 1)
-                end
-            else
-                if frame.NineSlice.SetBorderColor then
-                    pcall(frame.NineSlice.SetBorderColor, frame.NineSlice, unpack(mUI:Color(0.35, 1)))
-                end
-            end
+            pcall(frame.NineSlice.SetBorderColor, frame.NineSlice, unpack(mUI:Color(0.35, 1)))
         end
     end
 end

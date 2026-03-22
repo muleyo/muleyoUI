@@ -2,5 +2,7 @@
     <Include file="Style.lua" />
     <Include file="Combat.lua" />
     <Include file="Anchor.lua" />
+    <Include file="MythicPlus.lua" />
+    <Include file="LFGTooltips.lua" />
     <Include file="Modules.lua" />
 </Ui>
