@@ -14,8 +14,8 @@ function Repair:OnInitialize()
             if repairCost > 0 then
                 local formattedCost = string.format("%.1fg", repairCost * 0.0001)
                 if IsInGuild() and CanGuildBankRepair() and Repair.db.repair == "Guild" then
-                    if (GetGuildBankWithdrawMoney() > 0) and (GetGuildBankWithdrawMoney() > GetGuildBankMoney()) and
-                        (GetGuildBankMoney() > repairCost) then
+                    local withdrawLimit = GetGuildBankWithdrawMoney()
+                    if (withdrawLimit == -1 or withdrawLimit >= repairCost) and (GetGuildBankMoney() >= repairCost) then
                         RepairAllItems(1)
                         mUI:Debug("|cffead000Repair cost covered by Guild Bank: " .. formattedCost .. "|r")
                     else

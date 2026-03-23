@@ -3,6 +3,7 @@ local Style = mUI:GetModule("mUI.Modules.Chat.Style")
 local _G = getfenv(0)
 local t_insert = _G.table.insert
 local t_remove = _G.table.remove
+local pcall = _G.pcall
 local backdrops = {}
 local backdrop_proto = {}
 
@@ -27,12 +28,17 @@ local POOL_SIZE = 20
 local function CreatePooledBackdrop()
     local f = Mixin(CreateFrame("Frame", nil, UIParent, "BackdropTemplate"), backdrop_proto)
     f:Hide()
-    -- f:SetSize(1, 1) -- explicit size so SetBackdrop succeeds
     f:SetBackdrop(BACKDROP_INFO)
     -- fix the Blizzard gap issue
     f.Center:ClearAllPoints()
     f.Center:SetPoint("TOPLEFT", f.TopLeftCorner, "BOTTOMRIGHT", 0, 0)
     f.Center:SetPoint("BOTTOMRIGHT", f.BottomRightCorner, "TOPLEFT", 0, 0)
+
+    local origSetupTC = f.SetupTextureCoordinates
+    f.SetupTextureCoordinates = function(self, ...)
+        pcall(origSetupTC, self, ...)
+    end
+
     return f
 end
 
