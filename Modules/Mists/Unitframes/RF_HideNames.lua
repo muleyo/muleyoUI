@@ -17,16 +17,23 @@ function RF_HideNames:OnInitialize()
                            "RaidGroup7Member3", "RaidGroup7Member4", "RaidGroup7Member5", "RaidGroup8Member1", "RaidGroup8Member2",
                            "RaidGroup8Member3", "RaidGroup8Member4", "RaidGroup8Member5"}
 
-    function RF_HideNames:Update(status)
+    function RF_HideNames:UpdateName(frame)
+        if not frame or frame:IsForbidden() then
+            return
+        end
+        if mUI.db.profile.unitframes.raidframes.hidenames then
+            frame.name:SetAlpha(0)
+        else
+            frame.name:SetAlpha(1)
+        end
+    end
+
+    function RF_HideNames:Update()
         for _, frame in pairs(RF_HideNames.frames) do
             local frame = _G["Compact" .. frame]
 
             if frame then
-                if mUI.db.profile.unitframes.raidframes.hidenames then
-                    frame.name:SetAlpha(0)
-                else
-                    frame.name:SetAlpha(1)
-                end
+                RF_HideNames:UpdateName(frame)
             end
         end
     end
@@ -34,6 +41,9 @@ end
 
 function RF_HideNames:OnEnable()
     RF_HideNames:Update()
+    RF_HideNames:SecureHook("CompactUnitFrame_UpdateName", function(frame)
+        RF_HideNames:UpdateName(frame)
+    end)
 end
 
 function RF_HideNames:OnDisable()
