@@ -44,7 +44,7 @@ function LFGTooltips:HookApplicantEntry(button)
 
                     local memberIdx = self.memberIdx or 1
                     local name, classStr, localizedClass, _, itemLevel, _, tank, healer, damage, _, _, dungeonScore, _, _, _, specID =
-                        C_LFGList.GetApplicantMemberInfo(parent.applicantID, memberIdx)
+                        securecallfunction(C_LFGList.GetApplicantMemberInfo, parent.applicantID, memberIdx)
 
                     if not name then
                         return
@@ -90,11 +90,14 @@ function LFGTooltips:HookApplicantEntry(button)
                         GameTooltip:AddLine("M+ Rating: " .. dungeonScore, r, g, b)
                     end
 
-                    -- Show applicant note
-                    local applicantInfo = C_LFGList.GetApplicantInfo(parent.applicantID)
-                    if applicantInfo and applicantInfo.comment and applicantInfo.comment ~= "" then
+                    -- Show applicant note (use securecallfunction to avoid tainting the cached applicant table)
+                    local comment = securecallfunction(function(id)
+                        local info = C_LFGList.GetApplicantInfo(id)
+                        return info and info.comment
+                    end, parent.applicantID)
+                    if comment and comment ~= "" then
                         GameTooltip:AddLine(" ")
-                        GameTooltip:AddLine('"' .. applicantInfo.comment .. '"', 1, 1, 1, true)
+                        GameTooltip:AddLine('"' .. comment .. '"', 1, 1, 1, true)
                     end
 
                     GameTooltip:Show()
