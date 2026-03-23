@@ -21,10 +21,14 @@ function RF_HideNames:OnInitialize()
         if not frame or frame:IsForbidden() then
             return
         end
-        if mUI.db.profile.unitframes.raidframes.hidenames then
-            frame.name:SetAlpha(0)
-        else
-            frame.name:SetAlpha(1)
+
+        local name = frame:GetName()
+        if name and name:match("^Compact") then
+            if mUI.db.profile.unitframes.raidframes.hidenames then
+                frame.name:SetAlpha(0)
+            else
+                frame.name:SetAlpha(1)
+            end
         end
     end
 
