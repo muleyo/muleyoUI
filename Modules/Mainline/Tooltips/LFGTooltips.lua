@@ -43,7 +43,7 @@ function LFGTooltips:HookApplicantEntry(button)
                     end
 
                     local memberIdx = self.memberIdx or 1
-                    local name, classStr, _, _, itemLevel, _, _, _, _, _, dungeonScore =
+                    local name, classStr, localizedClass, _, itemLevel, _, tank, healer, damage, _, _, dungeonScore, _, _, _, specID =
                         C_LFGList.GetApplicantMemberInfo(parent.applicantID, memberIdx)
 
                     if not name then
@@ -61,8 +61,22 @@ function LFGTooltips:HookApplicantEntry(button)
                         GameTooltip:SetText(name, 1, 1, 1)
                     end
 
+                    local cr, cg, cb = 1, 1, 1
+                    if classColor then
+                        cr, cg, cb = classColor.r, classColor.g, classColor.b
+                    end
+
+                    if specID and specID > 0 then
+                        local _, specName = GetSpecializationInfoByID(specID)
+                        if specName then
+                            local hex = string.format("|cff%02x%02x%02x", cr * 255, cg * 255, cb * 255)
+                            GameTooltip:AddLine("Spec: " .. hex .. specName .. "|r", 1, 1, 1)
+                        end
+                    end
+
                     if itemLevel and itemLevel > 0 then
-                        GameTooltip:AddDoubleLine("Item Level", math.floor(itemLevel), 0.5, 0.5, 0.5, 1, 1, 1)
+                        local hex = string.format("|cff%02x%02x%02x", cr * 255, cg * 255, cb * 255)
+                        GameTooltip:AddLine("iLvl: " .. hex .. math.floor(itemLevel) .. "|r", 1, 1, 1)
                     end
 
                     if dungeonScore and dungeonScore > 0 then
@@ -73,15 +87,14 @@ function LFGTooltips:HookApplicantEntry(button)
                                 r, g, b = color.r, color.g, color.b
                             end
                         end
-                        GameTooltip:AddDoubleLine("M+ Rating", dungeonScore, 0.5, 0.5, 0.5, r, g, b)
+                        GameTooltip:AddLine("M+ Rating: " .. dungeonScore, r, g, b)
                     end
 
                     -- Show applicant note
                     local applicantInfo = C_LFGList.GetApplicantInfo(parent.applicantID)
                     if applicantInfo and applicantInfo.comment and applicantInfo.comment ~= "" then
                         GameTooltip:AddLine(" ")
-                        GameTooltip:AddLine("Note:", 1, 0.82, 0)
-                        GameTooltip:AddLine(applicantInfo.comment, 1, 1, 1, true)
+                        GameTooltip:AddLine('"' .. applicantInfo.comment .. '"', 1, 1, 1, true)
                     end
 
                     GameTooltip:Show()
