@@ -17,10 +17,7 @@ end
 
 function MouseCursor:OnEnable()
     MouseCursor:SecureHookScript(MouseCursor.frame, "OnUpdate", function(self)
-        local x, y = GetCursorPosition()
-        local scale = self:GetEffectiveScale()
-        self:ClearAllPoints()
-        self:SetPoint("CENTER", UIParent, "BOTTOMLEFT", x / scale, y / scale)
+        InputUtil.AnchorRegionToCursor(self, "CENTER")
     end)
 
     MouseCursor.frame:Show()
