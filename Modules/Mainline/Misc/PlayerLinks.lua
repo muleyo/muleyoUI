@@ -13,9 +13,9 @@ function PlayerLinks:OnInitialize()
         if not realm then
             return nil
         end
-        realm = realm:gsub("(%l)(%u)", "%1 %2")
-        realm = realm:gsub("'", "")
-        return realm:gsub("%s+", "-"):lower()
+        realm = string.gsub(realm, "(%l)(%u)", "%1 %2")
+        realm = string.gsub(realm, "'", "")
+        return string.lower(string.gsub(realm, "%s+", "-"))
     end
 
     local region = regionMap[GetCurrentRegion()] or "eu"
@@ -47,8 +47,8 @@ function PlayerLinks:OnInitialize()
             return nil
         end
         local name, realm
-        if fullName:find("-") then
-            name, realm = fullName:match("^(.+)-(.+)$")
+        if string.find(fullName, "-") then
+            name, realm = string.match(fullName, "^(.+)-(.+)$")
         else
             name = fullName
             realm = GetNormalizedRealmName()
