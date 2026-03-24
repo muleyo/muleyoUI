@@ -98,6 +98,22 @@ function PlayerLinks:OnInitialize()
             return nil
         end
 
+        -- Search results: browsing groups in the LFG list
+        local resultID = owner.resultID
+        if not resultID and owner.GetParent then
+            local parent = owner:GetParent()
+            if parent then
+                resultID = resultID or parent.resultID
+            end
+        end
+
+        if resultID then
+            local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
+            if searchResultInfo and searchResultInfo.leaderName then
+                return searchResultInfo.leaderName
+            end
+        end
+
         -- Applicant viewer: someone applied to your group
         local applicantID = owner.applicantID
         local memberIdx = owner.memberIdx

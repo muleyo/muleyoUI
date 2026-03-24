@@ -1,5 +1,12 @@
 local LFGTooltips = mUI:NewModule("mUI.Tooltips.LFGTooltips", "AceHook-3.0")
 
+local hookedButtons = setmetatable({}, {
+    __mode = "k"
+})
+local hookedMembers = setmetatable({}, {
+    __mode = "k"
+})
+
 function LFGTooltips:OnInitialize()
     LFGTooltips.db = mUI.db.profile.tooltips
 end
@@ -9,7 +16,7 @@ function LFGTooltips:OnEnable()
         -- Hide the cover frame that blocks mouse interaction for non-leaders
         if LFGListFrame and LFGListFrame.ApplicationViewer and LFGListFrame.ApplicationViewer.UnempoweredCover then
             LFGTooltips.unempoweredCover = LFGListFrame.ApplicationViewer.UnempoweredCover
-            LFGTooltips.unempoweredCover:EnableMouse(false)
+            securecallfunction(LFGTooltips.unempoweredCover.EnableMouse, LFGTooltips.unempoweredCover, false)
         end
 
         -- Hook applicant member frames so non-leaders can read notes
@@ -27,15 +34,15 @@ function LFGTooltips:OnEnable()
 end
 
 function LFGTooltips:HookApplicantEntry(button)
-    if not button or button.mUIApplicantHooked then
+    if not button or hookedButtons[button] then
         return
     end
-    button.mUIApplicantHooked = true
+    hookedButtons[button] = true
 
     if button.Members then
         for _, member in pairs(button.Members) do
-            if not member.mUITooltipHooked then
-                member.mUITooltipHooked = true
+            if not hookedMembers[member] then
+                hookedMembers[member] = true
                 member:HookScript("OnEnter", function(self)
                     local parent = self:GetParent()
                     if not parent or not parent.applicantID then
@@ -114,7 +121,7 @@ end
 function LFGTooltips:OnDisable()
     -- Re-enable the cover frame for non-leaders
     if LFGTooltips.unempoweredCover then
-        LFGTooltips.unempoweredCover:EnableMouse(true)
+        securecallfunction(LFGTooltips.unempoweredCover.EnableMouse, LFGTooltips.unempoweredCover, true)
     end
     LFGTooltips:UnhookAll()
 end
