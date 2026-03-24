@@ -51,6 +51,51 @@ end
 
 function LFGDeclined:OnEnable()
     LFGDeclined:SecureHookScript(LFGDeclined.frame, "OnEvent", LFGDeclined.OnEvent)
+
+    -- Sort groups the player has applied to above all other results
+    if not LFGDeclined.sortHooked then
+        LFGDeclined.sortHooked = true
+        local isSorting = false
+        hooksecurefunc("LFGListSearchPanel_UpdateResults", function(self)
+            if isSorting or not LFGDeclined:IsEnabled() then
+                return
+            end
+            if not self.results or #self.results == 0 then
+                return
+            end
+
+            local appliedSet = {}
+            local hasApplied = false
+
+            for _, resultID in ipairs(self.results) do
+                local _, appStatus = C_LFGList.GetApplicationInfo(resultID)
+                if appStatus == "applied" or appStatus == "invited" then
+                    appliedSet[resultID] = true
+                    hasApplied = true
+                end
+            end
+
+            if not hasApplied then
+                return
+            end
+
+            -- Stable sort: applied/invited first, preserve relative order within each group
+            table.sort(self.results, function(a, b)
+                local aApp = appliedSet[a] or false
+                local bApp = appliedSet[b] or false
+                if aApp ~= bApp then
+                    return aApp
+                end
+                return false
+            end)
+
+            -- Re-run the Blizzard function so it rebuilds the DataProvider
+            -- from the reordered self.results
+            isSorting = true
+            LFGListSearchPanel_UpdateResults(self)
+            isSorting = false
+        end)
+    end
 end
 
 function LFGDeclined:OnDisable()
