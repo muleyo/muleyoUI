@@ -44,13 +44,15 @@ function Style:OnInitialize()
         if not Style.cfg.barColor then
             return
         end
-        if r == Style.cfg.barColor.r and g == Style.cfg.barColor.g and b == Style.cfg.barColor.b then
-            return
-        end
-        local texture = frame:GetStatusBarTexture()
-        if texture then
-            texture:SetVertexColor(Style.cfg.barColor.r, Style.cfg.barColor.g, Style.cfg.barColor.b)
-        end
+        xpcall(function()
+            if r == Style.cfg.barColor.r and g == Style.cfg.barColor.g and b == Style.cfg.barColor.b then
+                return
+            end
+            local texture = frame:GetStatusBarTexture()
+            if texture then
+                texture:SetVertexColor(Style.cfg.barColor.r, Style.cfg.barColor.g, Style.cfg.barColor.b)
+            end
+        end, nop)
     end
 
     function Style:GetTarget(guid)
