@@ -2553,7 +2553,7 @@ function EditMode:OnInitialize()
         EditMode.LEM = ns.LibEditMode
 
         -- Create Holder Frame
-        EditMode.QueueStatus = CreateFrame("Frame", "mUI QueueStatusButton", UIParent)
+        EditMode.QueueStatus = CreateFrame("Frame", "mUIQueueStatusButton", UIParent)
         EditMode.QueueStatus:SetSize(QueueStatusButton:GetWidth(), QueueStatusButton:GetHeight())
         EditMode.QueueStatus:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
 
@@ -2564,7 +2564,9 @@ function EditMode:OnInitialize()
         -- Keep button centered when Blizzard tries to reposition it
         local ignoringPointHook = false
         EditMode:SecureHook(QueueStatusButton, "SetPoint", function()
-            if ignoringPointHook then return end
+            if ignoringPointHook then
+                return
+            end
             ignoringPointHook = true
             QueueStatusButton:ClearAllPoints()
             QueueStatusButton:SetPoint("CENTER", EditMode.QueueStatus)
@@ -2582,7 +2584,9 @@ function EditMode:OnInitialize()
 
         -- Stats Frame
         function EditMode:StatsFrame(layout, point, x, y)
-            if not EditMode.db[layout].statsframe then EditMode.db[layout].statsframe = {} end
+            if not EditMode.db[layout].statsframe then
+                EditMode.db[layout].statsframe = {}
+            end
             EditMode.db[layout].statsframe.point = point
             EditMode.db[layout].statsframe.x = x
             EditMode.db[layout].statsframe.y = y
@@ -2590,7 +2594,9 @@ function EditMode:OnInitialize()
 
         -- QueueStatusButton
         function EditMode:QueueIcon(layout, point, x, y)
-            if not EditMode.db[layout].queueicon then EditMode.db[layout].queueicon = {} end
+            if not EditMode.db[layout].queueicon then
+                EditMode.db[layout].queueicon = {}
+            end
             EditMode.db[layout].queueicon.point = point
             EditMode.db[layout].queueicon.x = x
             EditMode.db[layout].queueicon.y = y
@@ -2643,7 +2649,9 @@ function EditMode:OnInitialize()
                 return EditMode.db[layout].statsframe and EditMode.db[layout].statsframe.textsize or 13
             end,
             set = function(layout, value)
-                if not EditMode.db[layout].statsframe then EditMode.db[layout].statsframe = {} end
+                if not EditMode.db[layout].statsframe then
+                    EditMode.db[layout].statsframe = {}
+                end
                 EditMode.db[layout].statsframe.textsize = value
                 local Stats = mUI:GetModule("mUI.Modules.General.Stats")
                 local fontPath = Stats and Stats.db and Stats.db.general.font ~= "None" and Stats.db.general.fontpath or STANDARD_TEXT_FONT
@@ -2665,7 +2673,9 @@ function EditMode:OnInitialize()
                 return EditMode.db[layout].queueicon and EditMode.db[layout].queueicon.scale or 0.8
             end,
             set = function(layout, value)
-                if not EditMode.db[layout].queueicon then EditMode.db[layout].queueicon = {} end
+                if not EditMode.db[layout].queueicon then
+                    EditMode.db[layout].queueicon = {}
+                end
                 EditMode.db[layout].queueicon.scale = value
                 queueDesiredScale = value
                 QueueStatusButton:SetScale(value)
