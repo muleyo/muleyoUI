@@ -19,33 +19,40 @@ function Casttime:OnInitialize()
     Casttime.LSM = LibStub("LibSharedMedia-3.0")
     Casttime.font = Casttime.LSM:Fetch('font', Casttime.db.font)
 
+    -- Store timer fontstrings in a separate table to avoid tainting secure frame tables (barType)
+    Casttime.timers = {}
+
     for unitframe, castbar in pairs(Casttime.castbars) do
+        local frame = _G[castbar]
+        Casttime.timers[frame] = frame:CreateFontString(nil)
         if unitframe == "player" then
-            _G[castbar].timer = _G[castbar]:CreateFontString(nil)
-            _G[castbar].timer:SetFont(Casttime.font, 14, "OUTLINE")
-            _G[castbar].timer:SetPoint("LEFT", _G[castbar], "RIGHT", 5, 0)
+            Casttime.timers[frame]:SetFont(Casttime.font, 14, "OUTLINE")
+            Casttime.timers[frame]:SetPoint("LEFT", frame, "RIGHT", 5, 0)
         else
-            _G[castbar].timer = _G[castbar]:CreateFontString(nil)
-            _G[castbar].timer:SetFont(Casttime.font, 11, "OUTLINE")
-            _G[castbar].timer:SetPoint("LEFT", _G[castbar], "RIGHT", 4, 0)
+            Casttime.timers[frame]:SetFont(Casttime.font, 11, "OUTLINE")
+            Casttime.timers[frame]:SetPoint("LEFT", frame, "RIGHT", 4, 0)
         end
     end
 
     function Casttime:Update(frame)
+        local timer = Casttime.timers[frame]
+        if not timer then
+            return
+        end
         if frame.casting then
             local duration = UnitCastingDuration(frame.unit)
             if duration then
                 local remaining = duration:GetRemainingDuration()
-                frame.timer:SetText(format("%.1f", remaining))
+                timer:SetText(format("%.1f", remaining))
             end
         elseif frame.channeling then
             local duration = UnitChannelDuration(frame.unit)
             if duration then
                 local remaining = duration:GetRemainingDuration()
-                frame.timer:SetText(format("%.1f", remaining, 0))
+                timer:SetText(format("%.1f", remaining, 0))
             end
         else
-            frame.timer:SetText("")
+            timer:SetText("")
         end
     end
 end
@@ -65,6 +72,9 @@ function Casttime:OnDisable()
     Casttime:UnhookAll()
 
     for _, castbar in pairs(Casttime.castbars) do
-        _G[castbar].timer:SetText("")
+        local timer = Casttime.timers[_G[castbar]]
+        if timer then
+            timer:SetText("")
+        end
     end
 end
