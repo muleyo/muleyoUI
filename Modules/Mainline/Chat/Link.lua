@@ -35,13 +35,17 @@ function Link:OnInitialize()
     end
 
     -- Single filter callback shared by every event.  Runs inside
-    -- Blizzard's ChatFrame_MessageEventHandler *before* AddMessage,
-    -- so the entire call chain stays in secure context.
+    -- Blizzard's ChatFrame_MessageEventHandler *before* AddMessage.
+    -- Only return modified args when a URL was actually transformed;
+    -- returning nothing preserves the original untainted values and
+    -- prevents lineID taint that breaks FCF_RemoveAllMessagesFromChanSender.
     Link.urlFilter = function(_, _, msg, ...)
         if msg then
-            msg = Link:TransformURLs(msg)
+            local newMsg = Link:TransformURLs(msg)
+            if newMsg ~= msg then
+                return false, newMsg, ...
+            end
         end
-        return false, msg, ...
     end
 
     Link.SetHyperlink = ItemRefTooltip.SetHyperlink
