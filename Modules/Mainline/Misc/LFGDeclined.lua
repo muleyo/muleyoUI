@@ -5,22 +5,24 @@ function LFGDeclined:OnInitialize()
     LFGDeclined.frame:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
 
     function LFGDeclined:GetSearchResultInfo(resultID)
-        local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
+        local searchResultInfo = securecallfunction(C_LFGList.GetSearchResultInfo, resultID)
         -- In rare cases such as when an application is full or rejected,
         -- C_LFGList.GetSearchResultInfo returns nil
         if not searchResultInfo then
             return nil
         end
-        if searchResultInfo.activityIDs then
-            searchResultInfo.activityID = searchResultInfo.activityIDs[1]
+        -- Copy the table so we don't taint the cached version
+        local info = CopyTable(searchResultInfo)
+        if info.activityIDs then
+            info.activityID = info.activityIDs[1]
         end
-        if searchResultInfo.leaderDungeonScoreInfo then
-            searchResultInfo.leaderDungeonScoreInfo = searchResultInfo.leaderDungeonScoreInfo[1]
+        if info.leaderDungeonScoreInfo then
+            info.leaderDungeonScoreInfo = info.leaderDungeonScoreInfo[1]
         end
-        if searchResultInfo.leaderPvpRatingInfo then
-            searchResultInfo.leaderPvpRatingInfo = searchResultInfo.leaderPvpRatingInfo[1]
+        if info.leaderPvpRatingInfo then
+            info.leaderPvpRatingInfo = info.leaderPvpRatingInfo[1]
         end
-        return searchResultInfo
+        return info
     end
 
     function LFGDeclined:GetGroupKey(searchResultInfo)
@@ -44,7 +46,7 @@ function LFGDeclined:OnInitialize()
                 LFGListFrame.declines = {}
             end
             LFGListFrame.declines[key] = nil
-            LFGListSearchPanel_UpdateResults(LFGListFrame.SearchPanel)
+            securecallfunction(LFGListSearchPanel_UpdateResults, LFGListFrame.SearchPanel)
         end
     end
 end
