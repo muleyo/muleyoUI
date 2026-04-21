@@ -108,7 +108,7 @@ function PlayerLinks:OnInitialize()
         end
 
         if resultID then
-            local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
+            local searchResultInfo = securecallfunction(C_LFGList.GetSearchResultInfo, resultID)
             if searchResultInfo and searchResultInfo.leaderName then
                 return searchResultInfo.leaderName
             end

@@ -647,6 +647,9 @@ function Unitframes:OnInitialize()
                 name = "Skin Aura Icons",
                 desc = "Apply mUI Skin to Aura Icons on Party/Raidframes\n\n|cffffff00Info:|r Requires Reload",
                 type = "toggle",
+                hidden = function()
+                    return select(4, GetBuildInfo()) >= 120005
+                end,
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.skinicons = val
 
@@ -676,6 +679,9 @@ function Unitframes:OnInitialize()
                     ["BOTTOMLEFT"] = "Bottom Left",
                     ["BOTTOMRIGHT"] = "Bottom Right"
                 },
+                hidden = function()
+                    return select(4, GetBuildInfo()) >= 120005
+                end,
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.defensive.position = val
 
@@ -697,6 +703,9 @@ function Unitframes:OnInitialize()
                 min = 0,
                 max = 50,
                 step = 1,
+                hidden = function()
+                    return select(4, GetBuildInfo()) >= 120005
+                end,
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.defensive.size = val
 
@@ -718,6 +727,9 @@ function Unitframes:OnInitialize()
                 min = 10,
                 max = 50,
                 step = 1,
+                hidden = function()
+                    return select(4, GetBuildInfo()) >= 120005
+                end,
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.buffsize = val
 
@@ -737,6 +749,9 @@ function Unitframes:OnInitialize()
                 min = 10,
                 max = 100,
                 step = 1,
+                hidden = function()
+                    return select(4, GetBuildInfo()) >= 120005
+                end,
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.debuffsize = val
                 end,
@@ -752,6 +767,9 @@ function Unitframes:OnInitialize()
                 min = 10,
                 max = 100,
                 step = 1,
+                hidden = function()
+                    return select(4, GetBuildInfo()) >= 120005
+                end,
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.privateaurasize = val
                 end,
