@@ -82,7 +82,7 @@ function Theme:OnEnable()
             end
         end)
 
-        if mUI.db.profile.unitframes.raidframes.skinicons and select(4, GetBuildInfo()) <= 120005 then
+        if mUI.db.profile.unitframes.raidframes.skinicons and select(4, GetBuildInfo()) < 120005 then
             Theme:SecureHook("CompactUnitFrame_UpdateAuras", function(frame)
                 if not frame or frame:IsForbidden() then
                     return
