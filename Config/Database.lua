@@ -130,7 +130,10 @@ local defaults = {
                 defensive = {
                     position = "TOP",
                     size = 25
-                }
+                },
+                dispelIcons = true,
+                dispelIconSize = 36,
+                dispelGlow = true
             }
         },
         castbars = {
