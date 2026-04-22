@@ -777,6 +777,65 @@ function Unitframes:OnInitialize()
                     return mUI.db.profile.unitframes.raidframes.privateaurasize
                 end,
                 order = 39
+            },
+            header_dispel = {
+                name = "Dispellable Debuffs (5-man only)",
+                type = "header",
+                order = 40
+            },
+            dispelIcons = {
+                name = "Dispel Icons",
+                desc = "Show enlarged dispellable-debuff icons to the left of party frames",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.dispelIcons = val
+
+                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_Auras and Unitframes.Module.RF_Auras:IsEnabled() then
+                        Unitframes.Module.RF_Auras:UpdateAllFrames()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.dispelIcons
+                end,
+                order = 41
+            },
+            dispelGlow = {
+                name = "Dispel Glow",
+                desc = "Pulse a pixel glow around the raid frame when the unit has a dispellable debuff",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.dispelGlow = val
+
+                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_Auras and Unitframes.Module.RF_Auras:IsEnabled() then
+                        Unitframes.Module.RF_Auras:UpdateAllFrames()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.dispelGlow
+                end,
+                order = 42
+            },
+            dispelIconSize = {
+                name = "Dispel Icon Size",
+                desc = "Size of the enlarged dispellable-debuff icons shown to the left of party frames",
+                type = "range",
+                min = 16,
+                max = 64,
+                step = 1,
+                disabled = function()
+                    return not mUI.db.profile.unitframes.raidframes.dispelIcons
+                end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.dispelIconSize = val
+
+                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_Auras and Unitframes.Module.RF_Auras:IsEnabled() then
+                        Unitframes.Module.RF_Auras:UpdateAllFrames()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.dispelIconSize
+                end,
+                order = 43
             }
         }
     }
