@@ -95,9 +95,6 @@ function RF_Auras:OnInitialize()
         local slots = frame.mUI_dispelIcons
 
         local unit = frame.displayedUnit or frame.unit
-        if unit and UnitGUID(unit) then
-            unit = UnitTokenFromGUID(UnitGUID(unit)) or unit
-        end
 
         local colorCurve = RF_Auras.Theme and RF_Auras.Theme.colorCurve
         local showIcons = RF_Auras:IconsEnabled()
