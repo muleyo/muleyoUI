@@ -126,44 +126,88 @@ function ItemInfo:OnInitialize()
     192976 -- Increased Stamina and Mastery
     }
 
+    -- Enchant ID replacements (checked first, localization-proof).
+    -- Keyed by enchantID as it appears in the itemLink.
+    ItemInfo.enchantIdTable = {
+        -- Midnight
+        [7956] = "Stam & Str",
+        [7957] = "Stam & Str", -- Mark of Nalorakk
+        [7984] = "Stam & Agi",
+        [7985] = "Stam & Agi", -- Mark of the Rootwarden
+        [7986] = "Primary Stat",
+        [7987] = "Primary Stat", -- Mark of the Worldsoul
+        [8012] = "Int & Mana",
+        [8013] = "Int & Mana", -- Mark of the Magister
+        [7962] = "Avoid & Stam",
+        [7963] = "Avoid & Stam", -- Lynx's Dexterity
+        [7992] = "Leech & Stam",
+        [7993] = "Leech & Stam", -- Shaladrassil's Roots
+        [8018] = "Speed & Stam",
+        [8019] = "Speed & Stam", -- Farstrider's Hunt
+        [7958] = "22 Leech",
+        [7959] = "33 Leech", -- Hex of Leeching
+        [7960] = "44 Leech",
+        [7961] = "55 Leech", -- Empowered Hex of Leeching
+        [7988] = "9 Speed",
+        [7989] = "13 Speed", -- Blessing of Speed
+        [7990] = "17 Speed",
+        [7991] = "22 Speed", -- Empowered Blessing of Speed
+        [8014] = "15 Avoid",
+        [8015] = "22 Avoid", -- Rune of Avoidance
+        [8016] = "30 Avoid",
+        [8017] = "37 Avoid", -- Empowered Rune of Avoidance
+        [7964] = "22 Mast",
+        [7965] = "24 Mast", -- Amani Mastery
+        [7966] = "1% Crit",
+        [7967] = "2% Crit", -- Eyes of the Eagle
+        [7968] = "27 Mast",
+        [7969] = "29 Mast", -- Zul'jin's Mastery
+        [7994] = "22 Crit",
+        [7995] = "24 Crit", -- Nature's Wrath
+        [7996] = "27 Crit",
+        [7997] = "29 Crit", -- Nature's Fury
+        [8020] = "22 Haste",
+        [8021] = "24 Haste", -- Thalassian Haste
+        [8022] = "22 Vers",
+        [8023] = "24 Vers", -- Thalassian Versatility
+        [8024] = "27 Haste",
+        [8025] = "29 Haste", -- Silvermoon's Alacrity
+        [8026] = "27 Vers",
+        [8027] = "29 Vers", -- Silvermoon's Tenacity
+        [7970] = "Speed",
+        [7971] = "Speed", -- Flight of the Eagle
+        [7972] = "Speed",
+        [7973] = "Speed", -- Akil'zon's Swiftness
+        [7998] = "44 Avoid",
+        [7999] = "67 Avoid", -- Nature's Grace
+        [8000] = "89 Avoid",
+        [8001] = "111 Avoid", -- Amirdrassil's Grace
+        [8028] = "66 Leech",
+        [8029] = "99 Leech", -- Thalassian Recovery
+        [8030] = "132 Leech",
+        [8031] = "166 Leech", -- Silvermoon's Mending
+        [7978] = "Str of Halazzi",
+        [7979] = "Str of Halazzi", -- Strength of Halazzi
+        [7980] = "Jan Precision",
+        [7981] = "Jan Precision", -- Jan'alai's Precision
+        [7982] = "Berserker's Rage",
+        [7983] = "Berserker's Rage", -- Berserker's Rage
+        [8006] = "WS Cradle",
+        [8007] = "WS Cradle", -- Worldsoul Cradle
+        [8008] = "WS Aegis",
+        [8009] = "WS Aegis", -- Worldsoul Aegis
+        [8010] = "WS Tenacity",
+        [8011] = "WS Tenacity", -- Worldsoul Tenacity
+        [8036] = "Flames",
+        [8037] = "Flames", -- Flames of the Sin'dorei
+        [8038] = "Acuity",
+        [8039] = "Acuity", -- Acuity of the Ren'dorei
+        [8040] = "Arcane Mastery",
+        [8041] = "Arcane Mastery" -- Arcane Mastery
+    }
+
     -- Full enchant name replacements (if found anywhere in text, replace the entire string)
     ItemInfo.enchantNameTable = {
-        -- Midnight
-        ["Mark of the Nalorakk"] = "Stam & Str",
-        ["Mark of the Rootwarden"] = "Stam & Agi",
-        ["Mark of the Worldsoul"] = "Primary Stat",
-        ["Mark of the Magister"] = "Int & Mana",
-        ["Lynx's Dexterity"] = "Avoid & Stam",
-        ["Shaladrassil's Roots"] = "Leech & Stam",
-        ["Farstrider's Hunt"] = "Speed & Stam",
-        ["Hex of Leeching"] = "Leech",
-        ["Blessing of Speed"] = "Speed",
-        ["Rune of Avoidance"] = "Avoid",
-        ["Amani Mastery"] = "Mast",
-        ["Eyes of the Eagle"] = "1% Crit",
-        ["Zul'jins Mastery"] = "Mast",
-        ["Nature's Wrath"] = "Crit",
-        ["Nature's Fury"] = "Crit",
-        ["Thalassian Haste"] = "Haste",
-        ["Thalassian Versatility"] = "Vers",
-        ["Silvermoon's Alacrity"] = "Haste",
-        ["Silvermoon's Tenacity"] = "Vers",
-        ["Flight of the Eagle"] = "Speed",
-        ["Akil'zon's Swiftness"] = "Speed",
-        ["Nature's Grace"] = "Avoid",
-        ["Amirdrassil's Grace"] = "Avoid",
-        ["Thalassian Recovery"] = "Leech",
-        ["Silvermoon's Mending"] = "Leech",
-        ["Strength of Halazzi"] = "Strength of Halazzi",
-        ["Jan'alai's Precision"] = "Jan'alai's Precision",
-        ["Berserker's Rage"] = "Berserker's Rage",
-        ["Worldsoul Cradle"] = "Worldsoul Cradle",
-        ["Worldsoul Aegis"] = "Worldsoul Aegis",
-        ["Worldsoul Tenacity"] = "Worldsoul Tenacity",
-        ["Flames of the Sin'dorei"] = "Flames of the Sin'dorei",
-        ["Acuity of the Ren'dorei"] = "Acuity of the Ren'dorei",
-        ["Arcane Mastery"] = "Arcane Mastery",
-
         -- The War Within
         ["Minor Speed Increase"] = "Speed",
         ["Homebound Speed"] = "Speed & HS Red.",
@@ -249,6 +293,19 @@ function ItemInfo:OnInitialize()
         if not data then
             return nil, nil
         end
+
+        local enchantId
+        local itemLink = GetInventoryItemLink(unit, slot)
+        if itemLink then
+            local itemString = itemLink:match("item[%-?%d:]+")
+            if itemString then
+                local _, _, idStr = strsplit(":", itemString)
+                if idStr and idStr ~= "" and idStr ~= "0" then
+                    enchantId = tonumber(idStr)
+                end
+            end
+        end
+
         for _, line in ipairs(data.lines) do
             local text = line.leftText
             local enchantText = string.match(text, ItemInfo.enchantPattern)
@@ -262,7 +319,7 @@ function ItemInfo:OnInitialize()
                     enchantText = maybeEnchantText or enchantText
                 end
 
-                return atlas, ItemInfo:ProcessEnchantText(enchantText)
+                return atlas, ItemInfo:ProcessEnchantText(enchantText, enchantId)
             end
         end
 
@@ -332,15 +389,20 @@ function ItemInfo:OnInitialize()
         return iter
     end
 
-    function ItemInfo:ProcessEnchantText(enchantText)
-        -- First pass: check for known enchant names and replace the entire string
+    function ItemInfo:ProcessEnchantText(enchantText, enchantId)
+        -- First pass: enchantID lookup (localization-proof, exact)
+        if enchantId and ItemInfo.enchantIdTable[enchantId] then
+            return ItemInfo.enchantIdTable[enchantId]
+        end
+
+        -- Second pass: fall back to known enchant names and replace the entire string
         for seek, replacement in ItemInfo:pairsByKeys(ItemInfo.enchantNameTable) do
             if enchantText:find(seek) then
                 return replacement
             end
         end
 
-        -- Second pass: abbreviate stat names and clean up formatting
+        -- Third pass: abbreviate stat names and clean up formatting
         for seek, replacement in ItemInfo:pairsByKeys(ItemInfo.enchantAbbreviationTable) do
             enchantText = enchantText:gsub(seek, replacement)
         end
