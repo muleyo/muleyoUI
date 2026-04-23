@@ -136,8 +136,8 @@ function RF_Auras:OnInitialize()
                 local slot = slots[idx]
                 slot.icon:SetTexture(aura.icon)
 
-                local stacks = aura.applications or aura.charges or 0
-                if stacks and stacks > 1 then
+                local stacks = aura.applications or aura.charges
+                if stacks then
                     slot.count:SetText(stacks)
                     slot.count:Show()
                 else
