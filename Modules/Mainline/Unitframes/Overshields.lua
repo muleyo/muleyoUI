@@ -24,13 +24,8 @@ local function EnsureContainer(unitFrame, healthBar, overAbsorbGlow)
     -- Don't draw above the health bar
     absorb:SetFrameLevel(healthBar:GetFrameLevel())
 
-    -- Handle potentially secret frame strata
-    local strata = healthBar:GetFrameStrata()
-    if type(strata) ~= "string" then
-        strata = "LOW"
-    end
-
-    absorb:SetFrameStrata(strata)
+    -- Child frames inherit the parent's strata; setting it explicitly can
+    -- fail on secure frames where GetFrameStrata returns a secret value.
     absorb:SetStatusBarColor(1, 1, 1, 0.5)
     absorb:Hide()
 
