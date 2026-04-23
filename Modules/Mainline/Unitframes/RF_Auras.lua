@@ -22,6 +22,12 @@ function RF_Auras:OnInitialize()
     local LCG = LibStub("LibCustomGlow-1.0")
     local GLOW_KEY = "mUI_RF_Dispel"
 
+    local LSM = LibStub("LibSharedMedia-3.0")
+    local function GetCountFont()
+        local fontName = mUI.db and mUI.db.profile.general and mUI.db.profile.general.font
+        return (fontName and LSM:Fetch("font", fontName)) or STANDARD_TEXT_FONT
+    end
+
     function RF_Auras:CreateIcon(parent, size)
         local f = CreateFrame("Frame", nil, parent)
         f:SetSize(size, size)
@@ -50,6 +56,11 @@ function RF_Auras:OnInitialize()
         mask:SetAllPoints(icon)
         icon:AddMaskTexture(mask)
 
+        local count = f:CreateFontString(nil, "OVERLAY")
+        count:SetFont(GetCountFont(), math.max(10, math.floor(size * 0.35)), "OUTLINE")
+        count:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", 2, 0)
+        f.count = count
+
         f:Hide()
         return f
     end
@@ -58,8 +69,13 @@ function RF_Auras:OnInitialize()
         local size = RF_Auras:GetIconSize()
         if frame.mUI_dispelIcons then
             -- Re-apply size so slider changes take effect without a /reload.
+            local fontSize = math.max(10, math.floor(size * 0.35))
             for i = 1, MAX_SLOTS do
-                frame.mUI_dispelIcons[i]:SetSize(size, size)
+                local f = frame.mUI_dispelIcons[i]
+                f:SetSize(size, size)
+                if f.count then
+                    f.count:SetFont(GetCountFont(), fontSize, "OUTLINE")
+                end
             end
             return
         end
@@ -119,6 +135,15 @@ function RF_Auras:OnInitialize()
                 end
                 local slot = slots[idx]
                 slot.icon:SetTexture(aura.icon)
+
+                local stacks = aura.applications or aura.charges or 0
+                if stacks and stacks > 1 then
+                    slot.count:SetText(stacks)
+                    slot.count:Show()
+                else
+                    slot.count:SetText("")
+                    slot.count:Hide()
+                end
 
                 local durObj = C_UnitAuras.GetAuraDuration(unit, aura.auraInstanceID)
                 if durObj then
