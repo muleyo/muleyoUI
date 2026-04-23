@@ -43,12 +43,16 @@ function Stats:OnInitialize()
     end
 
     function Stats:GetSpeed()
-        local isGliding, canGlide, forwardSpeed = C_PlayerInfo.GetGlidingInfo()
-        if isGliding then
-            return "|c00ffffff" .. string.format("%d", forwardSpeed and (forwardSpeed / BASE_MOVEMENT_SPEED * 100)) .. "%|r speed"
+        local isGliding, _, forwardSpeed = C_PlayerInfo.GetGlidingInfo()
+        local pct
+        if isGliding and forwardSpeed then
+            local ok, v = pcall(function() return forwardSpeed / BASE_MOVEMENT_SPEED * 100 end)
+            pct = ok and v or nil
         else
-            return "|c00ffffff" .. string.format("%d", (GetUnitSpeed("player") / BASE_MOVEMENT_SPEED * 100)) .. "%|r speed"
+            local ok, v = pcall(function() return GetUnitSpeed("player") / BASE_MOVEMENT_SPEED * 100 end)
+            pct = ok and v or nil
         end
+        return "|c00ffffff" .. string.format("%d", pct or 0) .. "%|r speed"
     end
 
     function Stats:Stats()

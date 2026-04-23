@@ -136,14 +136,8 @@ function RF_Auras:OnInitialize()
                 local slot = slots[idx]
                 slot.icon:SetTexture(aura.icon)
 
-                local stacks = aura.applications or aura.charges
-                if stacks then
-                    slot.count:SetText(stacks)
-                    slot.count:Show()
-                else
-                    slot.count:SetText("")
-                    slot.count:Hide()
-                end
+                slot.count:SetText(aura.applications or aura.charges or "")
+                slot.count:Show()
 
                 local durObj = C_UnitAuras.GetAuraDuration(unit, aura.auraInstanceID)
                 if durObj then
