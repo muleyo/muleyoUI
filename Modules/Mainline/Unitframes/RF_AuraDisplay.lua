@@ -2,6 +2,7 @@ local RF_AuraDisplay = mUI:NewModule("mUI.Modules.Unitframes.RF_AuraDisplay", "A
 
 local MAX_BUFFS = 6
 local MAX_DEBUFFS = 3
+local MAX_PRIVATE = 2
 local BUFFS_PER_ROW = 3
 local ICON_GAP = 1
 
@@ -26,7 +27,7 @@ local function OnAuraSlotEnter(slot)
     end
     local unit = slot.mUI_unit
     local id = slot.mUI_auraID
-    if not unit or not id or not UnitExists(unit) then
+    if not unit or not id or id <= 0 or not UnitExists(unit) then
         return
     end
     GameTooltip:SetOwner(slot, "ANCHOR_BOTTOMRIGHT")
@@ -229,6 +230,112 @@ function RF_AuraDisplay:OnInitialize()
         return data
     end
 
+    -- Test mode: render placeholder icons where each aura category would
+    -- appear so users can preview size/position without an actual mechanic.
+    local TEST_TEXTURE_PRIVATE = 132288 -- Spell_Holy_BorrowedTime
+    local TEST_TEXTURE_BUFF = 136224 -- Spell_Nature_Rejuvenation
+    local TEST_TEXTURE_DEBUFF = 136139 -- Spell_Shadow_AbominationExplosion
+    function RF_AuraDisplay:UpdateTestPrivateAuras(frame, data, size)
+        local active = RF_AuraDisplay.testPrivateAuras
+        data.testIcons = data.testIcons or {}
+        for i = 1, MAX_PRIVATE do
+            local icon = data.testIcons[i]
+            if active then
+                if not icon then
+                    icon = frame:CreateTexture(nil, "OVERLAY")
+                    data.testIcons[i] = icon
+                end
+                icon:SetTexture(TEST_TEXTURE_PRIVATE)
+                icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+                icon:SetSize(size, size)
+                icon:ClearAllPoints()
+                icon:SetPoint("RIGHT", frame, "LEFT", -2 - (i - 1) * (size + ICON_GAP), 0)
+                icon:Show()
+            elseif icon then
+                icon:Hide()
+            end
+        end
+    end
+
+    local function MakeTestAura(texture, instanceID)
+        return {
+            icon = texture,
+            auraInstanceID = instanceID,
+            spellId = 0,
+            mUI_scale = 1
+        }
+    end
+
+    function RF_AuraDisplay:GetTestBuffs()
+        if not RF_AuraDisplay.testBuffs then return nil end
+        local list = {}
+        for i = 1, MAX_BUFFS do
+            list[i] = MakeTestAura(TEST_TEXTURE_BUFF, -i)
+        end
+        return list
+    end
+
+    function RF_AuraDisplay:GetTestDebuffs()
+        if not RF_AuraDisplay.testDebuffs then return nil end
+        local list = {}
+        for i = 1, MAX_DEBUFFS do
+            list[i] = MakeTestAura(TEST_TEXTURE_DEBUFF, -100 - i)
+        end
+        return list
+    end
+
+    -- frame.buffFrames/debuffFrames were removed in 12.0.5; auras now flow
+    -- through the PrivateAura container system attached to the frame itself.
+    -- We register our own non-container PrivateAuraAnchors (auraIndex 1..N)
+    -- so private auras still render at our positions, while our custom
+    -- GetAuraSlots scan keeps showing regular buffs/debuffs.
+    local function ClearPrivateAuraAnchors(data)
+        if not C_UnitAuras or not C_UnitAuras.RemovePrivateAuraAnchor or not data.privateAnchorIDs then
+            return
+        end
+        for i = 1, #data.privateAnchorIDs do
+            C_UnitAuras.RemovePrivateAuraAnchor(data.privateAnchorIDs[i])
+        end
+        wipe(data.privateAnchorIDs)
+    end
+
+    local function RefreshPrivateAuraAnchors(frame, data, unit, size)
+        if not C_UnitAuras or not C_UnitAuras.AddPrivateAuraAnchor then
+            return
+        end
+        if data.privateUnit == unit and data.privateSize == size then
+            return
+        end
+        ClearPrivateAuraAnchors(data)
+        data.privateAnchorIDs = data.privateAnchorIDs or {}
+        data.privateUnit = unit
+        data.privateSize = size
+        for i = 1, MAX_PRIVATE do
+            local anchorID = C_UnitAuras.AddPrivateAuraAnchor({
+                unitToken = unit,
+                auraIndex = i,
+                parent = frame,
+                showCountdownFrame = true,
+                showCountdownNumbers = true,
+                isContainer = false,
+                iconInfo = {
+                    iconAnchor = {
+                        point = "RIGHT",
+                        relativeTo = frame,
+                        relativePoint = "LEFT",
+                        offsetX = -2 - (i - 1) * (size + ICON_GAP),
+                        offsetY = 0
+                    },
+                    iconWidth = size,
+                    iconHeight = size
+                }
+            })
+            if anchorID then
+                data.privateAnchorIDs[#data.privateAnchorIDs + 1] = anchorID
+            end
+        end
+    end
+
     -- Anchor the buff/debuff containers above the powerBar when one is shown
     local function PositionAnchors(frame, data)
         local powerBar = frame.powerBar
@@ -297,7 +404,11 @@ function RF_AuraDisplay:OnInitialize()
             slot.count:Hide()
         end
 
-        local durObj = C_UnitAuras.GetAuraDuration(unit, aura.auraInstanceID)
+        local durObj
+        if aura.auraInstanceID and aura.auraInstanceID > 0 then
+            local ok, result = pcall(C_UnitAuras.GetAuraDuration, unit, aura.auraInstanceID)
+            if ok then durObj = result end
+        end
         if durObj then
             slot.cooldown:SetCooldownFromDurationObject(durObj:Copy())
         else
@@ -308,8 +419,9 @@ function RF_AuraDisplay:OnInitialize()
         if isDebuff then
             local color
             local curve = RF_AuraDisplay.Theme and RF_AuraDisplay.Theme.colorCurve
-            if curve then
-                color = C_UnitAuras.GetAuraDispelTypeColor(unit, aura.auraInstanceID, curve)
+            if curve and aura.auraInstanceID and aura.auraInstanceID > 0 then
+                local ok, result = pcall(C_UnitAuras.GetAuraDispelTypeColor, unit, aura.auraInstanceID, curve)
+                if ok then color = result end
             end
             if color then
                 slot.border:SetVertexColor(color.r, color.g, color.b, 1)
@@ -432,9 +544,10 @@ function RF_AuraDisplay:OnInitialize()
             return
         end
 
-        -- Hide auras for units we can't observe: disconnected, or in a
-        -- different phase/shard/instance. Their aura data is stale because
-        -- UNIT_AURA no longer fires for them.
+        -- Hide auras for units we can't observe: in a different phase/shard
+        -- or out of visible range. Their aura data is stale because UNIT_AURA
+        -- no longer fires for them. Disconnected players still in-world stay
+        -- visible since they can still be healed/dispelled.
         local unreachable = (UnitPhaseReason and UnitPhaseReason(unit) ~= nil) or (UnitIsVisible and not UnitIsVisible(unit))
         if unreachable then
             for i = 1, MAX_BUFFS do
@@ -443,11 +556,24 @@ function RF_AuraDisplay:OnInitialize()
             for i = 1, MAX_DEBUFFS do
                 data.debuffs[i]:Hide()
             end
+            ClearPrivateAuraAnchors(data)
+            data.privateUnit, data.privateSize = nil, nil
             return
         end
 
         local buffSize, debuffSize = GetSizes(frame)
         local buffs, debuffs = ScanUnit(unit)
+        local testBuffs = RF_AuraDisplay:GetTestBuffs()
+        local testDebuffs = RF_AuraDisplay:GetTestDebuffs()
+        if testBuffs then buffs = testBuffs end
+        if testDebuffs then debuffs = testDebuffs end
+        local frameH = frame:GetHeight()
+        if not frameH or frameH < 1 then frameH = 36 end
+        local raid = mUI.db and mUI.db.profile.unitframes.raidframes
+        local privatePct = (raid and raid.privateaurasize or 90) / 100
+        local privateSize = math.floor(frameH * privatePct + 0.5)
+        RefreshPrivateAuraAnchors(frame, data, unit, privateSize)
+        RF_AuraDisplay:UpdateTestPrivateAuras(frame, data, privateSize)
 
         for i = 1, MAX_BUFFS do
             local slot = data.buffs[i]
@@ -525,35 +651,28 @@ function RF_AuraDisplay:OnInitialize()
     end
 end
 
-local BLIZZARD_AURA_CVARS = {"raidFramesDisplayBuffs", "raidFramesDisplayDebuffs"}
-
-local function SafeSetCVar(name, value)
-    if not SetCVar then
-        return
-    end
-    pcall(SetCVar, name, value)
-end
-
 function RF_AuraDisplay:RefreshFilters()
     BuildFilterTables()
 end
 
-function RF_AuraDisplay:HideBlizzardAuraCVars()
-    for _, name in ipairs(BLIZZARD_AURA_CVARS) do
-        SafeSetCVar(name, "0")
-    end
+function RF_AuraDisplay:SetTestPrivateAuras(enabled)
+    self.testPrivateAuras = enabled and true or false
+    self:UpdateAll()
 end
 
-function RF_AuraDisplay:RestoreBlizzardAuraCVars()
-    for _, name in ipairs(BLIZZARD_AURA_CVARS) do
-        SafeSetCVar(name, "1")
-    end
+function RF_AuraDisplay:SetTestBuffs(enabled)
+    self.testBuffs = enabled and true or false
+    self:UpdateAll()
+end
+
+function RF_AuraDisplay:SetTestDebuffs(enabled)
+    self.testDebuffs = enabled and true or false
+    self:UpdateAll()
 end
 
 function RF_AuraDisplay:OnEnable()
     BuildFilterTables()
     self.Theme = mUI:GetModule("mUI.Modules.General.Theme", true)
-    self:HideBlizzardAuraCVars()
 
     _G.SLASH_RFADEBUG1 = "/rfadebug"
     _G.SlashCmdList = _G.SlashCmdList or {}
@@ -644,5 +763,16 @@ function RF_AuraDisplay:OnDisable()
         self.visibilityTicker:Cancel()
         self.visibilityTicker = nil
     end
-    self:RestoreBlizzardAuraCVars()
+    if C_UnitAuras and C_UnitAuras.RemovePrivateAuraAnchor then
+        for frame in pairs(RF_AuraDisplay.trackedFrames or {}) do
+            local data = frame and frame.mUI_AD
+            if data and data.privateAnchorIDs then
+                for i = 1, #data.privateAnchorIDs do
+                    C_UnitAuras.RemovePrivateAuraAnchor(data.privateAnchorIDs[i])
+                end
+                wipe(data.privateAnchorIDs)
+                data.privateUnit, data.privateSize = nil, nil
+            end
+        end
+    end
 end

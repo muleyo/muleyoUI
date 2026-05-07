@@ -800,6 +800,56 @@ function Unitframes:OnInitialize()
                     return mUI.db.profile.unitframes.raidframes.ccScale
                 end,
                 order = 40
+            },
+            privateaurasize = {
+                name = "Private Aura Size",
+                desc = "Size of private aura icons as a percent of the raid frame's height.",
+                type = "range",
+                min = 20,
+                max = 150,
+                step = 1,
+                hidden = function()
+                    if select(4, GetBuildInfo()) < 120005 then
+                        return false
+                    end
+                    return not mUI.db.profile.unitframes.raidframes.auraDisplay
+                end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.privateaurasize = val
+
+                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_AuraDisplay and Unitframes.Module.RF_AuraDisplay:IsEnabled() then
+                        Unitframes.Module.RF_AuraDisplay:UpdateAll()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.privateaurasize
+                end,
+                order = 41
+            },
+            auraTest = {
+                name = function()
+                    local rfa = Unitframes.Module and Unitframes.Module.RF_AuraDisplay
+                    if rfa and rfa.testBuffs then
+                        return "|cff00ff00Hide Test Auras|r"
+                    end
+                    return "Show Test Auras"
+                end,
+                desc = "Toggle placeholder buff, debuff, and private aura icons on each raid frame so you can preview size and position.",
+                type = "execute",
+                hidden = function()
+                    return not mUI.db.profile.unitframes.raidframes.auraDisplay
+                end,
+                func = function()
+                    local rfa = Unitframes.Module and Unitframes.Module.RF_AuraDisplay
+                    if rfa and rfa:IsEnabled() then
+                        local active = not rfa.testBuffs
+                        rfa.testBuffs = active
+                        rfa.testDebuffs = active
+                        rfa.testPrivateAuras = active
+                        rfa:UpdateAll()
+                    end
+                end,
+                order = 42
             }
         }
     }
