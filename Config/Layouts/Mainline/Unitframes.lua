@@ -643,98 +643,85 @@ function Unitframes:OnInitialize()
                 end,
                 order = 33
             },
-            skinicons = {
-                name = "Skin Aura Icons",
-                desc = "Apply mUI Skin to Aura Icons on Party/Raidframes\n\n|cffffff00Info:|r Requires Reload",
+            dispelGlow = {
+                name = "Dispel Glow",
+                desc = "Pulse a pixel glow around the raid/party frame when the unit has a dispellable debuff (color-coded by dispel type)",
                 type = "toggle",
-                hidden = function()
-                    return select(4, GetBuildInfo()) >= 120005
-                end,
                 set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.skinicons = val
+                    mUI.db.profile.unitframes.raidframes.dispelGlow = val
 
+                    if not Unitframes.Module:IsEnabled() then
+                        return
+                    end
                     if val then
-                        mUI:Reload("Enable Skin Aura Icons")
+                        Unitframes.Module.RF_Auras:Enable()
                     else
-                        mUI:Reload("Disable Skin Aura Icons")
+                        Unitframes.Module.RF_Auras:Disable()
                     end
                 end,
                 get = function()
-                    return mUI.db.profile.unitframes.raidframes.skinicons
+                    return mUI.db.profile.unitframes.raidframes.dispelGlow
                 end,
                 order = 34
             },
-            defensivePosition = {
-                name = "Defensive Buff Position",
-                desc = "Set the Position of Defensive Buffs on Raidframes\n\n|cffffff00Info:|r Requires Skin Aura Icons",
-                type = "select",
-                values = {
-                    ["TOP"] = "Top Center",
-                    ["TOPLEFT"] = "Top Left",
-                    ["TOPRIGHT"] = "Top Right",
-                    ["CENTER"] = "Center",
-                    ["LEFT"] = "Left",
-                    ["RIGHT"] = "Right",
-                    ["BOTTOM"] = "Bottom Center",
-                    ["BOTTOMLEFT"] = "Bottom Left",
-                    ["BOTTOMRIGHT"] = "Bottom Right"
-                },
-                hidden = function()
-                    return select(4, GetBuildInfo()) >= 120005
-                end,
+            auraDisplay = {
+                name = "Custom Aura Icons",
+                desc = "Replace Blizzard's raid/party-frame buff and debuff icons with mUI-styled icons (custom borders, native countdown, dispellable debuffs scaled larger and shown first).\n\n|cffffff00Info:|r Requires UI reload to take effect.",
+                type = "toggle",
                 set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.defensive.position = val
+                    mUI.db.profile.unitframes.raidframes.auraDisplay = val
 
                     if not Unitframes.Module:IsEnabled() then
                         return
                     end
-
-                    Unitframes.Module.RF_Defensive:UpdateSizePos()
+                    if val then
+                        Unitframes.Module.RF_AuraDisplay:Enable()
+                    else
+                        Unitframes.Module.RF_AuraDisplay:Disable()
+                    end
                 end,
                 get = function()
-                    return mUI.db.profile.unitframes.raidframes.defensive.position
+                    return mUI.db.profile.unitframes.raidframes.auraDisplay
                 end,
                 order = 35
             },
-            defensiveSize = {
-                name = "Defensive Buff Size",
-                desc = "Set the Size of Defensive Buffs on Raidframes\n\n|cffffff00Info:|r Requires Skin Aura Icons",
-                type = "range",
-                min = 0,
-                max = 50,
-                step = 1,
-                hidden = function()
-                    return select(4, GetBuildInfo()) >= 120005
+            auraTooltips = {
+                name = "Aura Tooltips",
+                desc = "Show the aura tooltip when hovering over a custom aura icon. Disabling lets clicks pass through to the unit frame.",
+                type = "toggle",
+                disabled = function()
+                    return not mUI.db.profile.unitframes.raidframes.auraDisplay
                 end,
                 set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.defensive.size = val
+                    mUI.db.profile.unitframes.raidframes.auraTooltips = val
 
-                    if not Unitframes.Module:IsEnabled() then
-                        return
+                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_AuraDisplay and Unitframes.Module.RF_AuraDisplay:IsEnabled() then
+                        Unitframes.Module.RF_AuraDisplay:UpdateAll()
                     end
-
-                    Unitframes.Module.RF_Defensive:UpdateSizePos()
                 end,
                 get = function()
-                    return mUI.db.profile.unitframes.raidframes.defensive.size
+                    return mUI.db.profile.unitframes.raidframes.auraTooltips
                 end,
                 order = 36
             },
             buffSize = {
                 name = "Buff Size",
-                desc = "Set the Size of Buffs on Raidframes\n\n|cffffff00Info:|r Requires Skin Aura Icons",
+                desc = "Set the size of Buffs on Raidframes (percentage of frame height)\n\n|cffffff00Info:|r Requires Skin Aura Icons or Custom Aura Icons",
                 type = "range",
                 min = 10,
                 max = 50,
                 step = 1,
                 hidden = function()
-                    return select(4, GetBuildInfo()) >= 120005
+                    if select(4, GetBuildInfo()) < 120005 then
+                        return false
+                    end
+                    return not mUI.db.profile.unitframes.raidframes.auraDisplay
                 end,
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.buffsize = val
 
-                    if not Unitframes.Module:IsEnabled() then
-                        return
+                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_AuraDisplay and Unitframes.Module.RF_AuraDisplay:IsEnabled() then
+                        Unitframes.Module.RF_AuraDisplay:UpdateAll()
                     end
                 end,
                 get = function()
@@ -744,98 +731,75 @@ function Unitframes:OnInitialize()
             },
             debuffSize = {
                 name = "Debuff Size",
-                desc = "Set the Size of important Debuffs on Raidframes (Dispellable / CC)\n\nPercentage of frame height\n\n|cffffff00Info:|r Requires Skin Aura Icons",
+                desc = "Set the size of Debuffs on Raidframes (percentage of frame height)\n\n|cffffff00Info:|r Requires Skin Aura Icons or Custom Aura Icons",
                 type = "range",
                 min = 10,
                 max = 100,
                 step = 1,
                 hidden = function()
-                    return select(4, GetBuildInfo()) >= 120005
+                    if select(4, GetBuildInfo()) < 120005 then
+                        return false
+                    end
+                    return not mUI.db.profile.unitframes.raidframes.auraDisplay
                 end,
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.debuffsize = val
+
+                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_AuraDisplay and Unitframes.Module.RF_AuraDisplay:IsEnabled() then
+                        Unitframes.Module.RF_AuraDisplay:UpdateAll()
+                    end
                 end,
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.debuffsize
                 end,
                 order = 38
             },
-            privateAuraSize = {
-                name = "Private Aura Size",
-                desc = "Set the Size of Private Auras on Raidframes\n\nPercentage of frame height\n\n|cffffff00Info:|r Requires Skin Aura Icons",
+            dispelScale = {
+                name = "Dispellable Debuff Size",
+                desc = "Scale multiplier applied to debuffs the player can personally dispel. Bigger scale also sorts them to the front.",
                 type = "range",
-                min = 10,
-                max = 100,
-                step = 1,
+                min = 1,
+                max = 2,
+                step = 0.05,
+                isPercent = false,
                 hidden = function()
-                    return select(4, GetBuildInfo()) >= 120005
+                    return not mUI.db.profile.unitframes.raidframes.auraDisplay
                 end,
                 set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.privateaurasize = val
+                    mUI.db.profile.unitframes.raidframes.dispelScale = val
+
+                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_AuraDisplay and Unitframes.Module.RF_AuraDisplay:IsEnabled() then
+                        Unitframes.Module.RF_AuraDisplay:UpdateAll()
+                    end
                 end,
                 get = function()
-                    return mUI.db.profile.unitframes.raidframes.privateaurasize
+                    return mUI.db.profile.unitframes.raidframes.dispelScale
                 end,
                 order = 39
             },
-            header_dispel = {
-                name = "Dispellable Debuffs (5-man only)",
-                type = "header",
-                order = 40
-            },
-            dispelIcons = {
-                name = "Dispel Icons",
-                desc = "Show enlarged dispellable-debuff icons to the left of party frames",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.dispelIcons = val
-
-                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_Auras and Unitframes.Module.RF_Auras:IsEnabled() then
-                        Unitframes.Module.RF_Auras:UpdateAllFrames()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.dispelIcons
-                end,
-                order = 41
-            },
-            dispelGlow = {
-                name = "Dispel Glow",
-                desc = "Pulse a pixel glow around the raid frame when the unit has a dispellable debuff",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.dispelGlow = val
-
-                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_Auras and Unitframes.Module.RF_Auras:IsEnabled() then
-                        Unitframes.Module.RF_Auras:UpdateAllFrames()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.dispelGlow
-                end,
-                order = 42
-            },
-            dispelIconSize = {
-                name = "Dispel Icon Size",
-                desc = "Size of the enlarged dispellable-debuff icons shown to the left of party frames",
+            ccScale = {
+                name = "CC Debuff Size",
+                desc = "Scale multiplier applied to crowd-control debuffs.",
                 type = "range",
-                min = 16,
-                max = 64,
-                step = 1,
-                disabled = function()
-                    return not mUI.db.profile.unitframes.raidframes.dispelIcons
+                min = 1,
+                max = 2,
+                step = 0.05,
+                isPercent = false,
+                hidden = function()
+                    return not mUI.db.profile.unitframes.raidframes.auraDisplay
                 end,
                 set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.dispelIconSize = val
+                    mUI.db.profile.unitframes.raidframes.ccScale = val
 
-                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_Auras and Unitframes.Module.RF_Auras:IsEnabled() then
-                        Unitframes.Module.RF_Auras:UpdateAllFrames()
+                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_AuraDisplay and Unitframes.Module.RF_AuraDisplay:IsEnabled() then
+                        Unitframes.Module.RF_AuraDisplay:RefreshFilters()
+                        Unitframes.Module.RF_AuraDisplay:UpdateAll()
                     end
                 end,
                 get = function()
-                    return mUI.db.profile.unitframes.raidframes.dispelIconSize
+                    return mUI.db.profile.unitframes.raidframes.ccScale
                 end,
-                order = 43
+                order = 40
             }
         }
     }

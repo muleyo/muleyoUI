@@ -8,6 +8,7 @@
     <Include file="RF_Solo.lua" />
     <Include file="RF_Defensive.lua" />
     <Include file="RF_Auras.lua" />
+    <Include file="RF_AuraDisplay.lua" />
 
     <!-- Unitframes -->
     <Include file="UF_Textures.lua" />

@@ -10,6 +10,7 @@ function Modules:OnInitialize()
     Modules.RF_Solo = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Solo")
     Modules.RF_Defensive = mUI:GetModule("mUI.Modules.Unitframes.RF_Defensive")
     Modules.RF_Auras = mUI:GetModule("mUI.Modules.Unitframes.RF_Auras")
+    Modules.RF_AuraDisplay = mUI:GetModule("mUI.Modules.Unitframes.RF_AuraDisplay")
     Modules.UF_Textures = mUI:GetModule("mUI.Modules.Unitframes.Unitframes_Textures")
     Modules.Color = mUI:GetModule("mUI.Modules.Unitframes.Color")
     Modules.BuffsDebuffs = mUI:GetModule("mUI.Modules.Unitframes.BuffsDebuffs")
@@ -101,7 +102,12 @@ function Modules:OnEnable()
         Modules.Overshields:Enable()
     end
     -- Modules.RF_Defensive:Enable()
-    Modules.RF_Auras:Enable()
+    if Modules.db.raidframes.dispelGlow then
+        Modules.RF_Auras:Enable()
+    end
+    if Modules.db.raidframes.auraDisplay then
+        Modules.RF_AuraDisplay:Enable()
+    end
 end
 
 function Modules:OnDisable()
@@ -127,6 +133,7 @@ function Modules:OnDisable()
     Modules.RF_HideNames:Disable()
     Modules.RF_Solo:Disable()
     Modules.RF_Auras:Disable()
+    Modules.RF_AuraDisplay:Disable()
     Modules.Smooth:Disable()
     Modules.Overshields:Disable()
 end
