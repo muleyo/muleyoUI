@@ -131,9 +131,11 @@ local defaults = {
                     position = "TOP",
                     size = 25
                 },
-                dispelIcons = true,
-                dispelIconSize = 36,
-                dispelGlow = true
+                dispelGlow = true,
+                auraDisplay = false,
+                auraTooltips = true,
+                dispelScale = 1.5,
+                ccScale = 1.3
             }
         },
         castbars = {
