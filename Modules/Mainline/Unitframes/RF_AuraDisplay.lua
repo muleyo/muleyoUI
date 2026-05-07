@@ -52,7 +52,8 @@ local HIDDEN_SPELL_IDS = {
     [80354] = true, -- Temporal Displacement (Time Warp)
     [95809] = true, -- Insanity (Hunter pet Ancient Hysteria)
     [264689] = true, -- Fatigued (Drums of Fury / Primal Rage)
-    [390435] = true -- Exhaustion (Evoker Fury of the Aspects)
+    [390435] = true, -- Exhaustion (Evoker Fury of the Aspects)
+    [308312] = true -- Time Trial Practice (Time Trial)
 }
 
 local BORDER_TEX = [[Interface\AddOns\mUI\Media\Textures\Core\border.png]]
@@ -431,6 +432,20 @@ function RF_AuraDisplay:OnInitialize()
             return
         end
 
+        -- Hide auras for units we can't observe: disconnected, or in a
+        -- different phase/shard/instance. Their aura data is stale because
+        -- UNIT_AURA no longer fires for them.
+        local unreachable = (UnitPhaseReason and UnitPhaseReason(unit) ~= nil) or (UnitIsVisible and not UnitIsVisible(unit))
+        if unreachable then
+            for i = 1, MAX_BUFFS do
+                data.buffs[i]:Hide()
+            end
+            for i = 1, MAX_DEBUFFS do
+                data.debuffs[i]:Hide()
+            end
+            return
+        end
+
         local buffSize, debuffSize = GetSizes(frame)
         local buffs, debuffs = ScanUnit(unit)
 
@@ -574,10 +589,28 @@ function RF_AuraDisplay:OnEnable()
         end
     end)
 
+    -- Visibility (UnitIsVisible) doesn't fire a dedicated event, so poll on
+     -- our own (insecure) frame to avoid tainting Blizzard's range-update path.
+    if not self.visibilityTicker then
+        self.visibilityTicker = C_Timer.NewTicker(0.5, function()
+            self:ForEachTrackedFrame(function(f)
+                local unit = f.displayedUnit or f.unit
+                if not unit then
+                    return
+                end
+                local visible = UnitIsVisible and UnitIsVisible(unit)
+                if f.mUI_AD_lastVisible ~= visible then
+                    f.mUI_AD_lastVisible = visible
+                    self:UpdateFrame(f)
+                end
+            end)
+        end)
+    end
+
     if not self.eventFrame then
         self.eventFrame = CreateFrame("Frame")
         self.eventFrame:SetScript("OnEvent", function(_, event, unit)
-            if event == "UNIT_AURA" and unit then
+            if (event == "UNIT_AURA" or event == "UNIT_PHASE" or event == "UNIT_FLAGS" or event == "UNIT_CONNECTION") and unit then
                 self:ForEachTrackedFrame(function(f)
                     if f.unit == unit or f.displayedUnit == unit then
                         self:UpdateFrame(f)
@@ -591,6 +624,9 @@ function RF_AuraDisplay:OnEnable()
         end)
     end
     self.eventFrame:RegisterEvent("UNIT_AURA")
+    self.eventFrame:RegisterEvent("UNIT_PHASE")
+    self.eventFrame:RegisterEvent("UNIT_FLAGS")
+    self.eventFrame:RegisterEvent("UNIT_CONNECTION")
     self.eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     self.eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
@@ -603,6 +639,10 @@ function RF_AuraDisplay:OnDisable()
     self:UnhookAll()
     if self.eventFrame then
         self.eventFrame:UnregisterAllEvents()
+    end
+    if self.visibilityTicker then
+        self.visibilityTicker:Cancel()
+        self.visibilityTicker = nil
     end
     self:RestoreBlizzardAuraCVars()
 end
