@@ -26,6 +26,17 @@ function RF_Auras:OnInitialize()
         if not unit or unit:match("target") then
             return
         end
+
+        -- Hide glow for units we can't observe: in a different phase/shard
+        -- or out of visible range. Their aura data is stale because UNIT_AURA
+        -- no longer fires for them. Disconnected players still in-world stay
+        -- visible since they can still be healed/dispelled.
+        local unreachable = (UnitPhaseReason and UnitPhaseReason(unit) ~= nil) or (UnitIsVisible and not UnitIsVisible(unit))
+        if unreachable then
+            LCG.PixelGlow_Stop(frame, GLOW_KEY)
+            return
+        end
+
         local colorCurve = RF_Auras.Theme and RF_Auras.Theme.colorCurve
         local glowR, glowG, glowB
 
@@ -101,7 +112,7 @@ function RF_Auras:OnEnable()
     if not RF_Auras.eventFrame then
         RF_Auras.eventFrame = CreateFrame("Frame")
         RF_Auras.eventFrame:SetScript("OnEvent", function(_, event, unit)
-            if event == "UNIT_AURA" then
+            if (event == "UNIT_AURA" or event == "UNIT_PHASE" or event == "UNIT_FLAGS") and unit then
                 RF_Auras:UpdateFrameForUnit(unit)
             else
                 C_Timer.After(0, function()
@@ -112,8 +123,27 @@ function RF_Auras:OnEnable()
     end
 
     RF_Auras.eventFrame:RegisterEvent("UNIT_AURA")
+    RF_Auras.eventFrame:RegisterEvent("UNIT_PHASE")
+    RF_Auras.eventFrame:RegisterEvent("UNIT_FLAGS")
     RF_Auras.eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     RF_Auras.eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+    -- Visibility (UnitIsVisible) doesn't fire a dedicated event, so poll on
+    -- our own (insecure) frame to avoid tainting Blizzard's range-update path.
+    if not RF_Auras.visibilityTicker then
+        RF_Auras.visibilityTicker = C_Timer.NewTicker(0.5, function()
+            for frame in pairs(RF_Auras.trackedFrames) do
+                if frame and not frame:IsForbidden() and frame.unit then
+                    local u = frame.displayedUnit or frame.unit
+                    local visible = UnitIsVisible and UnitIsVisible(u)
+                    if frame.mUI_RFA_lastVisible ~= visible then
+                        frame.mUI_RFA_lastVisible = visible
+                        RF_Auras:UpdateFrame(frame)
+                    end
+                end
+            end
+        end)
+    end
 
     C_Timer.After(0, function()
         RF_Auras:UpdateAllFrames()
@@ -124,6 +154,10 @@ function RF_Auras:OnDisable()
     RF_Auras:UnhookAll()
     if RF_Auras.eventFrame then
         RF_Auras.eventFrame:UnregisterAllEvents()
+    end
+    if RF_Auras.visibilityTicker then
+        RF_Auras.visibilityTicker:Cancel()
+        RF_Auras.visibilityTicker = nil
     end
 
     local LCG = LibStub("LibCustomGlow-1.0")
