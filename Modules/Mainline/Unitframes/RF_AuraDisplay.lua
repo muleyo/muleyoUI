@@ -235,7 +235,7 @@ function RF_AuraDisplay:OnInitialize()
     local TEST_TEXTURE_PRIVATE = 132288 -- Spell_Holy_BorrowedTime
     local TEST_TEXTURE_BUFF = 136224 -- Spell_Nature_Rejuvenation
     local TEST_TEXTURE_DEBUFF = 136139 -- Spell_Shadow_AbominationExplosion
-    function RF_AuraDisplay:UpdateTestPrivateAuras(frame, data, size)
+    function RF_AuraDisplay:UpdateTestPrivateAuras(frame, data, size, debuffSize)
         local active = RF_AuraDisplay.testPrivateAuras
         data.testIcons = data.testIcons or {}
         for i = 1, MAX_PRIVATE do
@@ -249,7 +249,7 @@ function RF_AuraDisplay:OnInitialize()
                 icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
                 icon:SetSize(size, size)
                 icon:ClearAllPoints()
-                icon:SetPoint("RIGHT", frame, "LEFT", -2 - (i - 1) * (size + ICON_GAP), 0)
+                icon:SetPoint("BOTTOMLEFT", data.debuffAnchor, "BOTTOMLEFT", (i - 1) * (size + ICON_GAP), (debuffSize or 0) + ICON_GAP)
                 icon:Show()
             elseif icon then
                 icon:Hide()
@@ -267,7 +267,9 @@ function RF_AuraDisplay:OnInitialize()
     end
 
     function RF_AuraDisplay:GetTestBuffs()
-        if not RF_AuraDisplay.testBuffs then return nil end
+        if not RF_AuraDisplay.testBuffs then
+            return nil
+        end
         local list = {}
         for i = 1, MAX_BUFFS do
             list[i] = MakeTestAura(TEST_TEXTURE_BUFF, -i)
@@ -276,7 +278,9 @@ function RF_AuraDisplay:OnInitialize()
     end
 
     function RF_AuraDisplay:GetTestDebuffs()
-        if not RF_AuraDisplay.testDebuffs then return nil end
+        if not RF_AuraDisplay.testDebuffs then
+            return nil
+        end
         local list = {}
         for i = 1, MAX_DEBUFFS do
             list[i] = MakeTestAura(TEST_TEXTURE_DEBUFF, -100 - i)
@@ -299,17 +303,18 @@ function RF_AuraDisplay:OnInitialize()
         wipe(data.privateAnchorIDs)
     end
 
-    local function RefreshPrivateAuraAnchors(frame, data, unit, size)
+    local function RefreshPrivateAuraAnchors(frame, data, unit, size, debuffSize)
         if not C_UnitAuras or not C_UnitAuras.AddPrivateAuraAnchor then
             return
         end
-        if data.privateUnit == unit and data.privateSize == size then
+        if data.privateUnit == unit and data.privateSize == size and data.privateRowOffset == debuffSize then
             return
         end
         ClearPrivateAuraAnchors(data)
         data.privateAnchorIDs = data.privateAnchorIDs or {}
         data.privateUnit = unit
         data.privateSize = size
+        data.privateRowOffset = debuffSize
         for i = 1, MAX_PRIVATE do
             local anchorID = C_UnitAuras.AddPrivateAuraAnchor({
                 unitToken = unit,
@@ -320,11 +325,11 @@ function RF_AuraDisplay:OnInitialize()
                 isContainer = false,
                 iconInfo = {
                     iconAnchor = {
-                        point = "RIGHT",
-                        relativeTo = frame,
-                        relativePoint = "LEFT",
-                        offsetX = -2 - (i - 1) * (size + ICON_GAP),
-                        offsetY = 0
+                        point = "BOTTOMLEFT",
+                        relativeTo = data.debuffAnchor,
+                        relativePoint = "BOTTOMLEFT",
+                        offsetX = (i - 1) * (size + ICON_GAP),
+                        offsetY = debuffSize + ICON_GAP
                     },
                     iconWidth = size,
                     iconHeight = size
@@ -407,7 +412,9 @@ function RF_AuraDisplay:OnInitialize()
         local durObj
         if aura.auraInstanceID and aura.auraInstanceID > 0 then
             local ok, result = pcall(C_UnitAuras.GetAuraDuration, unit, aura.auraInstanceID)
-            if ok then durObj = result end
+            if ok then
+                durObj = result
+            end
         end
         if durObj then
             slot.cooldown:SetCooldownFromDurationObject(durObj:Copy())
@@ -421,7 +428,9 @@ function RF_AuraDisplay:OnInitialize()
             local curve = RF_AuraDisplay.Theme and RF_AuraDisplay.Theme.colorCurve
             if curve and aura.auraInstanceID and aura.auraInstanceID > 0 then
                 local ok, result = pcall(C_UnitAuras.GetAuraDispelTypeColor, unit, aura.auraInstanceID, curve)
-                if ok then color = result end
+                if ok then
+                    color = result
+                end
             end
             if color then
                 slot.border:SetVertexColor(color.r, color.g, color.b, 1)
@@ -565,15 +574,21 @@ function RF_AuraDisplay:OnInitialize()
         local buffs, debuffs = ScanUnit(unit)
         local testBuffs = RF_AuraDisplay:GetTestBuffs()
         local testDebuffs = RF_AuraDisplay:GetTestDebuffs()
-        if testBuffs then buffs = testBuffs end
-        if testDebuffs then debuffs = testDebuffs end
+        if testBuffs then
+            buffs = testBuffs
+        end
+        if testDebuffs then
+            debuffs = testDebuffs
+        end
         local frameH = frame:GetHeight()
-        if not frameH or frameH < 1 then frameH = 36 end
+        if not frameH or frameH < 1 then
+            frameH = 36
+        end
         local raid = mUI.db and mUI.db.profile.unitframes.raidframes
         local privatePct = (raid and raid.privateaurasize or 90) / 100
         local privateSize = math.floor(frameH * privatePct + 0.5)
-        RefreshPrivateAuraAnchors(frame, data, unit, privateSize)
-        RF_AuraDisplay:UpdateTestPrivateAuras(frame, data, privateSize)
+        RefreshPrivateAuraAnchors(frame, data, unit, privateSize, debuffSize)
+        RF_AuraDisplay:UpdateTestPrivateAuras(frame, data, privateSize, debuffSize)
 
         for i = 1, MAX_BUFFS do
             local slot = data.buffs[i]
@@ -674,12 +689,6 @@ function RF_AuraDisplay:OnEnable()
     BuildFilterTables()
     self.Theme = mUI:GetModule("mUI.Modules.General.Theme", true)
 
-    _G.SLASH_RFADEBUG1 = "/rfadebug"
-    _G.SlashCmdList = _G.SlashCmdList or {}
-    _G.SlashCmdList.RFADEBUG = function()
-        self:DumpAuras()
-    end
-
     local function isCompactFrame(frame)
         local name = frame and frame:GetName()
         if not name then
@@ -709,7 +718,7 @@ function RF_AuraDisplay:OnEnable()
     end)
 
     -- Visibility (UnitIsVisible) doesn't fire a dedicated event, so poll on
-     -- our own (insecure) frame to avoid tainting Blizzard's range-update path.
+    -- our own (insecure) frame to avoid tainting Blizzard's range-update path.
     if not self.visibilityTicker then
         self.visibilityTicker = C_Timer.NewTicker(0.5, function()
             self:ForEachTrackedFrame(function(f)
