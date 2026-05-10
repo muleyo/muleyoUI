@@ -132,8 +132,12 @@ function Theme:ClassBar()
         end
     end
     if (playerClass == "SHAMAN" or playerClass == "PALADIN" or playerClass == "PRIEST" or playerClass == "DRUID" or playerClass == "MONK") then
-        for totem, _ in TotemFrame.totemPool:EnumerateActive() do
-            mUI:Skin({totem.Border}, true)
+        if not Theme:IsHooked(TotemFrame, "Update") then
+            Theme:SecureHook(TotemFrame, "Update", function()
+                for totem, _ in TotemFrame.totemPool:EnumerateActive() do
+                    mUI:Skin({totem.Border}, true)
+                end
+            end)
         end
     end
 end

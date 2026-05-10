@@ -3,16 +3,17 @@ local Totemicons = mUI:NewModule("mUI.Modules.Unitframes.Totemicons", "AceHook-3
 Totemicons.active = {}
 
 function Totemicons:OnEnable()
-    for totem, _ in TotemFrame.totemPool:EnumerateActive() do
-        Totemicons.active[totem] = true
-        totem:SetAlpha(0)
-        totem:EnableMouse(false)
-    end
+    Totemicons:SecureHook(TotemFrame, "Update", function()
+        for totem, _ in TotemFrame.totemPool:EnumerateActive() do
+            Totemicons.active[totem] = true
+            totem:Hide()
+        end
+    end)
 end
 
 function Totemicons:OnDisable()
+    Totemicons:UnhookAll()
     for totem in pairs(Totemicons.active) do
-        totem:SetAlpha(1)
-        totem:EnableMouse(true)
+        totem:Show()
     end
 end
