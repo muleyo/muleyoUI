@@ -131,7 +131,7 @@ function Theme:ClassBar()
                 true)
         end
     end
-    if (playerClass == "SHAMAN" or playerClass == "PALADIN" or playerClass == "PRIEST" or playerClass == "DRUID") then
+    if (playerClass == "SHAMAN" or playerClass == "PALADIN" or playerClass == "PRIEST" or playerClass == "DRUID" or playerClass == "MONK") then
         for totem, _ in TotemFrame.totemPool:EnumerateActive() do
             mUI:Skin({totem.Border}, true)
         end
