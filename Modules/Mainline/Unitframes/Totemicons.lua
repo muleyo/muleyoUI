@@ -5,12 +5,14 @@ Totemicons.active = {}
 function Totemicons:OnEnable()
     for totem, _ in TotemFrame.totemPool:EnumerateActive() do
         Totemicons.active[totem] = true
-        totem:Hide()
+        totem:SetAlpha(0)
+        totem:EnableMouse(false)
     end
 end
 
 function Totemicons:OnDisable()
     for totem in pairs(Totemicons.active) do
-        totem:Show()
+        totem:SetAlpha(1)
+        totem:EnableMouse(true)
     end
 end
