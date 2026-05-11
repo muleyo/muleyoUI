@@ -194,7 +194,7 @@ function RF_AuraDisplay:OnInitialize()
         textOverlay:SetAllPoints(icon)
         textOverlay:SetFrameLevel(cd:GetFrameLevel() + 1)
         local count = textOverlay:CreateFontString(nil, "OVERLAY")
-        count:SetFont(GetFont(), 14, "OUTLINE")
+        count:SetFont(GetFont(), 9, "OUTLINE")
         count:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", 2, 0)
         f.count = count
 
@@ -324,6 +324,7 @@ function RF_AuraDisplay:OnInitialize()
                 showCountdownNumbers = true,
                 isContainer = false,
                 iconInfo = {
+                    borderScale = 1,
                     iconAnchor = {
                         point = "BOTTOMLEFT",
                         relativeTo = data.debuffAnchor,
@@ -685,9 +686,15 @@ function RF_AuraDisplay:SetTestDebuffs(enabled)
     self:UpdateAll()
 end
 
+local BLIZZARD_AURA_CVARS = {"raidFramesDisplayBuffs", "raidFramesDisplayDebuffs"}
+
 function RF_AuraDisplay:OnEnable()
     BuildFilterTables()
     self.Theme = mUI:GetModule("mUI.Modules.General.Theme", true)
+
+    for _, cv in ipairs(BLIZZARD_AURA_CVARS) do
+        pcall(SetCVar, cv, "0")
+    end
 
     local function isCompactFrame(frame)
         local name = frame and frame:GetName()
@@ -765,6 +772,9 @@ end
 
 function RF_AuraDisplay:OnDisable()
     self:UnhookAll()
+    for _, cv in ipairs(BLIZZARD_AURA_CVARS) do
+        pcall(SetCVar, cv, "1")
+    end
     if self.eventFrame then
         self.eventFrame:UnregisterAllEvents()
     end

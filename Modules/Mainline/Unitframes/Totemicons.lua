@@ -1,17 +1,19 @@
 local Totemicons = mUI:NewModule("mUI.Modules.Unitframes.Totemicons", "AceHook-3.0")
 
-local function HideFrame(frame)
-    frame:Hide()
-end
+Totemicons.active = {}
 
 function Totemicons:OnEnable()
-    TotemFrame:Hide()
-    if not Totemicons:IsHooked(TotemFrame, "Show") then
-        Totemicons:SecureHook(TotemFrame, "Show", HideFrame)
-    end
+    Totemicons:SecureHook(TotemFrame, "Update", function()
+        for totem, _ in TotemFrame.totemPool:EnumerateActive() do
+            Totemicons.active[totem] = true
+            totem:Hide()
+        end
+    end)
 end
 
 function Totemicons:OnDisable()
     Totemicons:UnhookAll()
-    TotemFrame:Show()
+    for totem in pairs(Totemicons.active) do
+        totem:Show()
+    end
 end

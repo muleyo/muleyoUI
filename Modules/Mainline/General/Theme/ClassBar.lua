@@ -11,7 +11,7 @@ function Theme:ClassBar()
             end
         end
 
-        if PersonalResourceDisplayFrame and PersonalResourceDisplayFrame.ClassFrameContainer then
+        if select(4, GetBuildInfo()) >= 120007 then
             for _, child in pairs({PersonalResourceDisplayFrame.ClassFrameContainer:GetChildren()}) do
                 mUI:Skin({child.BGActive, child.BGInactive, child.BGShadow}, true)
                 if (child.isCharged) then
@@ -32,7 +32,7 @@ function Theme:ClassBar()
             mUI:Skin({child.ArcaneBG, child.ArcaneBGShadow}, true)
         end
 
-        if PersonalResourceDisplayFrame and PersonalResourceDisplayFrame.ClassFrameContainer then
+        if select(4, GetBuildInfo()) >= 120007 then
             for _, child in pairs({PersonalResourceDisplayFrame.ClassFrameContainer:GetChildren()}) do
                 mUI:Skin({child.ArcaneBG, child.ArcaneBGShadow}, true)
             end
@@ -47,7 +47,7 @@ function Theme:ClassBar()
             mUI:Skin({child.Background}, true)
         end
 
-        if PersonalResourceDisplayFrame and PersonalResourceDisplayFrame.ClassFrameContainer then
+        if select(4, GetBuildInfo()) >= 120007 then
             for _, child in pairs({PersonalResourceDisplayFrame.ClassFrameContainer:GetChildren()}) do
                 mUI:Skin({child.Background}, true)
             end
@@ -62,7 +62,7 @@ function Theme:ClassBar()
             mUI:Skin({child.BG_Active, child.BG_Inactive, child.BG_Shadow}, true)
         end
 
-        if PersonalResourceDisplayFrame and PersonalResourceDisplayFrame.ClassFrameContainer then
+        if select(4, GetBuildInfo()) >= 120007 then
             for _, child in pairs({PersonalResourceDisplayFrame.ClassFrameContainer:GetChildren()}) do
                 mUI:Skin({child.BG_Active, child.BG_Inactive, child.BG_Shadow}, true)
             end
@@ -77,7 +77,7 @@ function Theme:ClassBar()
             mUI:Skin({child.Chi_BG, child.Chi_BG_Active}, true)
         end
 
-        if PersonalResourceDisplayFrame and PersonalResourceDisplayFrame.ClassFrameContainer then
+        if select(4, GetBuildInfo()) >= 120007 then
             for _, child in pairs({PersonalResourceDisplayFrame.ClassFrameContainer:GetChildren()}) do
                 mUI:Skin({child.Chi_BG, child.Chi_BG_Active}, true)
             end
@@ -92,7 +92,7 @@ function Theme:ClassBar()
             mUI:Skin({child.BG_Active, child.BG_Inactive, child.BG_Shadow}, true)
         end
 
-        if PersonalResourceDisplayFrame and PersonalResourceDisplayFrame.ClassFrameContainer then
+        if select(4, GetBuildInfo()) >= 120007 then
             for _, child in pairs({PersonalResourceDisplayFrame.ClassFrameContainer:GetChildren()}) do
                 mUI:Skin({child.BG_Active, child.BG_Inactive, child.BG_Shadow}, true)
             end
@@ -110,7 +110,7 @@ function Theme:ClassBar()
             mUI:Skin({child.EssenceFillDone.CircBG, child.EssenceFillDone.CircBGActive}, true)
         end
 
-        if PersonalResourceDisplayFrame and PersonalResourceDisplayFrame.ClassFrameContainer then
+        if select(4, GetBuildInfo()) >= 120007 then
             for _, child in pairs({PersonalResourceDisplayFrame.ClassFrameContainer:GetChildren()}) do
                 mUI:Skin({child.EssenceFillDone.CircBG, child.EssenceFillDone.CircBGActive}, true)
             end
@@ -121,7 +121,7 @@ function Theme:ClassBar()
         end
     elseif (playerClass == "PALADIN") then
         -- Paladin
-        if PersonalResourceDisplayFrame and PersonalResourceDisplayFrame.ClassFrameContainer then
+        if select(4, GetBuildInfo()) >= 120007 then
             for _, child in pairs({PersonalResourceDisplayFrame.ClassFrameContainer:GetChildren()}) do
                 mUI:Skin({child.Background, child.ActiveTexture}, true)
             end
@@ -131,7 +131,15 @@ function Theme:ClassBar()
                 true)
         end
     end
-    if (playerClass == "SHAMAN" or playerClass == "PALADIN" or playerClass == "PRIEST" or playerClass == "DRUID") then
+    if (playerClass == "SHAMAN" or playerClass == "PALADIN" or playerClass == "PRIEST" or playerClass == "DRUID" or playerClass == "MONK") then
+        if not Theme:IsHooked(TotemFrame, "Update") then
+            Theme:SecureHook(TotemFrame, "Update", function()
+                for totem, _ in TotemFrame.totemPool:EnumerateActive() do
+                    mUI:Skin({totem.Border}, true)
+                end
+            end)
+        end
+
         for totem, _ in TotemFrame.totemPool:EnumerateActive() do
             mUI:Skin({totem.Border}, true)
         end
