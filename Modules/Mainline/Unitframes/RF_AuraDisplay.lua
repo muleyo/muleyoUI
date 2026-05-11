@@ -307,14 +307,13 @@ function RF_AuraDisplay:OnInitialize()
         if not C_UnitAuras or not C_UnitAuras.AddPrivateAuraAnchor then
             return
         end
-        if data.privateUnit == unit and data.privateSize == size and data.privateRowOffset == debuffSize then
+        data.privateAnchorIDs = data.privateAnchorIDs or {}
+        local fullyRegistered = #data.privateAnchorIDs == MAX_PRIVATE
+        if fullyRegistered and data.privateUnit == unit and data.privateSize == size and data.privateRowOffset == debuffSize then
             return
         end
         ClearPrivateAuraAnchors(data)
-        data.privateAnchorIDs = data.privateAnchorIDs or {}
-        data.privateUnit = unit
-        data.privateSize = size
-        data.privateRowOffset = debuffSize
+        local registered = 0
         for i = 1, MAX_PRIVATE do
             local anchorID = C_UnitAuras.AddPrivateAuraAnchor({
                 unitToken = unit,
@@ -338,7 +337,15 @@ function RF_AuraDisplay:OnInitialize()
             })
             if anchorID then
                 data.privateAnchorIDs[#data.privateAnchorIDs + 1] = anchorID
+                registered = registered + 1
             end
+        end
+        if registered == MAX_PRIVATE then
+            data.privateUnit = unit
+            data.privateSize = size
+            data.privateRowOffset = debuffSize
+        else
+            data.privateUnit, data.privateSize, data.privateRowOffset = nil, nil, nil
         end
     end
 
@@ -567,7 +574,7 @@ function RF_AuraDisplay:OnInitialize()
                 data.debuffs[i]:Hide()
             end
             ClearPrivateAuraAnchors(data)
-            data.privateUnit, data.privateSize = nil, nil
+            data.privateUnit, data.privateSize, data.privateRowOffset = nil, nil, nil
             return
         end
 
