@@ -124,9 +124,9 @@ local defaults = {
                 roleicons = false,
                 solo = false,
                 skinicons = true,
-                buffsize = 33,
-                debuffsize = 55,
-                privateaurasize = 45,
+                buffsize = 28,
+                debuffsize = 35,
+                privateaurasize = 35,
                 defensive = {
                     position = "TOP",
                     size = 25
@@ -134,8 +134,8 @@ local defaults = {
                 dispelGlow = true,
                 auraDisplay = false,
                 auraTooltips = true,
-                dispelScale = 1.5,
-                ccScale = 1.3
+                dispelScale = 1.3,
+                ccScale = 1.15
             }
         },
         castbars = {
