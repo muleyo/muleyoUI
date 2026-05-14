@@ -553,40 +553,26 @@ function RF_AuraDisplay:OnInitialize()
         PositionAnchors(frame, data)
 
         local unit = frame.displayedUnit or frame.unit
-        -- GetAuraSlots rejects compound tokens (e.g. boss1targetpet). Only
-        -- compound tokens reaching raid/party frames contain "target"; pet
-        -- tokens like "raidpet1" are fine. UnitTokenFromGUID would normally
-        -- resolve them but returns secret values under taint.
         if not unit or unit:match("target") then
             return
         end
 
-        -- Hide auras for units we can't observe: in a different phase/shard
-        -- or out of visible range. Their aura data is stale because UNIT_AURA
-        -- no longer fires for them. Disconnected players still in-world stay
-        -- visible since they can still be healed/dispelled.
         local unreachable = (UnitPhaseReason and UnitPhaseReason(unit) ~= nil) or (UnitIsVisible and not UnitIsVisible(unit))
-        if unreachable then
-            for i = 1, MAX_BUFFS do
-                data.buffs[i]:Hide()
-            end
-            for i = 1, MAX_DEBUFFS do
-                data.debuffs[i]:Hide()
-            end
-            ClearPrivateAuraAnchors(data)
-            data.privateUnit, data.privateSize, data.privateRowOffset = nil, nil, nil
-            return
-        end
 
         local buffSize, debuffSize = GetSizes(frame)
-        local buffs, debuffs = ScanUnit(unit)
-        local testBuffs = RF_AuraDisplay:GetTestBuffs()
-        local testDebuffs = RF_AuraDisplay:GetTestDebuffs()
-        if testBuffs then
-            buffs = testBuffs
-        end
-        if testDebuffs then
-            debuffs = testDebuffs
+        local buffs, debuffs
+        if unreachable then
+            buffs, debuffs = {}, {}
+        else
+            buffs, debuffs = ScanUnit(unit)
+            local testBuffs = RF_AuraDisplay:GetTestBuffs()
+            local testDebuffs = RF_AuraDisplay:GetTestDebuffs()
+            if testBuffs then
+                buffs = testBuffs
+            end
+            if testDebuffs then
+                debuffs = testDebuffs
+            end
         end
         local frameH = frame:GetHeight()
         if not frameH or frameH < 1 then
