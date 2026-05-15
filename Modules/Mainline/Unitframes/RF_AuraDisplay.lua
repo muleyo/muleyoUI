@@ -3,8 +3,31 @@ local RF_AuraDisplay = mUI:NewModule("mUI.Modules.Unitframes.RF_AuraDisplay", "A
 local MAX_BUFFS = 6
 local MAX_DEBUFFS = 3
 local MAX_PRIVATE = 2
+local MAX_DEFENSIVE = 2
 local BUFFS_PER_ROW = 3
 local ICON_GAP = 1
+
+local function GetDefensiveSize()
+    local raid = mUI.db and mUI.db.profile.unitframes.raidframes
+    return (raid and raid.centerDefensiveSize) or 60
+end
+
+local DEFENSIVE_POINTS = {
+    CENTER = true,
+    LEFT = true,
+    RIGHT = true
+}
+
+local function GetDefensivePosition()
+    local raid = mUI.db and mUI.db.profile.unitframes.raidframes
+    local point = raid and raid.centerDefensivePoint or "CENTER"
+    if not DEFENSIVE_POINTS[point] then
+        point = "CENTER"
+    end
+    local x = (raid and raid.centerDefensiveX) or 0
+    local y = (raid and raid.centerDefensiveY) or 0
+    return point, x, y
+end
 
 local function GetDispelScale()
     local raid = mUI.db and mUI.db.profile.unitframes.raidframes
@@ -61,7 +84,7 @@ local BORDER_TEX = [[Interface\AddOns\mUI\Media\Textures\Core\border.png]]
 local MASK_TEX = [[Interface\AddOns\mUI\Media\Textures\Core\mask.png]]
 
 -- Filter sets mirror RaidFrameAuras' defaults
-local BUFF_FILTERS, DEBUFF_FILTERS = {}, {}
+local BUFF_FILTERS, DEBUFF_FILTERS, DEFENSIVE_FILTERS = {}, {}, {}
 local BUFF_SCALE_FILTERS, DEBUFF_SCALE_FILTERS = {}, {}
 
 local function buildFilter(...)
@@ -86,17 +109,21 @@ local function BuildFilterTables()
     local EXTDEF = AF.ExternalDefensive
     local RAIDIC = AF.RaidInCombat
 
-    -- Buff inclusion filters (HELPFUL|PLAYER + category)
+    -- Buff inclusion filters (HELPFUL|PLAYER + category). BigDefensive and
+    -- ExternalDefensive are routed into DEFENSIVE_FILTERS instead of the
+    -- regular buff grid so they render in our centered defensive slots.
     BUFF_FILTERS = {}
     if RAIDIC then
         BUFF_FILTERS[#BUFF_FILTERS + 1] = buildFilter("HELPFUL", "PLAYER", RAIDIC)
     end
     BUFF_FILTERS[#BUFF_FILTERS + 1] = buildFilter("HELPFUL", "PLAYER", IMPORTANT)
+
+    DEFENSIVE_FILTERS = {}
     if BIGDEF then
-        BUFF_FILTERS[#BUFF_FILTERS + 1] = buildFilter("HELPFUL", "PLAYER", BIGDEF)
+        DEFENSIVE_FILTERS[#DEFENSIVE_FILTERS + 1] = buildFilter("HELPFUL", "PLAYER", BIGDEF)
     end
     if EXTDEF then
-        BUFF_FILTERS[#BUFF_FILTERS + 1] = buildFilter("HELPFUL", "PLAYER", EXTDEF)
+        DEFENSIVE_FILTERS[#DEFENSIVE_FILTERS + 1] = buildFilter("HELPFUL", "PLAYER", EXTDEF)
     end
 
     -- All buffs render at the same size — no per-category scaling.
@@ -208,7 +235,8 @@ function RF_AuraDisplay:OnInitialize()
         end
         local data = {
             buffs = {},
-            debuffs = {}
+            debuffs = {},
+            defensives = {}
         }
 
         local buffAnchor = CreateFrame("Frame", nil, frame)
@@ -219,11 +247,18 @@ function RF_AuraDisplay:OnInitialize()
         debuffAnchor:SetSize(1, 1)
         data.debuffAnchor = debuffAnchor
 
+        local defensiveAnchor = CreateFrame("Frame", nil, frame)
+        defensiveAnchor:SetSize(1, 1)
+        data.defensiveAnchor = defensiveAnchor
+
         for i = 1, MAX_BUFFS do
             data.buffs[i] = RF_AuraDisplay:CreateIcon(frame)
         end
         for i = 1, MAX_DEBUFFS do
             data.debuffs[i] = RF_AuraDisplay:CreateIcon(frame)
+        end
+        for i = 1, MAX_DEFENSIVE do
+            data.defensives[i] = RF_AuraDisplay:CreateIcon(frame)
         end
 
         frame.mUI_AD = data
@@ -235,6 +270,7 @@ function RF_AuraDisplay:OnInitialize()
     local TEST_TEXTURE_PRIVATE = 132288 -- Spell_Holy_BorrowedTime
     local TEST_TEXTURE_BUFF = 136224 -- Spell_Nature_Rejuvenation
     local TEST_TEXTURE_DEBUFF = 136139 -- Spell_Shadow_AbominationExplosion
+    local TEST_TEXTURE_DEFENSIVE = 135936 -- Spell_Holy_PainSuppression
     function RF_AuraDisplay:UpdateTestPrivateAuras(frame, data, size, debuffSize)
         local active = RF_AuraDisplay.testPrivateAuras
         data.testIcons = data.testIcons or {}
@@ -288,6 +324,17 @@ function RF_AuraDisplay:OnInitialize()
         return list
     end
 
+    function RF_AuraDisplay:GetTestDefensives()
+        if not RF_AuraDisplay.testDefensives then
+            return nil
+        end
+        local list = {}
+        for i = 1, MAX_DEFENSIVE do
+            list[i] = MakeTestAura(TEST_TEXTURE_DEFENSIVE, -200 - i)
+        end
+        return list
+    end
+
     -- frame.buffFrames/debuffFrames were removed in 12.0.5; auras now flow
     -- through the PrivateAura container system attached to the frame itself.
     -- We register our own non-container PrivateAuraAnchors (auraIndex 1..N)
@@ -303,33 +350,77 @@ function RF_AuraDisplay:OnInitialize()
         wipe(data.privateAnchorIDs)
     end
 
+    -- AddPrivateAuraAnchor caches the parent's frame level on the FIRST
+    -- registration and ignores it on every subsequent re-register against
+    -- the same parent. After a remove+re-add cycle the new icons render at
+    -- the OLD cached level and can end up painted behind the unit frame.
+    -- Toggling the level to 0 and back forces the renderer to re-read on
+    -- the next paint. (Workaround sourced from the Grid2 dev.)
+    local function ForceFrameLevelRefresh(parent)
+        if not parent then
+            return
+        end
+        local level = parent:GetFrameLevel()
+        parent:SetFrameLevel(0)
+        parent:SetFrameLevel(level)
+    end
+
+    local function EnsurePrivateSlots(frame, data)
+        if data.privateSlots then
+            return
+        end
+        data.privateSlots = {}
+        for i = 1, MAX_PRIVATE do
+            local slot = CreateFrame("Frame", nil, frame)
+            slot:SetFrameLevel(frame:GetFrameLevel() + 10)
+            slot:Hide()
+            data.privateSlots[i] = slot
+        end
+    end
+
+    local function PositionPrivateSlots(data, size, debuffSize)
+        for i = 1, MAX_PRIVATE do
+            local slot = data.privateSlots[i]
+            slot:SetSize(size, size)
+            slot:ClearAllPoints()
+            slot:SetPoint("BOTTOMLEFT", data.debuffAnchor, "BOTTOMLEFT", (i - 1) * (size + ICON_GAP), debuffSize + ICON_GAP)
+            slot:Show()
+        end
+    end
+
     local function RefreshPrivateAuraAnchors(frame, data, unit, size, debuffSize)
         if not C_UnitAuras or not C_UnitAuras.AddPrivateAuraAnchor then
             return
         end
+        EnsurePrivateSlots(frame, data)
+        PositionPrivateSlots(data, size, debuffSize)
+
         data.privateAnchorIDs = data.privateAnchorIDs or {}
+        local guid = UnitGUID and UnitGUID(unit) or nil
         local fullyRegistered = #data.privateAnchorIDs == MAX_PRIVATE
-        if fullyRegistered and data.privateUnit == unit and data.privateSize == size and data.privateRowOffset == debuffSize then
+        if fullyRegistered and data.privateUnit == unit and data.privateGUID == guid and guid and data.privateSize == size then
             return
         end
         ClearPrivateAuraAnchors(data)
         local registered = 0
         for i = 1, MAX_PRIVATE do
+            local slot = data.privateSlots[i]
+            slot:SetFrameLevel(frame:GetFrameLevel() + 10)
             local anchorID = C_UnitAuras.AddPrivateAuraAnchor({
                 unitToken = unit,
                 auraIndex = i,
-                parent = frame,
+                parent = slot,
                 showCountdownFrame = true,
                 showCountdownNumbers = true,
                 isContainer = false,
                 iconInfo = {
                     borderScale = 1,
                     iconAnchor = {
-                        point = "BOTTOMLEFT",
-                        relativeTo = data.debuffAnchor,
-                        relativePoint = "BOTTOMLEFT",
-                        offsetX = (i - 1) * (size + ICON_GAP),
-                        offsetY = debuffSize + ICON_GAP
+                        point = "CENTER",
+                        relativeTo = slot,
+                        relativePoint = "CENTER",
+                        offsetX = 0,
+                        offsetY = 0
                     },
                     iconWidth = size,
                     iconHeight = size
@@ -337,15 +428,17 @@ function RF_AuraDisplay:OnInitialize()
             })
             if anchorID then
                 data.privateAnchorIDs[#data.privateAnchorIDs + 1] = anchorID
+                ForceFrameLevelRefresh(slot)
                 registered = registered + 1
             end
         end
-        if registered == MAX_PRIVATE then
+        if registered == MAX_PRIVATE and guid then
             data.privateUnit = unit
+            data.privateGUID = guid
             data.privateSize = size
             data.privateRowOffset = debuffSize
         else
-            data.privateUnit, data.privateSize, data.privateRowOffset = nil, nil, nil
+            data.privateUnit, data.privateGUID, data.privateSize, data.privateRowOffset = nil, nil, nil, nil
         end
     end
 
@@ -452,6 +545,40 @@ function RF_AuraDisplay:OnInitialize()
         slot:Show()
     end
 
+    -- Horizontal layout of defensive slots. CENTER keeps the pair balanced
+    -- around the anchor; LEFT pins the first icon's left edge and grows
+    -- rightward; RIGHT pins the first icon's right edge and grows leftward.
+    local function LayoutCentered(anchor, icons, count, size, point)
+        if count <= 0 then
+            return
+        end
+        icons[1]:ClearAllPoints()
+        if point == "LEFT" then
+            icons[1]:SetPoint("LEFT", anchor, "LEFT", 0, 0)
+            for i = 2, count do
+                icons[i]:ClearAllPoints()
+                icons[i]:SetPoint("LEFT", icons[i - 1], "RIGHT", ICON_GAP, 0)
+            end
+        elseif point == "RIGHT" then
+            icons[1]:SetPoint("RIGHT", anchor, "RIGHT", 0, 0)
+            for i = 2, count do
+                icons[i]:ClearAllPoints()
+                icons[i]:SetPoint("RIGHT", icons[i - 1], "LEFT", -ICON_GAP, 0)
+            end
+        else
+            if count == 1 then
+                icons[1]:SetPoint("CENTER", anchor, "CENTER", 0, 0)
+            else
+                local pairOffset = (size + ICON_GAP) / 2
+                icons[1]:SetPoint("CENTER", anchor, "CENTER", -pairOffset, 0)
+                for i = 2, count do
+                    icons[i]:ClearAllPoints()
+                    icons[i]:SetPoint("LEFT", icons[i - 1], "RIGHT", ICON_GAP, 0)
+                end
+            end
+        end
+    end
+
     local function LayoutGrid(anchor, icons, count, perRow, growLeft)
         local rowCorner = growLeft and "BOTTOMRIGHT" or "BOTTOMLEFT"
         local rowOppCorner = growLeft and "TOPRIGHT" or "TOPLEFT"
@@ -494,13 +621,14 @@ function RF_AuraDisplay:OnInitialize()
     end
 
     local function ScanUnit(unit)
-        local buffs, debuffs = {}, {}
+        local buffs, debuffs, defensives = {}, {}, {}
         if not C_UnitAuras.GetAuraSlots then
-            return buffs, debuffs
+            return buffs, debuffs, defensives
         end
 
-        local seenBuff, seenDebuff = {}, {}
+        local seenBuff, seenDebuff, seenDef = {}, {}, {}
         ScanByFilters(unit, BUFF_FILTERS, BUFF_SCALE_FILTERS, buffs, seenBuff)
+        ScanByFilters(unit, DEFENSIVE_FILTERS, BUFF_SCALE_FILTERS, defensives, seenDef)
 
         -- Include all HARMFUL debuffs
         local harmful = {C_UnitAuras.GetAuraSlots(unit, "HARMFUL")}
@@ -541,8 +669,9 @@ function RF_AuraDisplay:OnInitialize()
         end
         table.sort(buffs, sortByScaleThenID)
         table.sort(debuffs, sortByScaleThenID)
+        table.sort(defensives, sortByScaleThenID)
 
-        return buffs, debuffs
+        return buffs, debuffs, defensives
     end
 
     function RF_AuraDisplay:UpdateFrame(frame)
@@ -560,18 +689,22 @@ function RF_AuraDisplay:OnInitialize()
         local unreachable = (UnitPhaseReason and UnitPhaseReason(unit) ~= nil) or (UnitIsVisible and not UnitIsVisible(unit))
 
         local buffSize, debuffSize = GetSizes(frame)
-        local buffs, debuffs
+        local buffs, debuffs, defensives
         if unreachable then
-            buffs, debuffs = {}, {}
+            buffs, debuffs, defensives = {}, {}, {}
         else
-            buffs, debuffs = ScanUnit(unit)
+            buffs, debuffs, defensives = ScanUnit(unit)
             local testBuffs = RF_AuraDisplay:GetTestBuffs()
             local testDebuffs = RF_AuraDisplay:GetTestDebuffs()
+            local testDefensives = RF_AuraDisplay:GetTestDefensives()
             if testBuffs then
                 buffs = testBuffs
             end
             if testDebuffs then
                 debuffs = testDebuffs
+            end
+            if testDefensives then
+                defensives = testDefensives
             end
         end
         local frameH = frame:GetHeight()
@@ -603,8 +736,24 @@ function RF_AuraDisplay:OnInitialize()
             end
         end
 
+        local defensiveSize = math.floor(frameH * (GetDefensiveSize() / 100) + 0.5)
+        local defensiveCount = math.min(#defensives, MAX_DEFENSIVE)
+        local defPoint, defX, defY = GetDefensivePosition()
+        data.defensiveAnchor:ClearAllPoints()
+        data.defensiveAnchor:SetPoint(defPoint, frame, defPoint, defX, defY)
+        for i = 1, MAX_DEFENSIVE do
+            local slot = data.defensives[i]
+            local aura = defensives[i]
+            if aura then
+                RF_AuraDisplay:ApplyAura(slot, unit, aura, defensiveSize, false)
+            else
+                slot:Hide()
+            end
+        end
+
         LayoutGrid(data.buffAnchor, data.buffs, math.min(#buffs, MAX_BUFFS), BUFFS_PER_ROW, true)
         LayoutGrid(data.debuffAnchor, data.debuffs, math.min(#debuffs, MAX_DEBUFFS), MAX_DEBUFFS, false)
+        LayoutCentered(data.defensiveAnchor, data.defensives, defensiveCount, defensiveSize, defPoint)
     end
 
     RF_AuraDisplay.trackedFrames = RF_AuraDisplay.trackedFrames or {}
@@ -679,7 +828,12 @@ function RF_AuraDisplay:SetTestDebuffs(enabled)
     self:UpdateAll()
 end
 
-local BLIZZARD_AURA_CVARS = {"raidFramesDisplayBuffs", "raidFramesDisplayDebuffs"}
+function RF_AuraDisplay:SetTestDefensives(enabled)
+    self.testDefensives = enabled and true or false
+    self:UpdateAll()
+end
+
+local BLIZZARD_AURA_CVARS = {"raidFramesDisplayBuffs", "raidFramesDisplayDebuffs", "raidFramesCenterBigDefensive"}
 
 function RF_AuraDisplay:OnEnable()
     BuildFilterTables()
@@ -697,15 +851,58 @@ function RF_AuraDisplay:OnEnable()
         return name:match("^CompactPartyFrameMember") or name:match("^CompactRaidFrame%d") or name:match("^CompactRaidGroup%d+Member%d") ~= nil
     end
 
+    -- Blizzard reuses frames across units/group changes. When it re-sets up
+    -- a frame, the private aura anchors we registered against it can be
+    -- silently invalidated. Drop our cache so RefreshPrivateAuraAnchors
+    -- forces a re-register on the next update.
+    local function InvalidatePrivateCache(frame)
+        local d = frame and frame.mUI_AD
+        if d then
+            d.privateUnit, d.privateGUID, d.privateSize, d.privateRowOffset = nil, nil, nil, nil
+        end
+    end
+
     self:SecureHook("DefaultCompactUnitFrameSetup", function(frame)
         if not frame or frame:IsForbidden() then
             return
         end
         if isCompactFrame(frame) then
+            InvalidatePrivateCache(frame)
             self:Track(frame)
             self:UpdateFrame(frame)
         end
     end)
+
+    -- CompactUnitFrame_SetUnit rebinds an existing frame to a (possibly new)
+    -- unit without going through DefaultCompactUnitFrameSetup. Blizzard tears
+    -- down the frame's private aura state on rebind, so our cache must be
+    -- dropped here too — otherwise dungeons/roster shuffles leave us thinking
+    -- the anchors are still live when they aren't.
+    self:SecureHook("CompactUnitFrame_SetUnit", function(frame)
+        if not frame or frame:IsForbidden() then
+            return
+        end
+        if isCompactFrame(frame) then
+            InvalidatePrivateCache(frame)
+        end
+    end)
+
+    -- Blizzard's own CompactUnitFrame_UpdatePrivateAuras manages a separate
+    -- set of anchors on the same parent frame. When it runs (frame setup,
+    -- roster changes, layout swaps in dungeons), it can quietly invalidate
+    -- anchors we registered earlier. Re-register right after it runs so our
+    -- anchors are always the last word on the frame's private aura state.
+    if _G.CompactUnitFrame_UpdatePrivateAuras then
+        self:SecureHook("CompactUnitFrame_UpdatePrivateAuras", function(frame)
+            if not frame or frame:IsForbidden() then
+                return
+            end
+            if isCompactFrame(frame) then
+                InvalidatePrivateCache(frame)
+                self:UpdateFrame(frame)
+            end
+        end)
+    end
 
     self:SecureHook("CompactUnitFrame_UpdateAll", function(frame)
         if not frame or frame:IsForbidden() then
@@ -745,6 +942,10 @@ function RF_AuraDisplay:OnEnable()
                     end
                 end)
             else
+                -- Roster/world transitions can invalidate private aura anchors
+                -- registered earlier. Wipe the cache so the next UpdateAll
+                -- forces a re-register for every tracked frame.
+                self:ForEachTrackedFrame(InvalidatePrivateCache)
                 C_Timer.After(0, function()
                     self:UpdateAll()
                 end)
