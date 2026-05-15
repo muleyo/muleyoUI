@@ -118,12 +118,15 @@ local function BuildFilterTables()
     end
     BUFF_FILTERS[#BUFF_FILTERS + 1] = buildFilter("HELPFUL", "PLAYER", IMPORTANT)
 
+    -- No PLAYER flag: BigDefensive includes self-cast cooldowns on other
+    -- party members (e.g. Shield Wall on the tank), and ExternalDefensive
+    -- can be cast by any teammate, not just the local player.
     DEFENSIVE_FILTERS = {}
     if BIGDEF then
-        DEFENSIVE_FILTERS[#DEFENSIVE_FILTERS + 1] = buildFilter("HELPFUL", "PLAYER", BIGDEF)
+        DEFENSIVE_FILTERS[#DEFENSIVE_FILTERS + 1] = buildFilter("HELPFUL", BIGDEF)
     end
     if EXTDEF then
-        DEFENSIVE_FILTERS[#DEFENSIVE_FILTERS + 1] = buildFilter("HELPFUL", "PLAYER", EXTDEF)
+        DEFENSIVE_FILTERS[#DEFENSIVE_FILTERS + 1] = buildFilter("HELPFUL", EXTDEF)
     end
 
     -- All buffs render at the same size — no per-category scaling.
@@ -258,7 +261,9 @@ function RF_AuraDisplay:OnInitialize()
             data.debuffs[i] = RF_AuraDisplay:CreateIcon(frame)
         end
         for i = 1, MAX_DEFENSIVE do
-            data.defensives[i] = RF_AuraDisplay:CreateIcon(frame)
+            local slot = RF_AuraDisplay:CreateIcon(frame)
+            slot:SetFrameLevel(frame:GetFrameLevel() + 10)
+            data.defensives[i] = slot
         end
 
         frame.mUI_AD = data
