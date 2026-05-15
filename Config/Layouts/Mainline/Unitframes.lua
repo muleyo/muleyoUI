@@ -704,6 +704,97 @@ function Unitframes:OnInitialize()
                 end,
                 order = 36
             },
+            centerDefensivePoint = {
+                name = "Defensive Anchor",
+                desc = "Where on the raid frame the defensive icon(s) attach.",
+                type = "select",
+                values = {
+                    CENTER = "Center",
+                    LEFT = "Left",
+                    RIGHT = "Right"
+                },
+                sorting = {"LEFT", "CENTER", "RIGHT"},
+                hidden = function()
+                    return not mUI.db.profile.unitframes.raidframes.auraDisplay
+                end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.centerDefensivePoint = val
+                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_AuraDisplay and Unitframes.Module.RF_AuraDisplay:IsEnabled() then
+                        Unitframes.Module.RF_AuraDisplay:UpdateAll()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.centerDefensivePoint
+                end,
+                order = 37
+            },
+            centerDefensiveSize = {
+                name = "Center Defensive Size",
+                desc = "Size of the centered defensive cooldown icon (BigDefensive / ExternalDefensive) as a percent of the raid frame's height.",
+                type = "range",
+                min = 20,
+                max = 150,
+                step = 1,
+                isPercent = false,
+                hidden = function()
+                    return not mUI.db.profile.unitframes.raidframes.auraDisplay
+                end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.centerDefensiveSize = val
+
+                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_AuraDisplay and Unitframes.Module.RF_AuraDisplay:IsEnabled() then
+                        Unitframes.Module.RF_AuraDisplay:UpdateAll()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.centerDefensiveSize
+                end,
+                order = 38
+            },
+            centerDefensiveX = {
+                name = "Defensive X Offset",
+                desc = "Horizontal offset of the defensive icon(s) from the chosen anchor.",
+                type = "range",
+                min = -100,
+                max = 100,
+                step = 1,
+                isPercent = false,
+                hidden = function()
+                    return not mUI.db.profile.unitframes.raidframes.auraDisplay
+                end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.centerDefensiveX = val
+                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_AuraDisplay and Unitframes.Module.RF_AuraDisplay:IsEnabled() then
+                        Unitframes.Module.RF_AuraDisplay:UpdateAll()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.centerDefensiveX
+                end,
+                order = 39
+            },
+            centerDefensiveY = {
+                name = "Defensive Y Offset",
+                desc = "Vertical offset of the defensive icon(s) from the chosen anchor.",
+                type = "range",
+                min = -100,
+                max = 100,
+                step = 1,
+                isPercent = false,
+                hidden = function()
+                    return not mUI.db.profile.unitframes.raidframes.auraDisplay
+                end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.centerDefensiveY = val
+                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_AuraDisplay and Unitframes.Module.RF_AuraDisplay:IsEnabled() then
+                        Unitframes.Module.RF_AuraDisplay:UpdateAll()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.centerDefensiveY
+                end,
+                order = 40
+            },
             buffSize = {
                 name = "Buff Size",
                 desc = "Set the size of Buffs on Raidframes (percentage of frame height)\n\n|cffffff00Info:|r Requires Skin Aura Icons or Custom Aura Icons",
@@ -727,7 +818,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.buffsize
                 end,
-                order = 37
+                order = 41
             },
             debuffSize = {
                 name = "Debuff Size",
@@ -752,7 +843,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.debuffsize
                 end,
-                order = 38
+                order = 42
             },
             dispelScale = {
                 name = "Dispellable Debuff Size",
@@ -775,7 +866,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.dispelScale
                 end,
-                order = 39
+                order = 43
             },
             ccScale = {
                 name = "CC Debuff Size",
@@ -799,7 +890,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.ccScale
                 end,
-                order = 40
+                order = 44
             },
             privateaurasize = {
                 name = "Private Aura Size",
@@ -824,7 +915,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.privateaurasize
                 end,
-                order = 41
+                order = 45
             },
             auraTest = {
                 name = function()
@@ -846,10 +937,11 @@ function Unitframes:OnInitialize()
                         rfa.testBuffs = active
                         rfa.testDebuffs = active
                         rfa.testPrivateAuras = active
+                        rfa.testDefensives = active
                         rfa:UpdateAll()
                     end
                 end,
-                order = 42
+                order = 46
             }
         }
     }
