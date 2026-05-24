@@ -374,6 +374,50 @@ function Unitframes:OnInitialize()
                 end,
                 order = 18
             },
+            healthtext = {
+                name = "Show Health Text",
+                desc = "Always show health values on Player / Target / Focus Unitframes (instead of only on mouseover)",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.healthtext = val
+
+                    if not Unitframes.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Unitframes.Module.Healthtext:Enable()
+                    else
+                        Unitframes.Module.Healthtext:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.healthtext
+                end,
+                order = 18.1
+            },
+            powertext = {
+                name = "Show Power Text",
+                desc = "Always show power values (Mana, Energy, Rage, Focus, etc.) on Player / Target / Focus Unitframes (instead of only on mouseover)",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.powertext = val
+
+                    if not Unitframes.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Unitframes.Module.Powertext:Enable()
+                    else
+                        Unitframes.Module.Powertext:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.powertext
+                end,
+                order = 18.2
+            },
             elitecolor = {
                 name = "Elitechain Color",
                 desc = "Keep the default Elitechain Color",

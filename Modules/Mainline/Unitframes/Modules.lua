@@ -23,6 +23,8 @@ function Modules:OnInitialize()
     Modules.Totemicons = mUI:GetModule("mUI.Modules.Unitframes.Totemicons")
     Modules.Name = mUI:GetModule("mUI.Modules.Unitframes.Name")
     Modules.Level = mUI:GetModule("mUI.Modules.Unitframes.Level")
+    Modules.Healthtext = mUI:GetModule("mUI.Modules.Unitframes.Healthtext")
+    Modules.Powertext = mUI:GetModule("mUI.Modules.Unitframes.Powertext")
     Modules.Restingtextures = mUI:GetModule("mUI.Modules.Unitframes.Restingtextures")
     Modules.Elitecolor = mUI:GetModule("mUI.Modules.Unitframes.Elitecolor")
     Modules.Smooth = mUI:GetModule("mUI.Modules.Unitframes.SmoothHealth")
@@ -74,6 +76,12 @@ function Modules:OnEnable()
     if Modules.db.level then
         Modules.Level:Enable()
     end
+    if Modules.db.healthtext then
+        Modules.Healthtext:Enable()
+    end
+    if Modules.db.powertext then
+        Modules.Powertext:Enable()
+    end
     if Modules.db.buffsdebuffs.enabled then
         Modules.BuffsDebuffs:Enable()
     end
@@ -124,6 +132,8 @@ function Modules:OnDisable()
     Modules.Totemicons:Disable()
     Modules.Name:Disable()
     Modules.Level:Disable()
+    Modules.Healthtext:Disable()
+    Modules.Powertext:Disable()
     Modules.Reputationcolor:Disable()
     Modules.Restingtextures:Disable()
     Modules.Elitecolor:Disable()
