@@ -12,6 +12,22 @@ local function GetDefensiveSize()
     return (raid and raid.centerDefensiveSize) or 60
 end
 
+-- C_UnitAuras.GetAuraSlots errors on any compound unit token (e.g.
+-- boss1targetpet, partypet1target). Compact party/raid frames legitimately
+-- only ever display these simple tokens; anything else is skipped rather
+-- than passed through.
+local function isSimpleRaidUnit(unit)
+    if not unit then
+        return false
+    end
+    return unit == "player"
+        or unit == "pet"
+        or unit:match("^party%d+$") ~= nil
+        or unit:match("^partypet%d+$") ~= nil
+        or unit:match("^raid%d+$") ~= nil
+        or unit:match("^raidpet%d+$") ~= nil
+end
+
 local DEFENSIVE_POINTS = {
     CENTER = true,
     LEFT = true,
@@ -687,7 +703,7 @@ function RF_AuraDisplay:OnInitialize()
         PositionAnchors(frame, data)
 
         local unit = frame.displayedUnit or frame.unit
-        if not unit or unit:match("target") then
+        if not isSimpleRaidUnit(unit) then
             return
         end
 

@@ -1,5 +1,22 @@
 local RF_Auras = mUI:NewModule("mUI.Modules.Unitframes.RF_Auras", "AceHook-3.0")
 
+-- AuraUtil.ForEachAura -> C_UnitAuras.GetAuraSlots errors on any compound
+-- unit token (e.g. boss1targetpet, partypet1target). Compact party/raid
+-- frames legitimately only ever display these simple tokens; anything else
+-- (compound forms, boss/arena/nameplate, vehicle re-bindings from other
+-- addons, etc.) is skipped rather than passed through.
+local function isSimpleRaidUnit(unit)
+    if not unit then
+        return false
+    end
+    return unit == "player"
+        or unit == "pet"
+        or unit:match("^party%d+$") ~= nil
+        or unit:match("^partypet%d+$") ~= nil
+        or unit:match("^raid%d+$") ~= nil
+        or unit:match("^raidpet%d+$") ~= nil
+end
+
 function RF_Auras:OnInitialize()
     local LCG = LibStub("LibCustomGlow-1.0")
     local GLOW_KEY = "mUI_RF_Dispel"
@@ -18,12 +35,7 @@ function RF_Auras:OnInitialize()
         end
 
         local unit = frame.displayedUnit or frame.unit
-        -- ForEachAura rejects compound tokens (e.g. boss1targetpet). The
-        -- only compound tokens that reach raid/party frames contain "target";
-        -- pet tokens like "raidpet1" are fine. UnitTokenFromGUID would
-        -- normally resolve them but returns secret values under taint, so
-        -- simple substring filtering is the safe path.
-        if not unit or unit:match("target") then
+        if not isSimpleRaidUnit(unit) then
             return
         end
 
