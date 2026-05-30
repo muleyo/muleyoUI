@@ -13,6 +13,10 @@ function UF_Textures:OnInitialize()
     UF_Textures.textures:RegisterEvent("UNIT_TARGET")
     UF_Textures.textures:RegisterEvent("PLAYER_TARGET_CHANGED")
     UF_Textures.textures:RegisterEvent("PLAYER_FOCUS_CHANGED")
+    UF_Textures.textures:RegisterEvent("PLAYER_ALIVE")
+    UF_Textures.textures:RegisterEvent("PLAYER_UNGHOST")
+    UF_Textures.textures:RegisterEvent("PLAYER_DEAD")
+    UF_Textures.textures:RegisterUnitEvent("UNIT_DISPLAYPOWER", "player")
 
     -- Tables
     UF_Textures.healthbars = {
