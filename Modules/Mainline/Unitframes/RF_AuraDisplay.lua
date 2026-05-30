@@ -401,9 +401,8 @@ function RF_AuraDisplay:OnInitialize()
         PositionPrivateSlots(data, size, debuffSize)
 
         data.privateAnchorIDs = data.privateAnchorIDs or {}
-        local guid = UnitGUID and UnitGUID(unit) or nil
         local fullyRegistered = #data.privateAnchorIDs == MAX_PRIVATE
-        if fullyRegistered and data.privateUnit == unit and data.privateGUID == guid and guid and data.privateSize == size then
+        if fullyRegistered and data.privateUnit == unit and data.privateSize == size then
             return
         end
         ClearPrivateAuraAnchors(data)
@@ -437,13 +436,12 @@ function RF_AuraDisplay:OnInitialize()
                 registered = registered + 1
             end
         end
-        if registered == MAX_PRIVATE and guid then
+        if registered == MAX_PRIVATE then
             data.privateUnit = unit
-            data.privateGUID = guid
             data.privateSize = size
             data.privateRowOffset = debuffSize
         else
-            data.privateUnit, data.privateGUID, data.privateSize, data.privateRowOffset = nil, nil, nil, nil
+            data.privateUnit, data.privateSize, data.privateRowOffset = nil, nil, nil
         end
     end
 
@@ -863,7 +861,7 @@ function RF_AuraDisplay:OnEnable()
     local function InvalidatePrivateCache(frame)
         local d = frame and frame.mUI_AD
         if d then
-            d.privateUnit, d.privateGUID, d.privateSize, d.privateRowOffset = nil, nil, nil, nil
+            d.privateUnit, d.privateSize, d.privateRowOffset = nil, nil, nil
         end
     end
 
