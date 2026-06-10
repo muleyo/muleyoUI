@@ -77,7 +77,10 @@ local HIDDEN_SPELL_IDS = {
     [95809] = true, -- Insanity (Hunter pet Ancient Hysteria)
     [264689] = true, -- Fatigued (Drums of Fury / Primal Rage)
     [390435] = true, -- Exhaustion (Evoker Fury of the Aspects)
-    [308312] = true -- Time Trial Practice (Time Trial)
+    [308312] = true, -- Time Trial Practice (Time Trial)
+    [1254550] = true, -- Arcane Empowerment
+    [26013] = true, -- Deserter
+    [71041] = true -- Deserter
 }
 
 local BORDER_TEX = [[Interface\AddOns\mUI\Media\Textures\Core\border.png]]

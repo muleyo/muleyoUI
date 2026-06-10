@@ -917,6 +917,35 @@ function Unitframes:OnInitialize()
                 end,
                 order = 45
             },
+            partyScale = {
+                name = "Party Frame Scale",
+                desc = "Scale of the CompactPartyFrame (party container).",
+                type = "range",
+                min = 50,
+                max = 200,
+                step = 1,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.partyScale = val
+
+                    if not Unitframes.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val == 100 then
+                        Unitframes.Module.RF_Scale:Disable()
+                    else
+                        if Unitframes.Module.RF_Scale:IsEnabled() then
+                            Unitframes.Module.RF_Scale:Update()
+                        else
+                            Unitframes.Module.RF_Scale:Enable()
+                        end
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.partyScale
+                end,
+                order = 47
+            },
             auraTest = {
                 name = function()
                     local rfa = Unitframes.Module and Unitframes.Module.RF_AuraDisplay
@@ -941,7 +970,7 @@ function Unitframes:OnInitialize()
                         rfa:UpdateAll()
                     end
                 end,
-                order = 46
+                order = 47
             }
         }
     }

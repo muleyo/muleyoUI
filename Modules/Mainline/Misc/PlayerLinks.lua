@@ -9,37 +9,134 @@ function PlayerLinks:OnInitialize()
         [5] = "cn"
     }
 
-    local function RealmSlug(realm)
+    -- EU Russian realms expose only their localized name through UnitName,
+    -- but armory-style sites use the English name. WoW has no API to
+    -- translate, so we hardcode the map. Values are the English realm
+    -- name with original casing/spacing (each site re-slugs as it needs).
+    -- Keys are the localized name with whitespace stripped (so we match
+    -- both "Ревущий Фьорд" and GetNormalizedRealmName's "РевущийФьорд").
+    local RU_REALM_EN = {
+        ["Азурегос"]          = "Azuregos",
+        ["Борейскаятундра"]   = "Borean Tundra",
+        ["ВечнаяПесня"]       = "Eversong",
+        ["Галакронд"]         = "Galakrond",
+        ["Голдринн"]          = "Goldrinn",
+        ["Гордунни"]          = "Gordunni",
+        ["Дракономор"]        = "Draenor",
+        ["Король-лич"]        = "Lich King",
+        ["Пиратскаябухта"]    = "Pirates' Cove",
+        ["Разувий"]           = "Razuvious",
+        ["Ревущийфьорд"]      = "Howling Fjord",
+        ["СвежевательДуш"]    = "Soulflayer",
+        ["Седогрив"]          = "Greymane",
+        ["СтражСмерти"]       = "Deathguard",
+        ["Термоштепсель"]     = "Thermaplugg",
+        ["ТкачСмерти"]        = "Deathweaver",
+        ["ЧёрныйШрам"]        = "Blackscar",
+        ["Ясеневыйлес"]       = "Ashenvale",
+    }
+
+    -- Returns the English realm name for cyrillic realms, or the input
+    -- unchanged for ASCII realms. nil if we have no mapping.
+    local function ResolveRealm(realm)
+        if not realm then
+            return nil
+        end
+        if string.find(realm, "[\208-\209]") then
+            return RU_REALM_EN[string.gsub(realm, "%s+", "")]
+        end
+        return realm
+    end
+
+    -- Lua's string.lower is ASCII-only. WarcraftLogs accepts cyrillic
+    -- slugs but they must be lowercased — do it manually via UTF-8
+    -- codepoint arithmetic (А-Я → а-я, Ё → ё).
+    local function CyrillicLower(s)
+        return (s:gsub("[\208-\209][\128-\191]", function(c)
+            local b1, b2 = c:byte(1, 2)
+            local cp = (b1 - 0xC0) * 0x40 + (b2 - 0x80)
+            if cp >= 0x410 and cp <= 0x42F then
+                cp = cp + 0x20
+            elseif cp == 0x401 then
+                cp = 0x451
+            else
+                return c
+            end
+            return string.char(0xC0 + math.floor(cp / 0x40), 0x80 + (cp % 0x40))
+        end))
+    end
+
+    local function ToDashSlug(realm)
+        realm = string.gsub(realm, "(%l)(%u)", "%1 %2")
+        realm = string.gsub(realm, "'", "")
+        realm = CyrillicLower(realm)
+        return string.lower(string.gsub(realm, "%s+", "-"))
+    end
+
+    -- Raider.io uses the English dash-slug ("howling-fjord"), so cyrillic
+    -- realms must be resolved to their English equivalent first.
+    local function RaiderIoSlug(realm)
+        realm = ResolveRealm(realm)
+        if not realm then
+            return nil
+        end
+        return ToDashSlug(realm)
+    end
+
+    -- WarcraftLogs uses the localized dash-slug ("ревущий-фьорд"), so
+    -- cyrillic realms stay in cyrillic — just lowercase + dash them.
+    local function WarcraftLogsSlug(realm)
+        if not realm then
+            return nil
+        end
+        return ToDashSlug(realm)
+    end
+
+    -- check-pvp expects the English realm name with original casing and
+    -- spaces preserved (URL-encoded), e.g. "Howling%20Fjord".
+    local function CheckPvpSlug(realm)
+        realm = ResolveRealm(realm)
         if not realm then
             return nil
         end
         realm = string.gsub(realm, "(%l)(%u)", "%1 %2")
-        realm = string.gsub(realm, "'", "")
-        return string.lower(string.gsub(realm, "%s+", "-"))
+        return (string.gsub(realm, " ", "%%20"))
     end
 
-    local region = regionMap[GetCurrentRegion()] or "eu"
+    local playerRegion = regionMap[GetCurrentRegion()] or "eu"
 
-    local function AppendLinks(rootDescription, name, realm)
+    local function AppendLinks(rootDescription, name, realm, region)
         if rootDescription._mUIPlayerLinks then
             return
         end
         rootDescription._mUIPlayerLinks = true
 
+        region = region or playerRegion
+
         rootDescription:CreateDivider()
         rootDescription:CreateTitle("|cff009cffm|r|cffffd100UI|r Player Links")
 
-        rootDescription:CreateButton("WarcraftLogs", function()
-            mUI:Link("https://www.warcraftlogs.com/character/" .. region .. "/" .. realm .. "/" .. name)
-        end)
+        local wlogs = WarcraftLogsSlug(realm)
+        local rio = RaiderIoSlug(realm)
+        local cpvp = CheckPvpSlug(realm)
 
-        rootDescription:CreateButton("Raider.io", function()
-            mUI:Link("https://raider.io/characters/" .. region .. "/" .. realm .. "/" .. name)
-        end)
+        if wlogs then
+            rootDescription:CreateButton("WarcraftLogs", function()
+                mUI:Link("https://www.warcraftlogs.com/character/" .. region .. "/" .. wlogs .. "/" .. name)
+            end)
+        end
 
-        rootDescription:CreateButton("CheckPVP", function()
-            mUI:Link("https://www.check-pvp.fr/" .. region .. "/" .. realm .. "/" .. name)
-        end)
+        if rio then
+            rootDescription:CreateButton("Raider.io", function()
+                mUI:Link("https://raider.io/characters/" .. region .. "/" .. rio .. "/" .. name)
+            end)
+        end
+
+        if cpvp then
+            rootDescription:CreateButton("CheckPVP", function()
+                mUI:Link("https://www.check-pvp.fr/" .. region .. "/" .. cpvp .. "/" .. name)
+            end)
+        end
     end
 
     local function ParseNameRealm(fullName)
@@ -56,7 +153,7 @@ function PlayerLinks:OnInitialize()
         if not name or not realm or realm == "" then
             return nil
         end
-        return name, RealmSlug(realm)
+        return name, realm
     end
 
     -- Handler for standard Menu.ModifyMenu hooks (unit frames, party, etc.)
@@ -69,19 +166,15 @@ function PlayerLinks:OnInitialize()
 
         if contextData.unit then
             name, realm = UnitName(contextData.unit)
-            if name then
-                if not realm then
-                    realm = GetNormalizedRealmName()
-                end
-
-                realm = RealmSlug(realm)
+            if name and not realm then
+                realm = GetNormalizedRealmName()
             end
         end
 
         if not name and contextData.name then
             name, realm = ParseNameRealm(contextData.name)
             if not realm and contextData.server and contextData.server ~= "" then
-                realm = RealmSlug(contextData.server)
+                realm = contextData.server
             end
         end
 
@@ -90,6 +183,43 @@ function PlayerLinks:OnInitialize()
         end
 
         AppendLinks(rootDescription, name, realm)
+    end
+
+    -- Battle.net friend menu (online + offline). contextData.bnetIDAccount
+    -- is the bnet account ID; their currently-active WoW character lives on
+    -- accountInfo.gameAccountInfo. Cross-region friends are possible so we
+    -- pass the region from regionID rather than the local player's region.
+    local function OnModifyBNMenu(owner, rootDescription, contextData)
+        if not PlayerLinks:IsEnabled() then
+            return
+        end
+
+        local bnetID = contextData.bnetIDAccount
+        if not bnetID then
+            return
+        end
+
+        local accountInfo = C_BattleNet and C_BattleNet.GetAccountInfoByID and C_BattleNet.GetAccountInfoByID(bnetID)
+        if not accountInfo then
+            return
+        end
+
+        local gameInfo = accountInfo.gameAccountInfo
+        if not gameInfo or gameInfo.clientProgram ~= BNET_CLIENT_WOW then
+            return
+        end
+        if gameInfo.wowProjectID and gameInfo.wowProjectID ~= WOW_PROJECT_ID then
+            return
+        end
+
+        local name = gameInfo.characterName
+        local realm = gameInfo.realmName
+        if not name or name == "" or not realm or realm == "" then
+            return
+        end
+
+        local region = regionMap[gameInfo.regionID] or playerRegion
+        AppendLinks(rootDescription, name, realm, region)
     end
 
     -- Try to extract player name from an LFG owner frame
@@ -136,6 +266,7 @@ function PlayerLinks:OnInitialize()
 
     PlayerLinks.hooked = false
     PlayerLinks.modifyMenuHandler = OnModifyMenu
+    PlayerLinks.modifyBNMenuHandler = OnModifyBNMenu
     PlayerLinks.appendLinks = AppendLinks
     PlayerLinks.parseNameRealm = ParseNameRealm
     PlayerLinks.getLFGPlayerName = GetLFGPlayerName
@@ -148,6 +279,12 @@ function PlayerLinks:OnEnable()
 
         for _, tag in ipairs(menus) do
             Menu.ModifyMenu(tag, PlayerLinks.modifyMenuHandler)
+        end
+
+        -- Battle.net friend menus (online + offline)
+        local bnMenus = {"MENU_UNIT_BN_FRIEND", "MENU_UNIT_BN_FRIEND_OFFLINE"}
+        for _, tag in ipairs(bnMenus) do
+            Menu.ModifyMenu(tag, PlayerLinks.modifyBNMenuHandler)
         end
 
         -- Hook MenuUtil.CreateContextMenu
