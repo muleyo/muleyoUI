@@ -15,7 +15,7 @@ function Gui:OnInitialize()
 
     -- Set FrameStrata, Size and Default Position
     Gui.frame:SetFrameStrata("DIALOG")
-    Gui.frame:SetSize(1100, 585)
+    Gui.frame:SetSize(1100, 600)
     Gui.frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
     Gui.frame:SetScale(Gui.db.scale)
 
@@ -210,8 +210,8 @@ function Gui:OnInitialize()
 
     local function CreateSidebarTab(parent, data, index)
         local button = CreateFrame("Button", nil, parent, "BackdropTemplate")
-        button:SetSize(196, 48)
-        button:SetPoint("TOPLEFT", parent, "TOPLEFT", 2, -2 - ((index - 1) * 49))
+        button:SetSize(196, 49)
+        button:SetPoint("TOPLEFT", parent, "TOPLEFT", 2, -2 - ((index - 1) * 50))
 
         button:SetBackdrop({
             bgFile = "Interface\\ChatFrame\\ChatFrameBackground",

@@ -37,9 +37,14 @@ function RF_Name:OnInitialize()
                     RF_Name.backup[4], RF_Name.backup[5], RF_Name.backup[6] = frame.name:GetTextColor()
                 end
 
-                if RF_Name.db.names and color then
+                local isParty = name:match("^CompactPartyFrameMember") and true or false
+                local centerParty = isParty and RF_Name.db.partyNameCentered
+
+                if (RF_Name.db.names and color) or centerParty then
                     frame.name:SetText(unitName)
-                    frame.name:SetTextColor(color.r, color.g, color.b)
+                    if RF_Name.db.names and color then
+                        frame.name:SetTextColor(color.r, color.g, color.b)
+                    end
 
                     -- Use EditMode API to get frame dimensions (GetWidth/GetHeight are protected)
                     local defaultWidth, defaultHeight = 72, 36
@@ -66,12 +71,15 @@ function RF_Name:OnInitialize()
                     frame.name:SetFont(STANDARD_TEXT_FONT, fontSize, "OUTLINE")
 
                     frame.name:ClearAllPoints()
-                    if RF_Name.db.roleicons then
+                    if centerParty then
+                        frame.name:SetPoint("TOP", frame, "TOP", 0, -3)
+                    elseif RF_Name.db.roleicons then
                         frame.name:SetPoint("TOPLEFT", frame, "TOPLEFT", 5, -3)
+                        frame.name:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
                     else
                         frame.name:SetPoint("TOPLEFT", frame, "TOPLEFT", 20, -3)
+                        frame.name:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
                     end
-                    frame.name:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
                     frame.name:SetWordWrap(false)
                 end
             end
