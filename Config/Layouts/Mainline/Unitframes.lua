@@ -525,6 +525,60 @@ function Unitframes:OnInitialize()
                 type = "header",
                 order = 28
             },
+            partyStatusColorMode = {
+                name = "Party StatusText Color",
+                desc = "Color of the StatusText (health/status) on Party Frames",
+                type = "select",
+                values = {
+                    default = "Default",
+                    class = "Class Color",
+                    custom = "Custom"
+                },
+                sorting = {"default", "class", "custom"},
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.partyStatusColorMode = val
+
+                    if not Unitframes.Module:IsEnabled() then
+                        return
+                    end
+
+                    local needs = val ~= "default" or mUI.db.profile.unitframes.raidframes.health
+                    if needs then
+                        if Unitframes.Module.RF_Health:IsEnabled() then
+                            Unitframes.Module.RF_Health:Update()
+                        else
+                            Unitframes.Module.RF_Health:Enable()
+                        end
+                    else
+                        Unitframes.Module.RF_Health:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.partyStatusColorMode or "default"
+                end,
+                order = 29
+            },
+            partyStatusCustomColor = {
+                name = "Party StatusText Custom Color",
+                desc = "Custom color for the Party StatusText",
+                type = "color",
+                hasAlpha = false,
+                hidden = function()
+                    return (mUI.db.profile.unitframes.raidframes.partyStatusColorMode or "default") ~= "custom"
+                end,
+                set = function(_, r, g, b)
+                    mUI.db.profile.unitframes.raidframes.partyStatusCustomColor = {r, g, b, 1}
+
+                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_Health:IsEnabled() then
+                        Unitframes.Module.RF_Health:Update()
+                    end
+                end,
+                get = function()
+                    local c = mUI.db.profile.unitframes.raidframes.partyStatusCustomColor or {1, 0.82, 0, 1}
+                    return c[1], c[2], c[3], c[4] or 1
+                end,
+                order = 30
+            },
             roleicons = {
                 name = "Role Icons",
                 desc = "Hide Role Icons on Party/Raidframes",
@@ -545,37 +599,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.roleicons
                 end,
-                order = 29
-            },
-            healthcolor = {
-                name = "Classcolor Health",
-                desc = "Show Health in Classcolor on Party/Raidframes",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.healthcolor = val
-
-                    if not Unitframes.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val then
-                        if not Unitframes.Module.RF_Health:IsEnabled() then
-                            Unitframes.Module.RF_Health:Enable()
-                        else
-                            Unitframes.Module.RF_Health:Update()
-                        end
-                    else
-                        if (not val) and (not mUI.db.profile.unitframes.raidframes.health) then
-                            Unitframes.Module.RF_Health:Disable()
-                        else
-                            Unitframes.Module.RF_Health:Update()
-                        end
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.healthcolor
-                end,
-                order = 30
+                order = 31
             },
             names = {
                 name = "Classcolor Names",
@@ -597,7 +621,37 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.names
                 end,
-                order = 31
+                order = 32
+            },
+            partyNameCentered = {
+                name = "Center Party Names",
+                desc = "Anchor party member names centered at the top of the frame",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.partyNameCentered = val
+
+                    if not Unitframes.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        if Unitframes.Module.RF_Name:IsEnabled() then
+                            Unitframes.Module.RF_Name:Update()
+                        else
+                            Unitframes.Module.RF_Name:Enable()
+                        end
+                    else
+                        if (not mUI.db.profile.unitframes.raidframes.names) and (not mUI.db.profile.unitframes.raidframes.hidenames) then
+                            Unitframes.Module.RF_Name:Disable()
+                        else
+                            Unitframes.Module.RF_Name:Update()
+                        end
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.partyNameCentered
+                end,
+                order = 33
             },
             hidenames = {
                 name = "Hide Names",
@@ -619,7 +673,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.hidenames
                 end,
-                order = 32
+                order = 34
             },
             solo = {
                 name = "Solo Partyframes",
@@ -641,7 +695,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.solo
                 end,
-                order = 33
+                order = 35
             },
             dispelGlow = {
                 name = "Dispel Glow",
@@ -662,7 +716,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.dispelGlow
                 end,
-                order = 34
+                order = 36
             },
             auraDisplay = {
                 name = "Custom Aura Icons",
@@ -683,7 +737,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.auraDisplay
                 end,
-                order = 35
+                order = 37
             },
             auraTooltips = {
                 name = "Aura Tooltips",
@@ -702,7 +756,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.auraTooltips
                 end,
-                order = 36
+                order = 38
             },
             centerDefensivePoint = {
                 name = "Defensive Anchor",
@@ -726,7 +780,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.centerDefensivePoint
                 end,
-                order = 37
+                order = 39
             },
             centerDefensiveSize = {
                 name = "Center Defensive Size",
@@ -749,7 +803,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.centerDefensiveSize
                 end,
-                order = 38
+                order = 40
             },
             centerDefensiveX = {
                 name = "Defensive X Offset",
@@ -771,7 +825,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.centerDefensiveX
                 end,
-                order = 39
+                order = 41
             },
             centerDefensiveY = {
                 name = "Defensive Y Offset",
@@ -793,7 +847,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.centerDefensiveY
                 end,
-                order = 40
+                order = 42
             },
             buffSize = {
                 name = "Buff Size",
@@ -818,7 +872,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.buffsize
                 end,
-                order = 41
+                order = 43
             },
             debuffSize = {
                 name = "Debuff Size",
@@ -843,7 +897,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.debuffsize
                 end,
-                order = 42
+                order = 44
             },
             dispelScale = {
                 name = "Dispellable Debuff Size",
@@ -866,7 +920,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.dispelScale
                 end,
-                order = 43
+                order = 45
             },
             ccScale = {
                 name = "CC Debuff Size",
@@ -890,7 +944,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.ccScale
                 end,
-                order = 44
+                order = 46
             },
             privateaurasize = {
                 name = "Private Aura Size",
@@ -915,7 +969,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.privateaurasize
                 end,
-                order = 45
+                order = 47
             },
             partyScale = {
                 name = "Party Frame Scale",
@@ -944,7 +998,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.partyScale
                 end,
-                order = 47
+                order = 48
             },
             auraTest = {
                 name = function()
@@ -970,7 +1024,7 @@ function Unitframes:OnInitialize()
                         rfa:UpdateAll()
                     end
                 end,
-                order = 47
+                order = 49
             }
         }
     }

@@ -84,10 +84,10 @@ function Modules:OnEnable()
     if Modules.db.raidframes.roleicons then
         Modules.RF_RoleIcons:Enable()
     end
-    if Modules.db.raidframes.health or Modules.db.raidframes.healthcolor then
+    if Modules.db.raidframes.health or (Modules.db.raidframes.partyStatusColorMode and Modules.db.raidframes.partyStatusColorMode ~= "default") then
         Modules.RF_Health:Enable()
     end
-    if Modules.db.raidframes.names or Modules.db.raidframes.hidenames then
+    if Modules.db.raidframes.names or Modules.db.raidframes.hidenames or Modules.db.raidframes.partyNameCentered then
         Modules.RF_Name:Enable()
     end
     if Modules.db.raidframes.hidenames then

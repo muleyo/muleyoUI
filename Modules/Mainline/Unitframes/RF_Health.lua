@@ -24,6 +24,45 @@ function RF_Health:OnInitialize()
                         "RaidGroup8Member4", "RaidGroup8Member5"}
 
     RF_Health.backup = {}
+    RF_Health.frameBackup = {}
+
+    function RF_Health:SnapshotFrame(frame)
+        if RF_Health.frameBackup[frame] or not frame.statusText then
+            return
+        end
+        local font, size, flags = frame.statusText:GetFont()
+        local r, g, b, a = frame.statusText:GetTextColor()
+        local point, relTo, relPoint, x, y = frame.statusText:GetPoint(1)
+        RF_Health.frameBackup[frame] = {
+            font = font,
+            size = size,
+            flags = flags,
+            r = r,
+            g = g,
+            b = b,
+            a = a,
+            point = point,
+            relTo = relTo,
+            relPoint = relPoint,
+            x = x,
+            y = y
+        }
+    end
+
+    function RF_Health:RestoreFrame(frame)
+        local bk = RF_Health.frameBackup[frame]
+        if not bk or not frame.statusText then
+            return
+        end
+        if bk.font then
+            frame.statusText:SetFont(bk.font, bk.size, bk.flags)
+        end
+        frame.statusText:SetTextColor(bk.r or 1, bk.g or 0.82, bk.b or 0, bk.a or 1)
+        if bk.point then
+            frame.statusText:ClearAllPoints()
+            frame.statusText:SetPoint(bk.point, bk.relTo or frame, bk.relPoint or bk.point, bk.x or 0, bk.y or 0)
+        end
+    end
 
     function RF_Health:SetHealth(frame)
         if (not frame) or frame:IsForbidden() then
@@ -33,6 +72,15 @@ function RF_Health:OnInitialize()
             local name = frame:GetName()
             if name and name:match("^Compact") then
                 local color = RAID_CLASS_COLORS[select(2, UnitClass(frame.unit))]
+                local isParty = name:match("^CompactPartyFrameMember") and true or false
+                local partyMode = RF_Health.db.partyStatusColorMode or "default"
+
+                RF_Health:SnapshotFrame(frame)
+
+                if isParty and partyMode == "default" then
+                    RF_Health:RestoreFrame(frame)
+                    return
+                end
 
                 if not RF_Health.backup[1] then
                     RF_Health.backup[1], RF_Health.backup[2], RF_Health.backup[3] = frame.statusText:GetFont()
@@ -61,13 +109,15 @@ function RF_Health:OnInitialize()
                 local scaleFactor = math.min(frameWidth / 100, frameHeight / 40)
                 fontSize = math.max(12, math.min(16, 13 * scaleFactor))
 
-                if RF_Health.db.healthcolor and color then
+                if isParty and partyMode == "class" and color then
                     frame.statusText:SetTextColor(color.r, color.g, color.b)
-                    frame.statusText:SetFont(STANDARD_TEXT_FONT, fontSize, "OUTLINE")
+                elseif isParty and partyMode == "custom" then
+                    local c = RF_Health.db.partyStatusCustomColor or {1, 0.82, 0, 1}
+                    frame.statusText:SetTextColor(c[1] or 1, c[2] or 0.82, c[3] or 0)
                 else
                     frame.statusText:SetTextColor(1, 0.82, 0)
-                    frame.statusText:SetFont(STANDARD_TEXT_FONT, fontSize, "OUTLINE")
                 end
+                frame.statusText:SetFont(STANDARD_TEXT_FONT, fontSize, "OUTLINE")
             end
         end
     end
