@@ -8,6 +8,7 @@ function Modules:OnInitialize()
     Modules.RF_HideNames = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_HideNames")
     Modules.RF_RoleIcons = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_RoleIcons")
     Modules.RF_Solo = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Solo")
+    Modules.RF_Scale = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Scale")
     Modules.RF_Defensive = mUI:GetModule("mUI.Modules.Unitframes.RF_Defensive")
     Modules.RF_Auras = mUI:GetModule("mUI.Modules.Unitframes.RF_Auras")
     Modules.RF_AuraDisplay = mUI:GetModule("mUI.Modules.Unitframes.RF_AuraDisplay")
@@ -95,6 +96,9 @@ function Modules:OnEnable()
     if Modules.db.raidframes.solo then
         Modules.RF_Solo:Enable()
     end
+    if (Modules.db.raidframes.partyScale or 100) ~= 100 then
+        Modules.RF_Scale:Enable()
+    end
     if Modules.db.smooth then
         Modules.Smooth:Enable()
     end
@@ -132,6 +136,7 @@ function Modules:OnDisable()
     Modules.RF_Name:Disable()
     Modules.RF_HideNames:Disable()
     Modules.RF_Solo:Disable()
+    Modules.RF_Scale:Disable()
     Modules.RF_Auras:Disable()
     Modules.RF_AuraDisplay:Disable()
     Modules.Smooth:Disable()

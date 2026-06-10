@@ -103,13 +103,15 @@ function PlayerLinks:OnInitialize()
         return (string.gsub(realm, " ", "%%20"))
     end
 
-    local region = regionMap[GetCurrentRegion()] or "eu"
+    local playerRegion = regionMap[GetCurrentRegion()] or "eu"
 
-    local function AppendLinks(rootDescription, name, realm)
+    local function AppendLinks(rootDescription, name, realm, region)
         if rootDescription._mUIPlayerLinks then
             return
         end
         rootDescription._mUIPlayerLinks = true
+
+        region = region or playerRegion
 
         rootDescription:CreateDivider()
         rootDescription:CreateTitle("|cff009cffm|r|cffffd100UI|r Player Links")
@@ -183,6 +185,43 @@ function PlayerLinks:OnInitialize()
         AppendLinks(rootDescription, name, realm)
     end
 
+    -- Battle.net friend menu (online + offline). contextData.bnetIDAccount
+    -- is the bnet account ID; their currently-active WoW character lives on
+    -- accountInfo.gameAccountInfo. Cross-region friends are possible so we
+    -- pass the region from regionID rather than the local player's region.
+    local function OnModifyBNMenu(owner, rootDescription, contextData)
+        if not PlayerLinks:IsEnabled() then
+            return
+        end
+
+        local bnetID = contextData.bnetIDAccount
+        if not bnetID then
+            return
+        end
+
+        local accountInfo = C_BattleNet and C_BattleNet.GetAccountInfoByID and C_BattleNet.GetAccountInfoByID(bnetID)
+        if not accountInfo then
+            return
+        end
+
+        local gameInfo = accountInfo.gameAccountInfo
+        if not gameInfo or gameInfo.clientProgram ~= BNET_CLIENT_WOW then
+            return
+        end
+        if gameInfo.wowProjectID and gameInfo.wowProjectID ~= WOW_PROJECT_ID then
+            return
+        end
+
+        local name = gameInfo.characterName
+        local realm = gameInfo.realmName
+        if not name or name == "" or not realm or realm == "" then
+            return
+        end
+
+        local region = regionMap[gameInfo.regionID] or playerRegion
+        AppendLinks(rootDescription, name, realm, region)
+    end
+
     -- Try to extract player name from an LFG owner frame
     local function GetLFGPlayerName(owner)
         if not owner then
@@ -227,6 +266,7 @@ function PlayerLinks:OnInitialize()
 
     PlayerLinks.hooked = false
     PlayerLinks.modifyMenuHandler = OnModifyMenu
+    PlayerLinks.modifyBNMenuHandler = OnModifyBNMenu
     PlayerLinks.appendLinks = AppendLinks
     PlayerLinks.parseNameRealm = ParseNameRealm
     PlayerLinks.getLFGPlayerName = GetLFGPlayerName
@@ -239,6 +279,12 @@ function PlayerLinks:OnEnable()
 
         for _, tag in ipairs(menus) do
             Menu.ModifyMenu(tag, PlayerLinks.modifyMenuHandler)
+        end
+
+        -- Battle.net friend menus (online + offline)
+        local bnMenus = {"MENU_UNIT_BN_FRIEND", "MENU_UNIT_BN_FRIEND_OFFLINE"}
+        for _, tag in ipairs(bnMenus) do
+            Menu.ModifyMenu(tag, PlayerLinks.modifyBNMenuHandler)
         end
 
         -- Hook MenuUtil.CreateContextMenu

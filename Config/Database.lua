@@ -123,6 +123,7 @@ local defaults = {
                 hidenames = false,
                 roleicons = false,
                 solo = false,
+                partyScale = 100,
                 skinicons = true,
                 buffsize = 28,
                 debuffsize = 35,
