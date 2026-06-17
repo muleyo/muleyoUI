@@ -12,9 +12,11 @@ function Theme:ClassBar()
         end
 
         for _, child in pairs({PersonalResourceDisplayFrame.ClassFrameContainer:GetChildren()}) do
-            mUI:Skin({child.BGActive, child.BGInactive, child.BGShadow}, true)
-            if (child.isCharged) then
-                mUI:Skin({child.ChargedFrameActive}, true)
+            for _, subchild in pairs({child:GetChildren()}) do
+                mUI:Skin({subchild.BGActive, subchild.BGInactive, subchild.BGShadow}, true)
+                if (subchild.isCharged) then
+                    mUI:Skin({subchild.ChargedFrameActive}, true)
+                end
             end
         end
     elseif (playerClass == "MAGE") then
@@ -24,7 +26,9 @@ function Theme:ClassBar()
         end
 
         for _, child in pairs({PersonalResourceDisplayFrame.ClassFrameContainer:GetChildren()}) do
-            mUI:Skin({child.ArcaneBG, child.ArcaneBGShadow}, true)
+            for _, subchild in pairs({child:GetChildren()}) do
+                mUI:Skin({subchild.ArcaneBG, subchild.ArcaneBGShadow}, true)
+            end
         end
     elseif (playerClass == "WARLOCK") then
         -- Warlock
@@ -33,7 +37,9 @@ function Theme:ClassBar()
         end
 
         for _, child in pairs({PersonalResourceDisplayFrame.ClassFrameContainer:GetChildren()}) do
-            mUI:Skin({child.Background}, true)
+            for _, subchild in pairs({child:GetChildren()}) do
+                mUI:Skin({subchild.Background}, true)
+            end
         end
     elseif (playerClass == "DRUID") then
         -- Druid
@@ -42,7 +48,9 @@ function Theme:ClassBar()
         end
 
         for _, child in pairs({PersonalResourceDisplayFrame.ClassFrameContainer:GetChildren()}) do
-            mUI:Skin({child.BG_Active, child.BG_Inactive, child.BG_Shadow}, true)
+            for _, subchild in pairs({child:GetChildren()}) do
+                mUI:Skin({subchild.BG_Active, subchild.BG_Inactive, subchild.BG_Shadow}, true)
+            end
         end
     elseif (playerClass == "MONK") then
         -- Monk
@@ -51,7 +59,9 @@ function Theme:ClassBar()
         end
 
         for _, child in pairs({PersonalResourceDisplayFrame.ClassFrameContainer:GetChildren()}) do
-            mUI:Skin({child.Chi_BG, child.Chi_BG_Active}, true)
+            for _, subchild in pairs({child:GetChildren()}) do
+                mUI:Skin({subchild.Chi_BG, subchild.Chi_BG_Active}, true)
+            end
         end
     elseif (playerClass == "DEATHKNIGHT") then
         -- Death Knight
