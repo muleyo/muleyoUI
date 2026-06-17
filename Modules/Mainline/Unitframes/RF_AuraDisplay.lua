@@ -104,48 +104,85 @@ local function buildFilter(...)
     return table.concat(parts, "|")
 end
 
+local function IsPriorityAura(aura)
+    if not aura then
+        return false
+    end
+    if aura.isBossAura then
+        return true
+    end
+    local id = aura.spellId
+    if not id then
+        return false
+    end
+    if type(issecretvalue) == "function" and issecretvalue(id) then
+        return false
+    end
+    if AuraUtil and AuraUtil.CheckIsPriorityAura then
+        local ok, result = pcall(AuraUtil.CheckIsPriorityAura, id)
+        if ok then
+            return result == true
+        end
+    end
+    return false
+end
+
 local function BuildFilterTables()
     local AF = (AuraUtil and AuraUtil.AuraFilters) or {}
-    local IMPORTANT = AF.Important or "IMPORTANT"
     local CC = AF.CrowdControl
     local BIGDEF = AF.BigDefensive
     local EXTDEF = AF.ExternalDefensive
     local RAIDIC = AF.RaidInCombat
 
-    -- Buff inclusion filters (HELPFUL|PLAYER + category). BigDefensive and
-    -- ExternalDefensive are routed into DEFENSIVE_FILTERS instead of the
-    -- regular buff grid so they render in our centered defensive slots.
+    -- AuraUtil.AuraFilters no longer exposes an "Important" token, so the
+    -- old HELPFUL|PLAYER|IMPORTANT filter returned no slots. We now scan
+    -- HELPFUL|PLAYER and keep auras that AuraUtil.CheckIsPriorityAura (or
+    -- isBossAura) flags as priority — entries marked priorityOnly=true are
+    -- post-filtered in ScanByFilters.
     BUFF_FILTERS = {}
     if RAIDIC then
-        BUFF_FILTERS[#BUFF_FILTERS + 1] = buildFilter("HELPFUL", "PLAYER", RAIDIC)
+        BUFF_FILTERS[#BUFF_FILTERS + 1] = {
+            filter = buildFilter("HELPFUL", "PLAYER", RAIDIC)
+        }
     end
-    BUFF_FILTERS[#BUFF_FILTERS + 1] = buildFilter("HELPFUL", "PLAYER", IMPORTANT)
+    BUFF_FILTERS[#BUFF_FILTERS + 1] = {
+        filter = buildFilter("HELPFUL", "PLAYER"),
+        priorityOnly = true
+    }
 
     -- No PLAYER flag: BigDefensive includes self-cast cooldowns on other
     -- party members (e.g. Shield Wall on the tank), and ExternalDefensive
     -- can be cast by any teammate, not just the local player.
     DEFENSIVE_FILTERS = {}
     if BIGDEF then
-        DEFENSIVE_FILTERS[#DEFENSIVE_FILTERS + 1] = buildFilter("HELPFUL", BIGDEF)
+        DEFENSIVE_FILTERS[#DEFENSIVE_FILTERS + 1] = {
+            filter = buildFilter("HELPFUL", BIGDEF)
+        }
     end
     if EXTDEF then
-        DEFENSIVE_FILTERS[#DEFENSIVE_FILTERS + 1] = buildFilter("HELPFUL", EXTDEF)
+        DEFENSIVE_FILTERS[#DEFENSIVE_FILTERS + 1] = {
+            filter = buildFilter("HELPFUL", EXTDEF)
+        }
     end
 
     -- All buffs render at the same size — no per-category scaling.
     BUFF_SCALE_FILTERS = {}
 
-    -- Debuff inclusion filters
-    DEBUFF_FILTERS = {buildFilter("HARMFUL", "RAID"), buildFilter("HARMFUL", IMPORTANT)}
+    -- Debuff inclusion filters. Priority/boss debuffs flow through the broad
+    -- HARMFUL scan in ScanUnit, so no separate "important" filter is needed.
+    DEBUFF_FILTERS = {{
+        filter = buildFilter("HARMFUL", "RAID")
+    }}
     if CC then
-        DEBUFF_FILTERS[#DEBUFF_FILTERS + 1] = buildFilter("HARMFUL", CC)
+        DEBUFF_FILTERS[#DEBUFF_FILTERS + 1] = {
+            filter = buildFilter("HARMFUL", CC)
+        }
     end
 
-    -- Debuff category scales (CC scale is user-configurable)
-    DEBUFF_SCALE_FILTERS = {{
-        scale = 1.00,
-        filter = buildFilter("HARMFUL", IMPORTANT)
-    }}
+    -- Debuff category scales (CC scale is user-configurable). The previous
+    -- IMPORTANT entry was a no-op (scale 1) and used a token that no longer
+    -- exists, so we drop it.
+    DEBUFF_SCALE_FILTERS = {}
     if CC then
         DEBUFF_SCALE_FILTERS[#DEBUFF_SCALE_FILTERS + 1] = {
             scale = GetCCScale(),
@@ -612,12 +649,14 @@ function RF_AuraDisplay:OnInitialize()
     end
 
     local function ScanByFilters(unit, filters, scaleFilters, into, seen)
-        for _, filterStr in ipairs(filters) do
+        for _, entry in ipairs(filters) do
+            local filterStr = entry.filter
+            local priorityOnly = entry.priorityOnly
             local slots = {C_UnitAuras.GetAuraSlots(unit, filterStr)}
             for i = 2, #slots do
                 local data = C_UnitAuras.GetAuraDataBySlot(unit, slots[i])
                 local id = data and data.auraInstanceID
-                if id and not seen[id] and not IsHidden(data) then
+                if id and not seen[id] and not IsHidden(data) and (not priorityOnly or IsPriorityAura(data)) then
                     seen[id] = true
                     data.mUI_scale = GetCategoryScale(unit, id, scaleFilters)
                     into[#into + 1] = data
