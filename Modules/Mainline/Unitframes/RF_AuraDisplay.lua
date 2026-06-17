@@ -108,14 +108,16 @@ local function IsPriorityAura(aura)
     if not aura then
         return false
     end
-    if aura.isBossAura then
+    local isSecret = type(issecretvalue) == "function"
+    local boss = aura.isBossAura
+    if not (isSecret and issecretvalue(boss)) and boss then
         return true
     end
     local id = aura.spellId
     if not id then
         return false
     end
-    if type(issecretvalue) == "function" and issecretvalue(id) then
+    if isSecret and issecretvalue(id) then
         return false
     end
     if AuraUtil and AuraUtil.CheckIsPriorityAura then
