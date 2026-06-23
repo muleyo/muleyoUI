@@ -73,16 +73,23 @@ function Theme:ClassBar()
         end
     elseif (playerClass == "EVOKER") then
         -- Evoker
+        -- UpdatePower fires every frame while essence regenerates; skip already-skinned orbs
         for _, child in pairs({EssencePlayerFrame:GetChildren()}) do
             if not child.EssenceFillDone then
                 return
             end
-            mUI:Skin({child.EssenceFillDone.CircBG, child.EssenceFillDone.CircBGActive}, true)
+            if not child.mUI_skinned then
+                mUI:Skin({child.EssenceFillDone.CircBG, child.EssenceFillDone.CircBGActive}, true)
+                child.mUI_skinned = true
+            end
         end
 
         for _, child in pairs({PersonalResourceDisplayFrame.ClassFrameContainer:GetChildren()}) do
             for _, subchild in pairs({child:GetChildren()}) do
-                mUI:Skin({subchild.EssenceFillDone.CircBG, subchild.EssenceFillDone.CircBGActive}, true)
+                if subchild.EssenceFillDone and not subchild.mUI_skinned then
+                    mUI:Skin({subchild.EssenceFillDone.CircBG, subchild.EssenceFillDone.CircBGActive}, true)
+                    subchild.mUI_skinned = true
+                end
             end
         end
     elseif (playerClass == "PALADIN") then
