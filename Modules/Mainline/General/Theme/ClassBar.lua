@@ -72,8 +72,6 @@ function Theme:ClassBar()
             mUI:Skin({child.BG_Active, child.BG_Inactive, child.BG_Shadow}, true)
         end
     elseif (playerClass == "EVOKER") then
-        -- Evoker
-        -- UpdatePower fires every frame while essence regenerates; skip already-skinned orbs
         for _, child in pairs({EssencePlayerFrame:GetChildren()}) do
             if not child.EssenceFillDone then
                 return
@@ -84,11 +82,13 @@ function Theme:ClassBar()
             end
         end
 
-        for _, child in pairs({PersonalResourceDisplayFrame.ClassFrameContainer:GetChildren()}) do
-            for _, subchild in pairs({child:GetChildren()}) do
-                if subchild.EssenceFillDone and not subchild.mUI_skinned then
-                    mUI:Skin({subchild.EssenceFillDone.CircBG, subchild.EssenceFillDone.CircBGActive}, true)
-                    subchild.mUI_skinned = true
+        if PersonalResourceDisplayFrame and PersonalResourceDisplayFrame.ClassFrameContainer then
+            for _, child in pairs({PersonalResourceDisplayFrame.ClassFrameContainer:GetChildren()}) do
+                for _, subchild in pairs({child:GetChildren()}) do
+                    if subchild.EssenceFillDone and not subchild.mUI_skinned then
+                        mUI:Skin({subchild.EssenceFillDone.CircBG, subchild.EssenceFillDone.CircBGActive}, true)
+                        subchild.mUI_skinned = true
+                    end
                 end
             end
         end
