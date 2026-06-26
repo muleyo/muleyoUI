@@ -141,10 +141,8 @@ function RF_Health:OnInitialize()
 end
 
 function RF_Health:OnEnable()
-    RF_Health:SecureHook("CompactUnitFrame_OnUpdate", function(frame)
-        RF_Health:SetHealth(frame)
-    end)
-
+    -- CompactUnitFrame_OnUpdate fires every frame for every raid frame; restyling the
+    -- statusText only needs to happen when the text itself updates.
     RF_Health:SecureHook("CompactUnitFrame_UpdateStatusText", function(frame)
         RF_Health:SetHealth(frame)
     end)
