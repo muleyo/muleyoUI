@@ -330,20 +330,66 @@ function ItemInfo:OnInitialize()
 
         local data = C_TooltipInfo.GetInventoryItem(unit, slot)
         if not data then
-            return {}
+            return {}, false
         end
-        local textures = {}
-        for i, line in ipairs(data.lines) do
-            if line.type == 3 then
-                if (line.gemIcon) then
-                    table.insert(textures, line.gemIcon)
-                else
-                    table.insert(textures, string.format("Interface\\ItemSocketingFrame\\UI-EmptySocket-%s", line.socketType))
+
+        -- Gem itemIDs straight from the itemLink; GetItemInfoInstant can
+        -- resolve their icons even when the gem item isn't cached yet
+        local gemIds = {}
+        local itemLink = GetInventoryItemLink(unit, slot)
+        if itemLink then
+            local itemString = itemLink:match("item[%-?%d:]+")
+            if itemString then
+                local fields = {strsplit(":", itemString)}
+                for i = 1, ItemInfo.NUM_SOCKET_TEXTURES do
+                    gemIds[i] = tonumber(fields[i + 3])
                 end
             end
         end
 
-        return textures
+        local textures = {}
+        local complete = true
+        local socketIndex = 0
+        for i, line in ipairs(data.lines) do
+            if line.type == 3 then
+                socketIndex = socketIndex + 1
+                local gemId = gemIds[socketIndex]
+                if (line.gemIcon) then
+                    table.insert(textures, line.gemIcon)
+                elseif (gemId and gemId > 0) then
+                    local icon = select(5, C_Item.GetItemInfoInstant(gemId))
+                    if icon then
+                        table.insert(textures, icon)
+                    else
+                        table.insert(textures, "Interface\\ItemSocketingFrame\\UI-EmptySocket-Prismatic")
+                        complete = false
+                    end
+                    C_Item.RequestLoadItemDataByID(gemId)
+                else
+                    table.insert(textures, string.format("Interface\\ItemSocketingFrame\\UI-EmptySocket-%s", line.socketType or "Prismatic"))
+                end
+            end
+        end
+
+        return textures, complete
+    end
+
+    function ItemInfo:ScheduleSocketRetry(button, unit)
+        local additionalFrame = button.mUIDisplay
+        if additionalFrame.retryPending then
+            return
+        end
+        additionalFrame.retryCount = (additionalFrame.retryCount or 0) + 1
+        if additionalFrame.retryCount > 10 then
+            return
+        end
+        additionalFrame.retryPending = true
+        C_Timer.After(0.25, function()
+            additionalFrame.retryPending = nil
+            if button:IsVisible() and UnitGUID(unit) == additionalFrame.lastGUID then
+                ItemInfo:UpdateAdditionalDisplay(button, unit)
+            end
+        end)
     end
 
     function ItemInfo:CanEnchantSlot(unit, slot)
@@ -593,7 +639,10 @@ function ItemInfo:OnInitialize()
                 end
             end
 
-            local textures = itemLink and ItemInfo:GetSocketTextures(unit, slot) or {}
+            local textures, socketsComplete = {}, true
+            if itemLink then
+                textures, socketsComplete = ItemInfo:GetSocketTextures(unit, slot)
+            end
             for i = 1, ItemInfo.NUM_SOCKET_TEXTURES do
                 local socketTexture = additionalFrame.socketDisplay[i]
                 if (#textures >= i) then
@@ -613,7 +662,15 @@ function ItemInfo:OnInitialize()
                 end
             end
 
-            additionalFrame.prevItemLink = itemLink
+            if socketsComplete then
+                additionalFrame.prevItemLink = itemLink
+                additionalFrame.retryCount = 0
+            else
+                -- Tooltip/gem data not loaded yet; don't cache so the next
+                -- update (or the scheduled retry) can fill in the gems
+                additionalFrame.prevItemLink = nil
+                ItemInfo:ScheduleSocketRetry(button, unit)
+            end
         end
 
         local currentDurablity, maxDurability = GetInventoryItemDurability(slot)
