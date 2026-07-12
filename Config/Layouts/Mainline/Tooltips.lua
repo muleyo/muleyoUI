@@ -139,6 +139,28 @@ function Tooltips:OnInitialize()
                 end,
                 order = 7
             },
+            pvprating = {
+                name = "PvP Ratings",
+                desc = "Show Solo Shuffle / 2v2 / 3v3 Ratings on Player Tooltips\n\n|cffffff00Info:|r Ratings of other players require them to be in Inspect Range",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.tooltips.pvprating = val
+
+                    if not Tooltips.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Tooltips.Module.PvPRating:Enable()
+                    else
+                        Tooltips.Module.PvPRating:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.tooltips.pvprating
+                end,
+                order = 8
+            },
             lfgtooltips = {
                 name = "LFG Tooltips",
                 desc = "Show Tooltips when hovering over players in the Group Finder, allowing non-leaders to read applicant notes",
@@ -159,7 +181,7 @@ function Tooltips:OnInitialize()
                 get = function()
                     return mUI.db.profile.tooltips.lfgtooltips
                 end,
-                order = 8
+                order = 9
             }
         }
     }

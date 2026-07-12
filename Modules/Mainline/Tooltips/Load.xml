@@ -3,6 +3,7 @@
     <Include file="Combat.lua" />
     <Include file="Anchor.lua" />
     <Include file="MythicPlus.lua" />
+    <Include file="PvPRating.lua" />
     <Include file="LFGTooltips.lua" />
     <Include file="Modules.lua" />
 </Ui>
