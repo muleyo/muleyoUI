@@ -139,7 +139,10 @@ function PlayerLinks:OnInitialize()
         end
     end
 
-    local function ParseNameRealm(fullName)
+    -- server: optional realm fallback (e.g. contextData.server from chat
+    -- menus, where the name comes through bare). Only consulted when
+    -- fullName carries no realm; without it we assume the player's realm.
+    local function ParseNameRealm(fullName, server)
         if not fullName then
             return nil
         end
@@ -148,7 +151,11 @@ function PlayerLinks:OnInitialize()
             name, realm = string.match(fullName, "^(.+)-(.+)$")
         else
             name = fullName
-            realm = GetNormalizedRealmName()
+            if server and server ~= "" then
+                realm = server
+            else
+                realm = GetNormalizedRealmName()
+            end
         end
         if not name or not realm or realm == "" then
             return nil
@@ -172,10 +179,7 @@ function PlayerLinks:OnInitialize()
         end
 
         if not name and contextData.name then
-            name, realm = ParseNameRealm(contextData.name)
-            if not realm and contextData.server and contextData.server ~= "" then
-                realm = contextData.server
-            end
+            name, realm = ParseNameRealm(contextData.name, contextData.server)
         end
 
         if not name or not realm then
@@ -274,8 +278,12 @@ end
 
 function PlayerLinks:OnEnable()
     if not PlayerLinks.hooked then
-        -- Standard unit frame menus
-        local menus = {"MENU_UNIT_SELF", "MENU_UNIT_PARTY", "MENU_UNIT_PLAYER", "MENU_UNIT_RAID_PLAYER", "MENU_UNIT_ENEMY_PLAYER", "MENU_UNIT_FRIEND"}
+        -- Standard unit frame menus, chat names, guild/community rosters
+        local menus = {
+            "MENU_UNIT_SELF", "MENU_UNIT_PARTY", "MENU_UNIT_PLAYER", "MENU_UNIT_RAID_PLAYER",
+            "MENU_UNIT_ENEMY_PLAYER", "MENU_UNIT_FRIEND", "MENU_UNIT_GUILD", "MENU_UNIT_GUILD_OFFLINE",
+            "MENU_UNIT_COMMUNITIES_GUILD_MEMBER", "MENU_UNIT_COMMUNITIES_WOW_MEMBER", "MENU_UNIT_CHAT_ROSTER"
+        }
 
         for _, tag in ipairs(menus) do
             Menu.ModifyMenu(tag, PlayerLinks.modifyMenuHandler)
