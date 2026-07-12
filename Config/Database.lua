@@ -182,6 +182,7 @@ local defaults = {
             combat = false,
             mouseanchor = false,
             mythicplus = true,
+            pvprating = true,
             lfgtooltips = true
         },
         map = {

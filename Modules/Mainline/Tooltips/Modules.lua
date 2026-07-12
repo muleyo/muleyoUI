@@ -6,6 +6,7 @@ function Modules:OnInitialize()
     Modules.Combat = mUI:GetModule("mUI.Tooltips.Combat")
     Modules.Anchor = mUI:GetModule("mUI.Tooltips.Anchor")
     Modules.MythicPlus = mUI:GetModule("mUI.Tooltips.MythicPlus")
+    Modules.PvPRating = mUI:GetModule("mUI.Tooltips.PvPRating")
     Modules.LFGTooltips = mUI:GetModule("mUI.Tooltips.LFGTooltips")
 end
 
@@ -25,6 +26,9 @@ function Modules:OnEnable()
     if Modules.db.mythicplus then
         Modules.MythicPlus:Enable()
     end
+    if Modules.db.pvprating then
+        Modules.PvPRating:Enable()
+    end
     if Modules.db.lfgtooltips then
         Modules.LFGTooltips:Enable()
     end
@@ -36,5 +40,6 @@ function Modules:OnDisable()
     Modules.Combat:Disable()
     Modules.Anchor:Disable()
     Modules.MythicPlus:Disable()
+    Modules.PvPRating:Disable()
     Modules.LFGTooltips:Disable()
 end
