@@ -38,7 +38,7 @@ function General:OnInitialize()
                 order = 1
             },
             header1 = {
-                name = "General",
+                name = "Theme",
                 type = "header",
                 order = 2
             },
@@ -73,10 +73,13 @@ function General:OnInitialize()
                 order = 3
             },
             color = {
-                name = "Custom Color",
+                name = "",
                 desc = "Choose a color for the Custom Theme",
                 type = "color",
                 hasAlpha = true,
+                hidden = function()
+                    return mUI.db.profile.general.theme ~= "Custom"
+                end,
                 set = function(_, r, g, b, a)
                     if mUI.db.profile.general.color == {r, g, b, a} then
                         return

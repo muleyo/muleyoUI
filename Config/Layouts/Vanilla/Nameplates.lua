@@ -3,7 +3,6 @@ local Nameplates = mUI:NewModule("mUI.Config.Layouts.Nameplates")
 function Nameplates:OnInitialize()
     -- Load Libraries
     Nameplates.LSM = LibStub("LibSharedMedia-3.0")
-    local ACD = LibStub("AceConfigDialog-3.0-mUI")
 
     -- Get Modules
     Nameplates.Module = mUI:GetModule("mUI.Modules.Nameplates")

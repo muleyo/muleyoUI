@@ -10,109 +10,25 @@ function About:OnInitialize()
                 type = "header",
                 order = 1
             },
-            spacer1 = {
-                name = " ",
-                type = "description",
-                width = "full",
-                order = 2
-            },
-            spacer2 = {
-                name = " ",
-                type = "description",
-                width = "full",
-                order = 3
-            },
-            spacer3 = {
-                name = " ",
-                type = "description",
-                width = "full",
-                order = 4
-            },
-            spacer4 = {
-                name = " ",
-                type = "description",
-                width = "full",
-                order = 5
-            },
-            spacer5 = {
-                name = " ",
-                type = "description",
-                width = "full",
-                order = 6
-            },
-            spacer6 = {
-                name = " ",
-                type = "description",
-                width = "full",
-                order = 7
-            },
-            spacer7 = {
-                name = " ",
-                type = "description",
-                width = "full",
-                order = 8
-            },
-            spacer8 = {
-                name = " ",
-                type = "description",
-                width = "full",
-                order = 9
-            },
-            spacer9 = {
-                name = " ",
-                type = "description",
-                width = "full",
-                order = 10
-            },
-            spacer10 = {
-                name = "",
-                type = "description",
-                width = 1.75,
-                order = 11
-            },
             description = {
                 name = "Thank you for using |cff009cffmuleyo|r|cffffd100UI|r!",
                 type = "description",
                 fontSize = "large",
-                width = 2,
-                order = 12
-            },
-            spacer11 = {
-                name = " ",
-                type = "description",
                 width = "full",
-                order = 13
-            },
-            spacer12 = {
-                name = " ",
-                type = "description",
-                width = 0.6,
-                order = 14
+                order = 2
             },
             subtext = {
                 name = "If you have any questions, suggestions, or issues, please visit the GitHub page or join the Discord Server.",
                 type = "description",
                 fontSize = "medium",
-                width = 4,
-                order = 15
+                width = "full",
+                order = 3
             },
-            spacer13 = {
+            spacer1 = {
                 name = " ",
                 type = "description",
                 width = "full",
-                order = 16
-            },
-            spacer14 = {
-                name = " ",
-                type = "description",
-                width = "full",
-                order = 17
-            },
-            spacer15 = {
-                name = " ",
-                type = "description",
-                width = 1,
-                order = 18
+                order = 4
             },
             twitch = {
                 name = "Twitch",
@@ -121,7 +37,7 @@ function About:OnInitialize()
                     mUI:Link("https://twitch.tv/muleyo")
                 end,
                 width = 1,
-                order = 19
+                order = 5
             },
             discord = {
                 name = "Discord",
@@ -130,7 +46,7 @@ function About:OnInitialize()
                     mUI:Link("https://discord.gg/gE5g43mZqy")
                 end,
                 width = 1,
-                order = 20
+                order = 6
             },
             donate = {
                 name = "Donate",
@@ -139,7 +55,7 @@ function About:OnInitialize()
                     mUI:Link("https://pay.muleyo.dev/?donation=true")
                 end,
                 width = 1,
-                order = 21
+                order = 7
             }
         }
     }

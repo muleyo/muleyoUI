@@ -48,114 +48,7 @@ function Health:OnInitialize()
                 end
 
                 mUI:Skin(nameplate.healthBar.border)
-                mUI:Skin({nameplate.CastBar.Border, nameplate.CastBar.BorderShield}, true)
-            end
-        end
-    end
-
-    function Health:Colors(nameplate)
-        if not Health.db.nameplates.colors then
-            return
-        end
-        if not nameplate or nameplate:IsForbidden() then
-            return
-        end
-        if nameplate.unit and nameplate.unit:find('nameplate%d') then
-            local playerRole = UnitGroupRolesAssigned("player")
-            if UnitIsPlayer(nameplate.unit) then
-                return
-            end
-            local healthBar = nameplate.healthBar
-            local _, _, _, _, _, id = strsplit("-", UnitGUID(nameplate.unit) or "")
-            local _, status = UnitDetailedThreatSituation("player", nameplate.unit)
-            local rColor = FACTION_BAR_COLORS[UnitReaction(nameplate.unit, "player")]
-            local color = Health.db.nameplates.npccolors[tonumber(id)] and Health.db.nameplates.npccolors[tonumber(id)].color or {
-                r = 0,
-                g = 1,
-                b = 0.6
-            }
-            local nColor = Health.db.nameplates.npccolors[tonumber(id)] and Health.db.nameplates.npccolors[tonumber(id)].color or {
-                r = 1,
-                g = 0,
-                b = 0.3
-            }
-
-            if (not status) or playerRole == "NONE" then
-                if (UnitIsTapDenied(nameplate.unit)) and not UnitPlayerControlled(nameplate.unit) then
-                    healthBar:SetStatusBarColor(0.5, 0.5, 0.5)
-                elseif (not UnitIsTapDenied(nameplate.unit)) then
-                    if mUI.db.profile.nameplates.npccolors[tonumber(id)] then
-                        healthBar:SetStatusBarColor(nColor.r, nColor.g, nColor.b)
-                    else
-                        healthBar:SetStatusBarColor(rColor.r, rColor.g, rColor.b)
-                    end
-                end
-            else
-                if playerRole == "TANK" then
-                    if status and status == 3 then
-                        healthBar:SetStatusBarColor(color.r, color.g, color.b)
-                    elseif status and status == 2 then
-                        healthBar:SetStatusBarColor(0.9, 0.7, 0)
-                    else
-                        healthBar:SetStatusBarColor(0.8, 0.3, 0.22)
-                    end
-                else
-                    if status and status == 3 then
-                        healthBar:SetStatusBarColor(0.8, 0.3, 0.22)
-                    elseif status and status == 2 then
-                        healthBar:SetStatusBarColor(0.9, 0.7, 0)
-                    else
-                        if playerClass == "DRUID" then
-                            if AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL") and
-                                (not AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL")) then
-                                healthBar:SetStatusBarColor(0.09, 0.96, 1)
-                            elseif AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL") and
-                                (not AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL")) then
-                                healthBar:SetStatusBarColor(0.99, 1, 0.52)
-                            else
-                                if status and status == 3 then
-                                    healthBar:SetStatusBarColor(0.8, 0.3, 0.22)
-                                elseif status and status == 2 then
-                                    healthBar:SetStatusBarColor(0.9, 0.7, 0)
-                                else
-                                    if playerClass == "DRUID" then
-                                        if AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL") and
-                                            (not AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL")) then
-                                            healthBar:SetStatusBarColor(0.09, 0.96, 1)
-                                        elseif AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL") and
-                                            (not AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL")) then
-                                            healthBar:SetStatusBarColor(0.99, 1, 0.52)
-                                        else
-                                            healthBar:SetStatusBarColor(color.r, color.g, color.b)
-                                        end
-                                    else
-                                        healthBar:SetStatusBarColor(color.r, color.g, color.b)
-                                    end
-                                end
-                            end
-                        else
-                            if status and status == 3 then
-                                healthBar:SetStatusBarColor(0.8, 0.3, 0.22)
-                            elseif status and status == 2 then
-                                healthBar:SetStatusBarColor(0.9, 0.7, 0)
-                            else
-                                if playerClass == "DRUID" then
-                                    if AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL") and
-                                        (not AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL")) then
-                                        healthBar:SetStatusBarColor(0.09, 0.96, 1)
-                                    elseif AuraUtil.FindAuraByName("Sunfire", nameplate.unit, "HARMFUL") and
-                                        (not AuraUtil.FindAuraByName("Moonfire", nameplate.unit, "HARMFUL")) then
-                                        healthBar:SetStatusBarColor(0.99, 1, 0.52)
-                                    else
-                                        healthBar:SetStatusBarColor(color.r, color.g, color.b)
-                                    end
-                                else
-                                    healthBar:SetStatusBarColor(color.r, color.g, color.b)
-                                end
-                            end
-                        end
-                    end
-                end
+                -- mUI:Skin({nameplate.CastBar.Border, nameplate.CastBar.BorderShield}, true)
             end
         end
     end
@@ -165,7 +58,6 @@ function Health:OnInitialize()
         for _, nameplate in pairs(C_NamePlate.GetNamePlates(false)) do
             -- Set Name for Nameplate
             Health:HealthText(nameplate.UnitFrame)
-            Health:Colors(nameplate.UnitFrame)
         end
     end
 end
@@ -173,10 +65,6 @@ end
 function Health:OnEnable()
     Health:SecureHook("CompactUnitFrame_UpdateHealth", function(nameplate)
         Health:HealthText(nameplate)
-    end)
-
-    Health:SecureHook("CompactUnitFrame_UpdateHealthColor", function(nameplate)
-        Health:Colors(nameplate)
     end)
 end
 

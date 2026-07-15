@@ -2,6 +2,7 @@
     <Include file="General.lua" />
     <Include file="Actionbars.lua" />
     <Include file="Unitframes.lua" />
+    <Include file="Raidframes.lua" />
     <Include file="Castbars.lua" />
     <Include file="Nameplates.lua" />
     <Include file="Tooltips.lua" />
@@ -9,7 +10,5 @@
     <Include file="Chat.lua" />
     <Include file="Misc.lua" />
     <Include file="Profiles.lua" />
-    <Include file="ProfilesExport.lua" />
-    <Include file="ProfilesImport.lua" />
     <Include file="About.lua" />
 </Ui>

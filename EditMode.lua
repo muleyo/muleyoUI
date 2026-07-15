@@ -5,7 +5,7 @@ function EditMode:OnInitialize()
     -- Load Database
     EditMode.db = mUI.db.profile.edit
 
-    if mUI:GameVersion()["Mists"] or mUI:GameVersion()["Vanilla"] then
+    if mUI:GameVersion()["Vanilla"] then
         -- Initialize grid database settings if they don't exist
         if not EditMode.db.grid then
             EditMode.db.grid = {

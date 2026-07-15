@@ -2,6 +2,7 @@ local Theme = mUI:GetModule("mUI.Modules.General.Theme")
 
 Theme.castbars = {
     player = "PlayerCastingBarFrame",
+    playerOverlay = "OverlayPlayerCastingBarFrame",
     target = "TargetFrameSpellBar",
     focus = "FocusFrameSpellBar",
     boss1 = "Boss1TargetFrameSpellBar",
@@ -29,7 +30,11 @@ function Theme:CreateCastbarIcons(unit, castbar)
         castbar.mUIBorder:SetDrawLayer("OVERLAY", 7)
         castbar.Icon:AddMaskTexture(castbar.mUIBorder.mask)
 
-        if unit == "player" then
+        -- playerOverlay (OverlayPlayerCastingBarFrame) is the frame Blizzard
+        -- swaps in over the real player castbar for the "Activating
+        -- Specialization" cast shown while switching talents/specs - style
+        -- it identically to the real player castbar.
+        if unit == "player" or unit == "playerOverlay" then
             castbar.mUIBorder:SetSize(22, 22)
             castbar.mUIBorder:SetPoint("CENTER", castbar.Icon, "CENTER", 0, 0)
         else

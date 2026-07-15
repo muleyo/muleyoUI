@@ -2,12 +2,12 @@ local Profiles = mUI:NewModule("mUI.Config.Layouts.Profiles")
 
 function Profiles:OnInitialize()
     -- Load Libraries
-    local ACD = LibStub("AceConfigDialog-3.0-mUI")
 
     -- Get Modules
     Profiles.Module = mUI:GetModule("mUI.Modules.Profiles")
 
     Profiles.profiles = {}
+    Profiles.importText = ""
 
     -- Get Profiles Function
     local function GetProfiles(info)
@@ -28,13 +28,19 @@ function Profiles:OnInitialize()
     Profiles.layout = {
         type = "group",
         args = {
-            header1 = {
+            active_profile = {
                 name = function()
                     local currentProfile = mUI.db:GetCurrentProfile()
-                    return "Profiles (active Profile: |cff00ff00" .. currentProfile .. "|r)"
+                    return "Active Profile: |cff00ff00" .. currentProfile .. "|r"
                 end,
-                type = "header",
+                type = "description",
+                fontSize = "medium",
                 order = 1
+            },
+            header1 = {
+                name = "Profile",
+                type = "header",
+                order = 2
             },
             reset = {
                 name = "Reset Profile",
@@ -46,13 +52,13 @@ function Profiles:OnInitialize()
                     mUI:Reload("Reset Profile")
                     mUI:GUI()
                 end,
-                order = 2
+                order = 3
             },
             newprofile_desc = {
                 name = "Create a new Profile",
                 type = "description",
                 fontSize = "medium",
-                order = 3
+                order = 4
             },
             newprofile = {
                 name = "New Profile",
@@ -67,13 +73,13 @@ function Profiles:OnInitialize()
                     mUI.db.profile.install = true
                     mUI:Reload("New Profile")
                 end,
-                order = 4
+                order = 5
             },
             changeprofile_desc = {
                 name = "Change your active Profile",
                 type = "description",
                 fontSize = "medium",
-                order = 5
+                order = 6
             },
             changeprofile = {
                 disabled = function()
@@ -92,13 +98,13 @@ function Profiles:OnInitialize()
                     mUI:Reload("Change Profile")
                 end,
                 arg = "no_current",
-                order = 6
+                order = 7
             },
             copyprofile_desc = {
                 name = "Copy settings from an existing profile into your current profile",
                 type = "description",
                 fontSize = "medium",
-                order = 7
+                order = 8
             },
             copyprofile = {
                 disabled = function()
@@ -117,13 +123,13 @@ function Profiles:OnInitialize()
                     mUI:Reload("Copy Profile")
                 end,
                 arg = "no_current",
-                order = 8
+                order = 9
             },
             deleteprofile_desc = {
                 name = "Delete an existing Profile",
                 type = "description",
                 fontSize = "medium",
-                order = 9
+                order = 10
             },
             deleteprofile = {
                 disabled = function()
@@ -142,30 +148,65 @@ function Profiles:OnInitialize()
                 arg = "no_current",
                 confirm = true,
                 confirmText = "Are you sure you want to delete the selected Profile?",
-                order = 10
-            },
-            header2 = {
-                name = "Import / Export",
-                type = "header",
                 order = 11
             },
-            export = {
-                name = "Export",
-                desc = "Export your current Profile",
-                type = "execute",
-                func = function()
-                    mUI:SwitchSettings("mUIOptions_ProfilesExport_Tab")
-                end,
+            header2 = {
+                name = "Import",
+                type = "header",
                 order = 12
             },
-            import = {
-                name = "Import",
-                desc = "Import a Profile",
-                type = "execute",
-                func = function()
-                    mUI:SwitchSettings("mUIOptions_ProfilesImport_Tab")
-                end,
+            import_desc = {
+                name = "Paste an Import String below, then click Okay to import a Profile",
+                type = "description",
+                fontSize = "medium",
                 order = 13
+            },
+            import = {
+                name = "Import String",
+                desc = "",
+                type = "input",
+                multiline = 12,
+                get = function()
+                end,
+                set = function(_, value)
+                    Profiles.importText = value
+                end,
+                width = "full",
+                order = 14
+            },
+            import_confirm = {
+                name = "Import",
+                desc = "Import the pasted Profile string\n\n|cffffff00Info:|r Overwrites your current Profile",
+                type = "execute",
+                disabled = function()
+                    return not Profiles.importText or Profiles.importText == ""
+                end,
+                confirm = true,
+                confirmText = "Warning: Importing a profile will overwrite your current settings. Continue?",
+                func = function()
+                    Profiles.Module.Import:ImportProfile(Profiles.importText)
+                    Profiles.importText = ""
+                end,
+                order = 15
+            },
+            header3 = {
+                name = "Export",
+                type = "header",
+                order = 16
+            },
+            export = {
+                name = "Export String",
+                desc = "",
+                type = "input",
+                multiline = 12,
+                get = function()
+                    return Profiles.Module.Export:ExportProfile()
+                end,
+                set = function()
+                end,
+                selectAllOnFocus = true,
+                width = "full",
+                order = 17
             }
         }
     }

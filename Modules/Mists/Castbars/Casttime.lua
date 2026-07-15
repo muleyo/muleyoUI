@@ -6,7 +6,7 @@ function Casttime:OnInitialize()
 
     -- Tables
     Casttime.castbars = {
-        player = "CastingBarFrame",
+        player = "PlayerCastingBarFrame",
         target = "TargetFrameSpellBar",
         focus = "FocusFrameSpellBar",
         boss1 = "Boss1TargetFrameSpellBar",

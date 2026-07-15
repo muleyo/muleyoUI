@@ -37,7 +37,9 @@ function RF_Textures:OnInitialize()
             return
         end
 
-        local ok, forbidden = pcall(function() return frame:IsForbidden() end)
+        local ok, forbidden = pcall(function()
+            return frame:IsForbidden()
+        end)
         if not ok or forbidden then
             return
         end
@@ -73,7 +75,9 @@ function RF_Textures:OnInitialize()
             return
         end
 
-        local ok, forbidden = pcall(function() return frame:IsForbidden() end)
+        local ok, forbidden = pcall(function()
+            return frame:IsForbidden()
+        end)
         if not ok or forbidden then
             return
         end

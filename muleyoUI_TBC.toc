@@ -1,4 +1,4 @@
-## Interface: 20505
+## Interface: 20506
 ## Author: muleyo
 ## Version: @project-version@
 ## Title: |cff009cffmuleyo|r|cffffd100UI|r

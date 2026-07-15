@@ -113,7 +113,7 @@ function Castbars:OnInitialize()
                 order = 5
             },
             header2 = {
-                name = "Target / Focus Castbar Size",
+                name = "Castbar Size",
                 type = "header",
                 order = 6
             },
@@ -176,7 +176,7 @@ function Castbars:OnInitialize()
                 order = 8
             },
             header3 = {
-                name = "Target / Focus Castbar Position",
+                name = "Castbar Position",
                 type = "header",
                 order = 9
             },
