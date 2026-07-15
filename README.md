@@ -1,4 +1,4 @@
-![Logo](https://i.imgur.com/yQZLC1Z.png)
+<center><img src="https://i.imgur.com/yQZLC1Z.png" width="256" height="256" alt="Logo"></center>
 
 mUI enhances the default Blizzard UI with a fresh dark theme and several quality of life features.
 
