@@ -19,4 +19,5 @@
     <Include file="GUI\Preview.lua" />
     <Include file="Gui.lua" />
     <Include file="Install.lua" />
+    <Include file="Changelog.lua" />
 </Ui>

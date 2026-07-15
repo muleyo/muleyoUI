@@ -71,7 +71,7 @@ function Gui:OnInitialize()
     local versionText = header:CreateFontString(nil, "OVERLAY")
     versionText:SetPoint("TOPLEFT", header, "TOPLEFT", 10, -8)
     mGUI:SetFont(versionText, 12)
-    versionText:SetText(C_AddOns.GetAddOnMetadata("muleyoUI", "Version"))
+    versionText:SetText(C_AddOns.GetAddOnMetadata("mUI", "Version"))
     versionText:SetTextColor(unpack(mGUI.Colors.version))
 
     -- Logo (centered)

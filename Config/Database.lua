@@ -4,6 +4,7 @@ local defaults = {
     profile = {
         install = false,
         new_version = false,
+        changelogVersion = false,
         gui = {
             scale = 1
         },
