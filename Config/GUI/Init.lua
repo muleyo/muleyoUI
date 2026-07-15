@@ -109,7 +109,8 @@ function mGUI:ApplyQuadBorder(frame, color, thickness)
     local overlay = frame.mGUIQuadOverlay
     if not overlay then
         overlay = CreateFrame("Frame", nil, frame)
-        overlay:SetAllPoints(frame)
+        PixelUtil.SetPoint(overlay, "TOPLEFT", frame, "TOPLEFT", 0, 0)
+        PixelUtil.SetPoint(overlay, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
         overlay:SetFrameLevel(frame:GetFrameLevel() + 50)
         overlay:SetFrameStrata("TOOLTIP")
         frame.mGUIQuadOverlay = overlay
@@ -124,8 +125,8 @@ function mGUI:ApplyQuadBorder(frame, color, thickness)
         end
         t:ClearAllPoints()
         t:SetColorTexture(color[1], color[2], color[3], color[4])
-        t:SetPoint(p1, overlay, rel1, ox1, oy1)
-        t:SetPoint(p2, overlay, rel2, ox2, oy2)
+        PixelUtil.SetPoint(t, p1, overlay, rel1, ox1, oy1)
+        PixelUtil.SetPoint(t, p2, overlay, rel2, ox2, oy2)
     end
 
     Edge("top", "TOPLEFT", "TOPLEFT", 0, 0, "BOTTOMRIGHT", "TOPRIGHT", 0, -size)

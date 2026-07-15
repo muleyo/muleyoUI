@@ -1,22 +1,19 @@
 local Changelog = mUI:NewModule("mUI.Config.Changelog")
 
--- Maintainer note: add a NEW entry to the TOP of this list for every release
--- that should surface a "What's New" popup to existing users (newest first).
--- Entries are purely informational text - this list is NOT compared against
--- the game's version number in any semantic way, it's just shown in full
--- whenever the installed addon version changes from what a user last saw.
-local CHANGELOG = {{
-    version = "1.0.0",
-    changes = {"Added a \"What's New\" window that shows this changelog once per update."}
-}}
+-- Maintainer note: this window intentionally shows ONLY the latest update.
+-- Keep this as a single entry and update it each release.
+local CHANGELOG = {
+    version = "4.0.0",
+    affected = {"Mainline", "Mists", "TBC", "Vanilla"},
+    changes = {"Reworked the whole settings GUI, it features a searchbar and much more other cool stuff!",
+               "Updated the logo, it looks a lot better now.", "Added a \"What's New\" window that shows this changelog once per update.",
+               "Updated Mists, TBC Anniversary and Vanilla to the latest versions."}
+}
 
 function Changelog:OnInitialize()
     Changelog.db = mUI.db.profile
     local currentVersion = C_AddOns.GetAddOnMetadata("mUI", "Version")
 
-    -- Brand-new installs already see Install.lua's welcome screen - just
-    -- record the current version so they don't ALSO get a changelog popup
-    -- the moment they finish first-time setup.
     if not Changelog.db.install then
         Changelog.db.changelogVersion = currentVersion
         return
@@ -31,7 +28,7 @@ function Changelog:OnInitialize()
     -- closes the window isn't re-prompted on every subsequent login.
     Changelog.db.changelogVersion = currentVersion
 
-    if not CHANGELOG[1] then
+    if not CHANGELOG.version then
         return
     end
 
@@ -43,15 +40,11 @@ function Changelog:Show(currentVersion)
 
     if not Changelog.frame then
         local frame = CreateFrame("Frame", "mUIChangelog", UIParent, "BackdropTemplate")
-        frame:SetSize(420, 380)
-        frame:SetPoint("CENTER")
+        PixelUtil.SetSize(frame, 420, 380)
+        PixelUtil.SetPoint(frame, "CENTER", UIParent, "CENTER", 0, 0)
         frame:SetFrameStrata("DIALOG")
-        frame:SetMovable(true)
-        frame:EnableMouse(true)
-        frame:RegisterForDrag("LeftButton")
-        frame:SetScript("OnDragStart", frame.StartMoving)
-        frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
-        mGUI:ApplyBackdrop(frame, "bg", "border")
+        mGUI:ApplyBackdrop(frame, "bg", false)
+        mGUI:ApplyQuadBorder(frame, mGUI.Colors.border)
         table.insert(UISpecialFrames, "mUIChangelog")
         Changelog.frame = frame
 
@@ -67,13 +60,22 @@ function Changelog:Show(currentVersion)
         versionText:SetTextColor(unpack(mGUI.Colors.version))
         frame.versionText = versionText
 
-        -- Scrollable body (same ScrollFrameTemplate + MinimalScrollBar
-        -- technique used by Gui.lua/MultiLineEditBox.lua, so the scrollbar
-        -- art is consistent across Mainline/Mists/TBC/Vanilla).
         local boxFrame = CreateFrame("Frame", nil, frame, "BackdropTemplate")
-        boxFrame:SetPoint("TOPLEFT", 16, -58)
-        boxFrame:SetPoint("BOTTOMRIGHT", -16, 46)
+        PixelUtil.SetPoint(boxFrame, "TOPLEFT", frame, "TOPLEFT", 16, -58)
+        PixelUtil.SetPoint(boxFrame, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -16, 46)
         mGUI:ApplyBackdrop(boxFrame, "bgWidget", "border")
+
+        local topEdgeOverlay = CreateFrame("Frame", nil, boxFrame)
+        topEdgeOverlay:SetAllPoints(boxFrame)
+        topEdgeOverlay:SetFrameLevel(boxFrame:GetFrameLevel() + 50)
+        topEdgeOverlay:SetFrameStrata("TOOLTIP")
+
+        local topEdge = topEdgeOverlay:CreateTexture(nil, "OVERLAY")
+        topEdge:SetColorTexture(unpack(mGUI.Colors.border))
+        PixelUtil.SetPoint(topEdge, "TOPLEFT", topEdgeOverlay, "TOPLEFT", 0, 0)
+        PixelUtil.SetPoint(topEdge, "TOPRIGHT", topEdgeOverlay, "TOPRIGHT", 0, 0)
+        PixelUtil.SetHeight(topEdge, 1)
+        mUI:DisablePixelSnap(topEdge)
 
         local scroll = CreateFrame("ScrollFrame", nil, boxFrame, "ScrollFrameTemplate")
         scroll:SetPoint("TOPLEFT", 8, -8)
@@ -118,20 +120,48 @@ function Changelog:Show(currentVersion)
         frame.closeButton = closeButton
     end
 
-    -- Show every entry (newest first, per the maintainer-ordered list above)
-    -- rather than trying to figure out which ones are "new" - version
-    -- strings aren't reliably comparable/sortable at runtime.
+    local gameVersion = mUI:GameVersion()
+    local currentFlavor = "Unknown"
+    if gameVersion.Mainline then
+        currentFlavor = "Mainline"
+    elseif gameVersion.Mists then
+        currentFlavor = "Mists"
+    elseif gameVersion.TBC then
+        currentFlavor = "TBC"
+    elseif gameVersion.Vanilla then
+        currentFlavor = "Vanilla"
+    end
+
+    local affected = CHANGELOG.affected or {}
+    local affectedList = #affected > 0 and table.concat(affected, ", ") or "All"
+    local affectedMap = {}
+    for _, flavor in ipairs(affected) do
+        affectedMap[flavor] = true
+    end
+    local currentIsAffected = (#affected == 0) or affectedMap[currentFlavor]
+
+    -- Show only the latest release notes by design.
     local lines = {}
-    for _, entry in ipairs(CHANGELOG) do
-        table.insert(lines, "|cff009cffv" .. entry.version .. "|r")
-        for _, change in ipairs(entry.changes) do
-            table.insert(lines, "  - " .. change)
-        end
-        table.insert(lines, "")
+    table.insert(lines, "|cff009cff" .. CHANGELOG.version .. "|r")
+    table.insert(lines, "")
+    table.insert(lines, "Affected game versions: " .. affectedList)
+    if currentIsAffected then
+        table.insert(lines, "This client (" .. currentFlavor .. ") is affected.")
+    else
+        table.insert(lines, "This client (" .. currentFlavor .. ") is not affected.")
+    end
+    table.insert(lines, "")
+    for _, change in ipairs(CHANGELOG.changes or {}) do
+        table.insert(lines, "  - " .. change)
     end
 
     Changelog.frame.versionText:SetText("Version " .. currentVersion)
     Changelog.frame.text:SetText(table.concat(lines, "\n"))
+    local contentWidth = math.max(1, (Changelog.frame.body:GetParent():GetWidth() or 1) - 4)
+    Changelog.frame.body:SetWidth(contentWidth)
+    Changelog.frame.text:SetWidth(contentWidth)
     Changelog.frame.body:SetHeight(Changelog.frame.text:GetStringHeight() + 10)
-    Changelog.frame:Show()
+    C_Timer.After(0.1, function()
+        Changelog.frame:Show()
+    end)
 end
