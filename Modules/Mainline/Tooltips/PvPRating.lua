@@ -122,10 +122,10 @@ function PvPRating:OnInitialize()
             ClearInspectPlayer()
         end
 
-        local _, unit = GameTooltip:GetUnit()
-        if unit and UnitGUID(unit) == guid then
-            PvPRating:AddLines(GameTooltip, ratings)
-            GameTooltip:Show()
+        -- GameTooltip:GetUnit() returns a secret value in tainted execution paths,
+        -- so refresh the tooltip data instead; the post call re-adds lines from cache
+        if GameTooltip:IsShown() and GameTooltip.RefreshData then
+            GameTooltip:RefreshData()
         end
     end
 
