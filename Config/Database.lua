@@ -173,8 +173,7 @@ local defaults = {
             focus = false,
             debuffs = false,
             colors = false,
-            smallerfriends = false,
-            npccolors = {}
+            smallerfriends = false
         },
         tooltips = {
             enabled = true,

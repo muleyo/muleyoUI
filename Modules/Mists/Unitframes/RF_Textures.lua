@@ -55,11 +55,6 @@ function RF_Textures:OnInitialize()
 
                 frame.selectionHighlight:SetTexture([[Interface\AddOns\mUI\Media\Textures\Raidframes\border_classic.png]])
                 frame.aggroHighlight:SetTexture([[Interface\AddOns\mUI\Media\Textures\Raidframes\border_classic.png]])
-
-                frame.vertLeftBorder:Hide()
-                frame.vertRightBorder:Hide()
-                frame.horizTopBorder:Hide()
-                frame.horizBottomBorder:Hide()
             end
         end
     end

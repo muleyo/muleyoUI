@@ -209,11 +209,11 @@ function Functions:OnInitialize()
         StaticPopupDialogs["mUIReloadPopup"] = {
             text = "|cff009cffmuleyo|r|cffffd100UI|r\n\n|cffffcc00Your UI requires a reload.\n\nReason: " .. module .. "|r",
             button1 = "Reload UI",
-            whileDead = true,
-            hideOnEscape = false,
-            StaticPopup1Button1:HookScript("OnClick", function()
+            OnAccept = function()
                 ReloadUI()
-            end)
+            end,
+            whileDead = true,
+            hideOnEscape = false
         }
         StaticPopup_Show("mUIReloadPopup", "", "")
     end

@@ -12,6 +12,15 @@ function Unitframes:OnInitialize()
     Unitframes.layout = {
         type = "group",
         args = {
+            preview = {
+                name = "Preview",
+                desc = "Preview your Unitframes changes in a side panel",
+                type = "execute",
+                func = function()
+                    mUI.mGUI.Preview:Toggle()
+                end,
+                order = 1.5
+            },
             enable = {
                 name = function()
                     if mUI.db.profile.unitframes.enabled then
@@ -44,8 +53,8 @@ function Unitframes:OnInitialize()
                 order = 2
             },
             textures_unitframes = {
-                name = "Unitframes",
-                desc = "Select a Texture for the Unitframes (Player, Target, Focus, etc.)",
+                name = "Healthbar / Powerbar",
+                desc = "Select a Texture for the Health-/Powerbars of Unitframes (Player, Target, Focus, etc.)",
                 type = "select",
                 values = Unitframes.LSM:HashTable("statusbar"),
                 dialogControl = 'mUI_LSM30_Status',
@@ -68,32 +77,6 @@ function Unitframes:OnInitialize()
                     return mUI.db.profile.unitframes.textures.unitframes
                 end,
                 order = 3
-            },
-            textures_raidframes = {
-                name = "Party / Raidframes",
-                desc = "Select a Texture for the Party / Raidframes",
-                type = "select",
-                values = Unitframes.LSM:HashTable("statusbar"),
-                dialogControl = 'mUI_LSM30_Status',
-                set = function(_, val)
-                    mUI.db.profile.unitframes.textures.raidframes = val
-
-                    if not Unitframes.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val == "None" then
-                        Unitframes.Module.RF_Textures:Disable()
-                        Unitframes.Module.RF_Textures:Update()
-                    else
-                        Unitframes.Module.RF_Textures:Enable()
-                        Unitframes.Module.RF_Textures:Update()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.textures.raidframes
-                end,
-                order = 5
             },
             header2 = {
                 name = "Options",
@@ -411,29 +394,6 @@ function Unitframes:OnInitialize()
                 end,
                 order = 20
             },
-            smooth = {
-                name = "Smooth Healthbars",
-                desc = "Enable Smooth Healthbar Animation\n\n|cffffff00Info:|r Requires Reload",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.unitframes.smooth = val
-
-                    if not Unitframes.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val then
-                        Unitframes.Module.Smooth:Enable()
-                    else
-                        Unitframes.Module.Smooth:Disable()
-                        mUI:Reload("Disable Smooth Healthbars")
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.smooth
-                end,
-                order = 22
-            },
             overshields = {
                 name = "Overshields",
                 desc = "Show Absorbshields on Unitframes\n\n|cffffff00Info:|r Requires Reload",
@@ -455,12 +415,12 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.overshields
                 end,
-                order = 23
+                order = 21
             },
             header3 = {
-                name = "Buffs & Debuffs",
+                name = "Auras",
                 type = "header",
-                order = 24
+                order = 22
             },
             enablebuffdebuff = {
                 name = function()
@@ -488,7 +448,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.buffsdebuffs.enabled
                 end,
-                order = 25
+                order = 23
             },
             buffsize = {
                 name = "Buff Size",
@@ -503,7 +463,10 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.buffsdebuffs.buffsize
                 end,
-                order = 26
+                hidden = function()
+                    return not mUI.db.profile.unitframes.buffsdebuffs.enabled
+                end,
+                order = 24
             },
             debuffsize = {
                 name = "Debuff Size",
@@ -518,514 +481,12 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.buffsdebuffs.debuffsize
                 end,
-                order = 27
-            },
-            header4 = {
-                name = "Raidframes",
-                type = "header",
-                order = 28
-            },
-            partyStatusColorMode = {
-                name = "Party StatusText Color",
-                desc = "Color of the StatusText (health/status) on Party Frames",
-                type = "select",
-                values = {
-                    default = "Default",
-                    class = "Class Color",
-                    custom = "Custom"
-                },
-                sorting = {"default", "class", "custom"},
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.partyStatusColorMode = val
-
-                    if not Unitframes.Module:IsEnabled() then
-                        return
-                    end
-
-                    local needs = val ~= "default" or mUI.db.profile.unitframes.raidframes.health
-                    if needs then
-                        if Unitframes.Module.RF_Health:IsEnabled() then
-                            Unitframes.Module.RF_Health:Update()
-                        else
-                            Unitframes.Module.RF_Health:Enable()
-                        end
-                    else
-                        Unitframes.Module.RF_Health:Disable()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.partyStatusColorMode or "default"
-                end,
-                order = 29
-            },
-            partyStatusCustomColor = {
-                name = "Party StatusText Custom Color",
-                desc = "Custom color for the Party StatusText",
-                type = "color",
-                hasAlpha = false,
                 hidden = function()
-                    return (mUI.db.profile.unitframes.raidframes.partyStatusColorMode or "default") ~= "custom"
+                    return not mUI.db.profile.unitframes.buffsdebuffs.enabled
                 end,
-                set = function(_, r, g, b)
-                    mUI.db.profile.unitframes.raidframes.partyStatusCustomColor = {r, g, b, 1}
-
-                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_Health:IsEnabled() then
-                        Unitframes.Module.RF_Health:Update()
-                    end
-                end,
-                get = function()
-                    local c = mUI.db.profile.unitframes.raidframes.partyStatusCustomColor or {1, 0.82, 0, 1}
-                    return c[1], c[2], c[3], c[4] or 1
-                end,
-                order = 30
-            },
-            roleicons = {
-                name = "Role Icons",
-                desc = "Hide Role Icons on Party/Raidframes",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.roleicons = val
-
-                    if not Unitframes.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val then
-                        Unitframes.Module.RF_RoleIcons:Enable()
-                    else
-                        Unitframes.Module.RF_RoleIcons:Disable()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.roleicons
-                end,
-                order = 31
-            },
-            names = {
-                name = "Classcolor Names",
-                desc = "Show Names in Classcolor on Party/Raidframes",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.names = val
-
-                    if not Unitframes.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val then
-                        Unitframes.Module.RF_Name:Enable()
-                    else
-                        Unitframes.Module.RF_Name:Disable()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.names
-                end,
-                order = 32
-            },
-            partyNameCentered = {
-                name = "Center Party Names",
-                desc = "Anchor party member names centered at the top of the frame",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.partyNameCentered = val
-
-                    if not Unitframes.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val then
-                        if Unitframes.Module.RF_Name:IsEnabled() then
-                            Unitframes.Module.RF_Name:Update()
-                        else
-                            Unitframes.Module.RF_Name:Enable()
-                        end
-                    else
-                        if (not mUI.db.profile.unitframes.raidframes.names) and (not mUI.db.profile.unitframes.raidframes.hidenames) then
-                            Unitframes.Module.RF_Name:Disable()
-                        else
-                            Unitframes.Module.RF_Name:Update()
-                        end
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.partyNameCentered
-                end,
-                order = 33
-            },
-            hidenames = {
-                name = "Hide Names",
-                desc = "Hide Names on Party/Raidframes",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.hidenames = val
-
-                    if not Unitframes.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val then
-                        Unitframes.Module.RF_HideNames:Enable()
-                    else
-                        Unitframes.Module.RF_HideNames:Disable()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.hidenames
-                end,
-                order = 34
-            },
-            solo = {
-                name = "Solo Partyframes",
-                desc = "Show Partyframes even when not in a group",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.solo = val
-
-                    if not Unitframes.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val then
-                        Unitframes.Module.RF_Solo:Enable()
-                    else
-                        Unitframes.Module.RF_Solo:Disable()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.solo
-                end,
-                order = 35
-            },
-            dispelGlow = {
-                name = "Dispel Glow",
-                desc = "Pulse a pixel glow around the raid/party frame when the unit has a dispellable debuff (color-coded by dispel type)",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.dispelGlow = val
-
-                    if not Unitframes.Module:IsEnabled() then
-                        return
-                    end
-                    if val then
-                        Unitframes.Module.RF_Auras:Enable()
-                    else
-                        Unitframes.Module.RF_Auras:Disable()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.dispelGlow
-                end,
-                order = 36
-            },
-            auraDisplay = {
-                name = "Custom Aura Icons",
-                desc = "Replace Blizzard's raid/party-frame buff and debuff icons with mUI-styled icons (custom borders, native countdown, dispellable debuffs scaled larger and shown first).\n\n|cffffff00Info:|r Requires UI reload to take effect.",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.auraDisplay = val
-
-                    if not Unitframes.Module:IsEnabled() then
-                        return
-                    end
-                    if val then
-                        Unitframes.Module.RF_AuraDisplay:Enable()
-                    else
-                        Unitframes.Module.RF_AuraDisplay:Disable()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.auraDisplay
-                end,
-                order = 37
-            },
-            auraTooltips = {
-                name = "Aura Tooltips",
-                desc = "Show the aura tooltip when hovering over a custom aura icon. Disabling lets clicks pass through to the unit frame.",
-                type = "toggle",
-                disabled = function()
-                    return not mUI.db.profile.unitframes.raidframes.auraDisplay
-                end,
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.auraTooltips = val
-
-                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_AuraDisplay and Unitframes.Module.RF_AuraDisplay:IsEnabled() then
-                        Unitframes.Module.RF_AuraDisplay:UpdateAll()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.auraTooltips
-                end,
-                order = 38
-            },
-            centerDefensivePoint = {
-                name = "Defensive Anchor",
-                desc = "Where on the raid frame the defensive icon(s) attach.",
-                type = "select",
-                values = {
-                    CENTER = "Center",
-                    LEFT = "Left",
-                    RIGHT = "Right"
-                },
-                sorting = {"LEFT", "CENTER", "RIGHT"},
-                hidden = function()
-                    return not mUI.db.profile.unitframes.raidframes.auraDisplay
-                end,
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.centerDefensivePoint = val
-                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_AuraDisplay and Unitframes.Module.RF_AuraDisplay:IsEnabled() then
-                        Unitframes.Module.RF_AuraDisplay:UpdateAll()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.centerDefensivePoint
-                end,
-                order = 39
-            },
-            centerDefensiveSize = {
-                name = "Center Defensive Size",
-                desc = "Size of the centered defensive cooldown icon (BigDefensive / ExternalDefensive) as a percent of the raid frame's height.",
-                type = "range",
-                min = 20,
-                max = 150,
-                step = 1,
-                isPercent = false,
-                hidden = function()
-                    return not mUI.db.profile.unitframes.raidframes.auraDisplay
-                end,
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.centerDefensiveSize = val
-
-                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_AuraDisplay and Unitframes.Module.RF_AuraDisplay:IsEnabled() then
-                        Unitframes.Module.RF_AuraDisplay:UpdateAll()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.centerDefensiveSize
-                end,
-                order = 40
-            },
-            centerDefensiveX = {
-                name = "Defensive X Offset",
-                desc = "Horizontal offset of the defensive icon(s) from the chosen anchor.",
-                type = "range",
-                min = -100,
-                max = 100,
-                step = 1,
-                isPercent = false,
-                hidden = function()
-                    return not mUI.db.profile.unitframes.raidframes.auraDisplay
-                end,
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.centerDefensiveX = val
-                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_AuraDisplay and Unitframes.Module.RF_AuraDisplay:IsEnabled() then
-                        Unitframes.Module.RF_AuraDisplay:UpdateAll()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.centerDefensiveX
-                end,
-                order = 41
-            },
-            centerDefensiveY = {
-                name = "Defensive Y Offset",
-                desc = "Vertical offset of the defensive icon(s) from the chosen anchor.",
-                type = "range",
-                min = -100,
-                max = 100,
-                step = 1,
-                isPercent = false,
-                hidden = function()
-                    return not mUI.db.profile.unitframes.raidframes.auraDisplay
-                end,
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.centerDefensiveY = val
-                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_AuraDisplay and Unitframes.Module.RF_AuraDisplay:IsEnabled() then
-                        Unitframes.Module.RF_AuraDisplay:UpdateAll()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.centerDefensiveY
-                end,
-                order = 42
-            },
-            buffSize = {
-                name = "Buff Size",
-                desc = "Set the size of Buffs on Raidframes (percentage of frame height)\n\n|cffffff00Info:|r Requires Skin Aura Icons or Custom Aura Icons",
-                type = "range",
-                min = 10,
-                max = 50,
-                step = 1,
-                hidden = function()
-                    if select(4, GetBuildInfo()) < 120005 then
-                        return false
-                    end
-                    return not mUI.db.profile.unitframes.raidframes.auraDisplay
-                end,
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.buffsize = val
-
-                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_AuraDisplay and Unitframes.Module.RF_AuraDisplay:IsEnabled() then
-                        Unitframes.Module.RF_AuraDisplay:UpdateAll()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.buffsize
-                end,
-                order = 43
-            },
-            debuffSize = {
-                name = "Debuff Size",
-                desc = "Set the size of Debuffs on Raidframes (percentage of frame height)\n\n|cffffff00Info:|r Requires Skin Aura Icons or Custom Aura Icons",
-                type = "range",
-                min = 10,
-                max = 100,
-                step = 1,
-                hidden = function()
-                    if select(4, GetBuildInfo()) < 120005 then
-                        return false
-                    end
-                    return not mUI.db.profile.unitframes.raidframes.auraDisplay
-                end,
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.debuffsize = val
-
-                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_AuraDisplay and Unitframes.Module.RF_AuraDisplay:IsEnabled() then
-                        Unitframes.Module.RF_AuraDisplay:UpdateAll()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.debuffsize
-                end,
-                order = 44
-            },
-            dispelScale = {
-                name = "Dispellable Debuff Size",
-                desc = "Scale multiplier applied to debuffs the player can personally dispel. Bigger scale also sorts them to the front.",
-                type = "range",
-                min = 1,
-                max = 2,
-                step = 0.05,
-                isPercent = false,
-                hidden = function()
-                    return not mUI.db.profile.unitframes.raidframes.auraDisplay
-                end,
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.dispelScale = val
-
-                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_AuraDisplay and Unitframes.Module.RF_AuraDisplay:IsEnabled() then
-                        Unitframes.Module.RF_AuraDisplay:UpdateAll()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.dispelScale
-                end,
-                order = 45
-            },
-            ccScale = {
-                name = "CC Debuff Size",
-                desc = "Scale multiplier applied to crowd-control debuffs.",
-                type = "range",
-                min = 1,
-                max = 2,
-                step = 0.05,
-                isPercent = false,
-                hidden = function()
-                    return not mUI.db.profile.unitframes.raidframes.auraDisplay
-                end,
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.ccScale = val
-
-                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_AuraDisplay and Unitframes.Module.RF_AuraDisplay:IsEnabled() then
-                        Unitframes.Module.RF_AuraDisplay:RefreshFilters()
-                        Unitframes.Module.RF_AuraDisplay:UpdateAll()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.ccScale
-                end,
-                order = 46
-            },
-            privateaurasize = {
-                name = "Private Aura Size",
-                desc = "Size of private aura icons as a percent of the raid frame's height.",
-                type = "range",
-                min = 20,
-                max = 150,
-                step = 1,
-                hidden = function()
-                    if select(4, GetBuildInfo()) < 120005 then
-                        return false
-                    end
-                    return not mUI.db.profile.unitframes.raidframes.auraDisplay
-                end,
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.privateaurasize = val
-
-                    if Unitframes.Module:IsEnabled() and Unitframes.Module.RF_AuraDisplay and Unitframes.Module.RF_AuraDisplay:IsEnabled() then
-                        Unitframes.Module.RF_AuraDisplay:UpdateAll()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.privateaurasize
-                end,
-                order = 47
-            },
-            partyScale = {
-                name = "Party Frame Scale",
-                desc = "Scale of the CompactPartyFrame (party container).",
-                type = "range",
-                min = 50,
-                max = 200,
-                step = 1,
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.partyScale = val
-
-                    if not Unitframes.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val == 100 then
-                        Unitframes.Module.RF_Scale:Disable()
-                    else
-                        if Unitframes.Module.RF_Scale:IsEnabled() then
-                            Unitframes.Module.RF_Scale:Update()
-                        else
-                            Unitframes.Module.RF_Scale:Enable()
-                        end
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.partyScale
-                end,
-                order = 48
-            },
-            auraTest = {
-                name = function()
-                    local rfa = Unitframes.Module and Unitframes.Module.RF_AuraDisplay
-                    if rfa and rfa.testBuffs then
-                        return "|cff00ff00Hide Test Auras|r"
-                    end
-                    return "Show Test Auras"
-                end,
-                desc = "Toggle placeholder buff, debuff, and private aura icons on each raid frame so you can preview size and position.",
-                type = "execute",
-                hidden = function()
-                    return not mUI.db.profile.unitframes.raidframes.auraDisplay
-                end,
-                func = function()
-                    local rfa = Unitframes.Module and Unitframes.Module.RF_AuraDisplay
-                    if rfa and rfa:IsEnabled() then
-                        local active = not rfa.testBuffs
-                        rfa.testBuffs = active
-                        rfa.testDebuffs = active
-                        rfa.testPrivateAuras = active
-                        rfa.testDefensives = active
-                        rfa:UpdateAll()
-                    end
-                end,
-                order = 49
+                order = 25
             }
+
         }
     }
 

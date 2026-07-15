@@ -118,36 +118,9 @@ function Misc:OnInitialize()
                 order = 6
             },
             header2 = {
-                name = "Hide Frames",
-                type = "header",
-                order = 7
-            },
-            gryphons = {
-                name = "Hide Gryphons",
-                desc = "Hide the Gryphons on the Main Menu Bar",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.misc.gryphons = val
-
-                    if not Misc.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val then
-                        Misc.Module.Gryphons:Enable()
-                    else
-                        Misc.Module.Gryphons:Disable()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.misc.gryphons
-                end,
-                order = 8
-            },
-            header3 = {
                 name = "PvP Options",
                 type = "header",
-                order = 9
+                order = 7
             },
             tabbinder = {
                 name = "Tab Binder",
@@ -169,7 +142,7 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.tabbinder
                 end,
-                order = 10
+                order = 8
             },
             dampening = {
                 name = "Dampening",
@@ -191,7 +164,7 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.dampening
                 end,
-                order = 11
+                order = 9
             },
             safequeue = {
                 name = "Safe Queue",
@@ -213,7 +186,7 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.safequeue
                 end,
-                order = 12
+                order = 10
             },
             losecontrol = {
                 name = "LoseControl",
@@ -235,7 +208,7 @@ function Misc:OnInitialize()
                 get = function()
                     return mUI.db.profile.misc.losecontrol
                 end,
-                order = 13
+                order = 11
             }
         }
     }

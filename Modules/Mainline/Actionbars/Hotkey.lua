@@ -1,7 +1,6 @@
 local Hotkey = mUI:NewModule("mUI.Modules.Actionbars.Hotkey")
 
 function Hotkey:OnInitialize()
-
     Hotkey.bars = {
         MainActionBar = MainActionBar,
         MultiBarBottomLeft = MultiBarBottomLeft,

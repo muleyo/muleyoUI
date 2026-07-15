@@ -35,6 +35,9 @@ function Modules:OnEnable()
     if Modules.db.cooldown then
         Modules.Cooldown:Enable()
     end
+    if Modules.db.style == "mUI" then
+        Modules.Style:Enable()
+    end
 end
 
 function Modules:OnDisable()

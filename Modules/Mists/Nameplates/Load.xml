@@ -3,7 +3,6 @@
     <Include file="Names.lua" />
     <Include file="Health.lua" />
     <Include file="Options.lua" />
-    <Include file="Casttime.lua" />
     <Include file="Debuffs.lua" />
     <Include file="Totemicons.lua" />
     <Include file="Modules.lua" />

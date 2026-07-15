@@ -52,31 +52,9 @@ function Theme:OnEnable()
                     mirrorAurasVertically)
             end)
 
-        if mUI.db.profile.unitframes.raidframes.skinicons then
-            Theme:SecureHook("CompactUnitFrame_UpdateAuras", function(frame)
-                if not frame or frame:IsForbidden() then
-                    return
-                end
-
-                -- Check if frame is Raid/Party
-                local name = frame:GetName()
-                if name and name:match("^Compact") then
-                    if frame.debuffFrames then
-                        for i = 1, #frame.debuffFrames do
-                            Theme:UpdateRaidframeAuras(frame.debuffFrames[i])
-                        end
-                    end
-
-                    if frame.buffFrames then
-                        for i = 1, #frame.buffFrames do
-                            Theme:UpdateRaidframeAuras(frame.buffFrames[i])
-                        end
-                    end
-                end
-            end)
+        if AuraFrameMixin then
+            Theme:SecureHook(AuraFrameMixin, "UpdateAuraButtons", Theme.AuraPositions)
         end
-
-        Theme:SecureHook(AuraFrameMixin, "UpdateAuraButtons", Theme.AuraPositions)
     end
 
     -- Castbar Icon Skins

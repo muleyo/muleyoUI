@@ -35,7 +35,7 @@ function Actionbars:OnInitialize()
                 order = 1
             },
             header1 = {
-                name = "Actionbar Buttons",
+                name = "Options",
                 type = "header",
                 order = 2
             },
@@ -178,9 +178,9 @@ function Actionbars:OnInitialize()
             enablemouseover = {
                 name = function()
                     if mUI.db.profile.actionbars.mouseover.enabled then
-                        return "|cFF00FF00Mouseover Enabled|r"
+                        return "|cFF00FF00Enabled|r"
                     else
-                        return "|cFFFF0000Mouseover Disabled|r"
+                        return "|cFFFF0000Disabled|r"
                     end
                 end,
                 desc = "Enable/Disable Mouseover Module",
@@ -232,6 +232,9 @@ function Actionbars:OnInitialize()
                 get = function()
                     return mUI.db.profile.actionbars.mouseover.bar1
                 end,
+                hidden = function()
+                    return not mUI.db.profile.actionbars.mouseover.enabled
+                end,
                 order = 12
             },
             bar2 = {
@@ -257,6 +260,9 @@ function Actionbars:OnInitialize()
                 end,
                 get = function()
                     return mUI.db.profile.actionbars.mouseover.bar2
+                end,
+                hidden = function()
+                    return not mUI.db.profile.actionbars.mouseover.enabled
                 end,
                 order = 13
             },
@@ -284,6 +290,9 @@ function Actionbars:OnInitialize()
                 get = function()
                     return mUI.db.profile.actionbars.mouseover.bar3
                 end,
+                hidden = function()
+                    return not mUI.db.profile.actionbars.mouseover.enabled
+                end,
                 order = 14
             },
             bar4 = {
@@ -309,6 +318,9 @@ function Actionbars:OnInitialize()
                 end,
                 get = function()
                     return mUI.db.profile.actionbars.mouseover.bar4
+                end,
+                hidden = function()
+                    return not mUI.db.profile.actionbars.mouseover.enabled
                 end,
                 order = 15
             },
@@ -336,6 +348,9 @@ function Actionbars:OnInitialize()
                 get = function()
                     return mUI.db.profile.actionbars.mouseover.bar5
                 end,
+                hidden = function()
+                    return not mUI.db.profile.actionbars.mouseover.enabled
+                end,
                 order = 16
             },
             bar6 = {
@@ -361,6 +376,9 @@ function Actionbars:OnInitialize()
                 end,
                 get = function()
                     return mUI.db.profile.actionbars.mouseover.bar6
+                end,
+                hidden = function()
+                    return not mUI.db.profile.actionbars.mouseover.enabled
                 end,
                 order = 17
             },
@@ -388,6 +406,9 @@ function Actionbars:OnInitialize()
                 get = function()
                     return mUI.db.profile.actionbars.mouseover.bar7
                 end,
+                hidden = function()
+                    return not mUI.db.profile.actionbars.mouseover.enabled
+                end,
                 order = 18
             },
             bar8 = {
@@ -413,6 +434,9 @@ function Actionbars:OnInitialize()
                 end,
                 get = function()
                     return mUI.db.profile.actionbars.mouseover.bar8
+                end,
+                hidden = function()
+                    return not mUI.db.profile.actionbars.mouseover.enabled
                 end,
                 order = 19
             },
@@ -440,6 +464,9 @@ function Actionbars:OnInitialize()
                 get = function()
                     return mUI.db.profile.actionbars.mouseover.petbar
                 end,
+                hidden = function()
+                    return not mUI.db.profile.actionbars.mouseover.enabled
+                end,
                 order = 20
             },
             stancebar = {
@@ -465,6 +492,9 @@ function Actionbars:OnInitialize()
                 end,
                 get = function()
                     return mUI.db.profile.actionbars.mouseover.stancebar
+                end,
+                hidden = function()
+                    return not mUI.db.profile.actionbars.mouseover.enabled
                 end,
                 order = 21
             },
@@ -501,6 +531,9 @@ function Actionbars:OnInitialize()
                 get = function()
                     return mUI.db.profile.actionbars.mouseover.micromenu
                 end,
+                hidden = function()
+                    return not mUI.db.profile.actionbars.mouseover.enabled
+                end,
                 order = 22
             },
             bagbuttons = {
@@ -535,6 +568,9 @@ function Actionbars:OnInitialize()
                 end,
                 get = function()
                     return mUI.db.profile.actionbars.mouseover.bagbuttons
+                end,
+                hidden = function()
+                    return not mUI.db.profile.actionbars.mouseover.enabled
                 end,
                 order = 23
             }

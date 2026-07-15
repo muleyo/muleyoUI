@@ -3,7 +3,6 @@ local Nameplates = mUI:NewModule("mUI.Config.Layouts.Nameplates")
 function Nameplates:OnInitialize()
     -- Load Libraries
     Nameplates.LSM = LibStub("LibSharedMedia-3.0")
-    local ACD = LibStub("AceConfigDialog-3.0-mUI")
 
     -- Get Modules
     Nameplates.Module = mUI:GetModule("mUI.Modules.Nameplates")
@@ -258,27 +257,6 @@ function Nameplates:OnInitialize()
                     return mUI.db.profile.nameplates.smartstacking
                 end,
                 order = 14
-            },
-            colors = {
-                name = "NPC Colors",
-                desc = "Enable/Disable custom colors.\n\n|cffffff00Info:|r Colors for NPCs can be edited by clicking on the 'Change NPC Colors' Button",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.nameplates.colors = val
-                end,
-                get = function()
-                    return mUI.db.profile.nameplates.colors
-                end,
-                order = 15
-            },
-            npccolors = {
-                name = "Change NPC Colors",
-                desc = "Change the Colors of NPCs",
-                type = "execute",
-                func = function()
-                    mUI:SwitchSettings("mUIOptions_NPCColors_Tab")
-                end,
-                order = 16
             }
         }
     }

@@ -28,10 +28,10 @@ function UF_Textures:OnInitialize()
         boss3 = Boss3TargetFrame.healthbar,
         boss4 = Boss4TargetFrame.healthbar,
         boss5 = Boss5TargetFrame.healthbar,
-        party1 = PartyMemberFrame1.healthbar,
-        party2 = PartyMemberFrame2.healthbar,
-        party3 = PartyMemberFrame3.healthbar,
-        party4 = PartyMemberFrame4.healthbar
+        party1 = PartyFrame.MemberFrame1.healthbar,
+        party2 = PartyFrame.MemberFrame2.healthbar,
+        party3 = PartyFrame.MemberFrame3.healthbar,
+        party4 = PartyFrame.MemberFrame4.healthbar
     }
 
     UF_Textures.powerbars = {
@@ -46,10 +46,10 @@ function UF_Textures:OnInitialize()
         boss3 = Boss3TargetFrame.manabar,
         boss4 = Boss4TargetFrame.manabar,
         boss5 = Boss5TargetFrame.manabar,
-        party1 = PartyMemberFrame1.manabar,
-        party2 = PartyMemberFrame2.manabar,
-        party3 = PartyMemberFrame3.manabar,
-        party4 = PartyMemberFrame4.manabar
+        party1 = PartyFrame.MemberFrame1.manabar,
+        party2 = PartyFrame.MemberFrame2.manabar,
+        party3 = PartyFrame.MemberFrame3.manabar,
+        party4 = PartyFrame.MemberFrame4.manabar
     }
 
     function UF_Textures:Update()

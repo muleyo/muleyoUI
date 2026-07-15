@@ -181,12 +181,6 @@ function Theme:Collections()
         mUI:Skin(WardrobeCollectionFrame.SetsCollectionFrame.RightInset)
         mUI:Skin(WardrobeCollectionFrame.SetsCollectionFrame.RightInset.NineSlice)
         mUI:Skin(WardrobeCollectionFrame.SetsTransmogFrame)
-        mUI:Skin(WardrobeFrame)
-        mUI:Skin(WardrobeFrame.NineSlice)
-        mUI:Skin(WardrobeTransmogFrame)
-        mUI:Skin(WardrobeTransmogFrame.Inset)
-        mUI:Skin(WardrobeTransmogFrame.Inset.NineSlice)
-        WardrobeTransmogFrame.Inset.BG:SetVertexColor(1, 1, 1) -- Reset Background Color
         mUI:Skin({WardrobeCollectionFrameScrollFrameScrollBarBottom, WardrobeCollectionFrameScrollFrameScrollBarMiddle,
                   WardrobeCollectionFrameScrollFrameScrollBarTop, WardrobeCollectionFrameScrollFrameScrollBarThumbTexture}, true)
 
@@ -205,6 +199,19 @@ function Theme:Collections()
         mUI:Skin(CollectionsJournalTab6)
         mUI:Skin(WardrobeCollectionFrameTab1)
         mUI:Skin(WardrobeCollectionFrameTab2)
+    end
+end
+
+function Theme:Transmog()
+    if TransmogFrame then
+        mUI:Skin(TransmogFrame)
+        mUI:Skin(TransmogFrame.NineSlice)
+        mUI:Skin(TransmogFrame.WardrobeCollection)
+        mUI:Skin(TransmogFrame.WardrobeCollection.TabContent)
+        mUI:Skin(TransmogFrame.WardrobeCollection:GetTabButton(1))
+        mUI:Skin(TransmogFrame.WardrobeCollection:GetTabButton(2))
+        mUI:Skin(TransmogFrame.WardrobeCollection:GetTabButton(3))
+        mUI:Skin(TransmogFrame.WardrobeCollection:GetTabButton(4))
     end
 end
 
@@ -566,10 +573,6 @@ function Theme:AddonList()
     mUI:Skin(AddonListInset)
     mUI:Skin(AddonListInset.NineSlice)
     mUI:Skin({AddonListBg, AddonListScrollFrameScrollBarTop, AddonListScrollFrameScrollBarMiddle, AddonListScrollFrameScrollBarBottom}, true)
-    AddonListEnableAllButton_RightSeparator:Hide()
-    AddonListDisableAllButton_RightSeparator:Hide()
-    AddonListOkayButton_LeftSeparator:Hide()
-    AddonListCancelButton_LeftSeparator:Hide()
 end
 
 function Theme:Bags()
@@ -1068,13 +1071,9 @@ function Theme:ClassBars()
         -- Totem Bar
         if (not Theme:IsHooked(TotemFrame, "OnEvent")) then
             Theme:SecureHookScript(TotemFrame, "OnEvent", function(frame)
-                local borderFrame1 = select(2, TotemFrameTotem1:GetChildren())
-                local borderFrame2 = select(2, TotemFrameTotem2:GetChildren())
-                local borderFrame3 = select(2, TotemFrameTotem3:GetChildren())
-
-                mUI:Skin(borderFrame1)
-                mUI:Skin(borderFrame2)
-                mUI:Skin(borderFrame3)
+                for totem, _ in frame.totemPool:EnumerateActive() do
+                    mUI:Skin({totem.Border}, true)
+                end
             end)
         end
 
@@ -1094,7 +1093,7 @@ end
 
 function Theme:Castbars()
     -- Castbars
-    mUI:Skin({CastingBarFrame.Border, TargetFrameSpellBar.Border, TargetFrameSpellBar.BorderShield, FocusFrameSpellBar.Border,
+    mUI:Skin({PlayerCastingBarFrame.Border, TargetFrameSpellBar.Border, TargetFrameSpellBar.BorderShield, FocusFrameSpellBar.Border,
               FocusFrameSpellBar.BorderShield, Boss1TargetFrameSpellBar.Border, Boss1TargetFrameSpellBar.BorderShield,
               Boss2TargetFrameSpellBar.Border, Boss2TargetFrameSpellBar.BorderShield, Boss3TargetFrameSpellBar.Border,
               Boss3TargetFrameSpellBar.BorderShield, Boss4TargetFrameSpellBar.Border, Boss4TargetFrameSpellBar.BorderShield,
@@ -1127,23 +1126,26 @@ function Theme:ExpansionLandingPage()
     end
 end
 
-function Theme:GameMenu()
-    local buttons = {"GameMenuButtonHelp", "GameMenuButtonStore", "GameMenuButtonOptions", "GameMenuButtonMacros", "GameMenuButtonAddons",
-                     "GameMenuButtonLogout", "GameMenuButtonQuit", "GameMenuButtonContinue", "mUI_EditModeButton", "mUI_MenuButton"}
-
-    for _, button in pairs(buttons) do
-        if mUI.db.profile.misc.skinmenu then
-            mUI:Skin({_G[button].Left, _G[button].Middle, _G[button].Right}, true)
-        else
-            _G[button].Left:SetDesaturated(false)
-            _G[button].Middle:SetDesaturated(false)
-            _G[button].Right:SetDesaturated(false)
-
-            _G[button].Left:SetVertexColor(1, 1, 1, 1)
-            _G[button].Middle:SetVertexColor(1, 1, 1, 1)
-            _G[button].Right:SetVertexColor(1, 1, 1, 1)
+function Theme:GameMenu(frame)
+    C_Timer.After(0, function()
+        for _, button in pairs(frame:GetLayoutChildren()) do
+            if mUI.db.profile.misc.skinmenu then
+                button.Left:SetDesaturated(true)
+                button.Middle:SetDesaturated(true)
+                button.Right:SetDesaturated(true)
+                button.Left:SetVertexColor(unpack(mUI:Color(0.15)))
+                button.Middle:SetVertexColor(unpack(mUI:Color(0.15)))
+                button.Right:SetVertexColor(unpack(mUI:Color(0.15)))
+            else
+                button.Left:SetDesaturated(false)
+                button.Middle:SetDesaturated(false)
+                button.Right:SetDesaturated(false)
+                button.Left:SetVertexColor(1, 1, 1, 1)
+                button.Middle:SetVertexColor(1, 1, 1, 1)
+                button.Right:SetVertexColor(1, 1, 1, 1)
+            end
         end
-    end
+    end)
 end
 
 function Theme:Frames()
@@ -1273,6 +1275,7 @@ function Theme:Update()
     Theme:Castbars()
     Theme:Auras()
     Theme:Frames()
+    Theme:Transmog()
 
     -- Tooltips
     for _, tooltip in next, Theme.tooltips do

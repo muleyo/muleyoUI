@@ -129,116 +129,45 @@ function Theme:ApplySkin(button, icon, unit, isDebuff)
     end
 end
 
+-- Disable Flashing of Buffs and Debuffs
+BuffFrame.AuraContainer.GetAuraWarningAlphaForDuration = nil
+DebuffFrame.AuraContainer.GetAuraWarningAlphaForDuration = nil
+
 HOUR_ONELETTER_ABBR = "%dh"
 DAY_ONELETTER_ABBR = "%dd"
 MINUTE_ONELETTER_ABBR = "%dm"
 SECOND_ONELETTER_ABBR = "%ds"
 
 function Theme:UpdatePlayerBuffs()
-    local index, aboveButton, prevButton, numEnchants, button, icon
+    local Children = BuffFrame.auraFrames
 
-    numEnchants = BuffFrame.numEnchants
+    for index, child in pairs(Children) do
+        local frame = select(index, BuffFrame.AuraContainer:GetChildren())
+        frame.TempEnchantBorder:SetAlpha(0)
 
-    if BuffFrame.numEnchants > 0 then
-        prevButton = _G["TempEnchant" .. numEnchants]
-        aboveButton = TempEnchant1
-    end
-
-    TempEnchant1:ClearAllPoints()
-    TempEnchant1:SetPoint("TOPRIGHT", mUIBuffFrame, "TOPRIGHT", 0, 0)
-
-    if not TempEnchant1.mUIBorder then
-        Theme:ApplySkin(TempEnchant1, TempEnchant1Icon, false)
-        TempEnchant1Border:Hide()
-    end
-    if not TempEnchant2.mUIBorder then
-        Theme:ApplySkin(TempEnchant2, TempEnchant2Icon, false)
-        TempEnchant2Border:Hide()
-    end
-    if not TempEnchant3.mUIBorder then
-        Theme:ApplySkin(TempEnchant3, TempEnchant3Icon, false)
-        TempEnchant3Border:Hide()
-    end
-
-    for i = 1, BUFF_ACTUAL_DISPLAY do
-        button = _G["BuffButton" .. i]
-        icon = _G["BuffButton" .. i .. "Icon"]
-
-        if not (button or icon) then
-            return
-        end
-
-        -- Check if consolidated
-        if not button.consolidated then
-            button.BuffFrameFlashState = 0
-            index = i + numEnchants
-
-            -- Anchor BuffButton to mUIBuffFrame
-            button:SetParent(mUIBuffFrame)
-            button:ClearAllPoints()
-
-            if index == 1 then
-                button:SetPoint("TOPRIGHT", mUIBuffFrame, "TOPRIGHT", 0, 0)
-            else
-                button:SetPoint("TOPRIGHT", prevButton, "TOPLEFT", -5, 0)
-            end
-
-            if index == 1 then
-                button:SetPoint("TOPRIGHT", mUIBuffFrame, "TOPRIGHT", 0, 0)
-                aboveButton = button
-            elseif index > 1 and mod(index, 11) == 1 then
-                button:SetPoint("TOPRIGHT", aboveButton, "BOTTOMRIGHT", 0, -5)
-                aboveButton = button
-            else
-                button:SetPoint("TOPRIGHT", prevButton, "TOPLEFT", -5, 0)
-            end
-
-            if not button.mUIBorder then
-                Theme:ApplySkin(button, icon)
-                Theme.aurabuttons[button] = "playerbuff"
-            end
-
-            button.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
-            TempEnchant1.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
-            TempEnchant2.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
-            TempEnchant3.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
-
-            prevButton = button
+        if not frame.mUIBorder then
+            Theme:ButtonDefault(frame)
         end
     end
 end
 
-function Theme:UpdatePlayerDebuffs(button, index)
-    local button = _G[button .. index]
-    local icon = _G["DebuffButton" .. index .. "Icon"]
+function Theme:UpdatePlayerDebuffs()
+    local Children = {DebuffFrame.AuraContainer:GetChildren()}
 
-    if not (button or icon) then
-        return
+    for index, child in pairs(Children) do
+        local frame = select(index, DebuffFrame.AuraContainer:GetChildren())
+        if not frame.mUIBorder then
+            Theme:ButtonDefault(frame, true)
+        end
+
+        if frame.DebuffBorder then
+            frame.DebuffBorder:Hide()
+
+            local color = {}
+            color.r, color.g, color.b = frame.DebuffBorder:GetVertexColor()
+            frame.mUIBorder:SetVertexColor(color.r, color.g, color.b, 1)
+        end
     end
-
-    local debuffType = select(4, UnitDebuff("player", index))
-    local color = Theme.debuffColors[debuffType or "none"]
-
-    -- Anchor BuffButton to mUIDebuffFrame
-    button:SetParent(mUIDebuffFrame)
-    button:ClearAllPoints()
-
-    if index == 1 then
-        button:SetPoint("TOPRIGHT", mUIDebuffFrame, "TOPRIGHT", 0, 0)
-    elseif index > 1 and mod(index, 10) == 1 then
-        button:SetPoint("TOPRIGHT", _G["DebuffButton" .. (index - 10)], "BOTTOMRIGHT", 0, -5)
-    else
-        button:SetPoint("TOPRIGHT", _G["DebuffButton" .. (index - 1)], "TOPLEFT", -5, 0)
-    end
-
-    if not button.mUIBorder then
-        Theme:ApplySkin(button, icon)
-        Theme.aurabuttons[button] = "playerdebuff"
-        _G["DebuffButton" .. index .. "Border"]:Hide()
-    end
-
-    -- Set Debuff Color
-    button.mUIBorder:SetVertexColor(color.r, color.g, color.b)
 end
 
 function Theme:UpdateUnitframeAuras(frame)
@@ -348,6 +277,44 @@ function Theme:UpdateUnitframeAuraPositions(aura, auraName, numAuras, numOpposit
     end
 end
 
+function Theme:UpdateRaidframeAuras(aura)
+    if not aura.mUIBorder then
+        aura.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+        aura.mUIBorder = aura:CreateTexture(nil, "OVERLAY", nil, 7)
+        aura.mUIBorder:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\border.png]])
+        aura.mUIBorder:SetPoint("TOPLEFT", aura.icon, "TOPLEFT", -1, 1)
+        aura.mUIBorder:SetPoint("BOTTOMRIGHT", aura.icon, "BOTTOMRIGHT", 1, -1)
+        if aura.border then
+            local r, g, b = aura.border:GetVertexColor()
+            aura.mUIBorder:SetVertexColor(r, g, b, 1)
+            aura.border:Hide()
+        else
+            aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
+        end
+
+        -- Mask
+        aura.mask = aura:CreateMaskTexture()
+        aura.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask.png]], "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+        aura.mask:SetAllPoints(aura.icon)
+        aura.icon:AddMaskTexture(aura.mask)
+
+        -- Cooldown Swipe
+        aura.cooldown:SetSwipeTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask.png]])
+        aura.cooldown:SetSwipeColor(0.2, 0.2, 0.2, 0.75)
+
+        aura.count:ClearAllPoints()
+        aura.count:SetPoint("BOTTOMRIGHT", aura.icon, "BOTTOMRIGHT", -1.5, 2.5)
+    else
+        if aura.border then
+            local r, g, b = aura.border:GetVertexColor()
+            aura.mUIBorder:SetVertexColor(r, g, b, 1)
+            aura.border:Hide()
+        else
+            aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
+        end
+    end
+end
+
 function Theme:AuraPositions()
     -- Buffs - Text Positioning
     for i = 1, #BuffFrame.auraFrames do
@@ -429,5 +396,9 @@ function Theme:AuraPositions()
                 end
             end
         end
+
+        --[[if DebuffFrame.auraFrames[i].DebuffBorder then
+            DebuffFrame.auraFrames[i].DebuffBorder:SetAlpha(0)
+        end]]
     end
 end
