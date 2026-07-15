@@ -9,7 +9,5 @@
     <Include file="Chat.lua" />
     <Include file="Misc.lua" />
     <Include file="Profiles.lua" />
-    <Include file="ProfilesExport.lua" />
-    <Include file="ProfilesImport.lua" />
     <Include file="About.lua" />
 </Ui>

@@ -7,9 +7,6 @@ function Core:OnInitialize()
     -- Load Database
     Core.db = mUI.db.profile
 
-    -- Libraries
-    local Config = LibStub("AceConfig-3.0")
-
     -- Get Modules
     Core.modules = {}
     Core.modules.general = mUI:GetModule("mUI.Modules.General")
@@ -28,6 +25,12 @@ function Core:OnInitialize()
     Core.layouts.general = mUI:GetModule("mUI.Config.Layouts.General")
     Core.layouts.actionbars = mUI:GetModule("mUI.Config.Layouts.Actionbars")
     Core.layouts.unitframes = mUI:GetModule("mUI.Config.Layouts.Unitframes")
+    -- Raidframes is currently only split out into its own tab/layout module
+    -- for Mainline - Mists/TBC/Vanilla still have raidframe options folded
+    -- into their combined Unitframes.lua layout.
+    if mUI:GameVersion()["Mainline"] then
+        Core.layouts.raidframes = mUI:GetModule("mUI.Config.Layouts.Raidframes")
+    end
     Core.layouts.castbars = mUI:GetModule("mUI.Config.Layouts.Castbars")
     Core.layouts.nameplates = mUI:GetModule("mUI.Config.Layouts.Nameplates")
     Core.layouts.tooltips = mUI:GetModule("mUI.Config.Layouts.Tooltips")
@@ -35,12 +38,7 @@ function Core:OnInitialize()
     Core.layouts.chat = mUI:GetModule("mUI.Config.Layouts.Chat")
     Core.layouts.misc = mUI:GetModule("mUI.Config.Layouts.Misc")
     Core.layouts.profiles = mUI:GetModule("mUI.Config.Layouts.Profiles")
-    Core.layouts.profilesImport = mUI:GetModule("mUI.Config.Layouts.ProfilesImport")
-    Core.layouts.profilesExport = mUI:GetModule("mUI.Config.Layouts.ProfilesExport")
     Core.layouts.about = mUI:GetModule("mUI.Config.Layouts.About")
-    if mUI:GameVersion()["Mists"] or mUI:GameVersion()["TBC"] then
-        Core.layouts.NPCColors = mUI:GetModule("mUI.Config.Layouts.NPCColors")
-    end
 
     -- Enable Modules
     if Core.db.general.enabled then
@@ -79,23 +77,21 @@ function Core:OnInitialize()
         Core.modules.misc:Enable()
     end
 
-    -- Register Options
-    Config:RegisterOptionsTable("mUIOptions_General_Tab", Core.layouts.general:GetOptions())
-    Config:RegisterOptionsTable("mUIOptions_Actionbars_Tab", Core.layouts.actionbars:GetOptions())
-    Config:RegisterOptionsTable("mUIOptions_Unitframes_Tab", Core.layouts.unitframes:GetOptions())
-    Config:RegisterOptionsTable("mUIOptions_Castbars_Tab", Core.layouts.castbars:GetOptions())
-    Config:RegisterOptionsTable("mUIOptions_Nameplates_Tab", Core.layouts.nameplates:GetOptions())
-    Config:RegisterOptionsTable("mUIOptions_Tooltips_Tab", Core.layouts.tooltips:GetOptions())
-    Config:RegisterOptionsTable("mUIOptions_MapMinimap_Tab", Core.layouts.mapminimap:GetOptions())
-    Config:RegisterOptionsTable("mUIOptions_Chat_Tab", Core.layouts.chat:GetOptions())
-    Config:RegisterOptionsTable("mUIOptions_Misc_Tab", Core.layouts.misc:GetOptions())
-    Config:RegisterOptionsTable("mUIOptions_Profiles_Tab", Core.layouts.profiles:GetOptions())
-    Config:RegisterOptionsTable("mUIOptions_ProfilesExport_Tab", Core.layouts.profilesExport:GetOptions())
-    Config:RegisterOptionsTable("mUIOptions_ProfilesImport_Tab", Core.layouts.profilesImport:GetOptions())
-    Config:RegisterOptionsTable("mUIOptions_About_Tab", Core.layouts.about:GetOptions())
-    if mUI:GameVersion()["Mists"] or mUI:GameVersion()["TBC"] then
-        Config:RegisterOptionsTable("mUIOptions_NPCColors_Tab", Core.layouts.NPCColors:GetOptions())
+    -- Register Options (keys keep the former AceConfig app names, see Config/GUI/Registry.lua)
+    mUI.mGUI:RegisterCategory("mUIOptions_General_Tab", Core.layouts.general:GetOptions())
+    mUI.mGUI:RegisterCategory("mUIOptions_Actionbars_Tab", Core.layouts.actionbars:GetOptions())
+    mUI.mGUI:RegisterCategory("mUIOptions_Unitframes_Tab", Core.layouts.unitframes:GetOptions())
+    if Core.layouts.raidframes then
+        mUI.mGUI:RegisterCategory("mUIOptions_Raidframes_Tab", Core.layouts.raidframes:GetOptions())
     end
+    mUI.mGUI:RegisterCategory("mUIOptions_Castbars_Tab", Core.layouts.castbars:GetOptions())
+    mUI.mGUI:RegisterCategory("mUIOptions_Nameplates_Tab", Core.layouts.nameplates:GetOptions())
+    mUI.mGUI:RegisterCategory("mUIOptions_Tooltips_Tab", Core.layouts.tooltips:GetOptions())
+    mUI.mGUI:RegisterCategory("mUIOptions_MapMinimap_Tab", Core.layouts.mapminimap:GetOptions())
+    mUI.mGUI:RegisterCategory("mUIOptions_Chat_Tab", Core.layouts.chat:GetOptions())
+    mUI.mGUI:RegisterCategory("mUIOptions_Misc_Tab", Core.layouts.misc:GetOptions())
+    mUI.mGUI:RegisterCategory("mUIOptions_Profiles_Tab", Core.layouts.profiles:GetOptions())
+    mUI.mGUI:RegisterCategory("mUIOptions_About_Tab", Core.layouts.about:GetOptions())
 end
 
 function Core:OnEnable()

@@ -16,6 +16,7 @@ function Style:OnInitialize()
     -- Tables
     Style.castbars = {
         player = "PlayerCastingBarFrame",
+        playerOverlay = "OverlayPlayerCastingBarFrame",
         target = "TargetFrameSpellBar",
         focus = "FocusFrameSpellBar",
         boss1 = "Boss1TargetFrameSpellBar",
@@ -29,7 +30,7 @@ function Style:OnInitialize()
     Style.textfunc = TargetFrameSpellBar.Text.SetText
 
     function Style:EnableStyle(unit, castbar)
-        if unit == "player" then
+        if unit == "player" or unit == "playerOverlay" then
             _G[castbar]:SetSize(209, 18)
             _G[castbar].StandardGlow:Hide()
             _G[castbar].TextBorder:Hide()
@@ -63,7 +64,7 @@ function Style:OnInitialize()
 
     function Style:DisableStyle()
         for unit, castbar in pairs(Style.castbars) do
-            if unit == "player" then
+            if unit == "player" or unit == "playerOverlay" then
                 _G[castbar]:SetSize(208.00001525879, 11.000000953674)
                 _G[castbar].StandardGlow:Show()
                 _G[castbar].TextBorder:Show()
@@ -98,10 +99,40 @@ function Style:OnEnable()
     Style:SecureHookScript(PlayerCastingBarFrame, "OnEvent", function()
         Style:EnableStyle("player", "PlayerCastingBarFrame")
     end)
+
+    Style:SecureHookScript(OverlayPlayerCastingBarFrame, "OnEvent", function()
+        Style:EnableStyle("playerOverlay", "OverlayPlayerCastingBarFrame")
+    end)
+
+    Style:SecureHook(OverlayPlayerCastingBarFrame, "SetLook", function()
+        Style:EnableStyle("playerOverlay", "OverlayPlayerCastingBarFrame")
+    end)
+
+    local function ReapplyPlayerCastbarStyle()
+        if PlayerCastingBarFrame:IsShown() then
+            Style:EnableStyle("player", "PlayerCastingBarFrame")
+        end
+        if OverlayPlayerCastingBarFrame:IsShown() then
+            Style:EnableStyle("playerOverlay", "OverlayPlayerCastingBarFrame")
+        end
+    end
+
+    for _, signal in ipairs({"PlayerSpellsFrame.TalentTab.Show", "PlayerSpellsFrame.TalentTab.Hide", "PlayerSpellsFrame.SpecFrame.Show",
+                             "PlayerSpellsFrame.SpecFrame.Hide", "PlayerSpellsFrame.SpecFrame.ActivateSpec", "PlayerSpellsFrame.CloseFrame",
+                             "TalentFrameBase.ButtonsUpdated"}) do
+        EventRegistry:RegisterCallback(signal, ReapplyPlayerCastbarStyle, Style)
+    end
 end
 
 function Style:OnDisable()
     -- Disable Style
     Style:UnhookAll()
+
+    for _, signal in ipairs({"PlayerSpellsFrame.TalentTab.Show", "PlayerSpellsFrame.TalentTab.Hide", "PlayerSpellsFrame.SpecFrame.Show",
+                             "PlayerSpellsFrame.SpecFrame.Hide", "PlayerSpellsFrame.SpecFrame.ActivateSpec", "PlayerSpellsFrame.CloseFrame",
+                             "TalentFrameBase.ButtonsUpdated"}) do
+        EventRegistry:UnregisterCallback(signal, Style)
+    end
+
     Style:DisableStyle()
 end

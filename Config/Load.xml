@@ -1,4 +1,23 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Include file="GUI\Init.lua" />
+    <Include file="GUI\Widgets\Button.lua" />
+    <Include file="GUI\Widgets\Checkbox.lua" />
+    <Include file="GUI\Widgets\Radio.lua" />
+    <Include file="GUI\Widgets\Dropdown.lua" />
+    <Include file="GUI\Widgets\Dropdown_Font.lua" />
+    <Include file="GUI\Widgets\Dropdown_Statusbar.lua" />
+    <Include file="GUI\Widgets\Slider.lua" />
+    <Include file="GUI\Widgets\EditBox.lua" />
+    <Include file="GUI\Widgets\MultiLineEditBox.lua" />
+    <Include file="GUI\Widgets\ColorPicker.lua" />
+    <Include file="GUI\Widgets\Header.lua" />
+    <Include file="GUI\Widgets\Label.lua" />
+    <Include file="GUI\Widgets\SectionTabs.lua" />
+    <Include file="GUI\Renderer.lua" />
+    <Include file="GUI\Registry.lua" />
+    <Include file="GUI\Search.lua" />
+    <Include file="GUI\Preview.lua" />
     <Include file="Gui.lua" />
     <Include file="Install.lua" />
+    <Include file="Changelog.lua" />
 </Ui>

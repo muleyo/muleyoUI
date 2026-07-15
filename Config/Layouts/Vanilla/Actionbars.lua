@@ -207,9 +207,9 @@ function Actionbars:OnInitialize()
             enablemouseover = {
                 name = function()
                     if mUI.db.profile.actionbars.mouseover.enabled then
-                        return "|cFF00FF00Mouseover Enabled|r"
+                        return "|cFF00FF00Enabled|r"
                     else
-                        return "|cFFFF0000Mouseover Disabled|r"
+                        return "|cFFFF0000Disabled|r"
                     end
                 end,
                 desc = "Enable/Disable Mouseover Module",

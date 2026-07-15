@@ -47,7 +47,7 @@ function Theme:Blacklist()
         [select(5, CommunitiesFrame.GuildBenefitsFrame.FactionFrame.Bar:GetRegions())] = true,
         [select(2, ClubFinderGuildFinderFrame.ClubFinderSearchTab:GetRegions())] = true,
         [select(2, ClubFinderGuildFinderFrame.ClubFinderPendingTab:GetRegions())] = true,
-        [select(18, FriendsFrame:GetRegions())] = true,
+        [select(19, FriendsFrame:GetRegions())] = true,
         [select(18, GossipFrame:GetRegions())] = true,
         [select(18, MailFrame:GetRegions())] = true,
         [select(9, ReportFrame:GetRegions())] = true,

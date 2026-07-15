@@ -36,58 +36,30 @@ function Textures:OnInitialize()
         end
 
         if nameplate.unit then
+            -- NOTE: always reapply (no "skip if already set" cache check) -
+            -- WoW recycles/reuses nameplate frame objects for different units
+            -- (e.g. when plates go off/on screen from turning your character),
+            -- and silently resets the health bar texture back to default when
+            -- it reassigns a frame - a cache keyed on the frame reference can't
+            -- detect that, so it must be unconditionally reapplied every time.
             if Textures.db.texture == "None" then
                 if not UnitIsUnit(nameplate.unit, "focus") then
-                    if Textures.nameplates[nameplate] == "None" then
-                        return
-                    end
-
                     nameplate.healthBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-TargetingFrame-BarFill]])
-
-                    Textures.nameplates[nameplate] = "None"
                 else
                     if Textures.db.focus then
-                        if Textures.nameplates[nameplate] == "Focus" then
-                            return
-                        end
                         nameplate.healthBar:SetStatusBarTexture([[Interface\AddOns\mUI\Media\Textures\Nameplates\focusTexture]])
-
-                        Textures.nameplates[nameplate] = "Focus"
                     else
-                        if Textures.nameplates[nameplate] == "defaultFocus" then
-                            return
-                        end
                         nameplate.healthBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-TargetingFrame-BarFill]])
-
-                        Textures.nameplates[nameplate] = "None"
                     end
                 end
             else
                 if not UnitIsUnit(nameplate.unit, "focus") then
-                    if Textures.nameplates[nameplate] == "Custom" then
-                        return
-                    end
-
                     nameplate.healthBar:SetStatusBarTexture(texture)
-
-                    Textures.nameplates[nameplate] = "Custom"
                 else
                     if Textures.db.focus then
-                        if Textures.nameplates[nameplate] == "Focus" then
-                            return
-                        end
-
                         nameplate.healthBar:SetStatusBarTexture([[Interface\AddOns\mUI\Media\Textures\Nameplates\focusTexture]])
-
-                        Textures.nameplates[nameplate] = "Focus"
                     else
-                        if Textures.nameplates[nameplate] == "Custom" then
-                            return
-                        end
-
                         nameplate.healthBar:SetStatusBarTexture(texture)
-
-                        Textures.nameplates[nameplate] = "Custom"
                     end
                 end
             end
@@ -111,9 +83,9 @@ function Textures:OnEnable()
     Textures.textures:RegisterEvent("PLAYER_TARGET_CHANGED")
     Textures.textures:RegisterEvent("NAME_PLATE_CREATED")
     Textures.textures:RegisterEvent("NAME_PLATE_UNIT_ADDED")
-    -- Textures.textures:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
+    Textures.textures:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
 
-    Textures:SecureHookScript(Textures.textures, "OnEvent", function(_, event)
+    Textures:SecureHookScript(Textures.textures, "OnEvent", function(_, event, unit)
         Textures:RefreshNameplates()
     end)
 end

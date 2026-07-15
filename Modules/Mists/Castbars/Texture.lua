@@ -9,7 +9,7 @@ function Texture:OnInitialize()
 
     -- Tables
     Texture.castbars = {
-        player = "CastingBarFrame",
+        player = "PlayerCastingBarFrame",
         target = "TargetFrameSpellBar",
         focus = "FocusFrameSpellBar",
         boss1 = "Boss1TargetFrameSpellBar",

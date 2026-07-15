@@ -5,9 +5,6 @@ mUI:SetDefaultModuleState(false)
 
 -- Register Slash Commands
 function mUI:OnInitialize()
-    -- Load Libraries
-    local ACD = LibStub("AceConfigDialog-3.0-mUI")
-
     self:RegisterChatCommand("mui", "SlashCommand")
     self:RegisterChatCommand("rl", ReloadUI)
     self:RegisterChatCommand("fs", function()
@@ -33,11 +30,7 @@ function mUI:OnInitialize()
     end
 
     function self:SwitchSettings(panel)
-        local gui = mUI:GetModule("mUI.Config.Gui")
-        C_Timer.After(0, function()
-            gui.container:ReleaseChildren()
-            ACD:Open(panel, gui.container)
-        end)
+        mUI.mGUI:Select(panel)
     end
 
     -- Open/Close GUI with smooth fade-in/out

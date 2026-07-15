@@ -19,23 +19,64 @@ function Theme:OnEnable()
 
     -- Buffs & Debuffs
     if not C_AddOns.IsAddOnLoaded("BlizzBuffsFacade") then
-        Theme:SecureHook("BuffFrame_UpdateAllBuffAnchors", function()
+        Theme.auras:RegisterEvent("PLAYER_ENTERING_WORLD")
+        Theme.auras:RegisterEvent("PLAYER_TARGET_CHANGED")
+        Theme.auras:RegisterEvent("PLAYER_FOCUS_CHANGED")
+        Theme.auras:RegisterEvent("WEAPON_ENCHANT_CHANGED")
+        Theme.auras:RegisterUnitEvent("UNIT_AURA", "player", "target", "focus")
+        Theme:SecureHookScript(Theme.auras, "OnEvent", function()
+            -- Player Auras
             Theme:UpdatePlayerBuffs()
+            Theme:UpdatePlayerDebuffs()
         end)
 
-        Theme:SecureHook("DebuffButton_UpdateAnchors", function(button, index)
-            Theme:UpdatePlayerDebuffs(button, index)
-        end)
-
-        Theme:SecureHook("TargetFrame_UpdateAuras", function(frame)
+        -- Target Frame
+        Theme:SecureHook(TargetFrame, "UpdateAuras", function(frame)
             Theme:UpdateUnitframeAuras(frame)
         end)
 
-        Theme:SecureHook("TargetFrame_UpdateAuraPositions",
+        Theme:SecureHook(TargetFrame, "UpdateAuraPositions",
             function(aura, auraName, numAuras, numOppositeAuras, largeAuraList, updateFunc, maxRowWidth, offsetX, mirrorAurasVertically)
                 Theme:UpdateUnitframeAuraPositions(aura, auraName, numAuras, numOppositeAuras, largeAuraList, updateFunc, maxRowWidth, offsetX,
                     mirrorAurasVertically)
             end)
+
+        -- Focus Frame
+        Theme:SecureHook(FocusFrame, "UpdateAuras", function(frame)
+            Theme:UpdateUnitframeAuras(frame)
+        end)
+
+        Theme:SecureHook(FocusFrame, "UpdateAuraPositions",
+            function(aura, auraName, numAuras, numOppositeAuras, largeAuraList, updateFunc, maxRowWidth, offsetX, mirrorAurasVertically)
+                Theme:UpdateUnitframeAuraPositions(aura, auraName, numAuras, numOppositeAuras, largeAuraList, updateFunc, maxRowWidth, offsetX,
+                    mirrorAurasVertically)
+            end)
+
+        --[[if mUI.db.profile.unitframes.raidframes.skinicons then
+            Theme:SecureHook("CompactUnitFrame_UpdateAuras", function(frame)
+                if not frame or frame:IsForbidden() then
+                    return
+                end
+
+                -- Check if frame is Raid/Party
+                local name = frame:GetName()
+                if name and name:match("^Compact") then
+                    if frame.debuffFrames then
+                        for i = 1, #frame.debuffFrames do
+                            Theme:UpdateRaidframeAuras(frame.debuffFrames[i])
+                        end
+                    end
+
+                    if frame.buffFrames then
+                        for i = 1, #frame.buffFrames do
+                            Theme:UpdateRaidframeAuras(frame.buffFrames[i])
+                        end
+                    end
+                end
+            end)
+        end]]
+
+        Theme:SecureHook(AuraFrameMixin, "UpdateAuraButtons", Theme.AuraPositions)
     end
 
     -- Castbar Icon Skins
@@ -46,11 +87,8 @@ function Theme:OnEnable()
         Theme:StyleTooltip(frame)
     end)
 
-    -- Update ActionButtons (re-skin after Blizzard resets visuals)
+    -- Update ActionButtons
     Theme:Actionbars()
-    Theme:SecureHook("ActionButton_OnUpdate", function(button)
-        Theme:StyleButton(button, "Actionbar")
-    end)
 
     -- Mirror Timer
     Theme:SecureHookScript(MirrorTimer1, "OnEvent", function(frame)
@@ -58,7 +96,7 @@ function Theme:OnEnable()
     end)
 
     Theme:SecureHookScript(GameMenuFrame, "OnShow", function(frame)
-        Theme:GameMenu()
+        Theme:GameMenu(frame)
     end)
 
     -- Remove Buff Blinking Animation
@@ -129,6 +167,10 @@ function Theme:OnEnable()
             Theme:ItemUpgrade()
         elseif (addon == "Blizzard_ReforgingUI") then
             Theme:Reforging()
+        elseif (addon == "Blizzard_GroupFinder_VanillaStyle") then
+            Theme:LFG()
+        elseif (addon == "Blizzard_Transmog") then
+            Theme:Transmog()
         end
     end)
 end

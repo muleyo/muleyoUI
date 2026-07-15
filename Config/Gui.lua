@@ -5,36 +5,16 @@ function Gui:OnInitialize()
     Gui.db = mUI.db.profile.gui
 
     -- Libraries
-    local AceGUI = LibStub("AceGUI-3.0")
-    local ACD = LibStub("AceConfigDialog-3.0-mUI")
-    local LSM = LibStub("LibSharedMedia-3.0")
-    local font = LSM:Fetch('font', mUI.db.profile.general.font)
+    local mGUI = mUI.mGUI
 
-    -- Create Custom Options Frame
+    -- Main Window (dimensions pixel-snapped so the border renders on all edges)
     Gui.frame = CreateFrame("Frame", "mUIOptions", UIParent, "BackdropTemplate")
-
-    -- Set FrameStrata, Size and Default Position
     Gui.frame:SetFrameStrata("DIALOG")
     Gui.frame:SetSize(1100, 600)
     Gui.frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
     Gui.frame:SetScale(Gui.db.scale)
-
-    -- Set Backdrop
-    local pixel = mUI:Scale(1)
-    Gui.frame:SetBackdrop({
-        bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
-        tileSize = pixel,
-        edgeSize = pixel
-    })
-
-    -- Disable pixel snapping on border textures
-    for _, region in next, {Gui.frame:GetRegions()} do
-        if region and region.IsObjectType then
-            mUI:DisablePixelSnap(region)
-        end
-    end
-
-    Gui.frame:SetBackdropColor(0.05, 0.05, 0.05, 0.95)
+    mGUI:ApplyBackdrop(Gui.frame, "bg", false)
+    mGUI:ApplyWindowArt(Gui.frame)
 
     -- Make frame draggable
     Gui.frame:SetMovable(true)
@@ -42,187 +22,277 @@ function Gui:OnInitialize()
     Gui.frame:SetClampedToScreen(true)
     Gui.frame:RegisterForDrag("LeftButton")
 
-    -- Center GUI on login/reload
-    Gui.frame:ClearAllPoints()
-    Gui.frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
-
-    -- Create Header Bar
+    -- Header Bar
     local header = CreateFrame("Frame", nil, Gui.frame, "BackdropTemplate")
-    header:SetPoint("TOPLEFT", Gui.frame, "TOPLEFT", 2, -2)
-    header:SetPoint("TOPRIGHT", Gui.frame, "TOPRIGHT", -2, -2)
-    header:SetHeight(40)
-    header:SetBackdrop({
-        bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
-        tile = false
-    })
-    header:SetBackdropColor(0.02, 0.02, 0.02, 1)
+    -- PixelUtil (not plain SetPoint with the precomputed `px`) so THIS hop of
+    -- the anchor chain is independently snapped to header's own effective
+    -- pixel grid, instead of accumulating drift from reusing one constant
+    -- computed against Gui.frame all the way down to deeply-nested children.
+    PixelUtil.SetPoint(header, "TOPLEFT", Gui.frame, "TOPLEFT", 1, -1)
+    PixelUtil.SetPoint(header, "TOPRIGHT", Gui.frame, "TOPRIGHT", -1, -1)
+    header:SetHeight(48)
+    mGUI:ApplyBackdrop(header, "bgAlt", false, 0.55)
     header:EnableMouse(true)
+    -- Drag threshold: StartMoving()/StopMovingOrSizing() track the cursor
+    -- continuously, so even a plain click (no intentional drag) still moves
+    -- Gui.frame by a tiny amount from ordinary mouse jitter — enough to land
+    -- searchBox at a slightly different sub-pixel screen position and make
+    -- its 1px border rasterize inconsistently. Only actually start moving
+    -- once the cursor has moved a few real pixels, so a plain click leaves
+    -- the window (and searchBox) completely untouched.
+    local DRAG_THRESHOLD = 4
+    local dragStartX, dragStartY, isDragging
     header:SetScript("OnMouseDown", function(_, button)
         if button == "LeftButton" then
-            Gui.frame:StartMoving()
+            dragStartX, dragStartY = GetCursorPosition()
+            isDragging = false
+            header:SetScript("OnUpdate", function()
+                local x, y = GetCursorPosition()
+                local scale = UIParent:GetEffectiveScale()
+                local dx, dy = (x - dragStartX) / scale, (y - dragStartY) / scale
+                if not isDragging and (math.abs(dx) > DRAG_THRESHOLD or math.abs(dy) > DRAG_THRESHOLD) then
+                    isDragging = true
+                    Gui.frame:StartMoving()
+                end
+            end)
         end
     end)
     header:SetScript("OnMouseUp", function(_, button)
         if button == "LeftButton" then
-            Gui.frame:StopMovingOrSizing()
+            header:SetScript("OnUpdate", nil)
+            if isDragging then
+                Gui.frame:StopMovingOrSizing()
+            end
+            isDragging = false
         end
     end)
 
-    -- Title Text
-    local titleText = header:CreateFontString(nil, "OVERLAY")
-    titleText:SetPoint("LEFT", header, "LEFT", 15, 0)
-    titleText:SetFont(font, 14, "OUTLINE")
-    titleText:SetText("|cff009cffmuleyo|r|cffffd100UI|r " .. C_AddOns.GetAddOnMetadata("mUI", "version"))
+    -- Version (top left corner)
+    local versionText = header:CreateFontString(nil, "OVERLAY")
+    versionText:SetPoint("TOPLEFT", header, "TOPLEFT", 10, -8)
+    mGUI:SetFont(versionText, 12)
+    versionText:SetText(C_AddOns.GetAddOnMetadata("mUI", "Version"))
+    versionText:SetTextColor(unpack(mGUI.Colors.version))
 
-    -- Create Slider Value Text
-    local scaleText = header:CreateFontString(nil, "OVERLAY")
-    scaleText:SetPoint("RIGHT", header, "RIGHT", -120, 0)
-    scaleText:SetFont(font, 12, "OUTLINE")
-    scaleText:SetText(math.floor(Gui.db.scale * 100) .. "%")
-    scaleText:SetTextColor(1, 0.82, 0, 1)
+    -- Logo (centered)
+    local logo = header:CreateTexture(nil, "ARTWORK")
+    logo:SetPoint("CENTER", header, "CENTER", 0, 0)
+    logo:SetSize(70, 70)
+    logo:SetTexture("Interface\\AddOns\\mUI\\Media\\logo.png")
 
-    -- Create Scale Slider
-    local scaleSlider = CreateFrame("Slider", nil, header, "MinimalSliderTemplate")
-    scaleSlider:SetPoint("RIGHT", header, "RIGHT", -40, 0)
-    scaleSlider:SetFrameLevel(header:GetFrameLevel() + 1)
-    scaleSlider:SetSize(80, 10)
-    scaleSlider:SetMinMaxValues(0.8, 1.5)
-    scaleSlider:SetValue(Gui.db.scale)
-    scaleSlider:SetValueStep(0.01)
-    scaleSlider:SetObeyStepOnDrag(true)
-    scaleSlider:HookScript("OnValueChanged", function(_, value)
-        Gui.db.scale = value
-        scaleText:SetText(math.floor(value * 100) .. "%")
-    end)
-    scaleSlider:HookScript("OnMouseUp", function()
-        Gui.frame:SetScale(Gui.db.scale)
-    end)
-
-    -- Close Button
+    -- Close Button, tinted to match the dark/blue theme instead of stock red
     local closeButton = CreateFrame("Button", nil, header)
     closeButton:SetPoint("RIGHT", header, "RIGHT", -10, 0)
-    closeButton:SetSize(20, 20)
-
-    -- Normal texture
-    local normalTex = closeButton:CreateTexture(nil, "ARTWORK")
-    normalTex:SetAllPoints()
-    normalTex:SetTexture("Interface\\AddOns\\mUI\\Media\\Textures\\Core\\close")
-    closeButton.normalTex = normalTex
-
-    -- Highlight texture
-    local highlightTex = closeButton:CreateTexture(nil, "HIGHLIGHT")
-    highlightTex:SetAllPoints()
-    highlightTex:SetTexture("Interface\\AddOns\\mUI\\Media\\Textures\\Core\\close_highlight")
-
-    -- Create Sidebar for Tabs
-    local sidebar = CreateFrame("Frame", nil, Gui.frame, "BackdropTemplate")
-    sidebar:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, -1)
-    sidebar:SetPoint("BOTTOMLEFT", Gui.frame, "BOTTOMLEFT", 2, 2)
-    sidebar:SetWidth(200)
-    sidebar:SetBackdrop({
-        bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
-        tile = false
-    })
-    sidebar:SetBackdropColor(0.02, 0.02, 0.02, 0.9)
-
-    -- Create Content Area
-    local contentFrame = CreateFrame("Frame", nil, Gui.frame, "BackdropTemplate")
-    contentFrame:SetPoint("TOPLEFT", sidebar, "TOPRIGHT", 1, 0)
-    contentFrame:SetPoint("BOTTOMRIGHT", Gui.frame, "BOTTOMRIGHT", -2, 2)
-    contentFrame:SetBackdrop({
-        bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
-        tile = false
-    })
-    contentFrame:SetBackdropColor(0.03, 0.03, 0.03, 0.8)
-    contentFrame:SetBackdropColor(0.03, 0.03, 0.03, 0.8)
-
-    -- Create Options Container within Content Area
-    Gui.container = AceGUI:Create("SimpleGroup")
-    Gui.container:SetLayout("Fill")
-    Gui.container.frame:SetParent(contentFrame)
-    Gui.container.frame:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 10, -10)
-    Gui.container.frame:SetPoint("BOTTOMRIGHT", contentFrame, "BOTTOMRIGHT", -20, 10)
-    Gui.container.frame:SetClipsChildren(true)
-    Gui.container.frame:Show()
-
-    -- Hover effects
-    closeButton:SetScript("OnEnter", function(self)
-        self.normalTex:SetVertexColor(1, 0.3, 0.3)
-    end)
-
-    closeButton:SetScript("OnLeave", function(self)
-        self.normalTex:SetVertexColor(1, 1, 1)
-    end)
-
+    closeButton:SetSize(24, 24)
+    closeButton:SetNormalAtlas("RedButton-Exit")
+    closeButton:SetPushedAtlas("RedButton-exit-pressed")
+    closeButton:SetDisabledAtlas("RedButton-Exit-Disabled")
+    closeButton:SetHighlightAtlas("RedButton-Highlight", "ADD")
+    mGUI:TintIconButton(closeButton)
     closeButton:SetScript("OnClick", function()
-        Gui.container:ReleaseChildren()
-        local fadeInfo = {}
-        fadeInfo.mode = "OUT"
-        fadeInfo.timeToFade = 0.2
-        fadeInfo.finishedFunc = function()
-            Gui.frame:Hide()
-        end
-        UIFrameFade(Gui.frame, fadeInfo)
+        Gui:Close()
     end)
 
-    -- Create Sidebar Tabs
+    -- Sidebar
+    local sidebar = CreateFrame("Frame", nil, Gui.frame, "BackdropTemplate")
+    PixelUtil.SetPoint(sidebar, "TOPLEFT", header, "BOTTOMLEFT", 0, -1)
+    PixelUtil.SetPoint(sidebar, "BOTTOMLEFT", Gui.frame, "BOTTOMLEFT", 1, 1)
+    sidebar:SetWidth(200)
+    mGUI:ApplyBackdrop(sidebar, "bgAlt", false, 0.55)
+
+    -- Themed search box
+    local searchBox = CreateFrame("Frame", nil, sidebar, "BackdropTemplate")
+    PixelUtil.SetPoint(searchBox, "TOPLEFT", sidebar, "TOPLEFT", 10, -10)
+    PixelUtil.SetSize(searchBox, 180, 24)
+    mGUI:ApplyBackdrop(searchBox, "bgWidget", false)
+    mGUI:ApplyQuadBorder(searchBox, mGUI.Colors.border)
+    Gui.searchBox = searchBox
+
+    local searchIcon = searchBox:CreateTexture(nil, "OVERLAY")
+    searchIcon:SetPoint("LEFT", searchBox, "LEFT", 7, 0)
+    searchIcon:SetSize(12, 12)
+    searchIcon:SetAtlas("common-search-magnifyingglass")
+    searchIcon:SetDesaturated(true)
+    searchIcon:SetVertexColor(unpack(mGUI.Colors.textDim))
+
+    local searchEdit = CreateFrame("EditBox", nil, searchBox)
+    searchEdit:SetPoint("LEFT", searchIcon, "RIGHT", 6, 0)
+    searchEdit:SetPoint("RIGHT", searchBox, "RIGHT", -6, 0)
+    searchEdit:SetHeight(24)
+    searchEdit:SetAutoFocus(false)
+    mGUI:SetFont(searchEdit, 12)
+    searchEdit:SetTextColor(unpack(mGUI.Colors.text))
+    searchBox.editBox = searchEdit
+
+    local placeholder = searchEdit:CreateFontString(nil, "ARTWORK")
+    placeholder:SetPoint("LEFT", 2, 0)
+    mGUI:SetFont(placeholder, 12)
+    placeholder:SetTextColor(unpack(mGUI.Colors.textDim))
+    placeholder:SetText("Search")
+
+    searchEdit:SetScript("OnEscapePressed", searchEdit.ClearFocus)
+    searchEdit:SetScript("OnTextChanged", function(box, userInput)
+        placeholder:SetShown(box:GetText() == "")
+        if userInput and mGUI.Search then
+            mGUI.Search:OnTextChanged(box:GetText())
+        end
+    end)
+
+    -- Content Area — translucent so the window background art shows through
+    local contentFrame = CreateFrame("Frame", nil, Gui.frame, "BackdropTemplate")
+    PixelUtil.SetPoint(contentFrame, "TOPLEFT", sidebar, "TOPRIGHT", 1, 0)
+    PixelUtil.SetPoint(contentFrame, "BOTTOMRIGHT", Gui.frame, "BOTTOMRIGHT", -1, 1)
+    mGUI:ApplyBackdrop(contentFrame, "bg", false, 0.35)
+    Gui.contentFrame = contentFrame
+
+    -- Scrollable options page within the Content Area.
+    local scrollFrame = CreateFrame("ScrollFrame", nil, contentFrame, "ScrollFrameTemplate")
+    scrollFrame:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 16, -16)
+    scrollFrame:SetPoint("BOTTOMRIGHT", contentFrame, "BOTTOMRIGHT", -30, 16)
+
+    -- ScrollFrameTemplate's OnLoad picks its scroll bar template from the
+    -- global SCROLL_FRAME_SCROLL_BAR_TEMPLATE (Blizzard_SharedXML/
+    -- ScrollDefine.lua): "MinimalScrollBar" (retail look) on Mainline, but
+    -- the old chunky "WoWClassicScrollBar" on Mists/TBC/Vanilla. The Mists
+    -- client build DOES still ship/use "MinimalScrollBar" (its own
+    -- AuctionHouse/CharacterFrame/Collections panels use it) - it's just not
+    -- the generic default there - so replace the auto-created bar with our
+    -- own explicit "MinimalScrollBar" for a consistent retail-style
+    -- scrollbar on every version. Offsets match Mainline's own ScrollDefine.
+    if scrollFrame.ScrollBar then
+        scrollFrame.ScrollBar:Hide()
+        scrollFrame.ScrollBar:ClearAllPoints()
+    end
+    local scrollBar = CreateFrame("EventFrame", nil, scrollFrame, "MinimalScrollBar")
+    scrollBar:SetPoint("TOPLEFT", scrollFrame, "TOPRIGHT", 6, 2)
+    scrollBar:SetPoint("BOTTOMLEFT", scrollFrame, "BOTTOMRIGHT", 6, 5)
+    scrollFrame.ScrollBar = scrollBar
+    ScrollUtil.InitScrollFrameWithScrollBar(scrollFrame, scrollBar)
+    scrollBar:Show()
+    scrollBar:Update()
+    scrollBar:SetHideIfUnscrollable(true)
+    scrollBar:SetHideTrackIfThumbExceedsTrack(true)
+
+    local scrollChild = CreateFrame("Frame", nil, scrollFrame)
+    scrollChild:SetSize(1, 1)
+    scrollFrame:SetScrollChild(scrollChild)
+    Gui.scrollFrame = scrollFrame
+
+    mGUI:EnableSmoothScroll(scrollFrame)
+    mGUI.Renderer:SetHost(scrollFrame, scrollChild)
+
+    -- Close with fade-out
+    function Gui:Close()
+        mGUI:FadeHide(Gui.frame)
+    end
+
+    -- Sidebar Tabs
     Gui.tabs = {}
     local tabData = {{
         name = "General",
+        app = "mUIOptions_General_Tab",
         atlas = "poi-transmogrifier"
     }, {
         name = "Actionbars",
+        app = "mUIOptions_Actionbars_Tab",
         atlas = "NPE_Icon"
     }, {
         name = "Unitframes",
+        app = "mUIOptions_Unitframes_Tab",
         atlas = [[Interface\AddOns\mUI\Media\Textures\Config\charactercreateicons.png]],
         customAtlas = true,
         texCoords = {0.44482421875, 0.50732421875, 0.1279296875, 0.2529296875}
     }, {
         name = "Castbars",
+        app = "mUIOptions_Castbars_Tab",
         icon = [[Interface\Icons\Spell_Arcane_ArcaneResilience]]
     }, {
         name = "Nameplates",
+        app = "mUIOptions_Nameplates_Tab",
         atlas = [[Interface\AddOns\mUI\Media\Textures\Config\uitutorialnameplates.png]],
         customAtlas = true,
         texCoords = {0.3662109375, 0.7294921875, 0.2607421875, 0.5185546875}
     }, {
         name = "Tooltips",
+        app = "mUIOptions_Tooltips_Tab",
         atlas = "QuestTurnin"
     }, {
         name = "Map & Minimap",
+        app = "mUIOptions_MapMinimap_Tab",
         atlas = [[Interface\AddOns\mUI\Media\Textures\Config\objecticonsatlas.png]],
         customAtlas = true,
         texCoords = {0.2998046875, 0.3369140625, 0.2939453125, 0.3310546875}
     }, {
         name = "Chat",
+        app = "mUIOptions_Chat_Tab",
         atlas = "communities-icon-chat"
     }, {
         name = "Misc",
+        app = "mUIOptions_Misc_Tab",
         icon = [[Interface\Icons\INV_Misc_Gear_01]]
     }, {
         name = "Profiles",
+        app = "mUIOptions_Profiles_Tab",
         icon = [[Interface\Icons\INV_Misc_Note_01]]
     }, {
         name = "About",
-        icon = [[Interface\AddOns\mUI\Media\Logo64x64.png]]
+        app = "mUIOptions_About_Tab",
+        icon = [[Interface\AddOns\mUI\Media\Logo.png]]
     }}
+
+    -- Raidframes is currently only split out into its own tab for Mainline -
+    -- Mists/TBC/Vanilla still have raidframe options folded into the
+    -- Unitframes tab (see Core.lua), so there's no category for them here.
+    if mUI:GameVersion()["Mainline"] then
+        table.insert(tabData, 4, {
+            name = "Raidframes",
+            app = "mUIOptions_Raidframes_Tab",
+            icon = [[Interface\Icons\Spell_Holy_PrayerOfHealing02]]
+        })
+    end
+
+    local TAB_HEIGHT = 40
+    local TABS_TOP_OFFSET = 42 -- below the search box
+
+    local BLANK = "Interface\\ChatFrame\\ChatFrameBackground"
 
     local function CreateSidebarTab(parent, data, index)
         local button = CreateFrame("Button", nil, parent, "BackdropTemplate")
-        button:SetSize(196, 49)
-        button:SetPoint("TOPLEFT", parent, "TOPLEFT", 2, -2 - ((index - 1) * 50))
+        button:SetSize(196, TAB_HEIGHT - 1)
+        button:SetPoint("TOPLEFT", parent, "TOPLEFT", 2, -TABS_TOP_OFFSET - ((index - 1) * TAB_HEIGHT))
+        -- Very translucent base so the window background shimmers through
+        mGUI:ApplyBackdrop(button, "bgWidget", false, 0.18)
 
-        button:SetBackdrop({
-            bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
-            tile = false
-        })
-        button:SetBackdropColor(0.08, 0.08, 0.08, 0.8)
+        -- Hover highlight (faint white), shown on enter when not selected
+        local hoverTex = button:CreateTexture(nil, "BACKGROUND")
+        hoverTex:SetAllPoints()
+        hoverTex:SetTexture(BLANK)
+        hoverTex:SetVertexColor(1, 1, 1, 0.06)
+        hoverTex:Hide()
+        button.hoverTex = hoverTex
+
+        -- Selection highlight (accent), alpha animated in/out on select
+        local selTex = button:CreateTexture(nil, "BORDER")
+        selTex:SetAllPoints()
+        selTex:SetTexture(BLANK)
+        selTex:SetVertexColor(unpack(mGUI.Colors.accent))
+        selTex:SetAlpha(0)
+        button.selTex = selTex
+
+        -- Accent bar on the left edge of the selected tab
+        local selBar = button:CreateTexture(nil, "ARTWORK")
+        selBar:SetPoint("TOPLEFT")
+        selBar:SetPoint("BOTTOMLEFT")
+        selBar:SetWidth(3)
+        selBar:SetTexture(BLANK)
+        selBar:SetVertexColor(unpack(mGUI.Colors.accent))
+        selBar:SetAlpha(0)
+        button.selBar = selBar
 
         -- Icon
         local icon = button:CreateTexture(nil, "ARTWORK")
-        icon:SetSize(32, 32)
-        icon:SetPoint("LEFT", button, "LEFT", 8, 0)
+        icon:SetSize(22, 22)
+        icon:SetPoint("LEFT", button, "LEFT", 10, 0)
         if data.icon then
             icon:SetTexture(data.icon)
             icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
@@ -240,140 +310,140 @@ function Gui:OnInitialize()
         -- Text
         local text = button:CreateFontString(nil, "OVERLAY")
         text:SetPoint("LEFT", icon, "RIGHT", 10, 0)
-        text:SetFont(font, 13, "OUTLINE")
+        mGUI:SetFont(text, 13)
         text:SetText(data.name)
-        text:SetTextColor(0.8, 0.8, 0.8)
+        text:SetTextColor(unpack(mGUI.Colors.text))
         button.text = text
+
+        -- Enable/Disable toggle (right edge)
+        local toggle = mGUI.Widgets.Checkbox(button)
+        toggle:SetPoint("RIGHT", button, "RIGHT", -10, 0)
+        toggle:Hide()
+        mGUI:AttachTooltip(toggle, function()
+            return toggle:GetChecked() and "Enabled" or "Disabled"
+        end, function()
+            local action = toggle:GetChecked() and "off" or "on"
+            return ("Toggle this module %s.\n\n|cffffff00Info:|r Requires Reload"):format(action)
+        end, function()
+            return toggle:GetChecked() and {0, 1, 0} or {1, 0, 0}
+        end)
+        button.toggle = toggle
 
         -- Highlight
         button:SetScript("OnEnter", function(self)
             if not self.selected then
-                self:SetBackdropColor(0.12, 0.12, 0.12, 1)
+                self.hoverTex:Show()
                 self.text:SetTextColor(1, 1, 1)
             end
         end)
-
         button:SetScript("OnLeave", function(self)
             if not self.selected then
-                self:SetBackdropColor(0.08, 0.08, 0.08, 0.8)
-                self.text:SetTextColor(0.8, 0.8, 0.8)
+                self.hoverTex:Hide()
+                self.text:SetTextColor(unpack(mGUI.Colors.text))
             end
         end)
 
         return button
     end
 
-    -- Create all tab buttons
-    for i, data in ipairs(tabData) do
-        local tab = CreateSidebarTab(sidebar, data, i)
-        Gui.tabs[data.name] = tab
-    end
-
-    -- Function to select a tab
-    local function SelectTab(tabName)
+    -- Select a tab and open its options page (with a smooth highlight transition)
+    local SEL_ALPHA = 0.28
+    function Gui:SelectTab(tabName)
+        Gui.currentTab = tabName
         for name, tab in pairs(Gui.tabs) do
             if name == tabName then
                 tab.selected = true
-                tab:SetBackdropColor(0, 0.6, 1, 0.3)
-                tab.text:SetTextColor(0, 0.8, 1)
+                tab.hoverTex:Hide()
+                UIFrameFadeIn(tab.selTex, 0.2, tab.selTex:GetAlpha(), SEL_ALPHA)
+                UIFrameFadeIn(tab.selBar, 0.2, tab.selBar:GetAlpha(), 1)
+                tab.text:SetTextColor(unpack(mGUI.Colors.accent))
             else
+                if tab.selected then
+                    UIFrameFadeOut(tab.selTex, 0.2, tab.selTex:GetAlpha(), 0)
+                    UIFrameFadeOut(tab.selBar, 0.2, tab.selBar:GetAlpha(), 0)
+                end
                 tab.selected = false
-                tab:SetBackdropColor(0.08, 0.08, 0.08, 0.8)
-                tab.text:SetTextColor(0.8, 0.8, 0.8)
+                tab.text:SetTextColor(unpack(mGUI.Colors.text))
+            end
+        end
+
+        -- A lingering search results flyout would overlap the new page
+        if mGUI.Search and mGUI.Search.results then
+            mGUI.Search.results:Hide()
+        end
+
+        scrollFrame:SetVerticalScroll(0)
+        mGUI.Renderer:RenderCategory(Gui.apps[tabName])
+    end
+
+    -- Show a category by registry key. Hidden categories (no sidebar tab, e.g.
+    -- profile import/export) render without changing the tab selection.
+    function Gui:SelectByKey(key)
+        for name, app in pairs(Gui.apps) do
+            if app == key then
+                Gui:SelectTab(name)
+                return
+            end
+        end
+        scrollFrame:SetVerticalScroll(0)
+        mGUI.Renderer:RenderCategory(key)
+    end
+
+    -- Create all tab buttons
+    Gui.apps = {}
+    for i, data in ipairs(tabData) do
+        local tab = CreateSidebarTab(sidebar, data, i)
+        tab:SetScript("OnClick", function()
+            Gui:SelectTab(data.name)
+        end)
+        Gui.tabs[data.name] = tab
+        Gui.apps[data.name] = data.app
+    end
+
+    -- Show + wire the sidebar enable/disable toggles for categories that expose
+    -- an `enable` option (their in-page toggle is skipped by the renderer).
+    function Gui:RefreshSidebarToggles()
+        for name, tab in pairs(Gui.tabs) do
+            local enable = mGUI:GetEnableOption(mGUI.categories[Gui.apps[name]])
+            if enable then
+                tab.toggle:Show()
+                tab.toggle:SetChecked(enable.get and enable.get({}) or false)
+                tab.toggle.OnValueChanged = function(_, checked)
+                    if enable.set then
+                        enable.set({}, checked)
+                    end
+                end
+            else
+                tab.toggle:Hide()
             end
         end
     end
 
-    -- General Tab
-    Gui.tabs["General"]:SetScript("OnClick", function()
-        SelectTab("General")
-        Gui.container:ReleaseChildren()
-        ACD:Open("mUIOptions_General_Tab", Gui.container)
-    end)
-
-    -- Actionbars Tab
-    Gui.tabs["Actionbars"]:SetScript("OnClick", function()
-        SelectTab("Actionbars")
-        Gui.container:ReleaseChildren()
-        ACD:Open("mUIOptions_Actionbars_Tab", Gui.container)
-    end)
-
-    -- Unitframes Tab
-    Gui.tabs["Unitframes"]:SetScript("OnClick", function()
-        SelectTab("Unitframes")
-        Gui.container:ReleaseChildren()
-        ACD:Open("mUIOptions_Unitframes_Tab", Gui.container)
-    end)
-
-    -- Castbars Tab
-    Gui.tabs["Castbars"]:SetScript("OnClick", function()
-        SelectTab("Castbars")
-        Gui.container:ReleaseChildren()
-        ACD:Open("mUIOptions_Castbars_Tab", Gui.container)
-    end)
-
-    -- Nameplates Tab
-    Gui.tabs["Nameplates"]:SetScript("OnClick", function()
-        SelectTab("Nameplates")
-        Gui.container:ReleaseChildren()
-        ACD:Open("mUIOptions_Nameplates_Tab", Gui.container)
-    end)
-
-    -- Tooltips Tab
-    Gui.tabs["Tooltips"]:SetScript("OnClick", function()
-        SelectTab("Tooltips")
-        Gui.container:ReleaseChildren()
-        ACD:Open("mUIOptions_Tooltips_Tab", Gui.container)
-    end)
-
-    -- Map & Minimap Tab
-    Gui.tabs["Map & Minimap"]:SetScript("OnClick", function()
-        SelectTab("Map & Minimap")
-        Gui.container:ReleaseChildren()
-        ACD:Open("mUIOptions_MapMinimap_Tab", Gui.container)
-    end)
-
-    -- Chat Tab
-    Gui.tabs["Chat"]:SetScript("OnClick", function()
-        SelectTab("Chat")
-        Gui.container:ReleaseChildren()
-        ACD:Open("mUIOptions_Chat_Tab", Gui.container)
-    end)
-
-    -- Misc Tab
-    Gui.tabs["Misc"]:SetScript("OnClick", function()
-        SelectTab("Misc")
-        Gui.container:ReleaseChildren()
-        ACD:Open("mUIOptions_Misc_Tab", Gui.container)
-    end)
-
-    -- Profiles Tab
-    Gui.tabs["Profiles"]:SetScript("OnClick", function()
-        SelectTab("Profiles")
-        Gui.container:ReleaseChildren()
-        ACD:Open("mUIOptions_Profiles_Tab", Gui.container)
-    end)
-
-    -- About Tab
-    Gui.tabs["About"]:SetScript("OnClick", function()
-        SelectTab("About")
-        Gui.container:ReleaseChildren()
-        ACD:Open("mUIOptions_About_Tab", Gui.container)
-    end)
-
-    -- On Show
+    -- On Show — reopen on whatever tab the user was last viewing, defaulting
+    -- to General only the very first time the GUI is ever shown.
     Gui.frame:SetScript("OnShow", function()
-        SelectTab("General")
-        ACD:Open("mUIOptions_General_Tab", Gui.container)
+        Gui:RefreshSidebarToggles()
+        Gui:SelectTab(Gui.currentTab or "General")
+
+        if Gui.searchBox then
+            mGUI:ApplyQuadBorder(Gui.searchBox, mGUI.Colors.border)
+        end
     end)
 
-    -- On Hide
-    Gui.frame:SetScript("OnHide", function()
-        Gui.container:ReleaseChildren()
+    -- ESC key handler — deliberately NOT using UISpecialFrames, since that
+    -- system hides the frame instantly, bypassing Gui:Close()'s fade-out.
+    -- Handling ESCAPE ourselves lets it share the same smooth close as the
+    -- titlebar close button.
+    Gui.frame:EnableKeyboard(true)
+    Gui.frame:SetPropagateKeyboardInput(true)
+    Gui.frame:SetScript("OnKeyDown", function(self, key)
+        if key == "ESCAPE" then
+            self:SetPropagateKeyboardInput(false)
+            Gui:Close()
+        else
+            self:SetPropagateKeyboardInput(true)
+        end
     end)
-
-    -- ESC key handler
-    tinsert(UISpecialFrames, "mUIOptions")
 
     -- Hide the frame by default
     Gui.frame:Hide()

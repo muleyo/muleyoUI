@@ -4,6 +4,7 @@ local defaults = {
     profile = {
         install = false,
         new_version = false,
+        changelogVersion = false,
         gui = {
             scale = 1
         },
@@ -173,8 +174,7 @@ local defaults = {
             focus = false,
             debuffs = false,
             colors = false,
-            smallerfriends = false,
-            npccolors = {}
+            smallerfriends = false
         },
         tooltips = {
             enabled = true,

@@ -36,58 +36,30 @@ function Textures:OnInitialize()
         end
 
         if nameplate.unit then
+            -- NOTE: always reapply (no "skip if already set" cache check) -
+            -- WoW recycles/reuses nameplate frame objects for different units
+            -- (e.g. when plates go off/on screen from turning your character),
+            -- and silently resets the health bar texture back to default when
+            -- it reassigns a frame - a cache keyed on the frame reference can't
+            -- detect that, so it must be unconditionally reapplied every time.
             if Textures.db.texture == "None" then
                 if not UnitIsUnit(nameplate.unit, "focus") then
-                    if Textures.nameplates[nameplate] == "None" then
-                        return
-                    end
-
                     nameplate.healthBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-TargetingFrame-BarFill]])
-
-                    Textures.nameplates[nameplate] = "None"
                 else
                     if Textures.db.focus then
-                        if Textures.nameplates[nameplate] == "Focus" then
-                            return
-                        end
                         nameplate.healthBar:SetStatusBarTexture([[Interface\AddOns\mUI\Media\Textures\Nameplates\focusTexture]])
-
-                        Textures.nameplates[nameplate] = "Focus"
                     else
-                        if Textures.nameplates[nameplate] == "defaultFocus" then
-                            return
-                        end
                         nameplate.healthBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-TargetingFrame-BarFill]])
-
-                        Textures.nameplates[nameplate] = "None"
                     end
                 end
             else
                 if not UnitIsUnit(nameplate.unit, "focus") then
-                    if Textures.nameplates[nameplate] == "Custom" then
-                        return
-                    end
-
                     nameplate.healthBar:SetStatusBarTexture(texture)
-
-                    Textures.nameplates[nameplate] = "Custom"
                 else
                     if Textures.db.focus then
-                        if Textures.nameplates[nameplate] == "Focus" then
-                            return
-                        end
-
                         nameplate.healthBar:SetStatusBarTexture([[Interface\AddOns\mUI\Media\Textures\Nameplates\focusTexture]])
-
-                        Textures.nameplates[nameplate] = "Focus"
                     else
-                        if Textures.nameplates[nameplate] == "Custom" then
-                            return
-                        end
-
                         nameplate.healthBar:SetStatusBarTexture(texture)
-
-                        Textures.nameplates[nameplate] = "Custom"
                     end
                 end
             end
@@ -111,10 +83,31 @@ function Textures:OnEnable()
     Textures.textures:RegisterEvent("PLAYER_TARGET_CHANGED")
     Textures.textures:RegisterEvent("NAME_PLATE_CREATED")
     Textures.textures:RegisterEvent("NAME_PLATE_UNIT_ADDED")
-    -- Textures.textures:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
+    Textures.textures:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
 
-    Textures:SecureHookScript(Textures.textures, "OnEvent", function(_, event)
-        Textures:RefreshNameplates()
+    Textures:SecureHookScript(Textures.textures, "OnEvent", function(_, event, unit)
+        if event == "NAME_PLATE_UNIT_ADDED" then
+            -- Handle the specific unit whose nameplate was just (re)assigned
+            -- directly, instead of relying solely on the blanket refresh below -
+            -- WoW recycles nameplate frames, and a full RefreshNameplates() pass
+            -- doesn't reliably catch every reused frame in time.
+            local nameplate = unit and C_NamePlate.GetNamePlateForUnit(unit)
+            if nameplate then
+                Textures:SetTextures(nameplate.UnitFrame)
+            end
+        elseif event ~= "NAME_PLATE_UNIT_REMOVED" then
+            Textures:RefreshNameplates()
+        end
+    end)
+
+    -- Blizzard calls CompactUnitFrame_UpdateHealth on every health update,
+    -- including whenever it reassigns a pooled nameplate frame to a
+    -- different unit - hooking it guarantees our custom texture is always
+    -- reapplied as the last word, regardless of when/why Blizzard itself
+    -- refreshes the health bar (event-based tracking alone can't catch every
+    -- case). Same reliable hook pattern already used by Health.lua/Names.lua.
+    Textures:SecureHook("CompactUnitFrame_UpdateHealth", function(frame)
+        Textures:SetTextures(frame)
     end)
 end
 

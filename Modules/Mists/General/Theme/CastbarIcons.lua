@@ -1,7 +1,7 @@
 local Theme = mUI:GetModule("mUI.Modules.General.Theme")
 
 Theme.castbars = {
-    player = "CastingBarFrame",
+    player = "PlayerCastingBarFrame",
     target = "TargetFrameSpellBar",
     focus = "FocusFrameSpellBar",
     boss1 = "Boss1TargetFrameSpellBar",
@@ -38,7 +38,6 @@ function Theme:CreateCastbarIcons(unit, castbar)
             castbar.Icon.SetSize = function()
             end
             castbar.mUIBorder:SetSize(16, 16)
-
             castbar.mUIBorder:SetPoint("TOPLEFT", castbar.Icon, "TOPLEFT", 0, 0)
             castbar.mUIBorder:SetPoint("BOTTOMRIGHT", castbar.Icon, "BOTTOMRIGHT", 1.25, -1.25)
         end
