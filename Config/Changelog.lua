@@ -3,11 +3,9 @@ local Changelog = mUI:NewModule("mUI.Config.Changelog")
 -- Maintainer note: this window intentionally shows ONLY the latest update.
 -- Keep this as a single entry and update it each release.
 local CHANGELOG = {
-    version = "4.0.0",
-    affected = {"Mainline", "Mists", "TBC", "Vanilla"},
-    changes = {"Reworked the whole settings GUI, it features a searchbar and much more other cool stuff!",
-               "Updated the logo, it looks a lot better now.", "Added a \"What's New\" window that shows this changelog once per update.",
-               "Updated Mists, TBC Anniversary and Vanilla to the latest versions."}
+    version = "4.0.1",
+    affected = {"Mainline"},
+    changes = {"Minimap: Omnium Folio Button is no longer hidden on mouseover, and is always visible now."}
 }
 
 function Changelog:OnInitialize()

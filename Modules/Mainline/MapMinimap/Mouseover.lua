@@ -18,15 +18,6 @@ end
 function Mouseover:OnEnable()
     Mouseover.frame:RegisterEvent("PLAYER_ENTERING_WORLD")
     Mouseover:SecureHookScript(Mouseover.frame, "OnEvent", Mouseover.RegisterButtons)
-
-    ExpansionLandingPageMinimapButton:SetAlpha(0)
-    Mouseover:SecureHookScript(ExpansionLandingPageMinimapButton, "OnEnter", function()
-        ExpansionLandingPageMinimapButton:SetAlpha(1)
-    end)
-
-    Mouseover:SecureHookScript(ExpansionLandingPageMinimapButton, "OnLeave", function(Mouseover)
-        ExpansionLandingPageMinimapButton:SetAlpha(0)
-    end)
 end
 
 function Mouseover:OnDisable()
