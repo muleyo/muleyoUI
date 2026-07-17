@@ -104,8 +104,7 @@ function PvPRating:OnInitialize()
         local v2 = GetInspectArenaData(1)
         local v3 = GetInspectArenaData(2)
         local solo = 0
-        local soloData = C_PaperDollInfo and C_PaperDollInfo.GetInspectRatedSoloShuffleData and
-                             C_PaperDollInfo.GetInspectRatedSoloShuffleData()
+        local soloData = C_PaperDollInfo and C_PaperDollInfo.GetInspectRatedSoloShuffleData and C_PaperDollInfo.GetInspectRatedSoloShuffleData()
         if soloData then
             solo = soloData.rating or soloData.personalRating or 0
         end
@@ -122,10 +121,8 @@ function PvPRating:OnInitialize()
             ClearInspectPlayer()
         end
 
-        -- GameTooltip:GetUnit() returns a secret value in tainted execution paths,
-        -- so refresh the tooltip data instead; the post call re-adds lines from cache
         if GameTooltip:IsShown() and GameTooltip.RefreshData then
-            GameTooltip:RefreshData()
+            xpcall(GameTooltip.RefreshData, nop, GameTooltip)
         end
     end
 
