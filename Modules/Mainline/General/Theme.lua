@@ -46,108 +46,52 @@ function Theme:OnEnable()
         ["Blizzard_Transmog"] = Theme.Transmog,
         ["Blizzard_HousingDashboard"] = Theme.Housing,
         ["Blizzard_HousingModelPreview"] = Theme.Housing,
-        ["Blizzard_ItemInteractionUI"] = Theme.Catalyst
+        ["Blizzard_ItemInteractionUI"] = Theme.Catalyst,
+        ["Blizzard_DebugTools"] = Theme.Framestack
     }
 
     -- Buffs & Debuffs
     if not C_AddOns.IsAddOnLoaded("BlizzBuffsFacade") then
-        -- not working as of now
-        -- Theme:HookDurationUpdates(BuffFrame.auraFrames)
-        -- Theme:HookDurationUpdates(DebuffFrame.auraFrames)
+        if select(4, GetBuildInfo()) >= 120100 then
+            -- Player Auras - the containers drive themselves off their own unit,
+            -- so there is nothing for us to refresh on UNIT_AURA.
+            Theme:InitPlayerAuraContainers()
 
-        Theme.auras:RegisterEvent("PLAYER_ENTERING_WORLD")
-        Theme.auras:RegisterEvent("PLAYER_TARGET_CHANGED")
-        Theme.auras:RegisterEvent("PLAYER_FOCUS_CHANGED")
-        Theme.auras:RegisterEvent("WEAPON_ENCHANT_CHANGED")
-        Theme.auras:RegisterUnitEvent("UNIT_AURA", "player", "target", "focus")
-        Theme:SecureHookScript(Theme.auras, "OnEvent", function()
-            -- Player Auras
-            Theme:UpdatePlayerBuffs()
-            Theme:UpdatePlayerDebuffs()
+            -- Target/Focus Auras
+            Theme:CreateUnitAuraContainer(TargetFrame, "target")
+            Theme:CreateUnitAuraContainer(FocusFrame, "focus")
+        else
+            Theme.auras:RegisterEvent("PLAYER_ENTERING_WORLD")
+            Theme.auras:RegisterEvent("PLAYER_TARGET_CHANGED")
+            Theme.auras:RegisterEvent("PLAYER_FOCUS_CHANGED")
+            Theme.auras:RegisterEvent("WEAPON_ENCHANT_CHANGED")
+            Theme.auras:RegisterUnitEvent("UNIT_AURA", "player", "target", "focus")
+            Theme:SecureHookScript(Theme.auras, "OnEvent", function()
+                -- Player Auras
+                Theme:UpdatePlayerBuffs()
+                Theme:UpdatePlayerDebuffs()
 
-            -- Target Auras
-            for aura in TargetFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
-                Theme:UpdateUnitframeAuras(aura)
-            end
-            for aura in TargetFrame.auraPools:GetPool("TargetDebuffFrameTemplate"):EnumerateActive() do
-                Theme:UpdateUnitframeAuras(aura, true, "target")
-            end
-
-            -- Focus Auras
-            for aura in FocusFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
-                Theme:UpdateUnitframeAuras(aura)
-            end
-            for aura in FocusFrame.auraPools:GetPool("TargetDebuffFrameTemplate"):EnumerateActive() do
-                Theme:UpdateUnitframeAuras(aura, true, "focus")
-            end
-        end)
-
-        if mUI.db.profile.unitframes.raidframes.skinicons and select(4, GetBuildInfo()) < 120005 then
-            Theme:SecureHook("CompactUnitFrame_UpdateAuras", function(frame)
-                if not frame or frame:IsForbidden() then
-                    return
+                -- Target Auras
+                for aura in TargetFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
+                    Theme:UpdateUnitframeAuras(aura)
+                end
+                for aura in TargetFrame.auraPools:GetPool("TargetDebuffFrameTemplate"):EnumerateActive() do
+                    Theme:UpdateUnitframeAuras(aura, true, "target")
                 end
 
-                -- Check if frame is Raid/Party
-                local name = frame:GetName()
-                if name and name:match("^Compact") then
-                    if frame.CenterDefensiveBuff then
-                        Theme:UpdateRaidframeAuras(frame.CenterDefensiveBuff)
-                    end
-                    if frame.debuffFrames then
-                        for i = 1, #frame.debuffFrames do
-                            Theme:UpdateRaidframeAuras(frame.debuffFrames[i])
-                        end
-                    end
-
-                    if frame.buffFrames then
-                        for i = 1, #frame.buffFrames do
-                            Theme:UpdateRaidframeAuras(frame.buffFrames[i])
-                        end
-                    end
+                -- Focus Auras
+                for aura in FocusFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
+                    Theme:UpdateUnitframeAuras(aura)
+                end
+                for aura in FocusFrame.auraPools:GetPool("TargetDebuffFrameTemplate"):EnumerateActive() do
+                    Theme:UpdateUnitframeAuras(aura, true, "focus")
                 end
             end)
 
-            Theme:SecureHook("CompactUnitFrame_UpdatePrivateAuras", function(frame)
-                if not frame then
-                    return
-                end
-
-                local ok, forbidden = pcall(function()
-                    return frame:IsForbidden()
-                end)
-                if not ok or forbidden then
-                    return
-                end
-
-                if not frame.PrivateAuraAnchors then
-                    return
-                end
-
-                local frameHeight
-                if IsInRaid() then
-                    frameHeight = EditModeManagerFrame:GetRaidFrameHeight(Enum.EditModeUnitFrameSystemIndices.Raid, 36)
-                else
-                    frameHeight = EditModeManagerFrame:GetRaidFrameHeight(Enum.EditModeUnitFrameSystemIndices.Party, 36)
-                end
-
-                local privateAuraMult = (mUI.db.profile.unitframes.raidframes.privateaurasize or 45) / 100
-                local desiredSize = frameHeight * privateAuraMult
-                local scaleFactor = desiredSize / 22
-
-                local spacing = 2 -- extra gap between icons (in anchor-local coords)
-                for i, anchor in ipairs(frame.PrivateAuraAnchors) do
-                    anchor:SetScale(scaleFactor)
-                    if i > 1 then
-                        local prev = frame.PrivateAuraAnchors[i - 1]
-                        anchor:ClearAllPoints()
-                        anchor:SetPoint("LEFT", prev, "RIGHT", spacing, 0)
-                    end
-                end
-            end)
+            -- Only the legacy path uses Blizzard's aura buttons, so this is the
+            -- only path that needs their text repositioned.
+            Theme:SecureHook(AuraFrameMixin, "UpdateAuraButtons", Theme.AuraPositions)
         end
-
-        Theme:SecureHook(AuraFrameMixin, "UpdateAuraButtons", Theme.AuraPositions)
     end
 
     -- Castbar Icon Skins

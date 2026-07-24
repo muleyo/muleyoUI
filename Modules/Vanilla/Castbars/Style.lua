@@ -15,8 +15,9 @@ function Style:OnInitialize()
 
     -- Tables
     Style.castbars = {
-        player = "CastingBarFrame",
+        player = "PlayerCastingBarFrame",
         target = "TargetFrameSpellBar",
+        focus = "FocusFrameSpellBar",
         boss1 = "Boss1TargetFrameSpellBar",
         boss2 = "Boss2TargetFrameSpellBar",
         boss3 = "Boss3TargetFrameSpellBar",
@@ -35,10 +36,6 @@ function Style:OnInitialize()
             _G[castbar].Border:SetPoint("CENTER", _G[castbar])
             _G[castbar].Flash:ClearAllPoints()
             _G[castbar].Flash:SetPoint("CENTER", _G[castbar])
-            _G[castbar]:SetMovable(true)
-            _G[castbar]:SetUserPlaced(true)
-            _G[castbar]:ClearAllPoints()
-            _G[castbar]:SetPoint("CENTER", UIParent, 0, -150)
             _G[castbar].Text:ClearAllPoints()
             _G[castbar].Text:SetPoint("TOP", _G[castbar], "TOP", 0, 2)
             _G[castbar].Text:SetFont(Style.font, 12, "OUTLINE")
@@ -105,8 +102,9 @@ function Style:OnEnable()
     Style.castEventFrame = Style.castEventFrame or CreateFrame("Frame")
 
     local unitToCastbar = {
-        player = CastingBarFrame,
-        target = TargetFrameSpellBar
+        player = PlayerCastingBarFrame,
+        target = TargetFrameSpellBar,
+        focus = FocusFrameSpellBar
     }
 
     local function UpdateCastbarColor(unit)
@@ -138,6 +136,10 @@ function Style:OnEnable()
         if unitToCastbar[unit] then
             UpdateCastbarColor(unit)
         end
+    end)
+
+    Style:SecureHookScript(PlayerCastingBarFrame, "OnEvent", function()
+        Style:EnableStyle("player", "PlayerCastingBarFrame")
     end)
 end
 

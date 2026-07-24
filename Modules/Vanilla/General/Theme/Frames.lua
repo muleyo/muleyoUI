@@ -464,11 +464,17 @@ function Theme:Actionbars()
     mUI:Skin(StanceBarFrame)
     mUI:Skin(PetActionBarFrame)
     mUI:Skin({OverrideActionBarHealthBarOverlay, OverrideActionBarPowerBarOverlay, MainMenuXPBarTexture0, MainMenuXPBarTexture1,
-              MainMenuXPBarTexture2, MainMenuXPBarTexture3, ReputationWatchBar.StatusBar.WatchBarTexture0,
-              ReputationWatchBar.StatusBar.WatchBarTexture1, ReputationWatchBar.StatusBar.WatchBarTexture2,
-              ReputationWatchBar.StatusBar.WatchBarTexture3, ExhaustionTickNormal, ExhaustionTickHighlight}, true)
+              MainMenuXPBarTexture2, MainMenuXPBarTexture3, ExhaustionTickNormal, ExhaustionTickHighlight}, true)
     mUI:Skin(OverrideActionBar)
     mUI:Skin({OverrideActionBarLeaveFrameDivider3}, true)
+    mUI:Skin({MainStatusTrackingBarContainer.MainMenuBarFrameTexture1, MainStatusTrackingBarContainer.MainMenuBarFrameTexture2,
+              MainStatusTrackingBarContainer.MainMenuBarFrameTexture3, MainStatusTrackingBarContainer.MainMenuBarFrameTexture4,
+              MainStatusTrackingBarContainer.MainMenuBarFrameTexture5, MainStatusTrackingBarContainer.StandaloneFrameTexture1,
+              MainStatusTrackingBarContainer.StandaloneFrameTexture2, MainStatusTrackingBarContainer.StandaloneFrameTexture3,
+              MainStatusTrackingBarContainer.StandaloneFrameTexture4, MainStatusTrackingBarContainer.StandaloneFrameTexture5,
+              SecondaryStatusTrackingBarContainer.StandaloneFrameTexture1, SecondaryStatusTrackingBarContainer.StandaloneFrameTexture2,
+              SecondaryStatusTrackingBarContainer.StandaloneFrameTexture3, SecondaryStatusTrackingBarContainer.StandaloneFrameTexture4,
+              SecondaryStatusTrackingBarContainer.StandaloneFrameTexture5}, true)
 
     -- Actionbars
     for j = 1, #Theme.Bars do
@@ -555,10 +561,6 @@ function Theme:AddonList()
     mUI:Skin(AddonListInset)
     mUI:Skin(AddonListInset.NineSlice)
     mUI:Skin({AddonListBg, AddonListScrollFrameScrollBarTop, AddonListScrollFrameScrollBarMiddle, AddonListScrollFrameScrollBarBottom}, true)
-    AddonListEnableAllButton_RightSeparator:Hide()
-    AddonListDisableAllButton_RightSeparator:Hide()
-    AddonListOkayButton_LeftSeparator:Hide()
-    AddonListCancelButton_LeftSeparator:Hide()
 end
 
 function Theme:Bags()
@@ -634,6 +636,8 @@ function Theme:Character()
     mUI:Skin(CharacterFrameTab1)
     mUI:Skin(CharacterFrameTab2)
     mUI:Skin(CharacterFrameTab3)
+    mUI:Skin(CharacterFrameTab4)
+    mUI:Skin(CharacterFrameTab5)
 
     mUI:Skin({CharacterFeetSlotFrame, CharacterHandsSlotFrame, CharacterWaistSlotFrame, CharacterLegsSlotFrame, CharacterFinger0SlotFrame,
               CharacterFinger1SlotFrame, CharacterTrinket0SlotFrame, CharacterTrinket1SlotFrame, CharacterWristSlotFrame, CharacterTabardSlotFrame,
@@ -794,6 +798,16 @@ function Theme:Item()
     mUI:Skin(ItemTextScrollFrame)
     mUI:Skin(ItemTextFrameInset)
     mUI:Skin(ItemTextFrameInset.NineSlice)
+end
+
+function Theme:LFG()
+    -- LFG
+    mUI:Skin(LFGListingFrame)
+    mUI:Skin(LFGBrowseFrame)
+    mUI:Skin(LFGParentFrameTab1)
+    mUI:Skin(LFGParentFrameTab2)
+    mUI:Skin(LFGBrowseFrameTab1)
+    mUI:Skin(LFGBrowseFrameTab2)
 end
 
 function Theme:Loot()
@@ -1106,10 +1120,11 @@ end
 
 function Theme:Castbars()
     -- Castbars
-    mUI:Skin({CastingBarFrame.Border, TargetFrameSpellBar.Border, TargetFrameSpellBar.BorderShield, Boss1TargetFrameSpellBar.Border,
-              Boss1TargetFrameSpellBar.BorderShield, Boss2TargetFrameSpellBar.Border, Boss2TargetFrameSpellBar.BorderShield,
-              Boss3TargetFrameSpellBar.Border, Boss3TargetFrameSpellBar.BorderShield, Boss4TargetFrameSpellBar.Border,
-              Boss4TargetFrameSpellBar.BorderShield, Boss5TargetFrameSpellBar.Border, Boss5TargetFrameSpellBar.BorderShield}, true)
+    mUI:Skin({PlayerCastingBarFrame.Border, TargetFrameSpellBar.Border, TargetFrameSpellBar.BorderShield, FocusFrameSpellBar.Border,
+              FocusFrameSpellBar.BorderShield, Boss1TargetFrameSpellBar.Border, Boss1TargetFrameSpellBar.BorderShield,
+              Boss2TargetFrameSpellBar.Border, Boss2TargetFrameSpellBar.BorderShield, Boss3TargetFrameSpellBar.Border,
+              Boss3TargetFrameSpellBar.BorderShield, Boss4TargetFrameSpellBar.Border, Boss4TargetFrameSpellBar.BorderShield,
+              Boss5TargetFrameSpellBar.Border, Boss5TargetFrameSpellBar.BorderShield}, true)
 
     -- Castbar Icon Skinning
     for castbar in pairs(Theme.castbarIcons) do
@@ -1138,23 +1153,26 @@ function Theme:ExpansionLandingPage()
     end
 end
 
-function Theme:GameMenu()
-    local buttons = {"GameMenuButtonHelp", "GameMenuButtonStore", "GameMenuButtonOptions", "GameMenuButtonMacros", "GameMenuButtonAddons",
-                     "GameMenuButtonLogout", "GameMenuButtonQuit", "GameMenuButtonContinue", "mUI_EditModeButton", "mUI_MenuButton"}
-
-    for _, button in pairs(buttons) do
-        if mUI.db.profile.misc.skinmenu then
-            mUI:Skin({_G[button].Left, _G[button].Middle, _G[button].Right}, true)
-        else
-            _G[button].Left:SetDesaturated(false)
-            _G[button].Middle:SetDesaturated(false)
-            _G[button].Right:SetDesaturated(false)
-
-            _G[button].Left:SetVertexColor(1, 1, 1, 1)
-            _G[button].Middle:SetVertexColor(1, 1, 1, 1)
-            _G[button].Right:SetVertexColor(1, 1, 1, 1)
+function Theme:GameMenu(frame)
+    C_Timer.After(0, function()
+        for _, button in pairs(frame:GetLayoutChildren()) do
+            if mUI.db.profile.misc.skinmenu then
+                button.Left:SetDesaturated(true)
+                button.Middle:SetDesaturated(true)
+                button.Right:SetDesaturated(true)
+                button.Left:SetVertexColor(unpack(mUI:Color(0.15)))
+                button.Middle:SetVertexColor(unpack(mUI:Color(0.15)))
+                button.Right:SetVertexColor(unpack(mUI:Color(0.15)))
+            else
+                button.Left:SetDesaturated(false)
+                button.Middle:SetDesaturated(false)
+                button.Right:SetDesaturated(false)
+                button.Left:SetVertexColor(1, 1, 1, 1)
+                button.Middle:SetVertexColor(1, 1, 1, 1)
+                button.Right:SetVertexColor(1, 1, 1, 1)
+            end
         end
-    end
+    end)
 end
 
 function Theme:Frames()
@@ -1274,6 +1292,7 @@ function Theme:Update()
     Theme:Castbars()
     Theme:Auras()
     Theme:Frames()
+    Theme:LFG()
 
     -- Tooltips
     for _, tooltip in next, Theme.tooltips do

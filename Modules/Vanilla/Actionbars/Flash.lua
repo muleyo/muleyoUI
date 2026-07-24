@@ -57,22 +57,19 @@ end
 
 function Flash:OnEnable()
     Flash:SecureHook("MultiActionButtonDown", function(bname, id)
-        if _G[bname .. "Button" .. id] and _G[bname .. "Button" .. id]:GetEffectiveAlpha() == 1 then
+        if _G[bname]:GetEffectiveAlpha() == 1 then
             Flash:AnimateButton(_G[bname .. "Button" .. id])
         end
     end)
 
-    Flash:SecureHook("PetActionButtonDown", function(id)
+    Flash:SecureHook(PetActionBar, "PetActionButtonDown", function(_, id)
         local button
-        if PetActionBarFrame then
+        if PetActionBar then
             if id > NUM_PET_ACTION_SLOTS then
                 return
             end
             button = _G["PetActionButton" .. id]
             if not button then
-                return
-            end
-            if not button:IsVisible() then
                 return
             end
         end

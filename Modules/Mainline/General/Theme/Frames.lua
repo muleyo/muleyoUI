@@ -7,7 +7,11 @@ function Theme:Achievements()
     -- Achievements Frame
     if AchievementFrame then
         -- Blacklist Frames
-        Theme.blacklist[select(8, AchievementFrame.Header:GetRegions())] = true
+        if select(8, AchievementFrame.Header:GetRegions()) then
+            Theme.blacklist[select(8, AchievementFrame.Header:GetRegions())] = true
+        else
+            Theme.blacklist[select(7, AchievementFrame.Header:GetRegions())] = true
+        end
 
         -- Skin frames
         mUI:Skin(AchievementFrame)
@@ -17,6 +21,12 @@ function Theme:Achievements()
         mUI:Skin(AchievementFrameTab1)
         mUI:Skin(AchievementFrameTab2)
         mUI:Skin(AchievementFrameTab3)
+        if AchievementFrame.HeaderDetails then
+            mUI:Skin({AchievementFrame.HeaderDetails.Filters.SearchBox.Left, AchievementFrame.HeaderDetails.Filters.SearchBox.Middle,
+                      AchievementFrame.HeaderDetails.Filters.SearchBox.Right}, true)
+        else
+            mUI:Skin({AchievementFrame.SearchBox.Left, AchievementFrame.SearchBox.Middle, AchievementFrame.SearchBox.Right}, true)
+        end
         AchievementFrame.Header.PointBorder:SetAlpha(0)
     end
 end
@@ -40,6 +50,13 @@ function Theme:CraftingOrders()
         mUI:Skin(ProfessionsCustomerOrdersFrame.MoneyFrameInset.NineSlice)
         mUI:Skin(ProfessionsCustomerOrdersFrameBrowseTab)
         mUI:Skin(ProfessionsCustomerOrdersFrameOrdersTab)
+        mUI:Skin({ProfessionsCustomerOrdersFrame.BrowseOrders.SearchBar.SearchBox.Left,
+                  ProfessionsCustomerOrdersFrame.BrowseOrders.SearchBar.SearchBox.Middle,
+                  ProfessionsCustomerOrdersFrame.BrowseOrders.SearchBar.SearchBox.Right,
+                  ProfessionsCustomerOrdersFrame.Form.OrderRecipientTarget.Left, ProfessionsCustomerOrdersFrame.Form.OrderRecipientTarget.Middle,
+                  ProfessionsCustomerOrdersFrame.Form.OrderRecipientTarget.Right,
+                  ProfessionsCustomerOrdersFrame.Form.PaymentContainer.NoteEditBox.Border}, true)
+
     end
 end
 
@@ -88,6 +105,14 @@ function Theme:AuctionHouse()
         mUI:Skin(AuctionHouseFrameAuctionsFrame.AllAuctionsList.NineSlice)
         mUI:Skin(AuctionHouseFrameAuctionsFrame.SummaryList)
         mUI:Skin(AuctionHouseFrameAuctionsFrame.SummaryList.NineSlice)
+        mUI:Skin(AuctionHouseFrame.ItemSellFrame.ItemDisplay)
+        mUI:Skin(AuctionHouseFrame.CommoditiesSellFrame.ItemDisplay)
+        mUI:Skin(AuctionHouseFrame.CommoditiesSellFrame)
+        mUI:Skin(AuctionHouseFrame.CommoditiesSellFrame.NineSlice)
+        mUI:Skin(AuctionHouseFrame.CommoditiesSellList)
+        mUI:Skin(AuctionHouseFrame.CommoditiesSellList.NineSlice)
+        mUI:Skin({AuctionHouseFrame.SearchBar.SearchBox.Left, AuctionHouseFrame.SearchBar.SearchBox.Middle,
+                  AuctionHouseFrame.SearchBar.SearchBox.Right}, true)
 
         if C_AddOns.IsAddOnLoaded("Auctionator") then
             C_Timer.After(0.2, function()
@@ -146,6 +171,7 @@ function Theme:Archaeology()
     -- Archaeology Frame
     if ArchaeologyFrame then
         mUI:Skin(ArchaeologyFrame.NineSlice)
+        mUI:Skin(ArchAeologyFrameInset)
     end
 end
 
@@ -242,17 +268,22 @@ function Theme:Collections()
         mUI:Skin(MountJournal.BottomLeftInset.NineSlice)
         mUI:Skin(MountJournal.RightInset.NineSlice)
         mUI:Skin(MountJournal.BottomLeftInset.SlotButton)
-        mUI:Skin({MountJournal.ToggleDynamicFlightFlyoutButton.Border, MountJournal.SummonRandomFavoriteSpellFrame.Button.Border}, true)
+        mUI:Skin(MountJournal.MountCount)
+        mUI:Skin({MountJournal.ToggleDynamicFlightFlyoutButton.Border, MountJournal.SummonRandomFavoriteSpellFrame.Button.Border,
+                  MountJournalSearchBox.Left, MountJournalSearchBox.Middle, MountJournalSearchBox.Right}, true)
 
         -- ToyBox
         mUI:Skin(ToyBox)
         mUI:Skin(ToyBox.iconsFrame)
         mUI:Skin(ToyBox.iconsFrame.NineSlice)
+        mUI:Skin({ToyBox.searchBox.Left, ToyBox.searchBox.Middle, ToyBox.searchBox.Right, ToyBox.progressBar.border}, true)
 
         -- Heirlooms Journal
         mUI:Skin(HeirloomsJournal)
         mUI:Skin(HeirloomsJournal.iconsFrame)
         mUI:Skin(HeirloomsJournal.iconsFrame.NineSlice)
+        mUI:Skin({HeirloomsJournalSearchBox.Left, HeirloomsJournalSearchBox.Middle, HeirloomsJournalSearchBox.Right,
+                  HeirloomsJournal.progressBar.border}, true)
 
         -- Pet Journal
         mUI:Skin(PetJournalLeftInset)
@@ -265,7 +296,9 @@ function Theme:Collections()
         mUI:Skin(PetJournalLoadoutPet3)
         mUI:Skin(PetJournalLoadoutBorder)
         mUI:Skin(PetJournalRightInset.NineSlice)
-        mUI:Skin({PetJournalSummonRandomFavoritePetButtonBorder, PetJournalHealPetButtonBorder}, true)
+        mUI:Skin(PetJournal.PetCount)
+        mUI:Skin({PetJournalSummonRandomFavoritePetButtonBorder, PetJournalHealPetButtonBorder, PetJournalSearchBox.Left, PetJournalSearchBox.Middle,
+                  PetJournalSearchBox.Right}, true)
 
         -- Wardrobe
         mUI:Skin(WardrobeCollectionFrame)
@@ -280,7 +313,9 @@ function Theme:Collections()
         mUI:Skin(WardrobeCollectionFrame)
         mUI:Skin(WardrobeCollectionFrame.NineSlice)
         mUI:Skin({WardrobeCollectionFrameScrollFrameScrollBarBottom, WardrobeCollectionFrameScrollFrameScrollBarMiddle,
-                  WardrobeCollectionFrameScrollFrameScrollBarTop, WardrobeCollectionFrameScrollFrameScrollBarThumbTexture}, true)
+                  WardrobeCollectionFrameScrollFrameScrollBarTop, WardrobeCollectionFrameScrollFrameScrollBarThumbTexture,
+                  WardrobeCollectionFrameSearchBox.Left, WardrobeCollectionFrameSearchBox.Middle, WardrobeCollectionFrameSearchBox.Right,
+                  WardrobeCollectionFrame.progressBar.border}, true)
 
         -- Campsites
         mUI:Skin(WarbandSceneJournal)
@@ -335,6 +370,7 @@ function Theme:EncounterJournal()
         mUI:Skin(EncounterJournalLootJournalTab)
         mUI:Skin(EncounterJournal.TutorialsTab)
         mUI:Skin(EncounterJournalMonthlyActivitiesFrame.ThemeContainer)
+        mUI:Skin({EncounterJournalSearchBox.Left, EncounterJournalSearchBox.Middle, EncounterJournalSearchBox.Right}, true)
     end
 end
 
@@ -392,7 +428,8 @@ function Theme:GuildBank()
         mUI:Skin(GuildBankFrameTab3)
         mUI:Skin(GuildBankFrameTab4)
         mUI:Skin(GuildBankFrame)
-        mUI:Skin({GuildBankFrameLeft, GuildBankFrameMiddle, GuildBankFrameRight}, true)
+        mUI:Skin({GuildBankFrameLeft, GuildBankFrameMiddle, GuildBankFrameRight, GuildItemSearchBox.Left, GuildItemSearchBox.Middle,
+                  GuildItemSearchBox.Right}, true)
         mUI:Skin(GuildBankFrame.MoneyFrameBG)
         mUI:Skin(GuildBankFrame.Column1)
         mUI:Skin(GuildBankFrame.Column2)
@@ -401,6 +438,26 @@ function Theme:GuildBank()
         mUI:Skin(GuildBankFrame.Column5)
         mUI:Skin(GuildBankFrame.Column6)
         mUI:Skin(GuildBankFrame.Column7)
+
+        -- Guild Bank Item Slots (static Column/Button frames)
+        for c = 1, 7 do
+            local column = GuildBankFrame["Column" .. c]
+            if column then
+                for b = 1, 14 do
+                    local button = column["Button" .. b]
+                    if button and button.NormalTexture then
+                        mUI:Skin({button.NormalTexture}, true)
+                    end
+                end
+            end
+        end
+
+        mUI:Skin({select(1, GuildBankTab1:GetRegions())}, true)
+        mUI:Skin({select(1, GuildBankTab2:GetRegions())}, true)
+        mUI:Skin({select(1, GuildBankTab3:GetRegions())}, true)
+        mUI:Skin({select(1, GuildBankTab4:GetRegions())}, true)
+        mUI:Skin({select(1, GuildBankTab5:GetRegions())}, true)
+        mUI:Skin({select(1, GuildBankTab6:GetRegions())}, true)
     end
 end
 
@@ -413,6 +470,11 @@ function Theme:Professions()
         mUI:Skin(ProfessionsFrame.NineSlice)
         mUI:Skin(ProfessionsFrame.SpecPage.PanelFooter)
         mUI:Skin(ProfessionsFrame.CraftingPage.RecipeList.BackgroundNineSlice)
+        mUI:Skin({ProfessionsFrame.CraftingPage.RecipeList.SearchBox.Left, ProfessionsFrame.CraftingPage.RecipeList.SearchBox.Middle,
+                  ProfessionsFrame.CraftingPage.RecipeList.SearchBox.Right, ProfessionsFrame.OrdersPage.BrowseFrame.RecipeList.SearchBox.Left,
+                  ProfessionsFrame.OrdersPage.BrowseFrame.RecipeList.SearchBox.Middle,
+                  ProfessionsFrame.OrdersPage.BrowseFrame.RecipeList.SearchBox.Right,
+                  ProfessionsFrame.OrdersPage.BrowseFrame.OrdersRemainingDisplay.Background}, true)
         mUI:Skin(ProfessionsFrame.CraftingPage.SchematicForm.NineSlice)
         mUI:Skin(ProfessionsFrame.CraftingPage.SchematicForm.Details)
         mUI:Skin(ProfessionsFrame.OrdersPage.BrowseFrame.OrderList.NineSlice)
@@ -449,9 +511,6 @@ end
 function Theme:PVP()
     -- PVP UI
     if HonorFrame then
-        Theme.blacklist[select(4, HonorFrame.ConquestBar:GetRegions())] = true
-        Theme.blacklist[select(4, ConquestFrame.ConquestBar:GetRegions())] = true
-
         mUI:Skin(PlunderstormFrame.Inset)
         mUI:Skin(PlunderstormFrame.Inset.NineSlice)
         mUI:Skin(HonorFrame)
@@ -461,7 +520,7 @@ function Theme:PVP()
         mUI:Skin(HonorFrame.BonusFrame)
         mUI:Skin(HonorFrame.ConquestBar)
         mUI:Skin(ConquestFrame)
-        mUI:Skin(ConquestFrame.ConquestBar)
+        mUI:Skin({ConquestFrame.ConquestBar.Border, TrainingGroundsFrame.ConquestBar.Border}, true)
         mUI:Skin(ConquestFrame.Inset)
         mUI:Skin(ConquestFrame.Inset.NineSlice)
         mUI:Skin(PVPQueueFrame)
@@ -550,7 +609,9 @@ function Theme:PlayerSpells()
         mUI:Skin(PlayerSpellsFrame.TabSystem.tabs[1])
         mUI:Skin(PlayerSpellsFrame.TabSystem.tabs[2])
         mUI:Skin(PlayerSpellsFrame.TabSystem.tabs[3])
-        mUI:Skin({ClassTalentFrameTitleBg, ClassTalentFrameBg, ClassTalentFrameTalentsPvpTalentFrameTalentListBg}, true)
+        mUI:Skin({ClassTalentFrameTitleBg, ClassTalentFrameBg, ClassTalentFrameTalentsPvpTalentFrameTalentListBg,
+                  PlayerSpellsFrame.SpellBookFrame.SearchBox.Left, PlayerSpellsFrame.SpellBookFrame.SearchBox.Middle,
+                  PlayerSpellsFrame.SpellBookFrame.SearchBox.Right}, true)
 
         if not Theme:IsHooked(SpellBookItemMixin, "UpdateVisuals") then
             Theme:SecureHook(SpellBookItemMixin, "UpdateVisuals", function(frame)
@@ -759,7 +820,7 @@ function Theme:AddonList()
     mUI:Skin(AddonList)
     mUI:Skin(AddonListInset)
     mUI:Skin(AddonListInset.NineSlice)
-    mUI:Skin({AddonListBg}, true)
+    mUI:Skin({AddonListBg, AddonList.SearchBox.Left, AddonList.SearchBox.Middle, AddonList.SearchBox.Right}, true)
 end
 
 function Theme:Bags()
@@ -781,6 +842,7 @@ function Theme:Bags()
     mUI:Skin(ContainerFrame5.Bg)
     mUI:Skin(ContainerFrame6.NineSlice)
     mUI:Skin(ContainerFrame6.Bg)
+    mUI:Skin({BagItemSearchBox.Left, BagItemSearchBox.Middle, BagItemSearchBox.Right}, true)
 
     for i = 1, 13 do
         local container = _G["ContainerFrame" .. i]
@@ -821,11 +883,70 @@ function Theme:Bank()
     -- Bank
     mUI:Skin(BankFrame)
     mUI:Skin(BankFrame.NineSlice)
+
+    -- Bank Tab Borders (purchased tabs are pooled/dynamically named, PurchaseTab is static)
+    local function SkinBankTab(tab)
+        if not tab then
+            return
+        end
+
+        local border, icon = tab:GetRegions()
+        if border then
+            mUI:Skin({border}, true)
+        end
+        if icon then
+            -- Keep the tab icon's original color, only tint the border
+            icon:SetVertexColor(1, 1, 1)
+        end
+    end
+
+    SkinBankTab(BankPanel.PurchaseTab)
+
+    if BankPanel.bankTabPool then
+        for tab, _ in BankPanel.bankTabPool:EnumerateActive() do
+            SkinBankTab(tab)
+        end
+    end
+
+    if not Theme:IsHooked(BankPanel, "RefreshBankTabs") then
+        Theme:SecureHook(BankPanel, "RefreshBankTabs", function(self)
+            SkinBankTab(self.PurchaseTab)
+            if self.bankTabPool then
+                for tab, _ in self.bankTabPool:EnumerateActive() do
+                    SkinBankTab(tab)
+                end
+            end
+        end)
+    end
+
+    -- Bank Item Slots (pooled/dynamically named)
+    local function SkinBankItemButtons(self)
+        if self.itemButtonPool then
+            for button, _ in self.itemButtonPool:EnumerateActive() do
+                if button.NormalTexture then
+                    button.NormalTexture:SetVertexColor(unpack(mUI:Color(0.15)))
+                end
+            end
+        end
+    end
+
+    SkinBankItemButtons(BankPanel)
+
+    if not Theme:IsHooked(BankPanel, "GenerateItemSlotsForSelectedTab") then
+        Theme:SecureHook(BankPanel, "GenerateItemSlotsForSelectedTab", SkinBankItemButtons)
+    end
+
+    if not Theme:IsHooked(BankPanel, "RefreshAllItemsForSelectedTab") then
+        Theme:SecureHook(BankPanel, "RefreshAllItemsForSelectedTab", SkinBankItemButtons)
+    end
+
     mUI:Skin(BankPanel)
     mUI:Skin(BankPanel.NineSlice)
     mUI:Skin(BankFrameMoneyFrameBorder)
     mUI:Skin(BankFrame.TabSystem.tabs[1])
     mUI:Skin(BankFrame.TabSystem.tabs[2])
+    mUI:Skin(BankPanel.MoneyFrame.Border)
+    mUI:Skin({BankItemSearchBox.Left, BankItemSearchBox.Middle, BankItemSearchBox.Right}, true)
 end
 
 function Theme:Character()
@@ -924,6 +1045,10 @@ function Theme:Communities()
     mUI:Skin(ClubFinderGuildFinderFrame.InsetFrame.NineSlice)
     mUI:Skin(ClubFinderGuildFinderFrame.ClubFinderSearchTab)
     mUI:Skin(ClubFinderGuildFinderFrame.ClubFinderPendingTab)
+    mUI:Skin({ClubFinderGuildFinderFrame.OptionsList.SearchBox.Left, ClubFinderGuildFinderFrame.OptionsList.SearchBox.Middle,
+              ClubFinderGuildFinderFrame.OptionsList.SearchBox.Right}, true)
+    mUI:Skin({ClubFinderCommunityAndGuildFinderFrame.OptionsList.SearchBox.Left, ClubFinderCommunityAndGuildFinderFrame.OptionsList.SearchBox.Middle,
+              ClubFinderCommunityAndGuildFinderFrame.OptionsList.SearchBox.Right}, true)
     mUI:Skin(ClubFinderCommunityAndGuildFinderFrame.InsetFrame)
     mUI:Skin(ClubFinderCommunityAndGuildFinderFrame.InsetFrame.NineSlice)
     mUI:Skin(ClubFinderCommunityAndGuildFinderFrame.ClubFinderSearchTab)
@@ -945,6 +1070,7 @@ function Theme:Friendlist()
     -- Friendlist
     mUI:Skin(AddFriendEntryFrame)
     mUI:Skin(AddFriendFrame.Border)
+    mUI:Skin({AddFriendNameEditBoxLeft, AddFriendNameEditBoxMiddle, AddFriendNameEditBoxRight}, true)
     mUI:Skin(FriendsFrame)
     mUI:Skin(FriendsFrame.NineSlice)
     mUI:Skin(FriendsFrameInset)
@@ -983,6 +1109,45 @@ function Theme:Friendlist()
     mUI:Skin(RaidInfoFrame)
     mUI:Skin(RaidInfoFrame.Header)
     mUI:Skin(RaidInfoFrame.Border)
+
+    if SocialUIFrame then
+        mUI:Skin(SocialUIFrame)
+        mUI:Skin(SocialUIFrame.NineSlice)
+        mUI:Skin(SocialUIFrame.BattleNetBar)
+        mUI:Skin(SocialUIFrame.BattleNetBroadcastFrame.Border)
+        mUI:Skin(SocialUIFrame.IgnoreListFrame)
+        mUI:Skin(SocialUIFrame.IgnoreListFrame.NineSlice)
+        mUI:Skin(SocialUIFrameInset)
+        mUI:Skin(SocialUIFrameInset.NineSlice)
+        mUI:Skin({SocialUIFrame.BattleNetBroadcastFrame.EditBox.BottomBorder, SocialUIFrame.BattleNetBroadcastFrame.EditBox.BottomLeftBorder,
+                  SocialUIFrame.BattleNetBroadcastFrame.EditBox.BottomRightBorder, SocialUIFrame.BattleNetBroadcastFrame.EditBox.TopBorder,
+                  SocialUIFrame.BattleNetBroadcastFrame.EditBox.TopLeftBorder, SocialUIFrame.BattleNetBroadcastFrame.EditBox.TopRightBorder,
+                  SocialUIFrame.BattleNetBroadcastFrame.EditBox.MiddleBorder, SocialUIFrame.BattleNetBroadcastFrame.EditBox.LeftBorder,
+                  SocialUIFrame.BattleNetBroadcastFrame.EditBox.RightBorder}, true)
+
+        -- Social Tabs (pooled/dynamically named)
+        local function SkinSocialTab(tab)
+            if tab and tab.Background then
+                mUI:Skin({tab.Background}, true)
+            end
+        end
+
+        if SocialUIFrame.socialTabPool then
+            for tab, _ in SocialUIFrame.socialTabPool:EnumerateActive() do
+                SkinSocialTab(tab)
+            end
+        end
+
+        if not Theme:IsHooked(SocialUIFrame, "RefreshTabs") then
+            Theme:SecureHook(SocialUIFrame, "RefreshTabs", function(self)
+                if self.socialTabPool then
+                    for tab, _ in self.socialTabPool:EnumerateActive() do
+                        SkinSocialTab(tab)
+                    end
+                end
+            end)
+        end
+    end
     Theme:StyleTooltip(FriendsTooltip)
 end
 
@@ -1044,6 +1209,12 @@ function Theme:LFG()
     mUI:Skin(LFGListFrame.ApplicationViewer.NameColumnHeader)
     mUI:Skin(LFGListFrame.ApplicationViewer.RoleColumnHeader)
     mUI:Skin(LFGListFrame.ApplicationViewer.ItemLevelColumnHeader)
+    mUI:Skin({LFGListFrame.SearchPanel.SearchBox.Left, LFGListFrame.SearchPanel.SearchBox.Middle, LFGListFrame.SearchPanel.SearchBox.Right,
+              LFGListApplicationDialogDescription.BottomTex, LFGListApplicationDialogDescription.BottomLeftTex,
+              LFGListApplicationDialogDescription.BottomRightTex, LFGListApplicationDialogDescription.TopTex,
+              LFGListApplicationDialogDescription.TopLeftTex, LFGListApplicationDialogDescription.TopRightTex,
+              LFGListApplicationDialogDescription.LeftTex, LFGListApplicationDialogDescription.MiddleTex, LFGListApplicationDialogDescription.RightTex},
+        true)
     mUI:Skin(ScenarioFinderFrameInset)
     mUI:Skin(ScenarioFinderFrameInset.NineSlice)
     mUI:Skin(LFGApplicationViewerRatingColumnHeader)
@@ -1125,7 +1296,8 @@ function Theme:Map()
     mUI:Skin(QuestMapFrame.QuestsFrame.DetailsFrame.BorderFrame)
     mUI:Skin(QuestMapFrame.QuestsFrame.DetailsFrame.BackFrame)
     mUI:Skin(QuestMapFrame.QuestsFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame)
-    mUI:Skin({QuestMapFrame.QuestsTab.Background, QuestMapFrame.EventsTab.Background, QuestMapFrame.MapLegendTab.Background}, true)
+    mUI:Skin({QuestMapFrame.QuestsTab.Background, QuestMapFrame.EventsTab.Background, QuestMapFrame.MapLegendTab.Background,
+              QuestScrollFrame.SearchBox.Left, QuestScrollFrame.SearchBox.Middle, QuestScrollFrame.SearchBox.Right}, true)
 
     -- Minimap
     mUI:Skin({MinimapCompassTexture}, true)
@@ -1255,6 +1427,7 @@ function Theme:Settings()
     mUI:Skin(SettingsPanel.NineSlice)
     mUI:Skin(SettingsPanel.GameTab)
     mUI:Skin(SettingsPanel.AddOnsTab)
+    mUI:Skin({SettingsPanel.SearchBox.Left, SettingsPanel.SearchBox.Middle, SettingsPanel.SearchBox.Right}, true)
     Theme:StyleTooltip(SettingsTooltip)
 end
 
@@ -1379,7 +1552,7 @@ function Theme:Castbars()
 
     -- Castbar Icon Skinning
     for castbar in pairs(Theme.castbarIcons) do
-        castbar.mUIBorder:SetVertexColor(unpack(mUI:Color(0.15)))
+        castbar.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
     end
 end
 
@@ -1390,7 +1563,9 @@ function Theme:Auras()
     -- Aura Skinning
     for button, type in pairs(Theme.aurabuttons) do
         if type == "playerbuff" or type == "unitframebuff" then
-            button.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
+            if button and button.mUIBorder then
+                button.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
+            end
         end
     end
 end
@@ -1415,6 +1590,17 @@ function Theme:Housing()
             mUI:Skin(HousingDashboardFrame.HouseInfoContent.ContentFrame.TabSystem.tabs[1])
             mUI:Skin(HousingDashboardFrame.HouseInfoContent.ContentFrame.TabSystem.tabs[2])
         end)
+        mUI:Skin({HousingDashboardFrame.CatalogContent.SearchBox.Left, HousingDashboardFrame.CatalogContent.SearchBox.Middle,
+                  HousingDashboardFrame.CatalogContent.SearchBox.Right}, true)
+
+        -- Housing Dashboard Side Tabs (static named frames)
+        if HousingDashboardFrame.TabButtons then
+            for _, tab in ipairs(HousingDashboardFrame.TabButtons) do
+                if tab.Background then
+                    mUI:Skin({tab.Background}, true)
+                end
+            end
+        end
     end
 
     if HousingModelPreviewFrame then
@@ -1455,6 +1641,15 @@ function Theme:GameMenu(frame)
     end)
 end
 
+function Theme:Framestack()
+    if TableAttributeDisplay then
+        mUI:Skin(TableAttributeDisplay)
+        mUI:Skin(TableAttributeDisplay.LinesScrollFrame)
+        mUI:Skin(TableAttributeDisplay.ScrollFrameArt)
+        mUI:Skin(TableAttributeDisplay.ScrollFrameArt.NineSlice)
+    end
+end
+
 function Theme:Frames()
     -- Bnet Toast
     Theme.blacklist[BNToastFrameIconTexture] = true
@@ -1478,6 +1673,7 @@ function Theme:Frames()
     -- EditMode
     mUI:Skin(EditModeManagerFrame)
     mUI:Skin(EditModeManagerFrame.Border)
+    mUI:Skin(EditModeManagerFrame.AccountSettings.SettingsContainer.BorderArt)
     mUI:Skin(EditModeSystemSettingsDialog)
     mUI:Skin(EditModeSystemSettingsDialog.Border)
 
@@ -1511,9 +1707,11 @@ function Theme:Frames()
     mUI:Skin(ReadyCheckListenerFrame)
     mUI:Skin(ReadyCheckListenerFrame.NineSlice)
 
-    -- Battletag Add Frame
-    mUI:Skin(BattleTagInviteFrame)
-    mUI:Skin(BattleTagInviteFrame.Border)
+    if select(4, GetBuildInfo()) < 120100 then
+        -- Battletag Add Frame
+        mUI:Skin(BattleTagInviteFrame)
+        mUI:Skin(BattleTagInviteFrame.Border)
+    end
 
     -- Currency Transfer
     mUI:Skin(CurrencyTransferMenu)
@@ -1544,6 +1742,11 @@ function Theme:Frames()
     mUI:Skin(CooldownViewerImportLayoutDialog)
     mUI:Skin(CooldownViewerImportLayoutDialog.Border)
     mUI:Skin(CooldownViewerSettingsEditAlert.BG)
+
+    -- Guild Invite Frame
+    mUI:Skin({GuildInviteFrameLeftBorder, GuildInviteFrameRightBorder, GuildInviteFrameTopBorder, GuildInviteFrameBottomBorder,
+              GuildInviteFrameTopLeftCorner, GuildInviteFrameTopRightCorner, GuildInviteFrameBottomLeftCorner, GuildInviteFrameBottomRightCorner},
+        true)
 
     for _, tab in pairs(CooldownViewerSettings.TabButtons) do
         Theme.blacklist[select(2, tab:GetRegions())] = true
@@ -1622,6 +1825,7 @@ function Theme:Update()
     Theme:Housing()
     Theme:DamageMeter()
     Theme:Catalyst()
+    Theme:Framestack()
 
     -- Tooltips
     for _, tooltip in next, Theme.tooltips do

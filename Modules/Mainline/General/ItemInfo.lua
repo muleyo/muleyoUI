@@ -1,5 +1,17 @@
 local ItemInfo = mUI:NewModule("mUI.Modules.General.ItemInfo", "AceHook-3.0")
 
+-- The global IsLevelAtEffectiveMaxLevel was removed in 12.1.0 in favour of
+-- GameRulesUtil.GetEffectiveMaxLevelForPlayer. Keep using the old global on
+-- live builds so retail keeps working.
+local USE_GAME_RULES_MAX_LEVEL = select(4, GetBuildInfo()) >= 120100
+local function IsUnitAtEffectiveMaxLevel(unit)
+    if USE_GAME_RULES_MAX_LEVEL then
+        return UnitLevel(unit) >= GameRulesUtil.GetEffectiveMaxLevelForPlayer()
+    end
+
+    return IsLevelAtEffectiveMaxLevel(UnitLevel(unit))
+end
+
 function ItemInfo:OnInitialize()
     -- Load Database
     ItemInfo.db = mUI.db.profile.general
@@ -615,7 +627,7 @@ function ItemInfo:OnInitialize()
             local canEnchant = ItemInfo:CanEnchantSlot(unit, slot)
 
             if (not enchantText) then
-                local shouldDisplayEchantMissingText = canEnchant and itemLink and IsLevelAtEffectiveMaxLevel(UnitLevel(unit))
+                local shouldDisplayEchantMissingText = canEnchant and itemLink and IsUnitAtEffectiveMaxLevel(unit)
                 additionalFrame.enchantDisplay:SetText(shouldDisplayEchantMissingText and "|cffff0000No Enchant|r" or "")
             else
                 -- trim size
