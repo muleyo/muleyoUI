@@ -53,8 +53,9 @@ function RF_Textures:OnInitialize()
                     frame.otherHealPrediction:SetTexture(RF_Textures.defaultTextures.health)
                 end
 
-                frame.selectionHighlight:SetTexture([[Interface\AddOns\mUI\Media\Textures\Raidframes\border_classic.png]])
-                frame.aggroHighlight:SetTexture([[Interface\AddOns\mUI\Media\Textures\Raidframes\border_classic.png]])
+                -- Use custom selection highlight texture
+                frame.selectionHighlight:SetTexture([[Interface\AddOns\mUI\Media\Textures\Raidframes\border.png]])
+                frame.aggroHighlight:SetTexture([[Interface\AddOns\mUI\Media\Textures\Raidframes\border.png]])
             end
         end
     end

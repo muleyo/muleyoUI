@@ -31,6 +31,9 @@ function Modules:OnEnable()
     if Modules.db.range then
         Modules.Range:Enable()
     end
+    if Modules.db.style == "mUI" then
+        Modules.Style:Enable()
+    end
     Modules.Fontsize:Enable()
     if Modules.db.cooldown then
         Modules.Cooldown:Enable()

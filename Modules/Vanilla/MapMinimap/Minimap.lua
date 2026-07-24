@@ -1,7 +1,7 @@
 local Minimap = mUI:NewModule("mUI.MapMinimap.Minimap")
 
 function Minimap:OnInitialize()
-    MinimapBorderTop:Hide()
+    MinimapCluster.BorderTop:Hide()
 end
 
 function Minimap:OnEnable()

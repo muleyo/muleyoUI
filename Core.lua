@@ -25,9 +25,6 @@ function Core:OnInitialize()
     Core.layouts.general = mUI:GetModule("mUI.Config.Layouts.General")
     Core.layouts.actionbars = mUI:GetModule("mUI.Config.Layouts.Actionbars")
     Core.layouts.unitframes = mUI:GetModule("mUI.Config.Layouts.Unitframes")
-    -- Raidframes is currently only split out into its own tab/layout module
-    -- for Mainline - Mists/TBC/Vanilla still have raidframe options folded
-    -- into their combined Unitframes.lua layout.
     if mUI:GameVersion()["Mainline"] then
         Core.layouts.raidframes = mUI:GetModule("mUI.Config.Layouts.Raidframes")
     end
@@ -92,26 +89,4 @@ function Core:OnInitialize()
     mUI.mGUI:RegisterCategory("mUIOptions_Misc_Tab", Core.layouts.misc:GetOptions())
     mUI.mGUI:RegisterCategory("mUIOptions_Profiles_Tab", Core.layouts.profiles:GetOptions())
     mUI.mGUI:RegisterCategory("mUIOptions_About_Tab", Core.layouts.about:GetOptions())
-end
-
-function Core:OnEnable()
-    if (Core.modules.nameplates:IsEnabled()) and
-        (C_AddOns.IsAddOnLoaded("Plater") or C_AddOns.IsAddOnLoaded("TidyPlates_ThreatPlates") or C_AddOns.IsAddOnLoaded("TidyPlates") or
-            C_AddOns.IsAddOnLoaded("Kui_Nameplates")) then
-        Core.db.nameplates.enabled = false
-        Core.modules.nameplates:Disable()
-        mUI:Debug("Nameplates Module disabled because another Nameplates AddOn is active.")
-    end
-
-    if Core.modules.chat:IsEnabled() and C_AddOns.IsAddOnLoaded("LS_Glass") then
-        Core.db.chat.enabled = false
-        Core.modules.chat:Disable()
-        mUI:Debug("Chat Module disabled because another Chat AddOn is active.")
-    end
-
-    if Core.modules.unitframes:IsEnabled() and C_AddOns.IsAddOnLoaded("BetterBlizzFrames") then
-        Core.db.unitframes.enabled = false
-        Core.modules.unitframes:Disable()
-        mUI:Debug("Unitframes Module disabled  because another Untiframes AddOn is active.")
-    end
 end

@@ -7,8 +7,12 @@ mUI:SetDefaultModuleState(false)
 function mUI:OnInitialize()
     self:RegisterChatCommand("mui", "SlashCommand")
     self:RegisterChatCommand("rl", ReloadUI)
-    self:RegisterChatCommand("fs", function()
-        UIParentLoadAddOn("Blizzard_DebugTools")
+    self:RegisterChatCommand("fs", function(msg)
+        if select(4, GetBuildInfo()) >= 120100 then
+            DebugTools_LoadUI()
+        else
+            UIParentLoadAddOn("Blizzard_DebugTools")
+        end
         local showHiddenArg, showRegionsArg, showAnchorsArg
         local pattern = "^%s*(%S+)(.*)$"
         showHiddenArg, msg = string.match(msg or "", pattern)

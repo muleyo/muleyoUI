@@ -9,6 +9,7 @@ function UF_Textures:OnInitialize()
 
     -- Create Frame
     UF_Textures.textures = CreateFrame("Frame")
+    UF_Textures.textures:RegisterEvent("PLAYER_LOGIN")
     UF_Textures.textures:RegisterEvent("PLAYER_ENTERING_WORLD")
     UF_Textures.textures:RegisterEvent("UNIT_HEALTH")
     UF_Textures.textures:RegisterEvent("UNIT_TARGET")
@@ -20,32 +21,36 @@ function UF_Textures:OnInitialize()
         player = PlayerFrame.healthbar,
         pet = PetFrame.healthbar,
         target = TargetFrame.healthbar,
+        focus = FocusFrame.healthbar,
         targettarget = TargetFrameToT.healthbar,
+        focustarget = FocusFrameToT.healthbar,
         boss1 = Boss1TargetFrame.healthbar,
         boss2 = Boss2TargetFrame.healthbar,
         boss3 = Boss3TargetFrame.healthbar,
         boss4 = Boss4TargetFrame.healthbar,
         boss5 = Boss5TargetFrame.healthbar,
-        party1 = PartyMemberFrame1.healthbar,
-        party2 = PartyMemberFrame2.healthbar,
-        party3 = PartyMemberFrame3.healthbar,
-        party4 = PartyMemberFrame4.healthbar
+        party1 = PartyFrame.MemberFrame1.healthbar,
+        party2 = PartyFrame.MemberFrame2.healthbar,
+        party3 = PartyFrame.MemberFrame3.healthbar,
+        party4 = PartyFrame.MemberFrame4.healthbar
     }
 
     UF_Textures.powerbars = {
         player = PlayerFrame.manabar,
         pet = PetFrame.manabar,
         target = TargetFrame.manabar,
+        focus = FocusFrame.manabar,
         targettarget = TargetFrameToT.manabar,
+        focustarget = FocusFrameToT.manabar,
         boss1 = Boss1TargetFrame.manabar,
         boss2 = Boss2TargetFrame.manabar,
         boss3 = Boss3TargetFrame.manabar,
         boss4 = Boss4TargetFrame.manabar,
         boss5 = Boss5TargetFrame.manabar,
-        party1 = PartyMemberFrame1.manabar,
-        party2 = PartyMemberFrame2.manabar,
-        party3 = PartyMemberFrame3.manabar,
-        party4 = PartyMemberFrame4.manabar
+        party1 = PartyFrame.MemberFrame1.manabar,
+        party2 = PartyFrame.MemberFrame2.manabar,
+        party3 = PartyFrame.MemberFrame3.manabar,
+        party4 = PartyFrame.MemberFrame4.manabar
     }
 
     function UF_Textures:Update()

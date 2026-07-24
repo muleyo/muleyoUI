@@ -95,6 +95,11 @@ function PvPRating:OnInitialize()
     end
 
     function PvPRating:INSPECT_READY(_, guid)
+        -- A secret guid can't be compared under tainted execution (throws), and
+        -- our pending/shownGuid are only ever set to non-secret guids, so bail.
+        if issecretvalue and issecretvalue(guid) then
+            return
+        end
         if guid ~= PvPRating.pending then
             return
         end
@@ -121,8 +126,15 @@ function PvPRating:OnInitialize()
             ClearInspectPlayer()
         end
 
-        if GameTooltip:IsShown() and GameTooltip.RefreshData then
-            xpcall(GameTooltip.RefreshData, nop, GameTooltip)
+        -- Do NOT call GameTooltip:RefreshData() here. Refreshing from this
+        -- tainted event handler forces Blizzard's GameTooltip_UnitColor to run
+        -- UnitPlayerControlled() during tainted execution, which throws on the
+        -- tooltip's secret unit value (and the error is raised inside a
+        -- securecallfunction boundary, so an xpcall around RefreshData can't
+        -- suppress it). Instead append our lines directly to the shown tooltip.
+        if GameTooltip:IsShown() and PvPRating.shownGuid == guid then
+            PvPRating:AddLines(GameTooltip, ratings)
+            GameTooltip:Show()
         end
     end
 
@@ -135,6 +147,11 @@ function PvPRating:OnInitialize()
         if not unit then
             return
         end
+
+        -- Remember which player this tooltip is currently displaying, so a
+        -- late INSPECT_READY only appends lines when the tooltip still shows
+        -- the same unit (we can't read the unit back from the tooltip: secret).
+        PvPRating.shownGuid = guid
 
         if UnitIsUnit(unit, "player") then
             PvPRating:AddLines(frame, PvPRating:GetPersonalRatings())
@@ -155,6 +172,14 @@ function PvPRating:OnEnable()
     if not PvPRating.hooked then
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, function(frame, data)
             if not PvPRating.db.pvprating or not PvPRating:IsEnabled() then
+                return
+            end
+
+            -- In active PvP matches unit identities are secret. A secret guid
+            -- can't be compared, branched on, or safely used as a table key under
+            -- tainted execution, so bail before it reaches shownGuid/cache/pending.
+            -- The rating lookup can't work without a real guid anyway.
+            if not data or data.guid == nil or (issecretvalue and issecretvalue(data.guid)) then
                 return
             end
 
