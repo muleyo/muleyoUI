@@ -70,7 +70,13 @@ function Font:OnInitialize()
                   LFGActivityEntryDifficult, LFGActivityEntryTrivial, LFGActivityHeader, MailTextFontNormal, MovieSubtitleFont, NewSubSpellFont,
                   NPE_TutorialKeyString, ObjectiveFont, OptionsFontLeft, PlayerChoiceTextFont, PVPInfoTextFont, QuestMapRewardsFont, SubSpellFont,
                   SubZoneTextFont, TextStatusBarText, TextStatusBarTextLarge, VehicleMenuBarStatusBarText, WhiteNormalNumberFont, WorldMapTextFont,
-                  ZoneTextFont}
+                  ZoneTextFont, UserScaledFontBody, UserScaledFontHeader, UserScaledFontGlueNormal, UserScaledFontGlueDisable,
+                  UserScaledFontGlueHighlight, UserScaledFontGlueNormalLarge, UserScaledFontGlueNormalExtraSmall, UserScaledFontGameNormal,
+                  UserScaledFontGameDisable, UserScaledFontGameHighlight, UserScaledFontGameHighlightRight, UserScaledFontGameNormalSmall,
+                  UserScaledFontGameDisableSmall, UserScaledFontGameHighlightSmall, UserScaledFontGameNormalMed2, UserScaledFontGame15Shadow,
+                  UserScaledFontGameNormalLarge, UserScaledFontGameHighlightLarge, UserScaledChatFontNormal, UserScaledFontNumberNormalRight,
+                  UserScaledFontNumberNormalRightRed, UserScaledFontNumberNormalRightYellow, UserScaledFontNumberNormalRightGray,
+                  UserScaledFontNumberNormalRightGreen, UserScaledFontSystem15Shadow}
 
     -- Functions
     function Font:Update()

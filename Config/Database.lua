@@ -112,6 +112,7 @@ local defaults = {
                 debuffcolors = false
             },
             raidframes = {
+                enabled = true,
                 size = {
                     enabled = false,
                     width = 100,
@@ -143,8 +144,7 @@ local defaults = {
                 dispelGlow = true,
                 auraDisplay = false,
                 auraTooltips = true,
-                dispelScale = 1.3,
-                ccScale = 1.15
+                dispelScale = 1.3
             }
         },
         castbars = {

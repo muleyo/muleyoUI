@@ -27,13 +27,16 @@ function BuffsDebuffs:OnInitialize()
 end
 
 function BuffsDebuffs:OnEnable()
-    BuffsDebuffs:SecureHook("TargetFrame_UpdateBuffAnchor", function(_, aura)
-        self:UpdateSize(aura, "buff")
-    end)
+    if select(4, GetBuildInfo()) >= 120100 then
+    else
+        BuffsDebuffs:SecureHook("TargetFrame_UpdateBuffAnchor", function(_, aura)
+            self:UpdateSize(aura, "buff")
+        end)
 
-    BuffsDebuffs:SecureHook("TargetFrame_UpdateDebuffAnchor", function(_, aura)
-        BuffsDebuffs:UpdateSize(aura, "debuff")
-    end)
+        BuffsDebuffs:SecureHook("TargetFrame_UpdateDebuffAnchor", function(_, aura)
+            BuffsDebuffs:UpdateSize(aura, "debuff")
+        end)
+    end
 end
 
 function BuffsDebuffs:OnDisable()

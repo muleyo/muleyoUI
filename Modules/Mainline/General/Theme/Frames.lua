@@ -1559,13 +1559,9 @@ end
 function Theme:Auras()
     -- BuffFrame Expand/Collapse Button
     mUI:Skin(BuffFrame.CollapseAndExpandButton)
-
-    -- Aura Skinning
     for button, type in pairs(Theme.aurabuttons) do
-        if type == "playerbuff" or type == "unitframebuff" then
-            if button and button.mUIBorder then
-                button.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
-            end
+        if (type == "playerbuff" or type == "unitframebuff") and button.mUIBorder then
+            pcall(button.mUIBorder.SetVertexColor, button.mUIBorder, unpack(mUI:Color(0.25)))
         end
     end
 end

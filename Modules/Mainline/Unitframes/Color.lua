@@ -59,11 +59,16 @@ function Classcolor:OnInitialize()
         end
         if UnitIsPlayer(unit) and UnitIsConnected(unit) and UnitClass(unit) then
             local _, class = UnitClass(unit)
-            local color = RAID_CLASS_COLORS[class]
-            tex:SetDesaturated(true)
-            tex:SetVertexColor(color.r, color.g, color.b)
-            if unitframe and unitframe.ReputationColor then
-                unitframe.ReputationColor:SetVertexColor(color.r, color.g, color.b)
+            -- C_ClassColor.GetClassColor is secret-safe (SecretArguments = AllowedWhenTainted),
+            -- so it takes the secret class token on 12.1.x without the "index table with secret
+            -- key" crash - but it MayReturnNothing, so nil-guard before reading the color.
+            local color = C_ClassColor.GetClassColor(class)
+            if color then
+                tex:SetDesaturated(true)
+                tex:SetVertexColor(color.r, color.g, color.b)
+                if unitframe and unitframe.ReputationColor then
+                    unitframe.ReputationColor:SetVertexColor(color.r, color.g, color.b)
+                end
             end
         elseif UnitIsPlayer(unit) and (not UnitIsConnected(unit)) then
             tex:SetDesaturated(true)

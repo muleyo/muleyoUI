@@ -53,13 +53,55 @@ function Theme:OnEnable()
     -- Buffs & Debuffs
     if not C_AddOns.IsAddOnLoaded("BlizzBuffsFacade") then
         if select(4, GetBuildInfo()) >= 120100 then
-            -- Player Auras - the containers drive themselves off their own unit,
-            -- so there is nothing for us to refresh on UNIT_AURA.
+            -- Player Auras
             Theme:InitPlayerAuraContainers()
 
-            -- Target/Focus Auras
-            Theme:CreateUnitAuraContainer(TargetFrame, "target")
-            Theme:CreateUnitAuraContainer(FocusFrame, "focus")
+            if mUI.db.profile.unitframes.enabled then
+                -- Target/Focus Auras
+                Theme:CreateUnitAuraContainer(TargetFrame, "target")
+                Theme:CreateUnitAuraContainer(FocusFrame, "focus")
+            end
+
+            if mUI.db.profile.unitframes.raidframes.enabled then
+                -- Raidframe Auras
+                Theme:DisableDefaultRaidAuras(true)
+                Theme:SecureHook("CompactUnitFrame_UpdateAll", function(frame)
+                    if not frame or frame:IsForbidden() or not frame.unit then
+                        return
+                    end
+
+                    local name = frame:GetName()
+
+                    if not name or not name:match("^Compact") then
+                        return
+                    end
+
+                    local data = Theme:EnsureContainers(frame)
+                    Theme:PositionAnchors(frame, data)
+
+                    local unit = frame.displayedUnit or frame.unit
+                    if not unit or unit:match("target") then
+                        return
+                    end
+
+                    local unreachable = (UnitIsConnected and not UnitIsConnected(unit))
+                    or (UnitPhaseReason and UnitPhaseReason(unit) ~= nil)
+                    or (UnitIsVisible and not UnitIsVisible(unit))
+
+                    local buffSize, debuffSize = Theme:GetSizes(frame)
+                    local frameH = frame:GetHeight()
+                    if not frameH or frameH < 1 then
+                        frameH = 36
+                    end
+
+                    local defensiveSize = math.floor(frameH * (Theme:GetDefensiveSize() / 100) + 0.5)
+                    local defPoint, defX, defY = Theme:GetDefensivePosition()
+
+                    Theme:UpdateRaidAuraContainers(frame, data, unit, unreachable, buffSize, debuffSize, defensiveSize, defPoint, defX, defY)
+                end)
+            else
+                Theme:DisableDefaultRaidAuras(false)
+            end
         else
             Theme.auras:RegisterEvent("PLAYER_ENTERING_WORLD")
             Theme.auras:RegisterEvent("PLAYER_TARGET_CHANGED")
