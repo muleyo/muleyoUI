@@ -50,25 +50,11 @@ function mGUI.Widgets.Slider(parent)
     local function Commit(value, fromSlider, isLiveTick)
         value = math.min(container.max or value, math.max(container.min or value, value))
         value = Round(container, value)
-        -- Don't call slider:SetValue() while reacting to the slider's OWN
-        -- OnValueChanged during an active drag - re-assigning the value from
-        -- inside that callback fights the native drag/thumb tracking and
-        -- can freeze dragging entirely. The slider is already at (or very
-        -- near, via SetObeyStepOnDrag) this value, so it's not needed there;
-        -- only sync it explicitly when committing from another source (the
-        -- value edit box).
         if not fromSlider then
             slider:SetValue(value)
         end
         valueBox:SetText(DisplayValue(value))
         if container.OnValueChanged then
-            -- `isLiveTick` tells Renderer.lua's Builders.range whether this
-            -- is a mid-drag tick (use the cheap, non-destructive
-            -- RefreshStates()) or the final commit (safe to do a full
-            -- Refresh() - the destructive release/reacquire/reposition a
-            -- full Refresh() does on EVERY tick was what froze dragging
-            -- entirely, since it fights the OS mouse-drag capture on the
-            -- thumb - even after the SetValue reentrancy above was fixed).
             container:OnValueChanged(value, isLiveTick)
         end
     end
@@ -80,9 +66,6 @@ function mGUI.Widgets.Slider(parent)
         end
     end)
 
-    -- One final full settle-commit once the drag actually ends (mouse no
-    -- longer captured), so dynamic name/hidden/disabled state across the
-    -- whole page catches up without disrupting the drag itself.
     slider:HookScript("OnMouseUp", function()
         Commit(slider:GetValue(), true, false)
     end)
