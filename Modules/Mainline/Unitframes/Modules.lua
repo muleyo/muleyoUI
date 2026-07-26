@@ -9,9 +9,6 @@ function Modules:OnInitialize()
     Modules.RF_RoleIcons = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_RoleIcons")
     Modules.RF_Solo = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Solo")
     Modules.RF_Scale = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Scale")
-    Modules.RF_Defensive = mUI:GetModule("mUI.Modules.Unitframes.RF_Defensive")
-    Modules.RF_Auras = mUI:GetModule("mUI.Modules.Unitframes.RF_Auras")
-    Modules.RF_AuraDisplay = mUI:GetModule("mUI.Modules.Unitframes.RF_AuraDisplay")
     Modules.UF_Textures = mUI:GetModule("mUI.Modules.Unitframes.Unitframes_Textures")
     Modules.Color = mUI:GetModule("mUI.Modules.Unitframes.Color")
     Modules.BuffsDebuffs = mUI:GetModule("mUI.Modules.Unitframes.BuffsDebuffs")
@@ -33,84 +30,83 @@ end
 function Modules:OnEnable()
     Modules.db = mUI.db.profile.unitframes
 
-    -- Enable Modules
-    if Modules.db.textures.unitframes ~= "None" then
-        Modules.UF_Textures:Enable()
+    -- Unitframe modules
+    if Modules.db.enabled then
+        if Modules.db.textures.unitframes ~= "None" then
+            Modules.UF_Textures:Enable()
+        end
+        if Modules.db.color then
+            Modules.Color:Enable()
+        end
+        if Modules.db.playerrepcolor then
+            Modules.Reputationcolor:Enable()
+        elseif Modules.db.reputationcolor then
+            Modules.Reputationcolor:Enable()
+        end
+        if Modules.db.combatindicator then
+            Modules.Combatindicator:Enable()
+        end
+        if Modules.db.pvpbadge then
+            Modules.Pvpbadge:Enable()
+        end
+        if Modules.db.hitindicator then
+            Modules.Hitindicator:Enable()
+        end
+        if Modules.db.totemicons then
+            Modules.Totemicons:Enable()
+        end
+        if Modules.db.classbar then
+            Modules.Classbar:Enable()
+        end
+        if Modules.db.cornericon then
+            Modules.Cornericon:Enable()
+        end
+        if Modules.db.restingtextures then
+            Modules.Restingtextures:Enable()
+        end
+        if Modules.db.name then
+            Modules.Name:Enable()
+        end
+        if Modules.db.level then
+            Modules.Level:Enable()
+        end
+        if Modules.db.buffsdebuffs.enabled then
+            Modules.BuffsDebuffs:Enable()
+        end
+        if Modules.db.elitecolor then
+            Modules.Elitecolor:Enable()
+        end
+        if Modules.db.smooth then
+            Modules.Smooth:Enable()
+        end
+        if Modules.db.overshields then
+            Modules.Overshields:Enable()
+        end
     end
-    if Modules.db.textures.raidframes ~= "None" then
-        Modules.RF_Textures:Enable()
-    end
-    if Modules.db.color then
-        Modules.Color:Enable()
-    end
-    if Modules.db.playerrepcolor then
-        Modules.Reputationcolor:Enable()
-    elseif Modules.db.reputationcolor then
-        Modules.Reputationcolor:Enable()
-    end
-    if Modules.db.combatindicator then
-        Modules.Combatindicator:Enable()
-    end
-    if Modules.db.pvpbadge then
-        Modules.Pvpbadge:Enable()
-    end
-    if Modules.db.hitindicator then
-        Modules.Hitindicator:Enable()
-    end
-    if Modules.db.totemicons then
-        Modules.Totemicons:Enable()
-    end
-    if Modules.db.classbar then
-        Modules.Classbar:Enable()
-    end
-    if Modules.db.cornericon then
-        Modules.Cornericon:Enable()
-    end
-    if Modules.db.restingtextures then
-        Modules.Restingtextures:Enable()
-    end
-    if Modules.db.name then
-        Modules.Name:Enable()
-    end
-    if Modules.db.level then
-        Modules.Level:Enable()
-    end
-    if Modules.db.buffsdebuffs.enabled then
-        Modules.BuffsDebuffs:Enable()
-    end
-    if Modules.db.elitecolor then
-        Modules.Elitecolor:Enable()
-    end
-    if Modules.db.raidframes.roleicons then
-        Modules.RF_RoleIcons:Enable()
-    end
-    if Modules.db.raidframes.health or (Modules.db.raidframes.partyStatusColorMode and Modules.db.raidframes.partyStatusColorMode ~= "default") then
-        Modules.RF_Health:Enable()
-    end
-    if Modules.db.raidframes.names or Modules.db.raidframes.hidenames or Modules.db.raidframes.partyNameCentered then
-        Modules.RF_Name:Enable()
-    end
-    if Modules.db.raidframes.hidenames then
-        Modules.RF_HideNames:Enable()
-    end
-    if Modules.db.raidframes.solo then
-        Modules.RF_Solo:Enable()
-    end
-    if (Modules.db.raidframes.partyScale or 100) ~= 100 then
-        Modules.RF_Scale:Enable()
-    end
-    if Modules.db.smooth then
-        Modules.Smooth:Enable()
-    end
-    if Modules.db.overshields then
-        Modules.Overshields:Enable()
-    end
-    -- Modules.RF_Defensive:Enable()
-    if Modules.db.raidframes.dispelGlow then
-        Modules.RF_Auras:Enable()
-    end
-    if Modules.db.raidframes.auraDisplay then
-        Modules.RF_AuraDisplay:Enable()
+
+    -- Raidframe modules
+    if Modules.db.raidframes.enabled then
+        if Modules.db.textures.raidframes ~= "None" then
+            Modules.RF_Textures:Enable()
+        end
+        if Modules.db.raidframes.roleicons then
+            Modules.RF_RoleIcons:Enable()
+        end
+        if Modules.db.raidframes.health or (Modules.db.raidframes.partyStatusColorMode and Modules.db.raidframes.partyStatusColorMode ~= "default") then
+            Modules.RF_Health:Enable()
+        end
+        if Modules.db.raidframes.names or Modules.db.raidframes.hidenames or Modules.db.raidframes.partyNameCentered then
+            Modules.RF_Name:Enable()
+        end
+        if Modules.db.raidframes.hidenames then
+            Modules.RF_HideNames:Enable()
+        end
+        if Modules.db.raidframes.solo then
+            Modules.RF_Solo:Enable()
+        end
+        if (Modules.db.raidframes.partyScale or 100) ~= 100 then
+            Modules.RF_Scale:Enable()
+        end
     end
 end
 
@@ -137,8 +133,6 @@ function Modules:OnDisable()
     Modules.RF_HideNames:Disable()
     Modules.RF_Solo:Disable()
     Modules.RF_Scale:Disable()
-    Modules.RF_Auras:Disable()
-    Modules.RF_AuraDisplay:Disable()
     Modules.Smooth:Disable()
     Modules.Overshields:Disable()
 end
