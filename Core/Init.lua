@@ -49,7 +49,7 @@ function mUI:OnInitialize()
                         mUIOptions:Hide()
                     end
                     UIFrameFade(mUIOptions, fadeInfo)
-                    ToggleGameMenu()
+                    HideUIPanel(GameMenuFrame)
                 else
                     local fadeInfo = {}
                     fadeInfo.mode = "IN"
@@ -58,7 +58,7 @@ function mUI:OnInitialize()
                         mUIOptions:Show()
                     end
                     UIFrameFade(mUIOptions, fadeInfo)
-                    ToggleGameMenu()
+                    HideUIPanel(GameMenuFrame)
                 end
             end
         else

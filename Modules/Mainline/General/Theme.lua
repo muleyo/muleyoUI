@@ -65,7 +65,7 @@ function Theme:OnEnable()
             if mUI.db.profile.unitframes.raidframes.enabled then
                 -- Raidframe Auras
                 Theme:DisableDefaultRaidAuras(true)
-                Theme:SecureHook("CompactUnitFrame_UpdateAll", function(frame)
+                Theme:SecureHook("CompactUnitFrame_UpdateStatusText", function(frame)
                     if not frame or frame:IsForbidden() or not frame.unit then
                         return
                     end
@@ -84,9 +84,8 @@ function Theme:OnEnable()
                         return
                     end
 
-                    local unreachable = (UnitIsConnected and not UnitIsConnected(unit))
-                    or (UnitPhaseReason and UnitPhaseReason(unit) ~= nil)
-                    or (UnitIsVisible and not UnitIsVisible(unit))
+                    local unreachable = (UnitIsConnected and not UnitIsConnected(unit)) or (UnitPhaseReason and UnitPhaseReason(unit) ~= nil) or
+                                            (UnitIsVisible and not UnitIsVisible(unit))
 
                     local buffSize, debuffSize = Theme:GetSizes(frame)
                     local frameH = frame:GetHeight()
@@ -142,6 +141,7 @@ function Theme:OnEnable()
     -- Update Tooltips
     Theme:SecureHook("SharedTooltip_SetBackdropStyle", function(frame)
         Theme:StyleTooltip(frame)
+        Theme:StyleAuraTooltip()
     end)
 
     -- Game Menu
