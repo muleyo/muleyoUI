@@ -4,17 +4,6 @@ local Theme = mUI:GetModule("mUI.Modules.General.Theme")
 Theme.aurabuttons = {}
 
 -- General Functions
---
--- Single canonical aura-button builder shared by the Player, Unitframe and
--- Raid/Party aura containers. Every button uses the same look (Core atlas
--- border, Core mask, rectangular border scaled to the icon). Callers only
--- differ in data, passed via opts:
---   size          icon size in pixels (border/inset scale with it)
---   category      "player"/"unitframe" -> registers in Theme.aurabuttons
---                 (nil for raid, which is size-managed elsewhere)
---   dispelBorder  create a live SetAuraBorder dispel-colored border (debuffs)
---   borderColor   static {r,g,b} border color (unitframe per-group debuffs)
---   baseShade     mUI:Color() shade for the default border (raid uses 0.15)
 local AURA_BORDER_TEX = [[Interface\AddOns\mUI\Media\Textures\Core\atlas.png]]
 local AURA_MASK_TEX = [[Interface\AddOns\mUI\Media\Textures\Core\mask.png]]
 local AURA_BORDER_COORD = {0.95263671875, 0.99365234375, 0.17919921875, 0.22021484375}
@@ -80,8 +69,8 @@ local function CreateAuraButton(auraFrame, isDebuff, opts)
         auraFrame.CountOverlay:SetFrameLevel(auraFrame.BorderOverlay:GetFrameLevel() + 1)
 
         auraFrame.Count = auraFrame.CountOverlay:CreateFontString(nil, "OVERLAY", "NumberFontNormal")
-        auraFrame.Count:SetFont(STANDARD_TEXT_FONT, 11, "OUTLINE")
-        auraFrame.Count:SetPoint("TOPRIGHT", auraFrame.Icon, "TOPRIGHT", -1, -1)
+        auraFrame.Count:SetFont(STANDARD_TEXT_FONT, opts.countSize or 11, "OUTLINE")
+        auraFrame.Count:SetPoint("TOPRIGHT", auraFrame.Icon, "TOPRIGHT", opts.countOffsetX or -1, opts.countOffsetY or -1)
         auraFrame:SetApplicationCount(auraFrame.Count)
 
         if isDebuff and opts.dispelBorder then
@@ -97,8 +86,6 @@ local function CreateAuraButton(auraFrame, isDebuff, opts)
                 showIcon = false,
                 showWhenHarmful = true,
                 showWhenHelpful = false,
-                -- Color the None dispel type too (curve point 0), matching the
-                -- base border, instead of letting it fall through as hidden.
                 showWithoutDispelType = true,
                 customDispelColorCurve = Theme.colorCurve,
                 style = AuraButtonBorderStyle.Color
@@ -276,20 +263,11 @@ function Theme:SetPlayerDebuffDispelTypeShown(shown)
 end
 
 function Theme:DisableDefaultPlayerAuras()
-    local nop = function()
-    end
-
     for _, hostFrame in ipairs({BuffFrame, DebuffFrame}) do
-        hostFrame:UnregisterEvent("UNIT_AURA")
-        hostFrame:UnregisterEvent("GROUP_ROSTER_UPDATE")
-        hostFrame:UnregisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-        hostFrame:UnregisterEvent("WEAPON_ENCHANT_CHANGED")
-        hostFrame:UnregisterEvent("WEAPON_SLOT_CHANGED")
-
+        hostFrame:UnregisterAllEvents()
+        hostFrame.AuraContainer:UnregisterAllEvents()
+        hostFrame.AuraContainer:Hide()
         hostFrame:SetScript("OnUpdate", nil)
-        hostFrame.UpdateAuras = nop
-        hostFrame.UpdateAuraButtons = nop
-        hostFrame.UpdateGridLayout = nop
 
         for _, auraFrame in ipairs(hostFrame.auraFrames or {}) do
             if not auraFrame.isAuraAnchor then
@@ -300,46 +278,13 @@ function Theme:DisableDefaultPlayerAuras()
     end
 
     BuffFrame.ConsolidatedBuffs:Hide()
-    BuffFrame.ConsolidatedBuffs.ShouldShow = function()
-        return false
-    end
-
     BuffFrame.CollapseAndExpandButton:Hide()
-    BuffFrame.RefreshConsolidationFrameVisibility = nop
-end
-
-function Theme:StyleAuraButtonTooltip()
-    if not (AuraContainerInbound and AuraContainerInbound.SetTooltipBackdrop) then
-        return
-    end
-
-    local bg = Theme.backdrop
-    if not bg then
-        return
-    end
-
-    local borderColor
-    if Theme.db.theme == "Default" then
-        borderColor = CreateColor(1, 1, 1, 1)
-    else
-        borderColor = CreateColor(unpack(Theme.backdrop.borderColor))
-    end
-
-    AuraContainerInbound.SetTooltipBackdrop({
-        backdropInfo = Theme.backdrop,
-        centerColor = CreateColor(0.03, 0.03, 0.03, 0.95),
-        borderColor = borderColor
-    })
 end
 
 function Theme:InitPlayerAuraContainers()
     Theme:CreatePlayerAuraContainer(BuffFrame, false)
     Theme:CreatePlayerAuraContainer(DebuffFrame, true)
-
     Theme:DisableDefaultPlayerAuras()
-
-    -- Global, one-time skin covering every aura button tooltip.
-    Theme:StyleAuraButtonTooltip()
 
     for _, hostFrame in ipairs({BuffFrame, DebuffFrame}) do
         Theme:SecureHook(hostFrame, "UpdateSystemSetting", function(self)
@@ -423,7 +368,8 @@ function Theme:CreateUnitAuraContainer(frame, unit)
         }
     })
 
-    local debuffFilterString = AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Harmful)
+    -- PLAYER: show only debuffs cast by the player (or player's pet/vehicle).
+    local debuffFilterString = AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Harmful, AuraUtil.AuraFilters.Player)
 
     if mUI.db.profile.unitframes.buffsdebuffs.debuffcolors then
         local DEBUFF_TYPE_GROUPS = {{
@@ -598,12 +544,27 @@ end
 -- Raid- & Partyframe Auras
 -- ============================================================================
 local RAID_MAX_BUFFS = 6
-local RAID_MAX_DEBUFFS = 3
+local RAID_MAX_DEBUFFS = 5
 local RAID_MAX_DEFENSIVE = 3
 local RAID_BUFFS_PER_ROW = 3
-local RAID_DEBUFFS_PER_ROW = 3
 local RAID_ICON_GAP = 1
 local RAID_MAX_BIG_DEBUFFS = 2
+
+local RAID_DEBUFF_EXCLUDE = {
+    [57723] = true, -- Exhaustion (Heroism)
+    [57724] = true, -- Sated (Bloodlust)
+    [80354] = true, -- Temporal Displacement (Time Warp)
+    [95809] = true, -- Insanity (Hunter pet Ancient Hysteria)
+    [264689] = true, -- Fatigued (Drums of Fury / Primal Rage)
+    [390435] = true, -- Exhaustion (Evoker Fury of the Aspects)
+    [308312] = true, -- Time Trial Practice (Time Trial)
+    [1254550] = true, -- Arcane Empowerment
+    [26013] = true, -- Deserter
+    [71041] = true, -- Deserter
+    [405692] = true -- Deserter
+}
+
+local RAID_DEBUFF_MAX_DURATION = 100000
 
 local BLIZZARD_RAID_AURA_CVARS = {"raidFramesDisplayBuffs", "raidFramesDisplayDebuffs", "raidFramesCenterBigDefensive"}
 
@@ -625,7 +586,10 @@ local function InitRaidAuraButton(auraFrame, container, groupKey, isDebuff)
     CreateAuraButton(auraFrame, isDebuff, {
         size = size,
         baseShade = 0.15,
-        dispelBorder = isDebuff
+        dispelBorder = isDebuff,
+        countSize = 9,
+        countOffsetX = 1,
+        countOffsetY = -1
     })
 end
 
@@ -664,8 +628,10 @@ function Theme:EnsureRaidAuraContainers(frame, data)
     buffContainer:SetEnabled(false)
     data.buffContainer = buffContainer
 
-    -- Debuffs
+    -- Debuffs (kept above buffs, matching the default raid frame where debuffs
+    -- draw over buffs when the containers overlap).
     local debuffContainer = CreateFrame("AuraContainer", nil, frame, "CustomAuraContainerTemplate")
+    debuffContainer:SetFrameLevel(buffContainer:GetFrameLevel() + 10)
     debuffContainer.mUI_groupSizes = {
         DebuffsBig = bigDebuffSize,
         DebuffsNormal = debuffSize
@@ -677,7 +643,8 @@ function Theme:EnsureRaidAuraContainers(frame, data)
     debuffContainer:AddAuraGroup("DebuffsBig", RaidFilter("HARMFUL"), {
         maxFrameCount = RAID_MAX_BIG_DEBUFFS,
         candidateFilters = {
-            isBossOrRoleAura = true
+            isBossOrRoleAura = true,
+            excludeSpellIDs = RAID_DEBUFF_EXCLUDE
         },
         initializeFrame = function(auraFrame)
             InitRaidAuraButton(auraFrame, debuffContainer, "DebuffsBig", true)
@@ -691,7 +658,12 @@ function Theme:EnsureRaidAuraContainers(frame, data)
     debuffContainer:AddAuraGroup("DebuffsNormal", RaidFilter("HARMFUL"), {
         maxFrameCount = RAID_MAX_DEBUFFS,
         candidateFilters = {
-            isBossOrRoleAura = false
+            isBossOrRoleAura = false,
+            excludeSpellIDs = RAID_DEBUFF_EXCLUDE,
+            -- Drops permanent (duration 0) debuffs like Dampening, which can't be
+            -- excluded by spellID (see note above). NOT applied to DebuffsBig -
+            -- boss/role debuffs are often permanent and must stay visible.
+            maxDuration = RAID_DEBUFF_MAX_DURATION
         },
         initializeFrame = function(auraFrame)
             InitRaidAuraButton(auraFrame, debuffContainer, "DebuffsNormal", true)
@@ -735,9 +707,12 @@ function Theme:UpdateRaidAuraContainers(frame, data, unit, unreachable, buffSize
     -- Sizes are baked at creation; read them back for the flow layout wrap width.
     local buffS = buffContainer.mUI_groupSizes.Buffs or buffSize
     local bigS = debuffContainer.mUI_groupSizes.DebuffsBig or debuffSize
+    local normalS = debuffContainer.mUI_groupSizes.DebuffsNormal or debuffSize
     local defS = defensiveContainer.mUI_groupSizes.BigDefensives or defensiveSize
     buffContainer:SetFlowLayoutMaximumLineSize(RAID_BUFFS_PER_ROW * (buffS + RAID_ICON_GAP))
-    debuffContainer:SetFlowLayoutMaximumLineSize(RAID_DEBUFFS_PER_ROW * (bigS + RAID_ICON_GAP))
+    -- Keep debuffs on a single line: wide enough to hold every possible icon
+    -- (max big + max normal), so no group ever wraps onto a second row.
+    debuffContainer:SetFlowLayoutMaximumLineSize(RAID_MAX_BIG_DEBUFFS * (bigS + RAID_ICON_GAP) + RAID_MAX_DEBUFFS * (normalS + RAID_ICON_GAP))
     defensiveContainer:SetFlowLayoutMaximumLineSize(RAID_MAX_DEFENSIVE * (defS + RAID_ICON_GAP))
 
     buffContainer:ClearAllPoints()
