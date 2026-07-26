@@ -76,9 +76,6 @@ function Modules:OnEnable()
         if Modules.db.elitecolor then
             Modules.Elitecolor:Enable()
         end
-        if Modules.db.smooth then
-            Modules.Smooth:Enable()
-        end
         if Modules.db.overshields then
             Modules.Overshields:Enable()
         end
@@ -106,6 +103,9 @@ function Modules:OnEnable()
         end
         if (Modules.db.raidframes.partyScale or 100) ~= 100 then
             Modules.RF_Scale:Enable()
+        end
+        if Modules.db.smooth then
+            Modules.Smooth:Enable()
         end
     end
 end

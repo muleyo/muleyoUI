@@ -29,7 +29,13 @@ function RF_Name:OnInitialize()
         if frame:GetName() and frame.unit then
             local name = frame:GetName()
             if name and name:match("^Compact") then
-                local color = RAID_CLASS_COLORS[select(2, UnitClass(frame.unit))]
+                local _, class = UnitClass(frame.unit)
+
+                if not class then
+                    return
+                end
+
+                local color = C_ClassColor.GetClassColor(class)
                 local unitName = UnitName(frame.unit)
 
                 if not RF_Name.backup[1] then

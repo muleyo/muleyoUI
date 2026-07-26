@@ -289,14 +289,14 @@ function Raidframes:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.unitframes.smooth = val
 
-                    if not Unitframes.Module:IsEnabled() then
+                    if not Raidframes.Module:IsEnabled() then
                         return
                     end
 
                     if val then
-                        Unitframes.Module.Smooth:Enable()
+                        Raidframes.Module.Smooth:Enable()
                     else
-                        Unitframes.Module.Smooth:Disable()
+                        Raidframes.Module.Smooth:Disable()
                         mUI:Reload("Disable Smooth Healthbars")
                     end
                 end,

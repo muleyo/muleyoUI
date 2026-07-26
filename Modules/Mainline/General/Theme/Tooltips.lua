@@ -51,3 +51,27 @@ function Theme:StyleTooltip(frame)
         end
     end
 end
+
+function Theme:StyleAuraTooltip()
+    if not (AuraContainerInbound and AuraContainerInbound.SetTooltipBackdrop) then
+        return
+    end
+
+    local bg = Theme.backdrop
+    if not bg then
+        return
+    end
+
+    local borderColor
+    if Theme.db.theme == "Default" then
+        borderColor = CreateColor(1, 1, 1, 1)
+    else
+        borderColor = CreateColor(unpack(Theme.backdrop.borderColor))
+    end
+
+    AuraContainerInbound.SetTooltipBackdrop({
+        backdropInfo = Theme.backdrop,
+        centerColor = CreateColor(0.03, 0.03, 0.03, 0.95),
+        borderColor = borderColor
+    })
+end

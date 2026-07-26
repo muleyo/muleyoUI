@@ -369,15 +369,6 @@ function Style:OnInitialize()
             end
         end
     end
-
-    --[[function Style:FixTooltipTextures()
-        for i = 1, 30 do
-            local frame = _G["GameTooltipTexture" .. i]
-            if frame and frame:IsShown() then
-                frame:SetDrawLayer("BACKGROUND", 1)
-            end
-        end
-    end]]
 end
 
 function Style:OnEnable()

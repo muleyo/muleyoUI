@@ -71,7 +71,13 @@ function RF_Health:OnInitialize()
         if frame:GetName() and frame.unit then
             local name = frame:GetName()
             if name and name:match("^Compact") then
-                local color = RAID_CLASS_COLORS[select(2, UnitClass(frame.unit))]
+                local _, class = UnitClass(frame.unit)
+
+                if not class then
+                    return
+                end
+
+                local color = C_ClassColor.GetClassColor(class)
                 local isParty = name:match("^CompactPartyFrameMember") and true or false
                 local partyMode = RF_Health.db.partyStatusColorMode or "default"
 
