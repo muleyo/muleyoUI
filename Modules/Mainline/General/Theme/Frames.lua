@@ -215,8 +215,12 @@ function Theme:Calendar()
         mUI:Skin(CalendarClassButton12)
         mUI:Skin(CalendarClassButton13)
         mUI:Skin(CalendarClassTotalsButton)
+        mUI:Skin(CalendarCreateEventDescriptionContainer.NineSlice)
+        mUI:Skin(CalendarCreateEventInviteList.NineSlice)
         mUI:Skin({CalendarCreateEventDivider, CalendarCreateEventFrameButtonBackground, CalendarCreateEventMassInviteButtonBorder,
-                  CalendarCreateEventCreateButtonBorder}, true)
+                  CalendarCreateEventCreateButtonBorder, CalendarCreateEventTitleEdit.Left, CalendarCreateEventTitleEdit.Middle,
+                  CalendarCreateEventTitleEdit.Right, CalendarCreateEventInviteEdit.Left, CalendarCreateEventInviteEdit.Middle,
+                  CalendarCreateEventInviteEdit.Right}, true)
     end
 end
 
@@ -1672,6 +1676,14 @@ function Theme:Frames()
     mUI:Skin(EditModeManagerFrame.AccountSettings.SettingsContainer.BorderArt)
     mUI:Skin(EditModeSystemSettingsDialog)
     mUI:Skin(EditModeSystemSettingsDialog.Border)
+    mUI:Skin(EditModeUnsavedChangesDialog.Border)
+    mUI:Skin(EditModeImportLayoutDialog.Border)
+    mUI:Skin({EditModeImportLayoutDialog.ImportBox.LeftTex, EditModeImportLayoutDialog.ImportBox.MiddleTex,
+              EditModeImportLayoutDialog.ImportBox.RightTex, EditModeImportLayoutDialog.ImportBox.TopTex,
+              EditModeImportLayoutDialog.ImportBox.BottomTex, EditModeImportLayoutDialog.ImportBox.BottomLeftTex,
+              EditModeImportLayoutDialog.ImportBox.BottomRightTex, EditModeImportLayoutDialog.ImportBox.TopLeftTex,
+              EditModeImportLayoutDialog.ImportBox.TopRightTex, EditModeImportLayoutDialog.LayoutNameEditBox.Left,
+              EditModeImportLayoutDialog.LayoutNameEditBox.Middle, EditModeImportLayoutDialog.LayoutNameEditBox.Right}, true)
 
     -- Vehicle Seat
     mUI:Skin(VehicleSeatIndicator)

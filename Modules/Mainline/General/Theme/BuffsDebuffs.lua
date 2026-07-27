@@ -97,6 +97,22 @@ local function CreateAuraButton(auraFrame, isDebuff, opts)
         else
             auraFrame.mUIBorder:SetVertexColor(unpack(mUI:Color(opts.baseShade or 0.25)))
         end
+
+        -- Apply the selected border style (and keep it re-skinnable on change)
+        Theme:RegisterBorder({
+            border = auraFrame.mUIBorder,
+            coord = true,
+            extra = auraFrame.mUIDispelBorder and {auraFrame.mUIDispelBorder} or nil,
+            mask = auraFrame.MaskTexture,
+            swipe = auraFrame.Cooldown,
+            applyGeometry = function(style)
+                local ins = size * (style.auraInsetRatio or AURA_BORDER_INSET_RATIO)
+                ApplyAuraBorderGeometry(auraFrame.mUIBorder, auraFrame, ins)
+                if auraFrame.mUIDispelBorder then
+                    ApplyAuraBorderGeometry(auraFrame.mUIDispelBorder, auraFrame, ins)
+                end
+            end
+        })
     end
 
     if opts.category then
@@ -883,7 +899,7 @@ function Theme:ButtonDefault(button, isDebuff)
 
     -- Create Border
     button.mUIBorder = button:CreateTexture(nil, "OVERLAY", nil, 7)
-    button.mUIBorder:SetTexture([[Interface\AddOns\mUI\Media\Textures\Auras\atlas.png]])
+    button.mUIBorder:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\atlas_v2.png]])
     button.mUIBorder:SetTexCoord(0.001953125, 0.142578125, 0.451171875, 0.591796875)
     button.mUIBorder:SetDesaturated(true)
 
@@ -893,7 +909,7 @@ function Theme:ButtonDefault(button, isDebuff)
 
     -- Create Border Mask
     button.mUIBorder.mask = button:CreateMaskTexture()
-    button.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Auras\mask.png]], "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    button.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask_v2.png]], "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     button.mUIBorder.mask:SetAllPoints(button.Icon)
     button.Icon:AddMaskTexture(button.mUIBorder.mask)
 
@@ -958,7 +974,7 @@ function Theme:UpdateUnitframeAuras(aura, isDebuff, unit)
 
         -- Create Border
         aura.mUIBorder = aura:CreateTexture(nil, "OVERLAY", nil, 7)
-        aura.mUIBorder:SetTexture([[Interface\AddOns\mUI\Media\Textures\Auras\atlas.png]])
+        aura.mUIBorder:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\atlas_v2.png]])
         aura.mUIBorder:SetTexCoord(0.001953125, 0.142578125, 0.451171875, 0.591796875)
         aura.mUIBorder:SetDesaturated(true)
 
@@ -967,12 +983,12 @@ function Theme:UpdateUnitframeAuras(aura, isDebuff, unit)
 
         -- Set Icon Mask
         aura.mUIBorder.mask = aura:CreateMaskTexture()
-        aura.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Auras\mask.png]], "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+        aura.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask_v2.png]], "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
         aura.mUIBorder.mask:SetAllPoints(aura.Icon)
         aura.Icon:AddMaskTexture(aura.mUIBorder.mask)
 
         -- Cooldown Swipe
-        aura.Cooldown:SetSwipeTexture([[Interface\AddOns\mUI\Media\Textures\Auras\mask.png]])
+        aura.Cooldown:SetSwipeTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask_v2.png]])
         aura.Cooldown:SetSwipeColor(0.0, 0.0, 0.0, 0.75)
 
         if not isDebuff then

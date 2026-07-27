@@ -14,6 +14,7 @@ local defaults = {
             color = {0, 0, 0, 1},
             font = "Prototype",
             fontpath = [[Interface\AddOns\mUI\Media\Fonts\Prototype.ttf]],
+            borderStyle = "Style1",
             automation = {
                 repair = "Personal",
                 sell = true,
