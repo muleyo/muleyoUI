@@ -3,9 +3,10 @@ local Changelog = mUI:NewModule("mUI.Config.Changelog")
 -- Maintainer note: this window intentionally shows ONLY the latest update.
 -- Keep this as a single entry and update it each release.
 local CHANGELOG = {
-    version = "4.0.4",
-    affected = {"Mainline"},
-    changes = {"Added option to change the border style of Aura/Castbar Icons", "Fixed some errors with the Aura Display module"}
+    version = "4.0.5",
+    affected = {"Mainline", "Mists", "TBC", "Vanilla"},
+    changes = {"Fixed several errors for Mists/TBC/Vanilla",
+               "Updates for Midnight Patch 12.1.0: Added several important Defensives/Buffs to AuraContainers"}
 }
 
 function Changelog:OnInitialize()
