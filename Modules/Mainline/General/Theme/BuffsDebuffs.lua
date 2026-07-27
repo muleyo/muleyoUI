@@ -377,7 +377,7 @@ function Theme:CreateUnitAuraContainer(frame, unit)
     local spellbar = _G[frame:GetName() .. "SpellBar"]
     if spellbar then
         spellbar:ClearAllPoints()
-        spellbar:SetPoint("TOPLEFT", debuffContainer, "BOTTOMLEFT", 18, -2)
+        spellbar:SetPoint("TOPLEFT", buffContainer, "BOTTOMLEFT", 18, -2)
     end
     Theme:AnchorSpellbarToContainer(frame)
 
@@ -502,19 +502,20 @@ function Theme:ReflowUnitAuraContainer(frame)
     local totShown = frame.IsTargetOfTargetShown and frame:IsTargetOfTargetShown()
     local lineSize = (not mirrorVertically and totShown) and AURA_LINE_SIZE_TOT or AURA_LINE_SIZE
 
-    -- Buffs: anchored to the frame.
-    buffContainer:ClearAllPoints()
-    buffContainer:SetPoint(point, frame.TargetFrameContainer.FrameTexture, relativePoint, AURA_START_X, offsetY)
-    buffContainer:SetFlowLayoutAnchorPoint(point)
-    buffContainer:SetFlowLayoutGrowthDirection(AnchorUtil.FlowDirection.Right, vGrowth)
-    buffContainer:SetFlowLayoutMaximumLineSize(lineSize)
-
-    -- Debuffs: anchored just past the buff block (buffs grow toward it), same direction.
+    -- Debuffs: anchored to the frame (always the block nearest the unit frame).
+    -- Not on top: debuffs sit above buffs. On top: debuffs sit below buffs.
     debuffContainer:ClearAllPoints()
-    debuffContainer:SetPoint(point, buffContainer, relativePoint, 0, offsetY)
+    debuffContainer:SetPoint(point, frame.TargetFrameContainer.FrameTexture, relativePoint, AURA_START_X, offsetY)
     debuffContainer:SetFlowLayoutAnchorPoint(point)
     debuffContainer:SetFlowLayoutGrowthDirection(AnchorUtil.FlowDirection.Right, vGrowth)
     debuffContainer:SetFlowLayoutMaximumLineSize(lineSize)
+
+    -- Buffs: anchored just past the debuff block (debuffs grow toward it), same direction.
+    buffContainer:ClearAllPoints()
+    buffContainer:SetPoint(point, debuffContainer, relativePoint, 0, offsetY)
+    buffContainer:SetFlowLayoutAnchorPoint(point)
+    buffContainer:SetFlowLayoutGrowthDirection(AnchorUtil.FlowDirection.Right, vGrowth)
+    buffContainer:SetFlowLayoutMaximumLineSize(lineSize)
 end
 
 function Theme:AnchorSpellbarToContainer(frame)
@@ -524,7 +525,9 @@ function Theme:AnchorSpellbarToContainer(frame)
     end
     frame.mUI_spellbar = spellbar
 
-    local container = frame.mUI_debuffContainer
+    -- Buffs are the outermost aura block (debuffs sit nearest the frame), so the
+    -- bar anchors below the buff container.
+    local container = frame.mUI_buffContainer
     if not container then
         return
     end
@@ -576,6 +579,7 @@ local RAID_MAX_DEFENSIVE = 3
 local RAID_BUFFS_PER_ROW = 3
 local RAID_ICON_GAP = 1
 local RAID_MAX_BIG_DEBUFFS = 2
+local RAID_DEBUFF_MAX_DURATION = 100000
 
 local RAID_DEBUFF_EXCLUDE = {
     [57723] = true, -- Exhaustion (Heroism)
@@ -591,7 +595,59 @@ local RAID_DEBUFF_EXCLUDE = {
     [405692] = true -- Deserter
 }
 
-local RAID_DEBUFF_MAX_DURATION = 100000
+-- Buffs force-shown in the NORMAL buff frame regardless of caster / visibility flags.
+local RAID_IMPORTANT_BUFFS = {
+    [10060] = true, -- Power Infusion
+    [1044] = true, -- Blessing of Freedom
+    [210256] = true, -- Blessing of Sanctuary
+    [106898] = true, -- Stampeding Roar (No Form)
+    [77764] = true, -- Stampeding Roar (Cat)
+    [77761] = true, -- Stampeding Roar (Bear)
+    [116841] = true -- Tiger's Lust
+}
+
+-- Cooldowns force-shown in the BIG DEFENSIVE frame
+local RAID_DEFENSIVES = {
+    [498] = true, -- Divine Protection
+    [403876] = true, -- Divine Protection
+    [33206] = true, -- Pain Suppression
+    [228050] = true, -- Guardian of the Forgotten Queen
+    [211210] = true, -- Aura Mastery
+    [363534] = true, -- Rewind
+    [370960] = true, -- Emerald Communion
+    [378441] = true, -- Time Stop
+    [325174] = true, -- Spirit Link Totem
+    [409293] = true, -- Burrow
+    [353319] = true, -- Revival
+    [108416] = true, -- Dark Pact
+    [200183] = true, -- Apotheosis
+    [215769] = true, -- Spirit of the Redeemer
+    [374227] = true, -- Zephyr
+    [193065] = true, -- Protective Light
+    [15286] = true, -- Vampiric Embrace
+    [586] = true, -- Fade
+    [5487] = true, -- Bear Form
+    [102558] = true, -- Incarnation (Guardian)
+    [125174] = true, -- Touch of Karma
+    [386208] = true, -- Defensive Stance
+    [97463] = true, -- Rallying Cry
+    [5277] = true, -- Evasion
+    [187827] = true, -- Metamorphosis
+    [145629] = true, -- Anti-Magic Zone
+    [49039] = true, -- Lichborne
+    [81256] = true, -- Dancing Rune Weapon
+    [216331] = true, -- Avenging Crusader
+    [31884] = true, -- Avenging Wrath
+    [389539] = true -- Sentinel
+}
+
+local RAID_CURATED_EXCLUDE = {}
+for id in pairs(RAID_IMPORTANT_BUFFS) do
+    RAID_CURATED_EXCLUDE[id] = true
+end
+for id in pairs(RAID_DEFENSIVES) do
+    RAID_CURATED_EXCLUDE[id] = true
+end
 
 local BLIZZARD_RAID_AURA_CVARS = {"raidFramesDisplayBuffs", "raidFramesDisplayDebuffs", "raidFramesCenterBigDefensive"}
 
@@ -608,8 +664,6 @@ end
 
 local function InitRaidAuraButton(auraFrame, container, groupKey, isDebuff)
     local size = (container.mUI_groupSizes and container.mUI_groupSizes[groupKey]) or 16
-    -- Raid buttons aren't tracked in Theme.aurabuttons (no category): their size
-    -- is driven by container:SetScale in UpdateAllRaidAuras, not theme recolors.
     CreateAuraButton(auraFrame, isDebuff, {
         size = size,
         baseShade = 0.15,
@@ -637,15 +691,32 @@ function Theme:EnsureRaidAuraContainers(frame, data)
     -- Buffs
     local buffContainer = CreateFrame("AuraContainer", nil, frame, "CustomAuraContainerTemplate")
     buffContainer.mUI_groupSizes = {
-        Buffs = buffSize
+        Buffs = buffSize,
+        BuffsImportant = buffSize
     }
-    buffContainer.mUI_groupKeys = {"Buffs"}
+    buffContainer.mUI_groupKeys = {"Buffs", "BuffsImportant"}
     buffContainer:SetFlowLayoutAnchorPoint("BOTTOMRIGHT")
     buffContainer:SetFlowLayoutGrowthDirection(AnchorUtil.FlowDirection.Left, AnchorUtil.FlowDirection.Up)
-    buffContainer:AddAuraGroup("Buffs", RaidFilter("RAID_IN_COMBAT", "PLAYER", "HELPFUL"), {
+    buffContainer:AddAuraGroup("Buffs", RaidFilter("HELPFUL", "PLAYER", "RAID_IN_COMBAT", "!BIG_DEFENSIVE", "!EXTERNAL_DEFENSIVE"), {
         maxFrameCount = RAID_MAX_BUFFS,
+        candidateFilters = {
+            excludeSpellIDs = RAID_CURATED_EXCLUDE
+        },
         initializeFrame = function(auraFrame)
             InitRaidAuraButton(auraFrame, buffContainer, "Buffs", false)
+        end,
+        layout = {
+            elementSpacing = RAID_ICON_GAP,
+            lineSpacing = RAID_ICON_GAP
+        }
+    })
+    buffContainer:AddAuraGroup("BuffsImportant", RaidFilter("HELPFUL"), {
+        maxFrameCount = RAID_MAX_BUFFS,
+        candidateFilters = {
+            includeSpellIDs = RAID_IMPORTANT_BUFFS
+        },
+        initializeFrame = function(auraFrame)
+            InitRaidAuraButton(auraFrame, buffContainer, "BuffsImportant", false)
         end,
         layout = {
             elementSpacing = RAID_ICON_GAP,
@@ -655,8 +726,7 @@ function Theme:EnsureRaidAuraContainers(frame, data)
     buffContainer:SetEnabled(false)
     data.buffContainer = buffContainer
 
-    -- Debuffs (kept above buffs, matching the default raid frame where debuffs
-    -- draw over buffs when the containers overlap).
+    -- Debuffs
     local debuffContainer = CreateFrame("AuraContainer", nil, frame, "CustomAuraContainerTemplate")
     debuffContainer:SetFrameLevel(buffContainer:GetFrameLevel() + 10)
     debuffContainer.mUI_groupSizes = {
@@ -687,9 +757,6 @@ function Theme:EnsureRaidAuraContainers(frame, data)
         candidateFilters = {
             isBossOrRoleAura = false,
             excludeSpellIDs = RAID_DEBUFF_EXCLUDE,
-            -- Drops permanent (duration 0) debuffs like Dampening, which can't be
-            -- excluded by spellID (see note above). NOT applied to DebuffsBig -
-            -- boss/role debuffs are often permanent and must stay visible.
             maxDuration = RAID_DEBUFF_MAX_DURATION
         },
         initializeFrame = function(auraFrame)
@@ -706,11 +773,28 @@ function Theme:EnsureRaidAuraContainers(frame, data)
     -- Defensives
     local defensiveContainer = CreateFrame("AuraContainer", nil, frame, "CustomAuraContainerTemplate")
     defensiveContainer.mUI_groupSizes = {
-        BigDefensives = defensiveSize
+        BigDefensives = defensiveSize,
+        AdditionalDefensives = defensiveSize
     }
-    defensiveContainer.mUI_groupKeys = {"BigDefensives", "ExternalDefensives"}
+    defensiveContainer.mUI_groupKeys = {"BigDefensives", "AdditionalDefensives"}
     defensiveContainer:AddAuraGroup("BigDefensives", RaidFilter("HELPFUL", "BIG_DEFENSIVE"), {
         maxFrameCount = RAID_MAX_DEFENSIVE,
+        candidateFilters = {
+            excludeSpellIDs = RAID_CURATED_EXCLUDE
+        },
+        initializeFrame = function(auraFrame)
+            InitRaidAuraButton(auraFrame, defensiveContainer, "BigDefensives", false)
+        end,
+        layout = {
+            elementSpacing = RAID_ICON_GAP,
+            lineSpacing = RAID_ICON_GAP
+        }
+    })
+    defensiveContainer:AddAuraGroup("AdditionalDefensives", RaidFilter("HELPFUL"), {
+        maxFrameCount = RAID_MAX_DEFENSIVE,
+        candidateFilters = {
+            includeSpellIDs = RAID_DEFENSIVES
+        },
         initializeFrame = function(auraFrame)
             InitRaidAuraButton(auraFrame, defensiveContainer, "BigDefensives", false)
         end,
@@ -737,8 +821,6 @@ function Theme:UpdateRaidAuraContainers(frame, data, unit, unreachable, buffSize
     local normalS = debuffContainer.mUI_groupSizes.DebuffsNormal or debuffSize
     local defS = defensiveContainer.mUI_groupSizes.BigDefensives or defensiveSize
     buffContainer:SetFlowLayoutMaximumLineSize(RAID_BUFFS_PER_ROW * (buffS + RAID_ICON_GAP))
-    -- Keep debuffs on a single line: wide enough to hold every possible icon
-    -- (max big + max normal), so no group ever wraps onto a second row.
     debuffContainer:SetFlowLayoutMaximumLineSize(RAID_MAX_BIG_DEBUFFS * (bigS + RAID_ICON_GAP) + RAID_MAX_DEBUFFS * (normalS + RAID_ICON_GAP))
     defensiveContainer:SetFlowLayoutMaximumLineSize(RAID_MAX_DEFENSIVE * (defS + RAID_ICON_GAP))
 
@@ -918,7 +1000,9 @@ local function SkinLegacyAuraButton(frame, category, opts)
 
         -- Known icon size, updated by callers (e.g. unitframe auras pass the
         -- configured buff/debuff size). Captured by the geometry closure below.
-        local geom = {size = opts.size}
+        local geom = {
+            size = opts.size
+        }
 
         -- Style-driven texture, mask, swipe and geometry (live-switchable)
         frame.mUIBorderRecord = Theme:RegisterBorder({
