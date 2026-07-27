@@ -948,7 +948,11 @@ local function SkinLegacyAuraButton(frame, category, opts)
 end
 
 function Theme:ButtonDefault(button, isDebuff)
-    SkinLegacyAuraButton(button, isDebuff and "playerdebuff" or "playerbuff")
+    -- Player auras also taint (Icon:GetWidth() is secret), so drive the border
+    -- geometry from the known player aura size instead of the live icon width.
+    SkinLegacyAuraButton(button, isDebuff and "playerdebuff" or "playerbuff", {
+        size = Theme.PLAYER_AURA_SIZE
+    })
 end
 
 -- Disable Flashing of Buffs and Debuffs
