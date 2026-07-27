@@ -18,9 +18,6 @@ function mGUI.Widgets.MultiLineEditBox(parent)
     scroll:SetPoint("TOPLEFT", 8, -8)
     scroll:SetPoint("BOTTOMRIGHT", -26, 8)
 
-    -- Force the retail-style "MinimalScrollBar" art on every client version
-    -- (see Config/Gui.lua's main options scroll for the full explanation of
-    -- why ScrollFrameTemplate's default differs on Mists/TBC/Vanilla).
     if scroll.ScrollBar then
         scroll.ScrollBar:Hide()
         scroll.ScrollBar:ClearAllPoints()

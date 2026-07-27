@@ -121,6 +121,37 @@ function General:OnInitialize()
                 end,
                 order = 5
             },
+            borderstyle = {
+                name = "Icon Border",
+                desc = "Select the border design used for aura and castbar icons",
+                type = "select",
+                style = "radio",
+                values = {
+                    ["Style1"] = "Style 1",
+                    ["Style2"] = "Style 2"
+                },
+                sorting = {"Style1", "Style2"},
+                width = 0.5,
+                set = function(_, val)
+                    if mUI.db.profile.general.borderStyle == val then
+                        return
+                    end
+                    mUI.db.profile.general.borderStyle = val
+
+                    if not General.Module:IsEnabled() then
+                        return
+                    end
+
+                    local Theme = mUI:GetModule("mUI.Modules.General.Theme", true)
+                    if Theme and Theme.ApplyBorderStyle then
+                        Theme:ApplyBorderStyle()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.general.borderStyle
+                end,
+                order = 5.5
+            },
             header2 = {
                 name = "Automation",
                 type = "header",

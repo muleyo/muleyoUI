@@ -29,18 +29,11 @@ function Unitframes:OnInitialize()
                         return "|cffff0000Disabled|r"
                     end
                 end,
-                desc = "Enable / Disable Module\n\n|cffffff00Info:|r Requires Reload",
+                desc = "Enable / Disable the Unitframes (Player, Target, Focus, etc.).\n\n|cffffff00Info:|r Requires Reload\n\n|cffffff00Note:|r Raidframes toggle separately on their own tab.",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.unitframes.enabled = val
-
-                    if val then
-                        Unitframes.Module:Enable()
-                        mUI:Reload('Enable Unitframes Module')
-                    else
-                        Unitframes.Module:Disable()
-                        mUI:Reload('Disable Unitframes Module')
-                    end
+                    mUI:Reload(val and 'Enable Unitframes Module' or 'Disable Unitframes Module')
                 end,
                 get = function()
                     return mUI.db.profile.unitframes.enabled
@@ -384,10 +377,13 @@ function Unitframes:OnInitialize()
             },
             debuffcolors = {
                 name = "Debuff Colors",
-                desc = "Color borders of Debuffs by their type on Target/Focus Frames",
+                desc = "Color borders of Debuffs by their type on Target/Focus Frames\n\n|cffffff00Info:|r Requires Reload",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.unitframes.buffsdebuffs.debuffcolors = val
+                    if select(4, GetBuildInfo()) >= 120100 then
+                        mUI:Reload("Debuff Colors")
+                    end
                 end,
                 get = function()
                     return mUI.db.profile.unitframes.buffsdebuffs.debuffcolors
@@ -422,37 +418,9 @@ function Unitframes:OnInitialize()
                 type = "header",
                 order = 22
             },
-            enablebuffdebuff = {
-                name = function()
-                    if mUI.db.profile.unitframes.buffsdebuffs.enabled then
-                        return "|cff00ff00Enabled|r"
-                    else
-                        return "|cffff0000Disabled|r"
-                    end
-                end,
-                desc = "Enable / Disable Buffs & Debuffs re-sizing on Unitframes",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.unitframes.buffsdebuffs.enabled = val
-
-                    if not Unitframes.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val then
-                        Unitframes.Module.BuffsDebuffs:Enable()
-                    else
-                        Unitframes.Module.BuffsDebuffs:Disable()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.buffsdebuffs.enabled
-                end,
-                order = 23
-            },
             buffsize = {
                 name = "Buff Size",
-                desc = "Set the Size of Buffs on Unitframes",
+                desc = "Set the Size of Buffs on Unitframes (Target / Focus)\n\n|cffffff00Info:|r Requires Reload",
                 type = "range",
                 min = 0,
                 max = 30,
@@ -463,14 +431,11 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.buffsdebuffs.buffsize
                 end,
-                hidden = function()
-                    return not mUI.db.profile.unitframes.buffsdebuffs.enabled
-                end,
                 order = 24
             },
             debuffsize = {
                 name = "Debuff Size",
-                desc = "Set the Size of Debuffs on Unitframes",
+                desc = "Set the Size of Debuffs on Unitframes (Target / Focus)\n\n|cffffff00Info:|r Requires Reload",
                 type = "range",
                 min = 0,
                 max = 30,
@@ -480,9 +445,6 @@ function Unitframes:OnInitialize()
                 end,
                 get = function()
                     return mUI.db.profile.unitframes.buffsdebuffs.debuffsize
-                end,
-                hidden = function()
-                    return not mUI.db.profile.unitframes.buffsdebuffs.enabled
                 end,
                 order = 25
             }

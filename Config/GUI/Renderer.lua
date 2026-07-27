@@ -197,20 +197,8 @@ Builders.range = function(parent, option)
     widget.OnValueChanged = function(_, value, isLiveTick)
         RunGuarded(option, function()
             option.set(InfoFor(option), value)
-            -- A full Refresh() releases/reacquires/repositions every widget
-            -- on the page - doing that on EVERY mid-drag tick fights the
-            -- native mouse-drag capture on the slider's own thumb and can
-            -- freeze dragging entirely. Use the cheap, non-destructive
-            -- RefreshStates() (just re-evaluates disabled state) while the
-            -- drag is still live, and only do the full Refresh() once the
-            -- drag actually ends (see Widgets/Slider.lua's OnMouseUp).
             if isLiveTick then
                 Renderer:RefreshStates()
-                -- RefreshStates() doesn't touch the Preview panel (that only
-                -- happens inside RenderCategory, which full Refresh() calls)
-                -- - without this, option.set() updates the DB but the
-                -- Preview mock never redraws until the drag ends, making it
-                -- look frozen/non-live while actually dragging.
                 if mGUI.Preview then
                     mGUI.Preview:OnCategoryChanged(Renderer.currentKey)
                 end
@@ -250,10 +238,6 @@ Builders.input = function(parent, option)
         RunGuarded(option, function()
             option.set(InfoFor(option), text)
             if option.multiline then
-                -- Skip the full Refresh() here: it would rebuild this very
-                -- textbox from option.get() and drop focus/cursor mid-edit.
-                -- Still re-evaluate other widgets' disabled state (e.g. an
-                -- "Okay" button gated on this field) via the lighter pass.
                 Renderer:RefreshStates()
             else
                 Renderer:Refresh()

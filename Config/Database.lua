@@ -14,6 +14,7 @@ local defaults = {
             color = {0, 0, 0, 1},
             font = "Prototype",
             fontpath = [[Interface\AddOns\mUI\Media\Fonts\Prototype.ttf]],
+            borderStyle = "Style1",
             automation = {
                 repair = "Personal",
                 sell = true,
@@ -112,6 +113,7 @@ local defaults = {
                 debuffcolors = false
             },
             raidframes = {
+                enabled = true,
                 size = {
                     enabled = false,
                     width = 100,
@@ -143,8 +145,7 @@ local defaults = {
                 dispelGlow = true,
                 auraDisplay = false,
                 auraTooltips = true,
-                dispelScale = 1.3,
-                ccScale = 1.15
+                dispelScale = 1.3
             }
         },
         castbars = {

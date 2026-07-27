@@ -135,14 +135,6 @@ function mGUI:ApplyQuadBorder(frame, color, thickness)
     Edge("right", "TOPLEFT", "TOPRIGHT", -size, 0, "BOTTOMRIGHT", "BOTTOMRIGHT", 0, 0)
 end
 
--- Re-tints a ThreeSliceButton (128-RedButton art) into the dark/blue theme.
--- UpdateButton swaps atlases on every state change, so tint from a hook.
--- NOTE: `MainMenuFrameButtonTemplate` only inherits the modern
--- BigRedThreeSliceButtonTemplate (with its `UpdateButton` method and
--- Left/Center/Right slices) on Mainline. On Mists/TBC/Vanilla it inherits
--- the old `UIPanelButtonTemplate` instead - no `UpdateButton` method at all,
--- and its slice textures are named Left/Middle/Right (not Center). Guard
--- both differences so older clients don't error on a missing method.
 function mGUI:TintThreeSlice(button)
     if button.mGUITinted then
         return
@@ -170,10 +162,6 @@ function mGUI:TintThreeSlice(button)
     Retint(button)
 end
 
--- Desaturates + tints a simple icon button's state textures (Normal/Pushed/
--- Disabled/Highlight, e.g. Blizzard's "RedButton-Exit" atlases) into the
--- dark/blue theme, so one-off icon buttons (close buttons, etc.) match the
--- rest of the GUI instead of standing out in stock Blizzard red.
 function mGUI:TintIconButton(button)
     local normal = button:GetNormalTexture()
     if normal then
@@ -200,8 +188,6 @@ function mGUI:TintIconButton(button)
     end
 end
 
--- Decorative blue background art + soft top-edge accent glow, shared by the
--- main options window and the preview panel so their backgrounds match.
 function mGUI:ApplyWindowArt(frame, glowHeight)
     local px = PixelUtil.GetNearestPixelSize(1, frame:GetEffectiveScale())
 
@@ -325,9 +311,6 @@ function mGUI:EnableSmoothScroll(scrollFrame)
     scrollFrame.StopSmoothScroll = Stop
 end
 
--- Shared tooltip behavior: title = option name, body = option desc.
--- `titleColorFn` is optional - a function (or plain r,g,b table) returning
--- the title line's color, defaulting to white when omitted.
 function mGUI:AttachTooltip(widget, titleFn, textFn, titleColorFn)
     local function OnEnter(frame)
         local title = type(titleFn) == "function" and titleFn() or titleFn

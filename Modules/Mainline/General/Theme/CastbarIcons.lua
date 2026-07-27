@@ -20,28 +20,31 @@ function Theme:CreateCastbarIcons(unit, castbar)
 
         -- Create Border
         castbar.mUIBorder = castbar:CreateTexture(nil, "OVERLAY", nil, 7)
-        castbar.mUIBorder:SetTexture([[Interface\AddOns\mUI\Media\Textures\Auras\atlas.png]])
-        castbar.mUIBorder:SetTexCoord(0.001953125, 0.142578125, 0.451171875, 0.591796875)
         castbar.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
 
         -- Set Icon Mask
         castbar.mUIBorder.mask = castbar:CreateMaskTexture()
-        castbar.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Auras\mask.png]], "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
         castbar.mUIBorder.mask:SetAllPoints(castbar.Icon)
         castbar.Icon:AddMaskTexture(castbar.mUIBorder.mask)
 
-        if unit == "player" or unit == "playerOverlay" then
-            castbar.mUIBorder:SetSize(22, 22)
-            -- castbar.mUIBorder:SetSize(22 * 1.75, 22 * 1.75)
-            castbar.mUIBorder:SetPoint("TOPLEFT", castbar.Icon, "TOPLEFT", -9, 9)
-            castbar.mUIBorder:SetPoint("BOTTOMRIGHT", castbar.Icon, "BOTTOMRIGHT", 9.75, -8.75)
-        else
+        local isPlayer = unit == "player" or unit == "playerOverlay"
+        if not isPlayer then
             castbar.Icon:SetSize(16, 16)
             castbar.Icon.SetSize = function()
             end
-            castbar.mUIBorder:SetSize(16 * 1.85, 16 * 1.85)
-            castbar.mUIBorder:SetPoint("CENTER", castbar.Icon, "CENTER", 0, 0)
         end
+
+        Theme:RegisterBorder({
+            border = castbar.mUIBorder,
+            coord = true,
+            mask = castbar.mUIBorder.mask,
+            applyGeometry = function(style)
+                local ins = isPlayer and (style.castbarInset or 4) or (style.castbarInsetSmall or 3.5)
+                castbar.mUIBorder:ClearAllPoints()
+                castbar.mUIBorder:SetPoint("TOPLEFT", castbar.Icon, "TOPLEFT", -ins, ins)
+                castbar.mUIBorder:SetPoint("BOTTOMRIGHT", castbar.Icon, "BOTTOMRIGHT", ins, -ins)
+            end
+        })
 
         castbar.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
 

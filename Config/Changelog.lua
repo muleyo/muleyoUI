@@ -3,9 +3,9 @@ local Changelog = mUI:NewModule("mUI.Config.Changelog")
 -- Maintainer note: this window intentionally shows ONLY the latest update.
 -- Keep this as a single entry and update it each release.
 local CHANGELOG = {
-    version = "4.0.1",
+    version = "4.0.3",
     affected = {"Mainline"},
-    changes = {"Minimap: Omnium Folio Button is no longer hidden on mouseover, and is always visible now."}
+    changes = {"Added option to change the border style of Aura/Castbar Icons"}
 }
 
 function Changelog:OnInitialize()

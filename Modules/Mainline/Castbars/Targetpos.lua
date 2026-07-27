@@ -8,6 +8,13 @@ function Targetpos:OnInitialize()
 end
 
 function Targetpos:OnEnable()
+    -- On 12.1.x the target aura container owns the castbar position (it anchors the
+    -- bar to itself and no-ops AdjustPosition). Hooking here would re-pin the bar to
+    -- the frame on OnShow and fight that anchor, so stay out of the way.
+    if select(4, GetBuildInfo()) >= 120100 then
+        return
+    end
+
     Targetpos:SecureHookScript(TargetFrameSpellBar, "OnShow", Targetpos.Update)
     Targetpos:SecureHook(TargetFrameSpellBar, "AdjustPosition", Targetpos.Update)
 end

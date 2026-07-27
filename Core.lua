@@ -46,7 +46,7 @@ function Core:OnInitialize()
         Core.modules.actionbars:Enable()
     end
 
-    if Core.db.unitframes.enabled then
+    if Core.db.unitframes.enabled or (mUI:GameVersion()["Mainline"] and Core.db.unitframes.raidframes.enabled) then
         Core.modules.unitframes:Enable()
     end
 

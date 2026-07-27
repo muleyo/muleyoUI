@@ -7,6 +7,86 @@ function Theme:OnInitialize()
     -- Create Frames
     Theme.auras = CreateFrame("Frame")
     Theme.events = CreateFrame("Frame")
+
+    -- ============================================================================
+    -- Icon Border Styles (aura + castbar icons)
+    -- ============================================================================
+    Theme.BorderStyles = {
+        Style1 = {
+            border = [[Interface\AddOns\mUI\Media\Textures\Core\atlas.png]],
+            borderCoord = {0.95263671875, 0.99365234375, 0.17919921875, 0.22021484375},
+            mask = [[Interface\AddOns\mUI\Media\Textures\Core\mask.png]],
+            auraInsetRatio = 6 / 30,
+            castbarInset = 4,
+            castbarInsetSmall = 3.5
+        },
+        Style2 = {
+            border = [[Interface\AddOns\mUI\Media\Textures\Core\atlas_v2.png]],
+            borderCoord = {0.001953125, 0.142578125, 0.451171875, 0.591796875},
+            mask = [[Interface\AddOns\mUI\Media\Textures\Core\mask_v2.png]],
+            auraInsetRatio = 12.5 / 30,
+            castbarInset = 8,
+            castbarInsetSmall = 7
+        }
+    }
+
+    -- Records of border textures created by aura/castbar skinning, so a style swap
+    -- can re-apply textures to already-created frames.
+    Theme.borderRegistry = {}
+
+    function Theme:GetBorderStyle()
+        local key = (mUI.db and mUI.db.profile.general.borderStyle) or "Style1"
+        return Theme.BorderStyles[key] or Theme.BorderStyles.Style1
+    end
+
+    -- Re-skins a single registered record. rec fields:
+    function Theme:SkinBorderRecord(rec, style)
+        style = style or Theme:GetBorderStyle()
+
+        if rec.border then
+            rec.border:SetTexture(style.border)
+            if rec.coord then
+                rec.border:SetTexCoord(unpack(style.borderCoord))
+            end
+        end
+
+        if rec.extra then
+            for _, tex in ipairs(rec.extra) do
+                tex:SetTexture(style.border)
+                if rec.coord then
+                    tex:SetTexCoord(unpack(style.borderCoord))
+                end
+            end
+        end
+
+        if rec.mask then
+            rec.mask:SetTexture(style.mask, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+        end
+
+        if rec.swipe then
+            rec.swipe:SetSwipeTexture(style.mask)
+        end
+
+        -- Re-position the border for this style's artwork thickness
+        if rec.applyGeometry then
+            rec.applyGeometry(style)
+        end
+    end
+
+    -- Registers and immediately skins a border record with the active style.
+    function Theme:RegisterBorder(rec)
+        Theme.borderRegistry[#Theme.borderRegistry + 1] = rec
+        Theme:SkinBorderRecord(rec)
+        return rec
+    end
+
+    -- Re-applies the active border style to every registered aura/castbar border.
+    function Theme:ApplyBorderStyle()
+        local style = Theme:GetBorderStyle()
+        for _, rec in ipairs(Theme.borderRegistry) do
+            Theme:SkinBorderRecord(rec, style)
+        end
+    end
 end
 
 function Theme:OnEnable()
@@ -53,13 +133,54 @@ function Theme:OnEnable()
     -- Buffs & Debuffs
     if not C_AddOns.IsAddOnLoaded("BlizzBuffsFacade") then
         if select(4, GetBuildInfo()) >= 120100 then
-            -- Player Auras - the containers drive themselves off their own unit,
-            -- so there is nothing for us to refresh on UNIT_AURA.
+            -- Player Auras
             Theme:InitPlayerAuraContainers()
 
-            -- Target/Focus Auras
-            Theme:CreateUnitAuraContainer(TargetFrame, "target")
-            Theme:CreateUnitAuraContainer(FocusFrame, "focus")
+            if mUI.db.profile.unitframes.enabled then
+                -- Target/Focus Auras
+                Theme:CreateUnitAuraContainer(TargetFrame, "target")
+                Theme:CreateUnitAuraContainer(FocusFrame, "focus")
+            end
+
+            if mUI.db.profile.unitframes.raidframes.enabled then
+                -- Raidframe Auras
+                Theme:DisableDefaultRaidAuras(true)
+                Theme:SecureHook("CompactUnitFrame_UpdateStatusText", function(frame)
+                    if not frame or frame:IsForbidden() or not frame.unit then
+                        return
+                    end
+
+                    local name = frame:GetName()
+
+                    if not name or not name:match("^Compact") then
+                        return
+                    end
+
+                    local data = Theme:EnsureContainers(frame)
+                    Theme:PositionAnchors(frame, data)
+
+                    local unit = frame.displayedUnit or frame.unit
+                    if not unit or unit:match("target") then
+                        return
+                    end
+
+                    local unreachable = (UnitIsConnected and not UnitIsConnected(unit)) or (UnitPhaseReason and UnitPhaseReason(unit) ~= nil) or
+                                            (UnitIsVisible and not UnitIsVisible(unit))
+
+                    local buffSize, debuffSize = Theme:GetSizes(frame)
+                    local frameH = frame:GetHeight()
+                    if not frameH or frameH < 1 then
+                        frameH = 36
+                    end
+
+                    local defensiveSize = math.floor(frameH * (Theme:GetDefensiveSize() / 100) + 0.5)
+                    local defPoint, defX, defY = Theme:GetDefensivePosition()
+
+                    Theme:UpdateRaidAuraContainers(frame, data, unit, unreachable, buffSize, debuffSize, defensiveSize, defPoint, defX, defY)
+                end)
+            else
+                Theme:DisableDefaultRaidAuras(false)
+            end
         else
             Theme.auras:RegisterEvent("PLAYER_ENTERING_WORLD")
             Theme.auras:RegisterEvent("PLAYER_TARGET_CHANGED")
@@ -100,6 +221,7 @@ function Theme:OnEnable()
     -- Update Tooltips
     Theme:SecureHook("SharedTooltip_SetBackdropStyle", function(frame)
         Theme:StyleTooltip(frame)
+        Theme:StyleAuraTooltip()
     end)
 
     -- Game Menu

@@ -9,10 +9,6 @@ local RAIDFRAMES_KEY = "mUIOptions_Raidframes_Tab"
 local PARTY_CLASSES = {"WARRIOR", "PRIEST", "MAGE", "HUNTER", "DRUID"}
 local PARTY_NAMES = {"Muleyo", "Lumen", "Arcanis", "Fenwick", "Thorn"}
 
--- Real spell IDs used for the raidframe aura preview (see GetPartyMock) so
--- the mock shows recognizable/representative auras instead of flat repeated
--- placeholder icons - buffs are HoTs, debuffs cover the 3 categories the
--- addon's Aura options actually distinguish (regular/CC/dispellable).
 local BUFF_SPELL_IDS = {33763, 774, 8936} -- Lifebloom, Rejuvenation, Regrowth
 local DEBUFF_DISPELLABLE_SPELL_ID = 2818 -- Deadly Poison
 local DEBUFF_CC_SPELL_ID = 408 -- Kidney Shot
@@ -23,15 +19,6 @@ local function GetSpellIcon(spellID, fallback)
     return texture or fallback
 end
 
--- Plain `MaskTexture:SetAtlas(atlas, useAtlasSize)` has no way to specify
--- wrap mode, but Blizzard's own XML for these exact masks explicitly sets
--- `hWrapMode="CLAMPTOBLACKADDITIVE" vWrapMode="CLAMPTOBLACKADDITIVE"` (e.g.
--- PlayerFrame.xml's PlayerPortraitMask) - CLAMP (the default) can leave a
--- faint smeared/bled edge instead of cleanly clipping to fully transparent
--- outside the mask shape. Fetch the atlas's real file+texcoords via
--- C_Texture.GetAtlasInfo and set them explicitly so we can also pass the
--- correct wrap mode, matching Blizzard's real behavior exactly instead of
--- just approximating it with SetAtlas alone.
 local function SetMaskAtlas(mask, atlas, wrapH, wrapV)
     local info = C_Texture and C_Texture.GetAtlasInfo and C_Texture.GetAtlasInfo(atlas)
     if info and info.file then
@@ -45,11 +32,6 @@ local function SetMaskAtlas(mask, atlas, wrapH, wrapV)
     end
 end
 
--- Same border/mask/cooldown-swipe construction as
--- Modules/Mainline/Unitframes/RF_AuraDisplay.lua's own `RF_AuraDisplay:
--- CreateIcon` (mUI-styled border + native countdown spiral/number) so the
--- preview's aura icons actually look like the real thing instead of a flat
--- unbordered, timer-less texture.
 local AURA_BORDER_TEX = [[Interface\AddOns\mUI\Media\Textures\Core\border.png]]
 local AURA_MASK_TEX = [[Interface\AddOns\mUI\Media\Textures\Core\mask.png]]
 
@@ -158,10 +140,6 @@ local function GetPlayerMock(content)
         return Preview.playerMock
     end
 
-    -- Native PlayerFrame layout (Blizzard_UnitFrame/PlayerFrame.xml) so the
-    -- mock can reuse Blizzard's OWN portrait mask + frame border atlas
-    -- textures, instead of a hand-drawn approximation that never quite
-    -- looks like the real default frame.
     local mock = CreateFrame("Frame", nil, content)
     mock:SetPoint("TOP", content, "TOP", 0, -10)
     mock:SetSize(232, 100)
@@ -173,9 +151,6 @@ local function GetPlayerMock(content)
     mock.portrait = portrait
 
     local portraitMask = mock:CreateMaskTexture()
-    -- Real PlayerFrame.xml PlayerPortraitMask atlas, with the exact wrap
-    -- mode Blizzard's own XML specifies (see SetMaskAtlas above) - plain
-    -- SetAtlas (no wrap mode control) was leaving the crop looking off.
     SetMaskAtlas(portraitMask, "UI-HUD-UnitFrame-Player-Portrait-Mask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     portraitMask:SetSize(60, 60)
     portraitMask:SetPoint("TOPLEFT", 24, -19)
@@ -195,30 +170,17 @@ local function GetPlayerMock(content)
     power:SetValue(62)
     mock.power = power
 
-    -- Real player-frame power bar mask ("UI-HUD-UnitFrame-Player-PortraitOn-
-    -- Bar-Mana-Mask", anchored TOPLEFT(-2,2) - matches PlayerFrame.xml's own
-    -- ManaBarMask) so the fill texture clips to the actual bar shape instead
-    -- of a plain unclipped rectangle, same reasoning as the health bar mask.
     power:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
     local powerMask = mock:CreateMaskTexture()
     powerMask:SetAtlas("UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana-Mask", true)
     powerMask:SetPoint("TOPLEFT", power, "TOPLEFT", -2, 2)
     power:GetStatusBarTexture():AddMaskTexture(powerMask)
 
-    -- Real player-frame border/ring artwork. A plain BACKGROUND-layer region
-    -- of `mock` (like the portrait) - health/power (child STATUSBAR frames
-    -- of `mock`) naturally draw ABOVE it, matching the real PlayerFrame
-    -- (PlayerFrameContent, which holds the health bars, is declared AFTER -
-    -- and therefore renders above - PlayerFrameContainer's own FrameTexture
-    -- region).
     local frameTexture = mock:CreateTexture(nil, "BACKGROUND", nil, 2)
     frameTexture:SetAtlas("UI-HUD-UnitFrame-Player-PortraitOn", true)
     frameTexture:SetPoint("CENTER")
     mock.frameTexture = frameTexture
 
-    -- Reputation bar indicator (Modules/Unitframes/Reputationcolor.lua adds
-    -- this exact overlay to the real PlayerFrame - same atlas/size/position/
-    -- texcoord-flip/color, toggled by the "Player Reputation Bar" option).
     local reputation = mock:CreateTexture(nil, "OVERLAY")
     reputation:SetAtlas("UI-HUD-UnitFrame-Target-PortraitOn-Type")
     reputation:SetSize(136, 20)
@@ -244,8 +206,6 @@ local function GetTargetMock(content)
         return Preview.targetMock
     end
 
-    -- Native TargetFrame layout (Blizzard_UnitFrame/Mainline/TargetFrame.xml)
-    -- - mirrored from the player frame (portrait on the RIGHT).
     local mock = CreateFrame("Frame", nil, content)
     mock:SetPoint("TOP", content, "TOP", 0, -130)
     mock:SetSize(232, 100)
@@ -253,10 +213,6 @@ local function GetTargetMock(content)
     local portrait = mock:CreateTexture(nil, "BACKGROUND", nil, 1)
     portrait:SetSize(58, 58)
     portrait:SetPoint("TOPRIGHT", -26, -19)
-    -- There's no real "target" unit while just browsing options, so
-    -- SetPortraitTexture(portrait, "target") renders nothing (an empty/
-    -- blank circle) - fall back to the player's own portrait as a stand-in
-    -- so the mock always shows a real face instead of a hollow ring.
     SetPortraitTexture(portrait, "player")
     mock.portrait = portrait
 
@@ -272,12 +228,6 @@ local function GetTargetMock(content)
     health:SetValue(100)
     mock.health = health
 
-    -- Real target-frame health bar mask (Blizzard's own
-    -- "UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Mask" atlas, anchored
-    -- TOPLEFT(-1,6) relative to the health bar - matches TargetFrame.xml's
-    -- own HealthBarMask) - without this the fill texture is a plain flat
-    -- rectangle instead of clipped to the frame's actual tapered/rounded
-    -- health-bar window, so it visually doesn't fit the border art.
     health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
     local healthMask = mock:CreateMaskTexture()
     healthMask:SetAtlas("UI-HUD-UnitFrame-Target-PortraitOn-Bar-Health-Mask", true)
@@ -291,27 +241,17 @@ local function GetTargetMock(content)
     power:SetValue(70)
     mock.power = power
 
-    -- Real target-frame power bar mask ("UI-HUD-UnitFrame-Target-PortraitOn-
-    -- Bar-Mana-Mask", anchored TOPLEFT(-61,3) - matches TargetFrame.xml's own
-    -- ManaBarMask) - same reasoning as the health bar mask above.
     power:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
     local powerMask = mock:CreateMaskTexture()
     powerMask:SetAtlas("UI-HUD-UnitFrame-Target-PortraitOn-Bar-Mana-Mask", true)
     powerMask:SetPoint("TOPLEFT", power, "TOPLEFT", -61, 3)
     power:GetStatusBarTexture():AddMaskTexture(powerMask)
 
-    -- Real target-frame border artwork - a plain BACKGROUND-layer region so
-    -- health/power (child frames) naturally draw above it, same as player.
     local frameTexture = mock:CreateTexture(nil, "BACKGROUND", nil, 2)
     frameTexture:SetAtlas("UI-HUD-UnitFrame-Target-PortraitOn", true)
     frameTexture:SetPoint("CENTER")
     mock.frameTexture = frameTexture
 
-    -- Reaction-color plaque (native on Target/Focus/Boss frames, toggled by
-    -- the "Hide Reputation Bars" option via Reputationcolor.lua). Uses
-    -- ARTWORK (not BACKGROUND like frameTexture/portrait) so it draws above
-    -- them, matching the real frame (its TargetFrameContentMain is a
-    -- separate, later-declared sibling frame that renders on top).
     local reputation = mock:CreateTexture(nil, "ARTWORK")
     reputation:SetAtlas("UI-HUD-UnitFrame-Target-PortraitOn-Type", true)
     reputation:SetPoint("TOPRIGHT", -75, -25)
@@ -353,9 +293,6 @@ local function GetPartyMock(content)
         health:SetValue(100 - (i - 1) * 12)
         unit.health = health
 
-        -- Default Party/Raid frames show a thin power bar sliver along the
-        -- bottom edge, below the health bar - mirror that instead of the
-        -- health bar filling the entire unit.
         local power = CreateFrame("StatusBar", nil, unit)
         power:SetPoint("BOTTOMLEFT", 2, 2)
         power:SetPoint("BOTTOMRIGHT", -2, 2)
@@ -368,10 +305,6 @@ local function GetPartyMock(content)
         name:SetPoint("TOPLEFT", 4, -2)
         unit.name = name
 
-        -- Role icon (native CompactUnitFrame element - RF_RoleIcons.lua just
-        -- toggles alpha on Blizzard's own `frame.roleIcon`; we approximate
-        -- with a representative role atlas, cycling tank/healer/dps across
-        -- the 5 mock units). Toggled by the "Hide Role Icons" option.
         local roleIcon = health:CreateTexture(nil, "OVERLAY")
         roleIcon:SetSize(12, 12)
         roleIcon:SetPoint("TOPLEFT", 2, -2)
@@ -379,29 +312,10 @@ local function GetPartyMock(content)
         roleIcon:SetAtlas(roleAtlases[i], true)
         unit.roleIcon = roleIcon
 
-        -- Default Party/Raid frames also show a centered "status text"
-        -- (health percent/value) whose color is driven by the "Party
-        -- StatusText Color" option - separate from the name text.
         local statusText = health:CreateFontString(nil, "OVERLAY")
         statusText:SetPoint("CENTER", 0, -2)
         unit.statusText = statusText
 
-        -- Aura icon placeholders (buffs/debuffs/private auras/defensive).
-        -- Only shown while the "Auras" sub-tab is active (see
-        -- Preview:UpdateParty) so users see them immediately upon switching
-        -- there, without needing a separate test-aura button.
-        --
-        -- Drawn on a dedicated elevated overlay FRAME (not as plain texture
-        -- regions of `unit`) so they render ABOVE health/power - those are
-        -- child STATUSBAR FRAMES of `unit`, and a child frame's own regions
-        -- always render above its PARENT's own regions regardless of layer,
-        -- so plain regions of `unit` would get drawn UNDER the bars.
-        -- `mGUI:ApplyBackdrop`'s border child frame (`unit`'s blue edge) uses
-        -- BOTH `SetFrameLevel(+50)` AND `SetFrameStrata("TOOLTIP")` (see
-        -- Config/GUI/Init.lua's `ApplyEdgeBorder`) - STRATA always wins over
-        -- FrameLevel in WoW's render order, so no FrameLevel offset alone
-        -- can ever get above it while still in a lower/default strata. Must
-        -- match strata too, not just out-level it.
         local auraOverlay = CreateFrame("Frame", nil, unit)
         auraOverlay:SetAllPoints(unit)
         auraOverlay:SetFrameLevel(unit:GetFrameLevel() + 60)
@@ -419,39 +333,24 @@ local function GetPartyMock(content)
             unit.buffIcons[j] = icon
         end
 
-        -- Debuffs cover the 3 categories the Aura options actually
-        -- distinguish: a dispellable debuff (scaled by "Dispellable Debuff
-        -- Size" and shown first), a CC debuff (scaled by "CC Debuff Size"),
-        -- and a regular debuff (plain "Debuff Size"). Border colors follow
-        -- WoW's real dispel-type convention (DebuffTypeColor): Poison =
-        -- green, none/physical = red.
-        unit.debuffDispellable = CreateAuraIcon(auraOverlay)
-        unit.debuffDispellable.icon:SetTexture(GetSpellIcon(DEBUFF_DISPELLABLE_SPELL_ID, 136137))
-        unit.debuffDispellable.border:SetVertexColor(0, 0.7, 0.1) -- Poison (dispellable)
-        StartAuraTimer(unit.debuffDispellable, 12, 5)
-        unit.debuffDispellable:Hide()
+        unit.debuffBig = CreateAuraIcon(auraOverlay)
+        unit.debuffBig.icon:SetTexture(GetSpellIcon(DEBUFF_CC_SPELL_ID, 132298))
+        unit.debuffBig.border:SetVertexColor(0.9, 0.1, 0.1) -- none/physical (boss)
+        StartAuraTimer(unit.debuffBig, 12, 5)
+        unit.debuffBig:Hide()
 
-        unit.debuffCC = CreateAuraIcon(auraOverlay)
-        unit.debuffCC.icon:SetTexture(GetSpellIcon(DEBUFF_CC_SPELL_ID, 132298))
-        unit.debuffCC.border:SetVertexColor(0.9, 0.1, 0.1) -- Physical/none (Kidney Shot)
-        StartAuraTimer(unit.debuffCC, 6, 1)
-        unit.debuffCC:Hide()
+        unit.debuffMagic = CreateAuraIcon(auraOverlay)
+        unit.debuffMagic.icon:SetTexture(GetSpellIcon(DEBUFF_DISPELLABLE_SPELL_ID, 136137))
+        unit.debuffMagic.border:SetVertexColor(0.2, 0.6, 1.0) -- Magic (dispellable)
+        StartAuraTimer(unit.debuffMagic, 16, 7)
+        unit.debuffMagic:Hide()
 
-        unit.debuffRegular = CreateAuraIcon(auraOverlay)
-        unit.debuffRegular.icon:SetTexture(GetSpellIcon(DEBUFF_REGULAR_SPELL_ID, 136121))
-        unit.debuffRegular.border:SetVertexColor(0.9, 0.1, 0.1) -- Physical/none (regular)
-        StartAuraTimer(unit.debuffRegular, 16, 7)
-        unit.debuffRegular:Hide()
-
-        -- Shown first (leftmost/closest to the power bar), matching the
-        -- real "dispellable debuffs scaled larger and shown first" behavior.
-        unit.debuffIcons = {unit.debuffDispellable, unit.debuffCC, unit.debuffRegular}
-
-        local privateIcon = CreateAuraIcon(auraOverlay)
-        privateIcon.icon:SetTexture(132288) -- Spell_Holy_BorrowedTime
-        StartAuraTimer(privateIcon, 8, 3)
-        privateIcon:Hide()
-        unit.privateIcon = privateIcon
+        unit.debuffNone = CreateAuraIcon(auraOverlay)
+        unit.debuffNone.icon:SetTexture(GetSpellIcon(DEBUFF_REGULAR_SPELL_ID, 136121))
+        unit.debuffNone.border:SetVertexColor(0.9, 0.1, 0.1) -- none/physical
+        StartAuraTimer(unit.debuffNone, 16, 3)
+        unit.debuffNone:Hide()
+        unit.debuffIcons = {unit.debuffBig, unit.debuffMagic, unit.debuffNone}
 
         local defensiveIcon = CreateAuraIcon(auraOverlay)
         defensiveIcon.icon:SetTexture(135936) -- Spell_Holy_PainSuppression
@@ -482,11 +381,6 @@ function Preview:UpdatePlayer()
     mock.health:SetStatusBarTexture(texture)
     mock.power:SetStatusBarTexture(texture)
 
-    -- Real default frame border art is tinted by mUI's OWN theme system
-    -- (Modules/General/Theme.lua's `mUI:Skin`: desaturate + tint with
-    -- `mUI:Color(0.15)`, derived from the user's configured theme/custom
-    -- color) - match that exactly so the mock's border reflects the
-    -- currently active theme instead of Blizzard's neutral default color.
     mock.frameTexture:SetDesaturated(true)
     mock.frameTexture:SetVertexColor(unpack(mUI:Color(0.15)))
 
@@ -506,11 +400,6 @@ function Preview:UpdatePlayer()
     mock.level:SetText(UnitLevel("player"))
     mock.name:SetShown(not db.name)
     mock.level:SetShown(not db.level)
-
-    -- "Player Reputation Bar" option - real Color.lua recolors this to the
-    -- player's class color when "Class/Reaction Colors" is enabled
-    -- (`Classcolor.playerFrame.ReputationColor:SetVertexColor`), otherwise it
-    -- keeps Reputationcolor.lua's own hardcoded base blue.
     mock.reputation:SetShown(db.playerrepcolor)
     if db.color then
         mock.reputation:SetVertexColor(classColor.r, classColor.g, classColor.b)
@@ -530,9 +419,6 @@ function Preview:UpdateTarget()
     mock.frameTexture:SetDesaturated(true)
     mock.frameTexture:SetVertexColor(unpack(mUI:Color(0.15)))
 
-    -- "Class/Reaction Colors" option: when enabled, reaction-color the
-    -- health bar (illustrative hostile red); when disabled, fall back to
-    -- the same plain green used by the player mock's own disabled state.
     if db.color then
         mock.health:SetStatusBarColor(0.85, 0.1, 0.1)
     else
@@ -546,10 +432,6 @@ function Preview:UpdateTarget()
     mock.level:SetText(90)
     mock.name:SetShown(not db.name)
     mock.level:SetShown(not db.level)
-
-    -- "Hide Reputation Bars" option - the reaction-color plaque always
-    -- stays red regardless of "Class/Reaction Colors" (unlike the health
-    -- bar, which falls back to green when that option is disabled).
     mock.reputation:SetVertexColor(0.85, 0.1, 0.1)
     mock.reputation:SetShown(not db.reputationcolor)
 end
@@ -566,19 +448,14 @@ function Preview:UpdateParty()
     -- +25px so each mock unit reads more clearly in the preview panel
     local unitHeight = height * 0.8 + 25
 
-    -- Show the aura icon placeholders only while the "Auras" sub-tab is
-    -- active (and the feature itself is enabled) - no separate "Show Test
-    -- Auras" button needed, they appear the moment the user looks at the
-    -- relevant settings.
     local activeSection = mGUI.Renderer.activeSection and mGUI.Renderer.activeSection[RAIDFRAMES_KEY]
-    local showAuras = rf.auraDisplay and activeSection == "Auras"
+    local auraDisplay = rf.auraDisplay or select(4, GetBuildInfo()) >= 120100
+    local showAuras = auraDisplay and activeSection == "Auras"
 
     local buffSize = math.floor(unitHeight * (rf.buffsize or 33) / 100 + 0.5)
     local debuffSize = math.floor(unitHeight * (rf.debuffsize or 55) / 100 + 0.5)
-    local privateSize = math.floor(unitHeight * (rf.privateaurasize or 35) / 100 + 0.5)
     local defensiveSize = math.floor(unitHeight * (rf.centerDefensiveSize or 60) / 100 + 0.5)
     local dispelScale = rf.dispelScale or 1.3
-    local ccScale = rf.ccScale or 1.15
     local defensivePoint = rf.centerDefensivePoint or "CENTER"
     if defensivePoint ~= "CENTER" and defensivePoint ~= "LEFT" and defensivePoint ~= "RIGHT" then
         defensivePoint = "CENTER"
@@ -627,10 +504,6 @@ function Preview:UpdateParty()
             unit.statusText:SetTextColor(1, 0.82, 0)
         end
 
-        -- Buffs (bottom-right of the power bar, growing left). Border uses
-        -- the same theme color as the frame border art (mUI:Skin's
-        -- desaturate + mUI:Color(0.15) tint), kept reactive to live theme
-        -- changes here rather than baked in once at creation.
         for j, icon in ipairs(unit.buffIcons) do
             icon:SetShown(showAuras)
             if showAuras then
@@ -645,11 +518,9 @@ function Preview:UpdateParty()
             end
         end
 
-        -- Debuffs (bottom-left of the power bar, growing right). Dispellable
-        -- debuffs are scaled larger by "Dispellable Debuff Size" and shown
-        -- first, CC debuffs by "CC Debuff Size" - matches the real
-        -- RF_AuraDisplay behavior instead of a single flat debuff size.
-        local debuffSizes = {math.floor(debuffSize * dispelScale + 0.5), math.floor(debuffSize * ccScale + 0.5), debuffSize}
+        -- Debuffs (bottom-left of the power bar, growing right). The first is the
+        -- enlarged boss/role debuff ("Big Debuff Size"); the rest are normal size.
+        local debuffSizes = {math.floor(debuffSize * dispelScale + 0.5), debuffSize, debuffSize}
         for j, icon in ipairs(unit.debuffIcons) do
             icon:SetShown(showAuras)
             if showAuras then
@@ -662,14 +533,6 @@ function Preview:UpdateParty()
                     icon:SetPoint("BOTTOMLEFT", unit.debuffIcons[j - 1], "BOTTOMRIGHT", 1, 0)
                 end
             end
-        end
-
-        -- Private aura (above the debuff row)
-        unit.privateIcon:SetShown(showAuras)
-        if showAuras then
-            unit.privateIcon:SetSize(privateSize, privateSize)
-            unit.privateIcon:ClearAllPoints()
-            unit.privateIcon:SetPoint("BOTTOMLEFT", unit.debuffIcons[1], "TOPLEFT", 0, 1)
         end
 
         -- Defensive icon (anchored per the "Defensive Anchor"/X/Y options),
@@ -730,10 +593,6 @@ function Preview:Toggle()
     self:UpdateModeFromCategory()
 end
 
--- Unitframes and Raidframes are separate top-level GUI categories, so which
--- mock (player vs party/raid) to preview is determined directly by whichever
--- category is currently active - no more scroll position/sub-section
--- guessing needed.
 function Preview:UpdateModeFromCategory()
     self:SetMode(mGUI.Renderer.currentKey == RAIDFRAMES_KEY and "raid" or "player")
 end
