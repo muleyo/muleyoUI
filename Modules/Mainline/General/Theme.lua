@@ -7,90 +7,85 @@ function Theme:OnInitialize()
     -- Create Frames
     Theme.auras = CreateFrame("Frame")
     Theme.events = CreateFrame("Frame")
-end
 
--- ============================================================================
--- Icon Border Styles (aura + castbar icons)
--- ============================================================================
--- Geometry fields (border overhang past the icon edge) let each style match the
--- thickness of its own artwork:
---   auraInsetRatio    aura border overhang as a fraction of the icon size
---   castbarInset      player castbar border overhang, in pixels
---   castbarInsetSmall target/focus/boss castbar border overhang, in pixels
-Theme.BorderStyles = {
-    Style1 = {
-        border = [[Interface\AddOns\mUI\Media\Textures\Core\atlas.png]],
-        borderCoord = {0.95263671875, 0.99365234375, 0.17919921875, 0.22021484375},
-        mask = [[Interface\AddOns\mUI\Media\Textures\Core\mask.png]],
-        auraInsetRatio = 6 / 30,
-        castbarInset = 4,
-        castbarInsetSmall = 3.5
-    },
-    Style2 = {
-        border = [[Interface\AddOns\mUI\Media\Textures\Core\atlas_v2.png]],
-        borderCoord = {0.001953125, 0.142578125, 0.451171875, 0.591796875},
-        mask = [[Interface\AddOns\mUI\Media\Textures\Core\mask_v2.png]],
-        auraInsetRatio = 12.5 / 30,
-        castbarInset = 7,
-        castbarInsetSmall = 7
+    -- ============================================================================
+    -- Icon Border Styles (aura + castbar icons)
+    -- ============================================================================
+    Theme.BorderStyles = {
+        Style1 = {
+            border = [[Interface\AddOns\mUI\Media\Textures\Core\atlas.png]],
+            borderCoord = {0.95263671875, 0.99365234375, 0.17919921875, 0.22021484375},
+            mask = [[Interface\AddOns\mUI\Media\Textures\Core\mask.png]],
+            auraInsetRatio = 6 / 30,
+            castbarInset = 4,
+            castbarInsetSmall = 3.5
+        },
+        Style2 = {
+            border = [[Interface\AddOns\mUI\Media\Textures\Core\atlas_v2.png]],
+            borderCoord = {0.001953125, 0.142578125, 0.451171875, 0.591796875},
+            mask = [[Interface\AddOns\mUI\Media\Textures\Core\mask_v2.png]],
+            auraInsetRatio = 12.5 / 30,
+            castbarInset = 8,
+            castbarInsetSmall = 7
+        }
     }
-}
 
--- Records of border textures created by aura/castbar skinning, so a style swap
--- can re-apply textures to already-created frames.
-Theme.borderRegistry = {}
+    -- Records of border textures created by aura/castbar skinning, so a style swap
+    -- can re-apply textures to already-created frames.
+    Theme.borderRegistry = {}
 
-function Theme:GetBorderStyle()
-    local key = (mUI.db and mUI.db.profile.general.borderStyle) or "Style1"
-    return Theme.BorderStyles[key] or Theme.BorderStyles.Default
-end
-
--- Re-skins a single registered record. rec fields:
-function Theme:SkinBorderRecord(rec, style)
-    style = style or Theme:GetBorderStyle()
-
-    if rec.border then
-        rec.border:SetTexture(style.border)
-        if rec.coord then
-            rec.border:SetTexCoord(unpack(style.borderCoord))
-        end
+    function Theme:GetBorderStyle()
+        local key = (mUI.db and mUI.db.profile.general.borderStyle) or "Style1"
+        return Theme.BorderStyles[key] or Theme.BorderStyles.Style1
     end
 
-    if rec.extra then
-        for _, tex in ipairs(rec.extra) do
-            tex:SetTexture(style.border)
+    -- Re-skins a single registered record. rec fields:
+    function Theme:SkinBorderRecord(rec, style)
+        style = style or Theme:GetBorderStyle()
+
+        if rec.border then
+            rec.border:SetTexture(style.border)
             if rec.coord then
-                tex:SetTexCoord(unpack(style.borderCoord))
+                rec.border:SetTexCoord(unpack(style.borderCoord))
             end
         end
+
+        if rec.extra then
+            for _, tex in ipairs(rec.extra) do
+                tex:SetTexture(style.border)
+                if rec.coord then
+                    tex:SetTexCoord(unpack(style.borderCoord))
+                end
+            end
+        end
+
+        if rec.mask then
+            rec.mask:SetTexture(style.mask, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+        end
+
+        if rec.swipe then
+            rec.swipe:SetSwipeTexture(style.mask)
+        end
+
+        -- Re-position the border for this style's artwork thickness
+        if rec.applyGeometry then
+            rec.applyGeometry(style)
+        end
     end
 
-    if rec.mask then
-        rec.mask:SetTexture(style.mask, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    -- Registers and immediately skins a border record with the active style.
+    function Theme:RegisterBorder(rec)
+        Theme.borderRegistry[#Theme.borderRegistry + 1] = rec
+        Theme:SkinBorderRecord(rec)
+        return rec
     end
 
-    if rec.swipe then
-        rec.swipe:SetSwipeTexture(style.mask)
-    end
-
-    -- Re-position the border for this style's artwork thickness
-    if rec.applyGeometry then
-        rec.applyGeometry(style)
-    end
-end
-
--- Registers and immediately skins a border record with the active style.
-function Theme:RegisterBorder(rec)
-    Theme.borderRegistry[#Theme.borderRegistry + 1] = rec
-    Theme:SkinBorderRecord(rec)
-    return rec
-end
-
--- Re-applies the active border style to every registered aura/castbar border.
-function Theme:ApplyBorderStyle()
-    local style = Theme:GetBorderStyle()
-    for _, rec in ipairs(Theme.borderRegistry) do
-        Theme:SkinBorderRecord(rec, style)
+    -- Re-applies the active border style to every registered aura/castbar border.
+    function Theme:ApplyBorderStyle()
+        local style = Theme:GetBorderStyle()
+        for _, rec in ipairs(Theme.borderRegistry) do
+            Theme:SkinBorderRecord(rec, style)
+        end
     end
 end
 

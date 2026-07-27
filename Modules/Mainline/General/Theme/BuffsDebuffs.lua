@@ -1,5 +1,16 @@
 local Theme = mUI:GetModule("mUI.Modules.General.Theme")
 
+-- Color Curve
+Theme.colorCurve = C_CurveUtil.CreateColorCurve()
+Theme.colorCurve:SetType(Enum.LuaCurveType.Step)
+Theme.colorCurve:AddPoint(0, DEBUFF_TYPE_NONE_COLOR)
+Theme.colorCurve:AddPoint(1, DEBUFF_TYPE_MAGIC_COLOR)
+Theme.colorCurve:AddPoint(2, DEBUFF_TYPE_CURSE_COLOR)
+Theme.colorCurve:AddPoint(3, DEBUFF_TYPE_DISEASE_COLOR)
+Theme.colorCurve:AddPoint(4, DEBUFF_TYPE_POISON_COLOR)
+Theme.colorCurve:AddPoint(9, DEBUFF_TYPE_BLEED_COLOR)
+Theme.colorCurve:AddPoint(11, DEBUFF_TYPE_BLEED_COLOR)
+
 -- Tables
 Theme.aurabuttons = {}
 
@@ -884,43 +895,52 @@ end
 -- ============================================================================
 -- Pre 12.1.0 Code
 -- ============================================================================
-Theme.colorCurve = C_CurveUtil.CreateColorCurve()
-Theme.colorCurve:SetType(Enum.LuaCurveType.Step)
-Theme.colorCurve:AddPoint(0, DEBUFF_TYPE_NONE_COLOR)
-Theme.colorCurve:AddPoint(1, DEBUFF_TYPE_MAGIC_COLOR)
-Theme.colorCurve:AddPoint(2, DEBUFF_TYPE_CURSE_COLOR)
-Theme.colorCurve:AddPoint(3, DEBUFF_TYPE_DISEASE_COLOR)
-Theme.colorCurve:AddPoint(4, DEBUFF_TYPE_POISON_COLOR)
-Theme.colorCurve:AddPoint(9, DEBUFF_TYPE_BLEED_COLOR)
-Theme.colorCurve:AddPoint(11, DEBUFF_TYPE_BLEED_COLOR)
+
+local function SkinLegacyAuraButton(frame, category, opts)
+    opts = opts or {}
+
+    if not frame.mUIBorder then
+        frame.Icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+
+        -- Border
+        frame.mUIBorder = frame:CreateTexture(nil, "OVERLAY", nil, 7)
+        frame.mUIBorder:SetDesaturated(true)
+        frame.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
+
+        -- Icon mask
+        frame.mUIBorder.mask = frame:CreateMaskTexture()
+        frame.mUIBorder.mask:SetAllPoints(frame.Icon)
+        frame.Icon:AddMaskTexture(frame.mUIBorder.mask)
+
+        if opts.swipe then
+            opts.swipe:SetSwipeColor(0, 0, 0, 0.75)
+        end
+
+        -- Style-driven texture, mask, swipe and geometry (live-switchable)
+        frame.mUIBorderRecord = Theme:RegisterBorder({
+            border = frame.mUIBorder,
+            coord = true,
+            mask = frame.mUIBorder.mask,
+            swipe = opts.swipe,
+            applyGeometry = function(style)
+                local size = frame.Icon:GetWidth()
+                if not size or size < 1 then
+                    size = Theme.PLAYER_AURA_SIZE
+                end
+                ApplyAuraBorderGeometry(frame.mUIBorder, frame.Icon, size * style.auraInsetRatio)
+            end
+        })
+
+        if category then
+            Theme.aurabuttons[frame] = category
+        end
+    end
+
+    return frame.mUIBorderRecord
+end
 
 function Theme:ButtonDefault(button, isDebuff)
-    button.Icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-
-    -- Create Border
-    button.mUIBorder = button:CreateTexture(nil, "OVERLAY", nil, 7)
-    button.mUIBorder:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\atlas_v2.png]])
-    button.mUIBorder:SetTexCoord(0.001953125, 0.142578125, 0.451171875, 0.591796875)
-    button.mUIBorder:SetDesaturated(true)
-
-    -- Set Border Position
-    button.mUIBorder:SetPoint("TOPLEFT", button.Icon, "TOPLEFT", -12.25, 12.25)
-    button.mUIBorder:SetPoint("BOTTOMRIGHT", button.Icon, "BOTTOMRIGHT", 12.75, -12.75)
-
-    -- Create Border Mask
-    button.mUIBorder.mask = button:CreateMaskTexture()
-    button.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask_v2.png]], "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-    button.mUIBorder.mask:SetAllPoints(button.Icon)
-    button.Icon:AddMaskTexture(button.mUIBorder.mask)
-
-    -- Set Border Color
-    button.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
-
-    if not isDebuff then
-        Theme.aurabuttons[button] = "playerbuff"
-    else
-        Theme.aurabuttons[button] = "playerdebuff"
-    end
+    SkinLegacyAuraButton(button, isDebuff and "playerdebuff" or "playerbuff")
 end
 
 -- Disable Flashing of Buffs and Debuffs
@@ -969,37 +989,15 @@ function Theme:UpdatePlayerDebuffs()
 end
 
 function Theme:UpdateUnitframeAuras(aura, isDebuff, unit)
-    if not aura.mUIBorder then
-        aura.Icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+    local record = SkinLegacyAuraButton(aura, isDebuff and "unitframedebuff" or "unitframebuff", {
+        swipe = aura.Cooldown
+    })
 
-        -- Create Border
-        aura.mUIBorder = aura:CreateTexture(nil, "OVERLAY", nil, 7)
-        aura.mUIBorder:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\atlas_v2.png]])
-        aura.mUIBorder:SetTexCoord(0.001953125, 0.142578125, 0.451171875, 0.591796875)
-        aura.mUIBorder:SetDesaturated(true)
-
-        -- Set Border Position
-        aura.mUIBorder:SetPoint("CENTER", aura.Icon, "CENTER", 0, 0)
-
-        -- Set Icon Mask
-        aura.mUIBorder.mask = aura:CreateMaskTexture()
-        aura.mUIBorder.mask:SetTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask_v2.png]], "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-        aura.mUIBorder.mask:SetAllPoints(aura.Icon)
-        aura.Icon:AddMaskTexture(aura.mUIBorder.mask)
-
-        -- Cooldown Swipe
-        aura.Cooldown:SetSwipeTexture([[Interface\AddOns\mUI\Media\Textures\Core\mask_v2.png]])
-        aura.Cooldown:SetSwipeColor(0.0, 0.0, 0.0, 0.75)
-
-        if not isDebuff then
-            Theme.aurabuttons[aura] = "unitframebuff"
-        else
-            Theme.aurabuttons[aura] = "unitframedebuff"
-        end
+    -- Aura icons can resize between updates, so re-apply the border geometry
+    -- for the current icon size and active style.
+    if record and record.applyGeometry then
+        record.applyGeometry(Theme:GetBorderStyle())
     end
-
-    local width, height = aura:GetSize()
-    aura.mUIBorder:SetSize(width * 1.85, height * 1.85)
 
     -- Set Count Position
     if aura.Count then
