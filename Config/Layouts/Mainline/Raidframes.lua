@@ -305,10 +305,63 @@ function Raidframes:OnInitialize()
                 end,
                 order = 13
             },
+            dispelGlow = {
+                name = "Dispel Glow",
+                desc = "Pulse a pixel glow around the raid/party frame when the unit has a dispellable debuff (color-coded by dispel type)",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.dispelGlow = val
+
+                    if not Raidframes.Module:IsEnabled() then
+                        return
+                    end
+                    if val then
+                        Raidframes.Module.RF_Auras:Enable()
+                    else
+                        Raidframes.Module.RF_Auras:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.dispelGlow
+                end,
+                order = 14
+            },
             header3 = {
                 name = "Auras",
                 type = "header",
                 order = 15
+            },
+            auraDisplay = {
+                name = function()
+                    if mUI.db.profile.unitframes.raidframes.auraDisplay then
+                        return "|cff00ff00Enabled|r"
+                    else
+                        return "|cffff0000Disabled|r"
+                    end
+                end,
+                desc = "Replace Blizzard's raid/party-frame buff and debuff icons with mUI-styled icons (custom borders, native countdown, dispellable debuffs scaled larger and shown first).\n\n|cffffff00Info:|r Requires UI reload to take effect.",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.auraDisplay = val
+
+                    if not Raidframes.Module:IsEnabled() then
+                        return
+                    end
+                    if val then
+                        Raidframes.Module.RF_AuraDisplay:Enable()
+                    else
+                        Raidframes.Module.RF_AuraDisplay:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.auraDisplay
+                end,
+                hidden = function()
+                    if select(4, GetBuildInfo()) < 120100 then
+                        return false
+                    end
+                end,
+                order = 16
             },
             auraTooltips = {
                 name = "Aura Tooltips",
@@ -319,6 +372,12 @@ function Raidframes:OnInitialize()
                 end,
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.auraTooltips = val
+
+                    if select(4, GetBuildInfo()) < 120100 then
+                        if Raidframes.Module:IsEnabled() and Raidframes.Module.RF_AuraDisplay and Raidframes.Module.RF_AuraDisplay:IsEnabled() then
+                            Raidframes.Module.RF_AuraDisplay:UpdateAll()
+                        end
+                    end
                 end,
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.auraTooltips
@@ -359,7 +418,16 @@ function Raidframes:OnInitialize()
                 end,
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.centerDefensiveSize = val
-                    Raidframes.Theme:UpdateAllRaidAuras()
+
+                    if select(4, GetBuildInfo()) >= 120100 then
+                        Raidframes.Theme:UpdateAllRaidAuras()
+                    else
+                        mUI.db.profile.unitframes.raidframes.centerDefensiveSize = val
+
+                        if Raidframes.Module:IsEnabled() and Raidframes.Module.RF_AuraDisplay and Raidframes.Module.RF_AuraDisplay:IsEnabled() then
+                            Raidframes.Module.RF_AuraDisplay:UpdateAll()
+                        end
+                    end
                 end,
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.centerDefensiveSize
@@ -379,6 +447,14 @@ function Raidframes:OnInitialize()
                 end,
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.centerDefensiveX = val
+
+                    if select(4, GetBuildInfo()) >= 120100 then
+                        Raidframes.Theme:UpdateAllRaidAuras()
+                    else
+                        if Raidframes.Module:IsEnabled() and Raidframes.Module.RF_AuraDisplay and Raidframes.Module.RF_AuraDisplay:IsEnabled() then
+                            Raidframes.Module.RF_AuraDisplay:UpdateAll()
+                        end
+                    end
                 end,
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.centerDefensiveX
@@ -398,6 +474,14 @@ function Raidframes:OnInitialize()
                 end,
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.centerDefensiveY = val
+
+                    if select(4, GetBuildInfo()) >= 120100 then
+                        Raidframes.Theme:UpdateAllRaidAuras()
+                    else
+                        if Raidframes.Module:IsEnabled() and Raidframes.Module.RF_AuraDisplay and Raidframes.Module.RF_AuraDisplay:IsEnabled() then
+                            Raidframes.Module.RF_AuraDisplay:UpdateAll()
+                        end
+                    end
                 end,
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.centerDefensiveY
@@ -412,14 +496,18 @@ function Raidframes:OnInitialize()
                 max = 50,
                 step = 1,
                 hidden = function()
-                    if select(4, GetBuildInfo()) < 120005 then
-                        return false
-                    end
                     return not (RAID_AURAS_FORCED or mUI.db.profile.unitframes.raidframes.auraDisplay)
                 end,
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.buffsize = val
-                    Raidframes.Theme:UpdateAllRaidAuras()
+
+                    if select(4, GetBuildInfo()) >= 120100 then
+                        Raidframes.Theme:UpdateAllRaidAuras()
+                    else
+                        if Raidframes.Module:IsEnabled() and Raidframes.Module.RF_AuraDisplay and Raidframes.Module.RF_AuraDisplay:IsEnabled() then
+                            Raidframes.Module.RF_AuraDisplay:UpdateAll()
+                        end
+                    end
                 end,
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.buffsize
@@ -434,14 +522,18 @@ function Raidframes:OnInitialize()
                 max = 100,
                 step = 1,
                 hidden = function()
-                    if select(4, GetBuildInfo()) < 120005 then
-                        return false
-                    end
                     return not (RAID_AURAS_FORCED or mUI.db.profile.unitframes.raidframes.auraDisplay)
                 end,
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.debuffsize = val
-                    Raidframes.Theme:UpdateAllRaidAuras()
+
+                    if select(4, GetBuildInfo()) >= 120100 then
+                        Raidframes.Theme:UpdateAllRaidAuras()
+                    else
+                        if Raidframes.Module:IsEnabled() and Raidframes.Module.RF_AuraDisplay and Raidframes.Module.RF_AuraDisplay:IsEnabled() then
+                            Raidframes.Module.RF_AuraDisplay:UpdateAll()
+                        end
+                    end
                 end,
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.debuffsize
@@ -449,8 +541,14 @@ function Raidframes:OnInitialize()
                 order = 23
             },
             dispelScale = {
-                name = "Big Debuff Size",
-                desc = "How much larger important debuffs (boss & role auras) are shown compared to normal debuffs.\n\n|cffffff00Info:|r Requires UI reload to take effect.",
+                name = function()
+                    return select(4, GetBuildInfo()) >= 120100 and "Big Debuff Size" or "Dispellable Debuff Size"
+                end,
+                desc = function()
+                    return select(4, GetBuildInfo()) >= 120100 and
+                               "How much larger important debuffs (boss & role auras) are shown compared to normal debuffs.\n\n|cffffff00Info:|r Requires UI reload to take effect." or
+                               "Scale multiplier applied to debuffs the player can personally dispel. Bigger scale also sorts them to the front."
+                end,
                 type = "range",
                 min = 1,
                 max = 2,
@@ -461,11 +559,64 @@ function Raidframes:OnInitialize()
                 end,
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.dispelScale = val
+                    if select(4, GetBuildInfo()) >= 120100 then
+                        Raidframes.Theme:UpdateAllRaidAuras()
+                    else
+                        if Raidframes.Module:IsEnabled() and Raidframes.Module.RF_AuraDisplay and Raidframes.Module.RF_AuraDisplay:IsEnabled() then
+                            Raidframes.Module.RF_AuraDisplay:UpdateAll()
+                        end
+                    end
                 end,
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.dispelScale
                 end,
                 order = 24
+            },
+            ccScale = {
+                name = "CC Debuff Size",
+                desc = "Scale multiplier applied to crowd-control debuffs.",
+                type = "range",
+                min = 1,
+                max = 2,
+                step = 0.05,
+                isPercent = false,
+                hidden = function()
+                    return not (RAID_AURAS_FORCED or mUI.db.profile.unitframes.raidframes.auraDisplay)
+                end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.ccScale = val
+
+                    if Raidframes.Module:IsEnabled() and Raidframes.Module.RF_AuraDisplay and Raidframes.Module.RF_AuraDisplay:IsEnabled() then
+                        Raidframes.Module.RF_AuraDisplay:RefreshFilters()
+                        Raidframes.Module.RF_AuraDisplay:UpdateAll()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.ccScale
+                end,
+                order = 25
+            },
+            privateaurasize = {
+                name = "Private Aura Size",
+                desc = "Size of private aura icons as a percent of the raid frame's height.",
+                type = "range",
+                min = 20,
+                max = 150,
+                step = 1,
+                hidden = function()
+                    return not (RAID_AURAS_FORCED or mUI.db.profile.unitframes.raidframes.auraDisplay)
+                end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.privateaurasize = val
+
+                    if Raidframes.Module:IsEnabled() and Raidframes.Module.RF_AuraDisplay and Raidframes.Module.RF_AuraDisplay:IsEnabled() then
+                        Raidframes.Module.RF_AuraDisplay:UpdateAll()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.privateaurasize
+                end,
+                order = 26
             }
         }
     }
