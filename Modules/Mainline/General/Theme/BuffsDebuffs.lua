@@ -916,6 +916,10 @@ local function SkinLegacyAuraButton(frame, category, opts)
             opts.swipe:SetSwipeColor(0, 0, 0, 0.75)
         end
 
+        -- Known icon size, updated by callers (e.g. unitframe auras pass the
+        -- configured buff/debuff size). Captured by the geometry closure below.
+        local geom = {size = opts.size}
+
         -- Style-driven texture, mask, swipe and geometry (live-switchable)
         frame.mUIBorderRecord = Theme:RegisterBorder({
             border = frame.mUIBorder,
@@ -923,13 +927,17 @@ local function SkinLegacyAuraButton(frame, category, opts)
             mask = frame.mUIBorder.mask,
             swipe = opts.swipe,
             applyGeometry = function(style)
-                local size = frame.Icon:GetWidth()
-                if not size or size < 1 then
-                    size = Theme.PLAYER_AURA_SIZE
-                end
+                -- Use the known configured size. Never read Icon:GetWidth() for
+                -- unitframe auras - it returns a secret value in tainted paths
+                -- and secret numbers can't be compared or tostring'd (only
+                -- arithmetic / flowing into setters is allowed). Player auras
+                -- are untainted and pass no size, so they fall back to the live
+                -- icon width.
+                local size = geom.size or frame.Icon:GetWidth()
                 ApplyAuraBorderGeometry(frame.mUIBorder, frame.Icon, size * style.auraInsetRatio)
             end
         })
+        frame.mUIBorderRecord.geom = geom
 
         if category then
             Theme.aurabuttons[frame] = category
@@ -989,14 +997,25 @@ function Theme:UpdatePlayerDebuffs()
 end
 
 function Theme:UpdateUnitframeAuras(aura, isDebuff, unit)
+    -- Unitframe auras run in a tainted path where Icon:GetWidth() is secret, so
+    -- drive the border geometry from the configured size instead.
+    local db = mUI.db.profile.unitframes.buffsdebuffs
+    local size = isDebuff and db.debuffsize or db.buffsize
+
     local record = SkinLegacyAuraButton(aura, isDebuff and "unitframedebuff" or "unitframebuff", {
-        swipe = aura.Cooldown
+        swipe = aura.Cooldown,
+        size = size
     })
 
     -- Aura icons can resize between updates, so re-apply the border geometry
-    -- for the current icon size and active style.
-    if record and record.applyGeometry then
-        record.applyGeometry(Theme:GetBorderStyle())
+    -- for the current configured size and active style.
+    if record then
+        if record.geom then
+            record.geom.size = size
+        end
+        if record.applyGeometry then
+            record.applyGeometry(Theme:GetBorderStyle())
+        end
     end
 
     -- Set Count Position
