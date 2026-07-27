@@ -294,6 +294,8 @@ function Theme:DisableDefaultPlayerAuras()
         hostFrame:UnregisterAllEvents()
         hostFrame.AuraContainer:UnregisterAllEvents()
         hostFrame.AuraContainer:Hide()
+        CVarCallbackRegistry:UnregisterCallback('consolidateBuffs', BuffFrame)
+        CVarCallbackRegistry:UnregisterCallback('collapseExpandBuffs', BuffFrame)
         hostFrame:SetScript("OnUpdate", nil)
 
         for _, auraFrame in ipairs(hostFrame.auraFrames or {}) do
@@ -636,7 +638,6 @@ local RAID_DEFENSIVES = {
     [49039] = true, -- Lichborne
     [81256] = true, -- Dancing Rune Weapon
     [216331] = true, -- Avenging Crusader
-    [31884] = true, -- Avenging Wrath
     [389539] = true -- Sentinel
 }
 
@@ -846,8 +847,11 @@ function Theme:UpdateRaidAuraContainers(frame, data, unit, unreachable, buffSize
     -- Out of phase/range
     if unreachable then
         for _, container in ipairs({buffContainer, debuffContainer, defensiveContainer}) do
-            container:SetEnabled(false)
-            container.mUI_unit = nil
+            if container.mUI_unit ~= nil then
+                container:SetEnabled(false)
+                container.mUI_unit = nil
+                container:Hide()
+            end
         end
         return
     end
@@ -857,6 +861,7 @@ function Theme:UpdateRaidAuraContainers(frame, data, unit, unreachable, buffSize
             container:SetUnit(unit)
             container:SetEnabled(true)
             container.mUI_unit = unit
+            container:Show()
         end
         container:UpdateAllAuras()
     end
@@ -997,25 +1002,16 @@ local function SkinLegacyAuraButton(frame, category, opts)
             opts.swipe:SetSwipeColor(0, 0, 0, 0.75)
         end
 
-        -- Known icon size, updated by callers (e.g. unitframe auras pass the
-        -- configured buff/debuff size). Captured by the geometry closure below.
         local geom = {
             size = opts.size
         }
 
-        -- Style-driven texture, mask, swipe and geometry (live-switchable)
         frame.mUIBorderRecord = Theme:RegisterBorder({
             border = frame.mUIBorder,
             coord = true,
             mask = frame.mUIBorder.mask,
             swipe = opts.swipe,
             applyGeometry = function(style)
-                -- Use the known configured size. Never read Icon:GetWidth() for
-                -- unitframe auras - it returns a secret value in tainted paths
-                -- and secret numbers can't be compared or tostring'd (only
-                -- arithmetic / flowing into setters is allowed). Player auras
-                -- are untainted and pass no size, so they fall back to the live
-                -- icon width.
                 local size = geom.size or frame.Icon:GetWidth()
                 ApplyAuraBorderGeometry(frame.mUIBorder, frame.Icon, size * style.auraInsetRatio)
             end
@@ -1031,8 +1027,6 @@ local function SkinLegacyAuraButton(frame, category, opts)
 end
 
 function Theme:ButtonDefault(button, isDebuff)
-    -- Player auras also taint (Icon:GetWidth() is secret), so drive the border
-    -- geometry from the known player aura size instead of the live icon width.
     SkinLegacyAuraButton(button, isDebuff and "playerdebuff" or "playerbuff", {
         size = Theme.PLAYER_AURA_SIZE
     })
@@ -1084,8 +1078,6 @@ function Theme:UpdatePlayerDebuffs()
 end
 
 function Theme:UpdateUnitframeAuras(aura, isDebuff, unit)
-    -- Unitframe auras run in a tainted path where Icon:GetWidth() is secret, so
-    -- drive the border geometry from the configured size instead.
     local db = mUI.db.profile.unitframes.buffsdebuffs
     local size = isDebuff and db.debuffsize or db.buffsize
 
@@ -1094,8 +1086,6 @@ function Theme:UpdateUnitframeAuras(aura, isDebuff, unit)
         size = size
     })
 
-    -- Aura icons can resize between updates, so re-apply the border geometry
-    -- for the current configured size and active style.
     if record then
         if record.geom then
             record.geom.size = size
