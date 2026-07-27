@@ -533,6 +533,10 @@ function Theme:PVP()
         PVPQueueFrame.HonorInset:Hide()
         Theme:StyleTooltip(ConquestTooltip)
     end
+
+    if PVPFramePopup then
+        mUI:Skin(PVPFramePopup.Border)
+    end
 end
 
 function Theme:Macros()
@@ -1607,6 +1611,10 @@ function Theme:Housing()
         mUI:Skin(HousingModelPreviewFrame)
         mUI:Skin(HousingModelPreviewFrame.NineSlice)
     end
+
+    if HouseListFrame then
+        mUI:Skin(HouseListFrame)
+    end
 end
 
 function Theme:Catalyst()
@@ -1667,6 +1675,9 @@ function Theme:Frames()
     mUI:Skin(StaticPopup1.BG)
     mUI:Skin(StaticPopup2.BG)
     mUI:Skin(StaticPopup3.BG)
+    mUI:Skin(StaticPopup1EditBox.NineSlice)
+    mUI:Skin(StaticPopup2EditBox.NineSlice)
+    mUI:Skin(StaticPopup3EditBox.NineSlice)
     mUI:Skin({StaticPopup1EditBoxLeft, StaticPopup1EditBoxMid, StaticPopup1EditBoxRight, StaticPopup2EditBoxLeft, StaticPopup2EditBoxMid,
               StaticPopup2EditBoxRight, StaticPopup3EditBoxLeft, StaticPopup3EditBoxMid, StaticPopup3EditBoxRight}, true)
 

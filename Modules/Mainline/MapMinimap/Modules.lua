@@ -26,7 +26,7 @@ function Modules:OnEnable()
     if Modules.db.date then
         Modules.Calendar:Enable()
     end
-    if Modules.db.coordinates then
+    if select(4, GetBuildInfo()) < 120100 and Modules.db.coordinates then
         Modules.Coords:Enable()
     end
     if Modules.db.minimap then

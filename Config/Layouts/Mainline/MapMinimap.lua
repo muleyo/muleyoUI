@@ -43,6 +43,11 @@ function MapMinimap:OnInitialize()
                 name = "Coordinates",
                 desc = "Display Coordinates on the Worldmap",
                 type = "toggle",
+                hidden = function()
+                    if select(4, GetBuildInfo()) >= 120100 then
+                        return true
+                    end
+                end,
                 set = function(_, val)
                     mUI.db.profile.map.coordinates = val
 
