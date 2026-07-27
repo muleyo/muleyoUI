@@ -523,6 +523,11 @@ function General:OnInitialize()
                 name = "Friends Class Colors",
                 desc = "Display Character Names in Class Colors on the Friendlist",
                 type = "toggle",
+                hidden = function()
+                    if select(4, GetBuildInfo()) >= 120100 then
+                        return true
+                    end
+                end,
                 set = function(_, val)
                     mUI.db.profile.general.display.friendlist = val
 

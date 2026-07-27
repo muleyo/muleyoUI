@@ -357,8 +357,8 @@ function Raidframes:OnInitialize()
                     return mUI.db.profile.unitframes.raidframes.auraDisplay
                 end,
                 hidden = function()
-                    if select(4, GetBuildInfo()) < 120100 then
-                        return false
+                    if select(4, GetBuildInfo()) >= 120100 then
+                        return true
                     end
                 end,
                 order = 16
@@ -368,7 +368,9 @@ function Raidframes:OnInitialize()
                 desc = "Show the aura tooltip when hovering over a custom aura icon. Disabling lets clicks pass through to the unit frame.",
                 type = "toggle",
                 hidden = function()
-                    return not (RAID_AURAS_FORCED or mUI.db.profile.unitframes.raidframes.auraDisplay)
+                    if select(4, GetBuildInfo()) >= 120100 then
+                        return true
+                    end
                 end,
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.auraTooltips = val
@@ -581,7 +583,9 @@ function Raidframes:OnInitialize()
                 step = 0.05,
                 isPercent = false,
                 hidden = function()
-                    return not (RAID_AURAS_FORCED or mUI.db.profile.unitframes.raidframes.auraDisplay)
+                    if select(4, GetBuildInfo()) >= 120100 then
+                        return true
+                    end
                 end,
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.ccScale = val
@@ -604,7 +608,9 @@ function Raidframes:OnInitialize()
                 max = 150,
                 step = 1,
                 hidden = function()
-                    return not (RAID_AURAS_FORCED or mUI.db.profile.unitframes.raidframes.auraDisplay)
+                    if select(4, GetBuildInfo()) >= 120100 then
+                        return true
+                    end
                 end,
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.privateaurasize = val

@@ -114,11 +114,13 @@ function Modules:OnEnable()
         end
 
         -- LEGACY MODULES
-        if Modules.db.raidframes.dispelGlow then
-            Modules.RF_Auras:Enable()
-        end
-        if Modules.db.raidframes.auraDisplay then
-            Modules.RF_AuraDisplay:Enable()
+        if select(4, GetBuildInfo()) < 120100 then
+            if Modules.db.raidframes.dispelGlow then
+                Modules.RF_Auras:Enable()
+            end
+            if Modules.db.raidframes.auraDisplay then
+                Modules.RF_AuraDisplay:Enable()
+            end
         end
     end
 end
