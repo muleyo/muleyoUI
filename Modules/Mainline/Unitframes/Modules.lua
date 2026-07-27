@@ -25,6 +25,11 @@ function Modules:OnInitialize()
     Modules.Elitecolor = mUI:GetModule("mUI.Modules.Unitframes.Elitecolor")
     Modules.Smooth = mUI:GetModule("mUI.Modules.Unitframes.SmoothHealth")
     Modules.Overshields = mUI:GetModule("mUI.Modules.Unitframes.Overshields")
+
+    -- LEGACY MODULES
+    Modules.RF_Defensive = mUI:GetModule("mUI.Modules.Unitframes.RF_Defensive")
+    Modules.RF_Auras = mUI:GetModule("mUI.Modules.Unitframes.RF_Auras")
+    Modules.RF_AuraDisplay = mUI:GetModule("mUI.Modules.Unitframes.RF_AuraDisplay")
 end
 
 function Modules:OnEnable()
@@ -107,6 +112,14 @@ function Modules:OnEnable()
         if Modules.db.smooth then
             Modules.Smooth:Enable()
         end
+
+        -- LEGACY MODULES
+        if Modules.db.raidframes.dispelGlow then
+            Modules.RF_Auras:Enable()
+        end
+        if Modules.db.raidframes.auraDisplay then
+            Modules.RF_AuraDisplay:Enable()
+        end
     end
 end
 
@@ -135,4 +148,8 @@ function Modules:OnDisable()
     Modules.RF_Scale:Disable()
     Modules.Smooth:Disable()
     Modules.Overshields:Disable()
+
+    -- LEGACY MODULES
+    Modules.RF_Auras:Disable()
+    Modules.RF_AuraDisplay:Disable()
 end

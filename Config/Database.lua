@@ -145,7 +145,8 @@ local defaults = {
                 dispelGlow = true,
                 auraDisplay = false,
                 auraTooltips = true,
-                dispelScale = 1.3
+                dispelScale = 1.3,
+                ccScale = 1.15
             }
         },
         castbars = {

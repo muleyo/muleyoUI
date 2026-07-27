@@ -305,10 +305,59 @@ function Raidframes:OnInitialize()
                 end,
                 order = 13
             },
+            dispelGlow = {
+                name = "Dispel Glow",
+                desc = "Pulse a pixel glow around the raid/party frame when the unit has a dispellable debuff (color-coded by dispel type)",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.dispelGlow = val
+
+                    if not Raidframes.Module:IsEnabled() then
+                        return
+                    end
+                    if val then
+                        Raidframes.Module.RF_Auras:Enable()
+                    else
+                        Raidframes.Module.RF_Auras:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.dispelGlow
+                end,
+                order = 14
+            },
             header3 = {
                 name = "Auras",
                 type = "header",
                 order = 15
+            },
+            auraDisplay = {
+
+                name = function()
+                    if mUI.db.profile.unitframes.raidframes.auraDisplay then
+                        return "|cff00ff00Enabled|r"
+                    else
+                        return "|cffff0000Disabled|r"
+                    end
+                end,
+                desc = "Replace Blizzard's raid/party-frame buff and debuff icons with mUI-styled icons (custom borders, native countdown, dispellable debuffs scaled larger and shown first).\n\n|cffffff00Info:|r Requires UI reload to take effect.",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.auraDisplay = val
+
+                    if not Raidframes.Module:IsEnabled() then
+                        return
+                    end
+                    if val then
+                        Raidframes.Module.RF_AuraDisplay:Enable()
+                    else
+                        Raidframes.Module.RF_AuraDisplay:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.auraDisplay
+                end,
+                order = 16
             },
             auraTooltips = {
                 name = "Aura Tooltips",
