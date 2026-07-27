@@ -625,7 +625,6 @@ local RAID_DEFENSIVES = {
     [374227] = true, -- Zephyr
     [193065] = true, -- Protective Light
     [15286] = true, -- Vampiric Embrace
-    [586] = true, -- Fade
     [5487] = true, -- Bear Form
     [102558] = true, -- Incarnation (Guardian)
     [125174] = true, -- Touch of Karma
