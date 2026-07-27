@@ -186,13 +186,14 @@ function Mouseover:OnInitialize()
             if bar == "stancebar" then
                 C_Timer.After(0, function()
                     for i = 1, GetNumShapeshiftForms() do
-                        if not (Mouseover:IsHooked(_G[Mouseover.ACTION_BUTTONS[bar] .. i], "OnEnter") and
-                            Mouseover:IsHooked(_G[Mouseover.ACTION_BUTTONS[bar] .. i], "OnLeave")) then
-                            Mouseover:SecureHookScript(_G[Mouseover.ACTION_BUTTONS[bar] .. i], "OnEnter", function()
+                        local button = _G[Mouseover.ACTION_BUTTONS[bar] .. i]
+                        if button and not (Mouseover:IsHooked(button, "OnEnter") and
+                            Mouseover:IsHooked(button, "OnLeave")) then
+                            Mouseover:SecureHookScript(button, "OnEnter", function()
                                 Mouseover:CancelTimer(Mouseover.func[bar])
                                 Mouseover:SetAlpha(bar, 1)
                             end)
-                            Mouseover:SecureHookScript(_G[Mouseover.ACTION_BUTTONS[bar] .. i], "OnLeave", function()
+                            Mouseover:SecureHookScript(button, "OnLeave", function()
                                 Mouseover.func[bar] = Mouseover:ScheduleTimer(function()
                                     Mouseover:SetAlpha(bar, 0)
                                 end, 0.1)

@@ -97,6 +97,20 @@ function Overshields:OnInitialize()
             absorbOverlay:SetParent(healthBar)
             absorbOverlay:ClearAllPoints() -- we'll be attaching the overlay on heal prediction update.
 
+            -- Newer clients set this overlay to an atlas texture, which can't tile
+            -- via SetTexCoord (the atlas is only a sub-rect of the sheet, so coords
+            -- past 1.0 sample empty space and the shield stripes vanish). Force the
+            -- file-based Shield-Overlay with wrap addressing so the stripes repeat.
+            if not absorbOverlay.mUITiled then
+                absorbOverlay:SetTexture("Interface\\RaidFrame\\Shield-Overlay", "REPEAT", "REPEAT")
+                absorbOverlay:SetHorizTile(true)
+                absorbOverlay:SetVertTile(true)
+                -- Draw above the health-bar fill; at full health the fill covers
+                -- the whole bar and would otherwise hide the shield stripes.
+                absorbOverlay:SetDrawLayer("ARTWORK", 1)
+                absorbOverlay.mUITiled = true
+            end
+
             if absorbBar:IsShown() then -- If absorb bar is shown, attach absorb overlay to it otherwise, attach to health bar.
                 absorbOverlay:SetPoint("TOPRIGHT", absorbBar, "TOPRIGHT", 0, 0)
                 absorbOverlay:SetPoint("BOTTOMRIGHT", absorbBar, "BOTTOMRIGHT", 0, 0)
@@ -108,8 +122,14 @@ function Overshields:OnInitialize()
             local totalWidth, totalHeight = healthBar:GetSize()
             local barSize = totalAbsorb / maxHealth * totalWidth
 
+            -- Newer clients drop the .tileSize field on the absorb overlay (the
+            -- texture now tiles via atlas wrap addressing), so fall back to the
+            -- Shield-Overlay texture's native 32px tile size to keep the
+            -- SetTexCoord tiling math working.
+            local tileSize = absorbOverlay.tileSize or 32
+
             absorbOverlay:SetWidth(barSize)
-            absorbOverlay:SetTexCoord(0, barSize / absorbOverlay.tileSize, 0, totalHeight / absorbOverlay.tileSize)
+            absorbOverlay:SetTexCoord(0, barSize / tileSize, 0, totalHeight / tileSize)
             absorbOverlay:Show()
 
             absorbGlow:ClearAllPoints()
