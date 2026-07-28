@@ -143,7 +143,7 @@ local function CreateAuraButton(auraFrame, isDebuff, opts)
             -- buff borders to the default shade don't clobber it (e.g. stealable).
             auraFrame.mUIBorderColor = opts.borderColor
         else
-            auraFrame.mUIBorder:SetVertexColor(unpack(mUI:Color(opts.baseShade or 0.25)))
+            auraFrame.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
         end
 
         -- Apply the selected border style (and keep it re-skinnable on change)
@@ -318,10 +318,14 @@ function Theme:SetPlayerDebuffDispelTypeShown(shown)
     Theme.showDispelType = shown
 
     local alpha = shown and 1 or 0
-    for auraFrame in pairs(Theme.aurabuttons) do
-        local border = auraFrame.mUIDispelBorder
-        if border then
-            pcall(border.SetAlpha, border, alpha)
+    for auraFrame, category in pairs(Theme.aurabuttons) do
+        -- Player debuffs only; raid debuffs also carry a dispel border but are
+        -- governed by their own settings, not this player-frame toggle.
+        if category == "playerdebuff" then
+            local border = auraFrame.mUIDispelBorder
+            if border then
+                pcall(border.SetAlpha, border, alpha)
+            end
         end
     end
 end
@@ -730,7 +734,7 @@ local function InitRaidAuraButton(auraFrame, container, groupKey, isDebuff)
     local size = (container.mUI_groupSizes and container.mUI_groupSizes[groupKey]) or 16
     CreateAuraButton(auraFrame, isDebuff, {
         size = size,
-        baseShade = 0.15,
+        category = "raidframe",
         dispelBorder = isDebuff,
         countSize = 9,
         countOffsetX = 1,

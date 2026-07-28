@@ -1568,7 +1568,7 @@ function Theme:Auras()
     -- BuffFrame Expand/Collapse Button
     mUI:Skin(BuffFrame.CollapseAndExpandButton)
     for button, type in pairs(Theme.aurabuttons) do
-        if (type == "playerbuff" or type == "unitframebuff") and button.mUIBorder then
+        if (type == "playerbuff" or type == "unitframebuff" or type == "raidframebuff") and button.mUIBorder then
             -- Preserve a frame's custom border color (e.g. stealable buffs); only
             -- reset plain buff borders to the theme's default shade.
             local c = button.mUIBorderColor
