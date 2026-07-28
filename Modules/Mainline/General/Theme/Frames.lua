@@ -1569,7 +1569,14 @@ function Theme:Auras()
     mUI:Skin(BuffFrame.CollapseAndExpandButton)
     for button, type in pairs(Theme.aurabuttons) do
         if (type == "playerbuff" or type == "unitframebuff") and button.mUIBorder then
-            pcall(button.mUIBorder.SetVertexColor, button.mUIBorder, unpack(mUI:Color(0.25)))
+            -- Preserve a frame's custom border color (e.g. stealable buffs); only
+            -- reset plain buff borders to the theme's default shade.
+            local c = button.mUIBorderColor
+            if c then
+                pcall(button.mUIBorder.SetVertexColor, button.mUIBorder, c.r, c.g, c.b, 1)
+            else
+                pcall(button.mUIBorder.SetVertexColor, button.mUIBorder, unpack(mUI:Color(0.25)))
+            end
         end
     end
 end
