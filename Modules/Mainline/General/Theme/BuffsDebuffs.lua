@@ -11,6 +11,19 @@ Theme.colorCurve:AddPoint(4, DEBUFF_TYPE_POISON_COLOR)
 Theme.colorCurve:AddPoint(9, DEBUFF_TYPE_BLEED_COLOR)
 Theme.colorCurve:AddPoint(11, DEBUFF_TYPE_BLEED_COLOR)
 
+-- Aura duration text formatter
+local AuraDurationFormatter = C_StringUtil.CreateSecondsFormatter()
+local mult = 1.5
+local curve = C_CurveUtil.CreateCurve()
+curve:AddPoint(1 + (mult * 60), Enum.SecondsFormatterInterval.Minutes)
+curve:AddPoint(1 + (mult * 3600), Enum.SecondsFormatterInterval.Hours)
+curve:AddPoint(1 + (mult * 86400), Enum.SecondsFormatterInterval.Days)
+AuraDurationFormatter:SetDefaultAbbreviation(Enum.SecondsFormatterAbbreviation.OneLetter)
+AuraDurationFormatter:SetMinInterval(Enum.SecondsFormatterInterval.Seconds)
+AuraDurationFormatter:SetMaxIntervalCurve(curve)
+AuraDurationFormatter:SetDesiredUnitCount(1)
+AuraDurationFormatter:SetStripIntervalWhitespace(Enum.SecondsFormatterIntervalWhitespace.StripIgnoreLocale)
+
 -- Tables
 Theme.aurabuttons = {}
 
@@ -56,11 +69,14 @@ local function CreateAuraButton(auraFrame, isDebuff, opts)
         auraFrame.Cooldown:SetCountdownFont("NumberFontNormalSmall")
         auraFrame:SetDurationCooldown(auraFrame.Cooldown)
 
-        -- Cooldown Text
-        auraFrame.CooldownText = auraFrame.Cooldown:GetCountdownFontString()
-        auraFrame.CooldownText:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
-        auraFrame.CooldownText:ClearAllPoints()
-        auraFrame.CooldownText:SetPoint("BOTTOM", auraFrame.Icon, "BOTTOM", 0, 0)
+        local durationFontSize, countFontSize
+        if opts.category == "player" then
+            durationFontSize = math.max(math.floor(size / 3), 6)
+            countFontSize = math.max(math.floor(size / 3.2), 6)
+        else
+            durationFontSize = math.max(math.floor(size / 3 + 2), 6)
+            countFontSize = math.max(math.floor(size / 3), 6)
+        end
 
         -- Create Border (in its own overlay above the Cooldown frame, otherwise
         -- the cooldown swipe - a child frame - draws over the border textures).
@@ -80,9 +96,27 @@ local function CreateAuraButton(auraFrame, isDebuff, opts)
         auraFrame.CountOverlay:SetFrameLevel(auraFrame.BorderOverlay:GetFrameLevel() + 1)
 
         auraFrame.Count = auraFrame.CountOverlay:CreateFontString(nil, "OVERLAY", "NumberFontNormal")
-        auraFrame.Count:SetFont(STANDARD_TEXT_FONT, opts.countSize or 11, "OUTLINE")
-        auraFrame.Count:SetPoint("TOPRIGHT", auraFrame.Icon, "TOPRIGHT", opts.countOffsetX or -1, opts.countOffsetY or -1)
+        auraFrame.Count:SetFont(STANDARD_TEXT_FONT, countFontSize, "OUTLINE")
         auraFrame:SetApplicationCount(auraFrame.Count)
+
+        if opts.category == "player" then
+            -- Player buffs/debuffs: custom suffixed countdown ("10s", "5m")
+            auraFrame.Cooldown:SetHideCountdownNumbers(true)
+            auraFrame.CooldownText = auraFrame.CountOverlay:CreateFontString(nil, "OVERLAY")
+            auraFrame.CooldownText:SetFont(STANDARD_TEXT_FONT, durationFontSize, "OUTLINE")
+            auraFrame.CooldownText:SetPoint("BOTTOM", auraFrame.Icon, "BOTTOM", 0, 2)
+            auraFrame:SetDurationText(auraFrame.CooldownText, {
+                textFormatter = AuraDurationFormatter
+            })
+            auraFrame.Count:SetPoint("TOPRIGHT", auraFrame.Icon, "TOPRIGHT", -1.5, -1.5)
+        else
+            -- Unitframe & raidframe auras: Blizzard's countdown numbers, centered.
+            auraFrame.CooldownText = auraFrame.Cooldown:GetCountdownFontString()
+            auraFrame.CooldownText:SetFont(STANDARD_TEXT_FONT, durationFontSize, "OUTLINE")
+            auraFrame.CooldownText:ClearAllPoints()
+            auraFrame.CooldownText:SetPoint("CENTER", auraFrame.Icon, "CENTER", 0, 0)
+            auraFrame.Count:SetPoint("TOPRIGHT", auraFrame.Icon, "TOPRIGHT", 1, -1)
+        end
 
         if isDebuff and opts.dispelBorder then
             auraFrame.mUIBorder:SetVertexColor(DEBUFF_TYPE_NONE_COLOR.r, DEBUFF_TYPE_NONE_COLOR.g, DEBUFF_TYPE_NONE_COLOR.b, 1)
@@ -105,6 +139,9 @@ local function CreateAuraButton(auraFrame, isDebuff, opts)
             auraFrame.mUIDispelBorder:SetAlpha(Theme.showDispelType == false and 0 or 1)
         elseif opts.borderColor then
             auraFrame.mUIBorder:SetVertexColor(opts.borderColor.r, opts.borderColor.g, opts.borderColor.b, 1)
+            -- Remember the custom color so theme refreshes (Theme:Auras) that reset
+            -- buff borders to the default shade don't clobber it (e.g. stealable).
+            auraFrame.mUIBorderColor = opts.borderColor
         else
             auraFrame.mUIBorder:SetVertexColor(unpack(mUI:Color(opts.baseShade or 0.25)))
         end
@@ -328,6 +365,12 @@ end
 Theme.MAX_UNITFRAME_BUFFS = 32
 Theme.MAX_UNITFRAME_DEBUFFS = 16
 Theme.UNITFRAME_AURA_SIZE = 24
+-- Border color for stealable/purgeable buffs (target/focus). Change to taste.
+local STEALABLE_BORDER_COLOR = {
+    r = 0.8,
+    g = 0.3,
+    b = 1
+}
 local AURA_START_X = 5
 local AURA_START_Y = 4
 local AURA_MIRRORED_START_Y = -6
@@ -386,10 +429,29 @@ function Theme:CreateUnitAuraContainer(frame, unit)
     buffContainer:SetEnabled(true)
     debuffContainer:SetEnabled(true)
 
+    -- Regular buffs: everything NOT stealable
     buffContainer:AddAuraGroup("Buffs", AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Helpful), {
         maxFrameCount = Theme.MAX_UNITFRAME_BUFFS,
+        candidateFilters = {
+            isStealable = false
+        },
         initializeFrame = function(auraFrame)
             Theme:InitializeCustomAuraButton(auraFrame, false, nil, buffSize)
+        end,
+        layout = {
+            elementSpacing = 3,
+            lineSpacing = 3
+        }
+    })
+
+    -- Stealable/purgeable buffs
+    buffContainer:AddAuraGroup("BuffsStealable", AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Helpful), {
+        maxFrameCount = Theme.MAX_UNITFRAME_BUFFS,
+        candidateFilters = {
+            isStealable = true
+        },
+        initializeFrame = function(auraFrame)
+            Theme:InitializeCustomAuraButton(auraFrame, false, STEALABLE_BORDER_COLOR, buffSize)
         end,
         layout = {
             elementSpacing = 3,
@@ -582,6 +644,7 @@ local RAID_BUFFS_PER_ROW = 3
 local RAID_ICON_GAP = 1
 local RAID_MAX_BIG_DEBUFFS = 2
 local RAID_DEBUFF_MAX_DURATION = 100000
+local RAID_BUFF_MAX_DURATION = 100000
 
 local RAID_DEBUFF_EXCLUDE = {
     [57723] = true, -- Exhaustion (Heroism)
@@ -624,10 +687,10 @@ local RAID_DEFENSIVES = {
     [108416] = true, -- Dark Pact
     [200183] = true, -- Apotheosis
     [215769] = true, -- Spirit of the Redeemer
+    [421453] = true, -- Ultimate Penitence
     [374227] = true, -- Zephyr
     [193065] = true, -- Protective Light
     [15286] = true, -- Vampiric Embrace
-    [5487] = true, -- Bear Form
     [102558] = true, -- Incarnation (Guardian)
     [125174] = true, -- Touch of Karma
     [386208] = true, -- Defensive Stance
@@ -638,7 +701,8 @@ local RAID_DEFENSIVES = {
     [49039] = true, -- Lichborne
     [81256] = true, -- Dancing Rune Weapon
     [216331] = true, -- Avenging Crusader
-    [389539] = true -- Sentinel
+    [389539] = true, -- Sentinel
+    [1261872] = true -- Heart of the Wild (Bear)
 }
 
 local RAID_CURATED_EXCLUDE = {}
@@ -700,7 +764,8 @@ function Theme:EnsureRaidAuraContainers(frame, data)
     buffContainer:AddAuraGroup("Buffs", RaidFilter("HELPFUL", "PLAYER", "RAID_IN_COMBAT", "!BIG_DEFENSIVE", "!EXTERNAL_DEFENSIVE"), {
         maxFrameCount = RAID_MAX_BUFFS,
         candidateFilters = {
-            excludeSpellIDs = RAID_CURATED_EXCLUDE
+            excludeSpellIDs = RAID_CURATED_EXCLUDE,
+            maxDuration = RAID_BUFF_MAX_DURATION
         },
         initializeFrame = function(auraFrame)
             InitRaidAuraButton(auraFrame, buffContainer, "Buffs", false)
@@ -710,10 +775,11 @@ function Theme:EnsureRaidAuraContainers(frame, data)
             lineSpacing = RAID_ICON_GAP
         }
     })
-    buffContainer:AddAuraGroup("BuffsImportant", RaidFilter("HELPFUL"), {
+    buffContainer:AddAuraGroup("BuffsImportant", RaidFilter("HELPFUL", "PLAYER"), {
         maxFrameCount = RAID_MAX_BUFFS,
         candidateFilters = {
-            includeSpellIDs = RAID_IMPORTANT_BUFFS
+            includeSpellIDs = RAID_IMPORTANT_BUFFS,
+            maxDuration = RAID_BUFF_MAX_DURATION
         },
         initializeFrame = function(auraFrame)
             InitRaidAuraButton(auraFrame, buffContainer, "BuffsImportant", false)
@@ -772,6 +838,8 @@ function Theme:EnsureRaidAuraContainers(frame, data)
 
     -- Defensives
     local defensiveContainer = CreateFrame("AuraContainer", nil, frame, "CustomAuraContainerTemplate")
+    local healthLevel = (frame.healthBar and frame.healthBar:GetFrameLevel()) or frame:GetFrameLevel()
+    defensiveContainer:SetFrameLevel(math.max(healthLevel, frame:GetFrameLevel()) + 10)
     defensiveContainer.mUI_groupSizes = {
         BigDefensives = defensiveSize,
         AdditionalDefensives = defensiveSize
@@ -793,7 +861,8 @@ function Theme:EnsureRaidAuraContainers(frame, data)
     defensiveContainer:AddAuraGroup("AdditionalDefensives", RaidFilter("HELPFUL"), {
         maxFrameCount = RAID_MAX_DEFENSIVE,
         candidateFilters = {
-            includeSpellIDs = RAID_DEFENSIVES
+            includeSpellIDs = RAID_DEFENSIVES,
+            maxDuration = RAID_BUFF_MAX_DURATION
         },
         initializeFrame = function(auraFrame)
             InitRaidAuraButton(auraFrame, defensiveContainer, "BigDefensives", false)
@@ -815,7 +884,7 @@ function Theme:UpdateRaidAuraContainers(frame, data, unit, unreachable, buffSize
         return
     end
 
-    -- Sizes are baked at creation; read them back for the flow layout wrap width.
+    -- Sizes
     local buffS = buffContainer.mUI_groupSizes.Buffs or buffSize
     local bigS = debuffContainer.mUI_groupSizes.DebuffsBig or debuffSize
     local normalS = debuffContainer.mUI_groupSizes.DebuffsNormal or debuffSize
