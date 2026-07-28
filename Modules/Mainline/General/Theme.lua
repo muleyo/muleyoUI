@@ -165,7 +165,7 @@ function Theme:OnEnable()
                 end
 
                 local unreachable = (UnitIsConnected and not UnitIsConnected(unit)) or (UnitPhaseReason and UnitPhaseReason(unit) ~= nil) or
-                                        (UnitIsVisible and not UnitIsVisible(unit))
+                                        (UnitIsVisible and not UnitIsVisible(unit)) or (UnitCanAssist and not UnitCanAssist("player", unit))
 
                 local buffSize, debuffSize = Theme:GetSizes(frame)
                 local frameH = frame:GetHeight()
