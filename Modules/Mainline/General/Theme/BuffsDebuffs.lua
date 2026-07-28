@@ -71,8 +71,8 @@ local function CreateAuraButton(auraFrame, isDebuff, opts)
 
         local durationFontSize, countFontSize
         if opts.category == "player" then
-            durationFontSize = math.max(math.floor(size / 3), 6)
-            countFontSize = math.max(math.floor(size / 3.2), 6)
+            durationFontSize = math.max(math.floor(size / 3.1), 6)
+            countFontSize = math.max(math.floor(size / 3), 6)
         else
             durationFontSize = math.max(math.floor(size / 3 + 2), 6)
             countFontSize = math.max(math.floor(size / 3), 6)
