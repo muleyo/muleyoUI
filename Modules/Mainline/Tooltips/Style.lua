@@ -98,7 +98,7 @@ function Style:OnInitialize()
 
         -- Get Class Color
         local _, unitClass = UnitClass(unit)
-        local color = RAID_CLASS_COLORS[unitClass]
+        local color = C_ClassColor.GetClassColor(unitClass)
         Style.cfg.barColor = color or {
             r = 0,
             g = 0.8,

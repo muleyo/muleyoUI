@@ -122,16 +122,6 @@ function PvPRating:OnInitialize()
         }
         PvPRating.cache[guid] = ratings
 
-        if not (InspectFrame and InspectFrame:IsShown()) then
-            ClearInspectPlayer()
-        end
-
-        -- Do NOT call GameTooltip:RefreshData() here. Refreshing from this
-        -- tainted event handler forces Blizzard's GameTooltip_UnitColor to run
-        -- UnitPlayerControlled() during tainted execution, which throws on the
-        -- tooltip's secret unit value (and the error is raised inside a
-        -- securecallfunction boundary, so an xpcall around RefreshData can't
-        -- suppress it). Instead append our lines directly to the shown tooltip.
         if GameTooltip:IsShown() and PvPRating.shownGuid == guid then
             PvPRating:AddLines(GameTooltip, ratings)
             GameTooltip:Show()
@@ -148,9 +138,6 @@ function PvPRating:OnInitialize()
             return
         end
 
-        -- Remember which player this tooltip is currently displaying, so a
-        -- late INSPECT_READY only appends lines when the tooltip still shows
-        -- the same unit (we can't read the unit back from the tooltip: secret).
         PvPRating.shownGuid = guid
 
         if UnitIsUnit(unit, "player") then
@@ -175,10 +162,6 @@ function PvPRating:OnEnable()
                 return
             end
 
-            -- In active PvP matches unit identities are secret. A secret guid
-            -- can't be compared, branched on, or safely used as a table key under
-            -- tainted execution, so bail before it reaches shownGuid/cache/pending.
-            -- The rating lookup can't work without a real guid anyway.
             if not data or data.guid == nil or (issecretvalue and issecretvalue(data.guid)) then
                 return
             end
