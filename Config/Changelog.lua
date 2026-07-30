@@ -3,10 +3,11 @@ local Changelog = mUI:NewModule("mUI.Config.Changelog")
 -- Maintainer note: this window intentionally shows ONLY the latest update.
 -- Keep this as a single entry and update it each release.
 local CHANGELOG = {
-    version = "4.0.6",
-    affected = {"Mainline", "Mists", "TBC", "Vanilla"},
-    changes = {"Fixed several errors for Mists/TBC/Vanilla",
-               "Updates for Midnight Patch 12.1.0: Added several important Defensives/Buffs to AuraContainers"}
+    version = "4.1.0",
+    affected = {"Mainline"},
+    changes = {"AddOn has been updated for patch 12.1.0.", "Reworked nameplate module - there's plenty of new stuff, inspired by BetterBlizzPlates.",
+               "Auras have been reworked, making use of the new AuraContainer system.",
+               "ClassBar option has been removed as it's available in Edit Mode now (Personal Resource Bar)"}
 }
 
 function Changelog:OnInitialize()
