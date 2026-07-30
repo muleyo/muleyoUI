@@ -168,6 +168,11 @@ local function CreateAuraButton(auraFrame, isDebuff, opts)
     end
 end
 
+-- Exposed so other modules (nameplate aura containers) can build icons with the
+-- exact same border/mask/cooldown treatment and Theme:RegisterBorder wiring,
+-- instead of duplicating this construction.
+Theme.CreateAuraButton = CreateAuraButton
+
 -- ============================================================================
 -- Player Auras
 -- ============================================================================
@@ -672,7 +677,10 @@ local RAID_IMPORTANT_BUFFS = {
     [106898] = true, -- Stampeding Roar (No Form)
     [77764] = true, -- Stampeding Roar (Cat)
     [77761] = true, -- Stampeding Roar (Bear)
-    [116841] = true -- Tiger's Lust
+    [116841] = true, -- Tiger's Lust
+    [53563] = true, -- Beacon of Light
+    [156910] = true, -- Beacon of Faith
+    [200025] = true -- Beacon of Virtue
 }
 
 -- Cooldowns force-shown in the BIG DEFENSIVE frame
@@ -782,8 +790,7 @@ function Theme:EnsureRaidAuraContainers(frame, data)
     buffContainer:AddAuraGroup("BuffsImportant", RaidFilter("HELPFUL", "PLAYER"), {
         maxFrameCount = RAID_MAX_BUFFS,
         candidateFilters = {
-            includeSpellIDs = RAID_IMPORTANT_BUFFS,
-            maxDuration = RAID_BUFF_MAX_DURATION
+            includeSpellIDs = RAID_IMPORTANT_BUFFS
         },
         initializeFrame = function(auraFrame)
             InitRaidAuraButton(auraFrame, buffContainer, "BuffsImportant", false)
@@ -811,7 +818,8 @@ function Theme:EnsureRaidAuraContainers(frame, data)
         maxFrameCount = RAID_MAX_BIG_DEBUFFS,
         candidateFilters = {
             isBossOrRoleAura = true,
-            excludeSpellIDs = RAID_DEBUFF_EXCLUDE
+            excludeSpellIDs = RAID_DEBUFF_EXCLUDE,
+            maxDuration = RAID_DEBUFF_MAX_DURATION
         },
         initializeFrame = function(auraFrame)
             InitRaidAuraButton(auraFrame, debuffContainer, "DebuffsBig", true)

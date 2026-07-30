@@ -17,8 +17,10 @@ function Theme:OnInitialize()
             borderCoord = {0.95263671875, 0.99365234375, 0.17919921875, 0.22021484375},
             mask = [[Interface\AddOns\mUI\Media\Textures\Core\mask.png]],
             auraInsetRatio = 6 / 30,
-            castbarInset = 5,
-            castbarInsetSmall = 4
+            castbarInset = 4.5,
+            castbarInsetSmall = 3.5,
+            nameplateIcons = 3.25,
+            totemIcon = 5
         },
         Style2 = {
             border = [[Interface\AddOns\mUI\Media\Textures\Core\atlas_v2.png]],
@@ -26,7 +28,9 @@ function Theme:OnInitialize()
             mask = [[Interface\AddOns\mUI\Media\Textures\Core\mask_v2.png]],
             auraInsetRatio = 12.5 / 30,
             castbarInset = 8,
-            castbarInsetSmall = 7
+            castbarInsetSmall = 7,
+            nameplateIcons = 6.75,
+            totemIcon = 9
         }
     }
 
