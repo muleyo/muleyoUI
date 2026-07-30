@@ -11,7 +11,7 @@ local tonumber = _G.tonumber
 local handledbuttons = {}
 
 local _, class = UnitClass("player")
-local color = RAID_CLASS_COLORS[class]
+local color = C_ClassColor.GetClassColor(class)
 
 local function handleButton(frame, ...)
     if not handledbuttons[frame] then

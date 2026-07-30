@@ -6,7 +6,7 @@ local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
 
 local _, class = UnitClass("player")
-local color = RAID_CLASS_COLORS[class]
+local color = C_ClassColor.GetClassColor(class)
 
 local function chatTabText_SetPoint(self, p, anchor, rP, x, y, shouldIgnore)
     if not shouldIgnore then

@@ -61,7 +61,7 @@ function LFGTooltips:HookApplicantEntry(button)
                     dungeonScore = tonumber(dungeonScore) or 0
 
                     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                    local classColor = RAID_CLASS_COLORS[classStr]
+                    local classColor = C_ClassColor.GetClassColor(classStr)
                     if classColor then
                         GameTooltip:SetText(name, classColor.r, classColor.g, classColor.b)
                     else

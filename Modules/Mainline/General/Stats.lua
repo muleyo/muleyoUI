@@ -14,7 +14,7 @@ function Stats:OnInitialize()
 
     -- Get Class Color
     local _, class = UnitClass("player")
-    Stats.color = RAID_CLASS_COLORS[class]
+    Stats.color = C_ClassColor.GetClassColor(class)
 
     mUI.statsFrame = CreateFrame("Frame", "mUIStatsFrame", UIParent)
     mUI.statsFrame:ClearAllPoints()
@@ -46,10 +46,14 @@ function Stats:OnInitialize()
         local isGliding, _, forwardSpeed = C_PlayerInfo.GetGlidingInfo()
         local pct
         if isGliding and forwardSpeed then
-            local ok, v = pcall(function() return forwardSpeed / BASE_MOVEMENT_SPEED * 100 end)
+            local ok, v = pcall(function()
+                return forwardSpeed / BASE_MOVEMENT_SPEED * 100
+            end)
             pct = ok and v or nil
         else
-            local ok, v = pcall(function() return GetUnitSpeed("player") / BASE_MOVEMENT_SPEED * 100 end)
+            local ok, v = pcall(function()
+                return GetUnitSpeed("player") / BASE_MOVEMENT_SPEED * 100
+            end)
             pct = ok and v or nil
         end
         return "|c00ffffff" .. string.format("%d", pct or 0) .. "%|r speed"
