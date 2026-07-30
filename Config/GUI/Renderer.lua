@@ -358,8 +358,11 @@ function Renderer:ActivateSectionFor(categoryKey, optionKey)
     end
 end
 
-local function BuildSectionTabs(parent, item)
+local function BuildSectionTabs(parent, item, width)
     local widget = Acquire("SectionTabs", parent)
+    -- Width has to land before SetTabs -- it wraps overflowing tabs onto a
+    -- second row and needs to know how much space it actually has to do that.
+    widget:SetWidth(width)
     widget:SetTabs(item.tabs, item.activeIndex, function(sectionName)
         Renderer.activeSection[Renderer.currentKey] = sectionName
         Renderer:RenderCategory(Renderer.currentKey)
@@ -389,11 +392,10 @@ function Renderer:RenderOptions(options)
 
     for _, entry in ipairs(self:BuildRenderList(options)) do
         if entry.tabs then
-            local widget = BuildSectionTabs(parent, entry)
+            local widget = BuildSectionTabs(parent, entry, contentWidth)
             widget.mGUISectionContent = false
             NewRow()
             widget:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, -y)
-            widget:SetWidth(contentWidth)
             widget.layoutY = y
             rowHeight = widget:GetHeight()
             NewRow()

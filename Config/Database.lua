@@ -171,12 +171,121 @@ local defaults = {
             classcolor = true,
             servername = true,
             arena = true,
-            totem = false,
             casttime = true,
             focus = false,
             debuffs = false,
             colors = false,
-            smallerfriends = false
+            clickthrough = false,
+            size = {
+                healthwidth = 150,
+                healthheight = 12,
+                castwidth = 150,
+                castheight = 10
+            },
+            castbar = {
+                y = 8
+            },
+            border = {
+                size = 1
+            },
+            name = {
+                size = 12
+            },
+            health = {
+                percent = false,
+                anchor = "RIGHT",
+                x = 2,
+                y = 0
+            },
+            names = {
+                arena = false,
+                spec = false
+            },
+            scale = {
+                target = 1.2,
+                other = 1
+            },
+            friendly = {
+                hidehealthbar = false,
+                hidenames = false,
+                classcolor = false,
+                small = false,
+                width = 90
+            },
+            classicons = {
+                enabled = false,
+                friendly = true,
+                enemy = true,
+                spec = true,
+                size = 22,
+                anchor = "LEFT",
+                x = 4,
+                y = 0
+            },
+            healer = {
+                enabled = false,
+                friendly = true,
+                enemy = true,
+                size = 18,
+                anchor = "RIGHT",
+                x = 4,
+                y = 0
+            },
+            target = {
+                enabled = false,
+                arrows = true,
+                glow = false,
+                classcolor = false,
+                color = {1, 1, 1, 1},
+                size = 16,
+                offset = 4
+            },
+            raidmarker = {
+                enabled = false,
+                hide = false,
+                alpha = 1,
+                size = 22,
+                anchor = "TOP",
+                x = 0,
+                y = 4
+            },
+            auras = {
+                enabled = false,
+                cc = {
+                    size = 20,
+                    x = 4,
+                    anchor = "RIGHT"
+                },
+                top = {
+                    size = 20,
+                    y = 4
+                },
+                left = {
+                    size = 20,
+                    x = 4,
+                    anchor = "LEFT"
+                }
+            },
+            -- Personal resource bar: shows only the native class resource
+            -- bar (combo points, runes, etc.), anchored to your target's Health Bar.
+            personalresource = {
+                enabled = false,
+                anchor = "TOP",
+                x = 0,
+                y = 6
+            },
+            -- Totem indicator, ported from BetterBlizzPlates with permission.
+            totem = {
+                enabled = false,
+                enemyOnly = false,
+                colorHealthBar = false,
+                noAnimation = false,
+                size = 24,
+                anchor = "TOP",
+                x = 0,
+                y = 4,
+                color = {1, 0.82, 0, 1}
+            }
         },
         tooltips = {
             enabled = true,

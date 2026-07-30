@@ -385,7 +385,7 @@ function Preview:UpdatePlayer()
     mock.frameTexture:SetVertexColor(unpack(mUI:Color(0.15)))
 
     local _, playerClass = UnitClass("player")
-    local classColor = RAID_CLASS_COLORS[playerClass or "WARRIOR"]
+    local classColor = C_ClassColor.GetClassColor(playerClass or "WARRIOR")
 
     if db.color then
         mock.health:SetStatusBarColor(classColor.r, classColor.g, classColor.b)
@@ -468,7 +468,7 @@ function Preview:UpdateParty()
         unit.power:SetStatusBarTexture(texture)
         unit.power:SetStatusBarColor(0.1, 0.4, 0.9)
 
-        local classColor = RAID_CLASS_COLORS[PARTY_CLASSES[i]]
+        local classColor = C_ClassColor.GetClassColor(PARTY_CLASSES[i])
         unit.health:SetStatusBarColor(classColor.r, classColor.g, classColor.b)
 
         -- "Hide Role Icons" option
