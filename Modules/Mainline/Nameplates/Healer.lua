@@ -34,7 +34,7 @@ function Healer:OnInitialize()
     end
 
     local function ShouldShow(data)
-        if not data.isPlayer or data.isSelf then
+        if not data.isPlayer then
             return false
         end
 
