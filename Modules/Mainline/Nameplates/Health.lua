@@ -112,8 +112,6 @@ function Health:OnInitialize()
     end
 
     local function BarColor(data)
-        -- Totem tints the bar for its own units. Pulled rather than pushed, so
-        -- there is no stored override to leave behind on a pooled plate.
         local Totem = mUI:GetModule("mUI.Modules.Nameplates.Totem", true)
         local override = Totem and Totem.GetBarColor and Totem:GetBarColor(data)
         if override then
@@ -122,8 +120,6 @@ function Health:OnInitialize()
 
         local npc = Health.db.classification
         if npc.enabled and not data.isPlayer and (inRelevantInstance or not npc.instancesonly) then
-            -- Resolved here rather than carried on the data table: it costs four
-            -- unit queries and this is the only branch that ever wants it.
             local npcType = NpcType(data.unit)
             local color = npcType and npc[npcType]
             if color then
@@ -152,10 +148,6 @@ function Health:OnInitialize()
         return 0.8, 0.2, 0.2
     end
 
-    -- Blizzard's CompactUnitFrame callbacks are global: they fire for raid,
-    -- party, arena and boss frames as well as nameplates, and UpdateHealthColor
-    -- runs per frame on every threat update. This is the first thing every hook
-    -- does, so it stays a plain substring compare rather than a pattern match.
     local function IsNamePlate(frame)
         if issecretvalue(frame) then
             return false
