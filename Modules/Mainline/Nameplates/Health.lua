@@ -404,6 +404,9 @@ function Health:OnInitialize()
         if bar then
             bar.mUITexture = nil
         end
+        if container and container.mUIBorder then
+            container.mUIBorder:Invalidate()
+        end
 
         SuppressBlizzardBar(frame)
         ApplyBarLayout(frame)

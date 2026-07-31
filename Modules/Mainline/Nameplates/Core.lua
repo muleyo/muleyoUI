@@ -166,6 +166,10 @@ function Core:OnInitialize()
             end
         end
 
+        function border:Invalidate()
+            self.appliedThickness = nil
+        end
+
         function border:SetThickness(size)
             local px = math.max(1, size or 1)
             if self.appliedThickness == px then
