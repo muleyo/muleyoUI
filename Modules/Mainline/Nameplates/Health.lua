@@ -37,10 +37,6 @@ function Health:OnInitialize()
 
     Health.HideFriendlyBar = HideFriendlyBar
 
-    Health.barColors = setmetatable({}, {
-        __mode = "k"
-    })
-
     local instanceLevel = UnitEffectiveLevel("player")
     local lieutenantLevel
     local inRelevantInstance = false
@@ -116,14 +112,20 @@ function Health:OnInitialize()
     end
 
     local function BarColor(data)
-        local override = data.plate and Health.barColors[data.plate]
+        -- Totem tints the bar for its own units. Pulled rather than pushed, so
+        -- there is no stored override to leave behind on a pooled plate.
+        local Totem = mUI:GetModule("mUI.Modules.Nameplates.Totem", true)
+        local override = Totem and Totem.GetBarColor and Totem:GetBarColor(data)
         if override then
             return override[1], override[2], override[3]
         end
 
         local npc = Health.db.classification
-        if npc.enabled and not data.isPlayer and data.npcType and (inRelevantInstance or not npc.instancesonly) then
-            local color = npc[data.npcType]
+        if npc.enabled and not data.isPlayer and (inRelevantInstance or not npc.instancesonly) then
+            -- Resolved here rather than carried on the data table: it costs four
+            -- unit queries and this is the only branch that ever wants it.
+            local npcType = NpcType(data.unit)
+            local color = npcType and npc[npcType]
             if color then
                 return color[1], color[2], color[3]
             end
@@ -150,31 +152,44 @@ function Health:OnInitialize()
         return 0.8, 0.2, 0.2
     end
 
-    local function GetInfo(frame, unit)
-        local reaction = UnitReaction(unit, "player")
-        local namePlate = frame:GetParent()
+    -- Blizzard's CompactUnitFrame callbacks are global: they fire for raid,
+    -- party, arena and boss frames as well as nameplates, and UpdateHealthColor
+    -- runs per frame on every threat update. This is the first thing every hook
+    -- does, so it stays a plain substring compare rather than a pattern match.
+    local function IsNamePlate(frame)
+        if issecretvalue(frame) then
+            return false
+        end
 
-        return {
-            unit = unit,
-            plate = namePlate and namePlate.mUIPlate,
-            displayName = UnitName(unit),
-            isFriend = reaction ~= nil and reaction >= 5,
-            isNeutral = reaction ~= nil and reaction == 4,
-            isEnemy = reaction ~= nil and reaction < 4,
-            isPlayer = UnitIsPlayer(unit) == true,
-            canAttack = UnitCanAttack("player", unit) == true,
-            npcType = Health.db.classification.enabled and NpcType(unit) or nil,
-            isSelf = UnitIsUnit(unit, "player") == true,
-            isTarget = UnitIsUnit(unit, "target") == true,
-            isFocus = UnitIsUnit(unit, "focus") == true,
-            classFile = UnitIsPlayer(unit) and select(2, UnitClass(unit)) or nil
-        }
+        local unit = frame.unit
+        return unit ~= nil and strsub(unit, 1, 9) == "nameplate" and not frame:IsForbidden()
     end
 
-    local function EnsureChrome(frame)
+    -- Filled fresh on every call; never held across one. See Core:GetUnitData.
+    local scratch = {}
+
+    local function GetInfo(frame, unit)
+        return Core:GetUnitData(unit, frame:GetParent(), scratch)
+    end
+
+    local healthFormat = "%.0f%%"
+    local edgeR, edgeG, edgeB, edgeA = 0, 0, 0, 1
+
+    local function RefreshCachedStyle()
+        healthFormat = "%." .. (Health.db.decimals or 0) .. "f%%"
+
+        local color = mUI:Color(0.15)
+        if color then
+            edgeR, edgeG, edgeB, edgeA = color[1], color[2], color[3], color[4]
+        end
+    end
+
+    Health.RefreshCachedStyle = RefreshCachedStyle
+
+    local function SuppressBlizzardBar(frame)
         local container = frame.HealthBarsContainer
         local bar = container and container.healthBar
-        if not container or not bar then
+        if not bar then
             return
         end
 
@@ -189,6 +204,13 @@ function Health:OnInitialize()
         end
         if bar.MaskTexture then
             bar.MaskTexture:Hide()
+        end
+    end
+
+    local function EnsureChrome(frame)
+        local container = frame.HealthBarsContainer
+        if not container then
+            return
         end
 
         if not container.mUIBackground then
@@ -321,11 +343,6 @@ function Health:OnInitialize()
         BOTTOM = {"TOP", "BOTTOM", 1, -1}
     }
 
-    local function HealthTextFormat()
-        local decimals = Health.db.decimals or 0
-        return "%." .. decimals .. "f%%"
-    end
-
     local function EnsureHealthText(bar)
         if not bar.mUIHealthText then
             local text = bar:CreateFontString(nil, "OVERLAY")
@@ -335,13 +352,11 @@ function Health:OnInitialize()
         return bar.mUIHealthText
     end
 
-    -- Split from the layout pass because health changes far more often than
-    -- anchors do: this is all the UNIT_HEALTH path has to run.
     local function UpdateHealthText(frame)
-        if not Health:IsEnabled() or issecretvalue(frame) then
+        if not Health:IsEnabled() or not Health.db.health.percent or not UnitHealthPercent then
             return
         end
-        if not frame.unit or not frame.unit:find("nameplate") or frame:IsForbidden() then
+        if not IsNamePlate(frame) then
             return
         end
 
@@ -351,11 +366,7 @@ function Health:OnInitialize()
             return
         end
 
-        if not Health.db.health.percent or not UnitHealthPercent then
-            return
-        end
-
-        bar.mUIHealthText:SetFormattedText(HealthTextFormat(), UnitHealthPercent(frame.unit, true, CurveConstants.ScaleTo100))
+        bar.mUIHealthText:SetFormattedText(healthFormat, UnitHealthPercent(frame.unit, true, CurveConstants.ScaleTo100))
     end
 
     local function ApplyHealthText(frame)
@@ -379,42 +390,40 @@ function Health:OnInitialize()
         text:ClearAllPoints()
         text:SetPoint(point, bar, relativePoint, config.x * xSign, config.y * ySign)
 
+        -- SetFont rebuilds the font binding, so only issue it on a real change.
         local path = mUI.db.profile.general.fontpath
-        if path then
-            text:SetFont(path, Health.db.name.size, WithSlug("OUTLINE"))
+        local size = Health.db.name.size
+        if path and (text.mUIFontPath ~= path or text.mUIFontSize ~= size) then
+            text.mUIFontPath, text.mUIFontSize = path, size
+            text:SetFont(path, size, WithSlug("OUTLINE"))
         end
 
         text:Show()
         UpdateHealthText(frame)
     end
 
-    local applying = setmetatable({}, {
-        __mode = "k"
-    })
-
     local function ApplyLayout(frame)
-        if not Health:IsEnabled() or not frame or applying[frame] then
+        if not Health:IsEnabled() or not frame then
             return
         end
         if not frame.unit or frame:IsForbidden() then
             return
         end
 
-        applying[frame] = true
+        local container = frame.HealthBarsContainer
+        local bar = container and container.healthBar
+        if bar then
+            bar.mUITexture = nil
+        end
+
+        SuppressBlizzardBar(frame)
         ApplyBarLayout(frame)
         ApplyNamePosition(frame)
         ApplyHealthText(frame)
-        applying[frame] = nil
     end
 
     local function OnHealthColorUpdate(frame)
-        if not Health:IsEnabled() then
-            return
-        end
-        if issecretvalue(frame) then
-            return
-        end
-        if not frame.unit or not frame.unit:find("nameplate") or frame:IsForbidden() then
+        if not Health:IsEnabled() or not IsNamePlate(frame) then
             return
         end
 
@@ -430,7 +439,11 @@ function Health:OnInitialize()
         bar:SetShown(not hideBar)
 
         local texture = BarTexture(data)
-        bar:SetStatusBarTexture(texture)
+        if bar.mUITexture ~= texture then
+            bar.mUITexture = texture
+            bar:SetStatusBarTexture(texture)
+        end
+
         bar:SetStatusBarColor(BarColor(data))
 
         local background, border = EnsureChrome(frame)
@@ -448,34 +461,13 @@ function Health:OnInitialize()
             if data.isTarget then
                 border:SetBorderColor(1, 1, 1, 1)
             else
-                local edgeColor = mUI:Color(0.15)
-                border:SetBorderColor(edgeColor[1], edgeColor[2], edgeColor[3], edgeColor[4])
+                border:SetBorderColor(edgeR, edgeG, edgeB, edgeA)
             end
         end
     end
 
-    function Health:SetBarColor(plate, color)
-        if not plate or Health.barColors[plate] == color then
-            return
-        end
-
-        Health.barColors[plate] = color
-
-        local namePlate = plate:GetParent()
-        local frame = namePlate and namePlate.UnitFrame
-        if frame then
-            OnHealthColorUpdate(frame)
-        end
-    end
-
     local function OnNameUpdate(frame)
-        if not Health:IsEnabled() then
-            return
-        end
-        if issecretvalue(frame) then
-            return
-        end
-        if not frame.unit or not frame.unit:find("nameplate") or frame:IsForbidden() then
+        if not Health:IsEnabled() or not IsNamePlate(frame) then
             return
         end
 
@@ -497,6 +489,9 @@ function Health:OnInitialize()
 
         local classFile = Units:GetClassFile(data)
         local color = classFile and C_ClassColor.GetClassColor(classFile)
+
+        -- Not guarded, for the same reason as the health bar colour: Blizzard
+        -- writes this FontString inside the function this is hooked to.
         if data.isPlayer and color and classcolor then
             name:SetTextColor(color.r, color.g, color.b)
         else
@@ -556,8 +551,6 @@ function Health:OnInitialize()
         end
     end
 
-    Health.RefreshFrame = RefreshFrame
-
     local activeFrames = {}
     local unitToFrame = {}
 
@@ -596,6 +589,7 @@ function Health:OnInitialize()
     end)
 
     function Health:Update()
+        RefreshCachedStyle()
         ApplyNamePlateFontObjects()
         for frame in pairs(activeFrames) do
             RefreshFrame(frame)
@@ -605,6 +599,7 @@ end
 
 function Health:OnEnable()
     Health.db = mUI.db.profile.nameplates
+    Health:RefreshCachedStyle()
     Health:RegisterEvent("PLAYER_ENTERING_WORLD", "RefreshInstanceInfo")
     Health:RegisterEvent("ZONE_CHANGED_NEW_AREA", "RefreshInstanceInfo")
     Health:RefreshInstanceInfo()

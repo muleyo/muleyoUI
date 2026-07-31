@@ -8,20 +8,16 @@ function Totem:OnInitialize()
 
     Totem.Core = mUI:GetModule("mUI.Modules.Nameplates.Core")
     Totem.Theme = mUI:GetModule("mUI.Modules.General.Theme")
-    Totem.Health = mUI:GetModule("mUI.Modules.Nameplates.Health")
 
     local Core = Totem.Core
     local Theme = Totem.Theme
-    local Health = Totem.Health
 
     local ICON_GENERIC = [[Interface\Icons\Spell_shaman_totemrecall]]
     local ICON_CAP = C_Spell.GetSpellTexture(192058) or ICON_GENERIC
     local ICON_PSYFIEND = C_Spell.GetSpellTexture(199824) or ICON_GENERIC
-
     local COLOR_CAP = {1, 0.69, 0}
     local COLOR_PSYFIEND = {0.49, 0, 1}
     local COLOR_GROUNDING = {1, 0.8, 0}
-
     local MASK_TEXTURE = [[Interface\Masks\CircleMaskScalable]]
     local BASE_ICON_SIZE = 20
 
@@ -35,6 +31,39 @@ function Totem:OnInitialize()
     local function IsTotem(unit)
         return Core:Safe(UnitIsMinion(unit), false) and not Core:Safe(UnitIsOtherPlayersPet(unit), false) and
                    not Core:Safe(UnitIsUnit(unit, "pet"), false)
+    end
+
+    local function TotemState(data)
+        local config = Totem.db.totem
+
+        if not config.enabled or not data or not data.unit then
+            return nil
+        end
+
+        if not IsTotem(data.unit) or (config.enemyOnly and data.isFriend) then
+            return nil
+        end
+
+        local unit = data.unit
+
+        if Core:Exists(UnitChannelInfo(unit)) then
+            return "channel", COLOR_PSYFIEND, ICON_PSYFIEND
+        end
+
+        if Core:Exists(UnitCastingInfo(unit)) then
+            return "cast", COLOR_CAP, ICON_CAP
+        end
+
+        return "idle", config.color
+    end
+
+    function Totem:GetBarColor(data)
+        if not Totem:IsEnabled() or not Totem.db.totem.colorHealthBar then
+            return nil
+        end
+
+        local _, color = TotemState(data)
+        return color
     end
 
     Totem.handler = {}
@@ -162,37 +191,15 @@ function Totem:OnInitialize()
         end
 
         local config = Totem.db.totem
+        local state, color, icon = TotemState(data)
 
-        if not config.enabled or not IsTotem(data.unit) or (config.enemyOnly and data.isFriend) then
+        if not state then
             HideAll(holder)
-            Health:SetBarColor(plate, nil)
             return
         end
 
-        local unit = data.unit
-        local isCap = Core:Exists(UnitCastingInfo(unit))
-        local isChannel = Core:Exists(UnitChannelInfo(unit))
-        local important = isCap or isChannel
-
-        local color
-
-        if important then
-            -- Cast/channel: the manual static icon, aura container off.
-            HideAuraContainer(holder)
-
-            local icon
-            if isChannel then
-                color, icon = COLOR_PSYFIEND, ICON_PSYFIEND
-            else
-                color, icon = COLOR_CAP, ICON_CAP
-            end
-
-            holder.texture:Show()
-            holder.border:Show()
-            holder.texture:SetTexture(icon)
-            holder.border:SetVertexColor(color[1], color[2], color[3])
-            holder:Show()
-        else
+        if state == "idle" then
+            local unit = data.unit
             local container = holder.auraContainer
             if container.mUI_unit ~= unit then
                 container:SetUnit(unit)
@@ -204,18 +211,21 @@ function Totem:OnInitialize()
 
             holder.texture:Hide()
             holder.border:Hide()
-            color = config.color
-
-            holder:Show()
+        else
+            HideAuraContainer(holder)
+            holder.texture:Show()
+            holder.border:Show()
+            holder.texture:SetTexture(icon)
+            holder.border:SetVertexColor(color[1], color[2], color[3])
         end
+
+        holder:Show()
 
         if config.noAnimation then
             holder.animation:Stop()
         else
             holder.animation:Play()
         end
-
-        Health:SetBarColor(plate, config.colorHealthBar and color or nil)
     end
 
     function Totem.handler.Layout(plate)
@@ -238,12 +248,15 @@ function Totem:OnInitialize()
         if plate.Totem then
             HideAll(plate.Totem)
         end
-
-        Health:SetBarColor(plate, nil)
     end
 
     function Totem:Update()
         Core:UpdateAll()
+
+        local Health = mUI:GetModule("mUI.Modules.Nameplates.Health", true)
+        if Health and Health:IsEnabled() then
+            Health:Update()
+        end
     end
 end
 
