@@ -288,15 +288,12 @@ local defaults = {
                     anchor = "LEFT"
                 }
             },
-            -- Personal resource bar: shows only the native class resource
-            -- bar (combo points, runes, etc.), anchored to your target's Health Bar.
             personalresource = {
                 enabled = false,
                 anchor = "TOP",
                 x = 0,
                 y = 6
             },
-            -- Totem indicator, ported from BetterBlizzPlates with permission.
             totem = {
                 enabled = false,
                 enemyOnly = false,
