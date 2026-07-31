@@ -1,4 +1,4 @@
-local PlayerLinks = mUI:NewModule("mUI.Modules.Misc.PlayerLinks")
+local PlayerLinks = mUI:NewModule("mUI.Modules.Misc.PlayerLinks", "AceHook-3.0")
 
 function PlayerLinks:OnInitialize()
     local regionMap = {
@@ -9,35 +9,27 @@ function PlayerLinks:OnInitialize()
         [5] = "cn"
     }
 
-    -- EU Russian realms expose only their localized name through UnitName,
-    -- but armory-style sites use the English name. WoW has no API to
-    -- translate, so we hardcode the map. Values are the English realm
-    -- name with original casing/spacing (each site re-slugs as it needs).
-    -- Keys are the localized name with whitespace stripped (so we match
-    -- both "Ревущий Фьорд" and GetNormalizedRealmName's "РевущийФьорд").
     local RU_REALM_EN = {
-        ["Азурегос"]          = "Azuregos",
-        ["Борейскаятундра"]   = "Borean Tundra",
-        ["ВечнаяПесня"]       = "Eversong",
-        ["Галакронд"]         = "Galakrond",
-        ["Голдринн"]          = "Goldrinn",
-        ["Гордунни"]          = "Gordunni",
-        ["Дракономор"]        = "Draenor",
-        ["Король-лич"]        = "Lich King",
-        ["Пиратскаябухта"]    = "Pirates' Cove",
-        ["Разувий"]           = "Razuvious",
-        ["Ревущийфьорд"]      = "Howling Fjord",
-        ["СвежевательДуш"]    = "Soulflayer",
-        ["Седогрив"]          = "Greymane",
-        ["СтражСмерти"]       = "Deathguard",
-        ["Термоштепсель"]     = "Thermaplugg",
-        ["ТкачСмерти"]        = "Deathweaver",
-        ["ЧёрныйШрам"]        = "Blackscar",
-        ["Ясеневыйлес"]       = "Ashenvale",
+        ["Азурегос"] = "Azuregos",
+        ["Борейскаятундра"] = "Borean Tundra",
+        ["ВечнаяПесня"] = "Eversong",
+        ["Галакронд"] = "Galakrond",
+        ["Голдринн"] = "Goldrinn",
+        ["Гордунни"] = "Gordunni",
+        ["Дракономор"] = "Draenor",
+        ["Король-лич"] = "Lich King",
+        ["Пиратскаябухта"] = "Pirates' Cove",
+        ["Разувий"] = "Razuvious",
+        ["Ревущийфьорд"] = "Howling Fjord",
+        ["СвежевательДуш"] = "Soulflayer",
+        ["Седогрив"] = "Greymane",
+        ["СтражСмерти"] = "Deathguard",
+        ["Термоштепсель"] = "Thermaplugg",
+        ["ТкачСмерти"] = "Deathweaver",
+        ["ЧёрныйШрам"] = "Blackscar",
+        ["Ясеневыйлес"] = "Ashenvale"
     }
 
-    -- Returns the English realm name for cyrillic realms, or the input
-    -- unchanged for ASCII realms. nil if we have no mapping.
     local function ResolveRealm(realm)
         if not realm then
             return nil
@@ -48,9 +40,6 @@ function PlayerLinks:OnInitialize()
         return realm
     end
 
-    -- Lua's string.lower is ASCII-only. WarcraftLogs accepts cyrillic
-    -- slugs but they must be lowercased — do it manually via UTF-8
-    -- codepoint arithmetic (А-Я → а-я, Ё → ё).
     local function CyrillicLower(s)
         return (s:gsub("[\208-\209][\128-\191]", function(c)
             local b1, b2 = c:byte(1, 2)
@@ -73,8 +62,6 @@ function PlayerLinks:OnInitialize()
         return string.lower(string.gsub(realm, "%s+", "-"))
     end
 
-    -- Raider.io uses the English dash-slug ("howling-fjord"), so cyrillic
-    -- realms must be resolved to their English equivalent first.
     local function RaiderIoSlug(realm)
         realm = ResolveRealm(realm)
         if not realm then
@@ -83,8 +70,6 @@ function PlayerLinks:OnInitialize()
         return ToDashSlug(realm)
     end
 
-    -- WarcraftLogs uses the localized dash-slug ("ревущий-фьорд"), so
-    -- cyrillic realms stay in cyrillic — just lowercase + dash them.
     local function WarcraftLogsSlug(realm)
         if not realm then
             return nil
@@ -92,8 +77,6 @@ function PlayerLinks:OnInitialize()
         return ToDashSlug(realm)
     end
 
-    -- check-pvp expects the English realm name with original casing and
-    -- spaces preserved (URL-encoded), e.g. "Howling%20Fjord".
     local function CheckPvpSlug(realm)
         realm = ResolveRealm(realm)
         if not realm then
@@ -109,6 +92,7 @@ function PlayerLinks:OnInitialize()
         if rootDescription._mUIPlayerLinks then
             return
         end
+
         rootDescription._mUIPlayerLinks = true
 
         region = region or playerRegion
@@ -139,9 +123,6 @@ function PlayerLinks:OnInitialize()
         end
     end
 
-    -- server: optional realm fallback (e.g. contextData.server from chat
-    -- menus, where the name comes through bare). Only consulted when
-    -- fullName carries no realm; without it we assume the player's realm.
     local function ParseNameRealm(fullName, server)
         if not fullName then
             return nil
@@ -173,9 +154,14 @@ function PlayerLinks:OnInitialize()
 
         if contextData.unit then
             name, realm = UnitName(contextData.unit)
+
             if name and not realm then
                 realm = GetNormalizedRealmName()
             end
+        end
+
+        if issecretvalue(contextData.name) then
+            return
         end
 
         if not name and contextData.name then
@@ -189,10 +175,6 @@ function PlayerLinks:OnInitialize()
         AppendLinks(rootDescription, name, realm)
     end
 
-    -- Battle.net friend menu (online + offline). contextData.bnetIDAccount
-    -- is the bnet account ID; their currently-active WoW character lives on
-    -- accountInfo.gameAccountInfo. Cross-region friends are possible so we
-    -- pass the region from regionID rather than the local player's region.
     local function OnModifyBNMenu(owner, rootDescription, contextData)
         if not PlayerLinks:IsEnabled() then
             return
@@ -279,11 +261,9 @@ end
 function PlayerLinks:OnEnable()
     if not PlayerLinks.hooked then
         -- Standard unit frame menus, chat names, guild/community rosters
-        local menus = {
-            "MENU_UNIT_SELF", "MENU_UNIT_PARTY", "MENU_UNIT_PLAYER", "MENU_UNIT_RAID_PLAYER",
-            "MENU_UNIT_ENEMY_PLAYER", "MENU_UNIT_FRIEND", "MENU_UNIT_GUILD", "MENU_UNIT_GUILD_OFFLINE",
-            "MENU_UNIT_COMMUNITIES_GUILD_MEMBER", "MENU_UNIT_COMMUNITIES_WOW_MEMBER", "MENU_UNIT_CHAT_ROSTER"
-        }
+        local menus = {"MENU_UNIT_SELF", "MENU_UNIT_PARTY", "MENU_UNIT_PLAYER", "MENU_UNIT_RAID_PLAYER", "MENU_UNIT_ENEMY_PLAYER", "MENU_UNIT_FRIEND",
+                       "MENU_UNIT_GUILD", "MENU_UNIT_GUILD_OFFLINE", "MENU_UNIT_COMMUNITIES_GUILD_MEMBER", "MENU_UNIT_COMMUNITIES_WOW_MEMBER",
+                       "MENU_UNIT_CHAT_ROSTER"}
 
         for _, tag in ipairs(menus) do
             Menu.ModifyMenu(tag, PlayerLinks.modifyMenuHandler)
@@ -297,32 +277,35 @@ function PlayerLinks:OnEnable()
 
         -- Hook MenuUtil.CreateContextMenu
         local isRecreating = false
-        hooksecurefunc(MenuUtil, "CreateContextMenu", function(owner, generator, ...)
-            if isRecreating or not PlayerLinks:IsEnabled() then
-                return
-            end
+        if not PlayerLinks:IsHooked(MenuUtil, "CreateContextMenu") then
+            PlayerLinks:SecureHook(MenuUtil, "CreateContextMenu", function(owner, generator, ...)
+                if isRecreating or not PlayerLinks:IsEnabled() then
+                    return
+                end
 
-            local lfgFullName = PlayerLinks.getLFGPlayerName(owner)
-            if not lfgFullName then
-                return
-            end
+                local lfgFullName = PlayerLinks.getLFGPlayerName(owner)
+                if not lfgFullName then
+                    return
+                end
 
-            local lfgName, lfgRealm = PlayerLinks.parseNameRealm(lfgFullName)
-            if not lfgName or not lfgRealm then
-                return
-            end
+                local lfgName, lfgRealm = PlayerLinks.parseNameRealm(lfgFullName)
+                if not lfgName or not lfgRealm then
+                    return
+                end
 
-            -- Re-open the menu with our links appended.  The original call
-            -- already ran securely; this replaces it from insecure context
-            -- (fine — it's our addon menu addition, not Blizzard's).
-            isRecreating = true
-            MenuUtil.CreateContextMenu(owner, function(ownerInner, rootDescription)
-                generator(ownerInner, rootDescription)
-                PlayerLinks.appendLinks(rootDescription, lfgName, lfgRealm)
-            end, ...)
-            isRecreating = false
-        end)
+                isRecreating = true
+                MenuUtil.CreateContextMenu(owner, function(ownerInner, rootDescription)
+                    generator(ownerInner, rootDescription)
+                    PlayerLinks.appendLinks(rootDescription, lfgName, lfgRealm)
+                end, ...)
+                isRecreating = false
+            end)
+        end
 
         PlayerLinks.hooked = true
     end
+end
+
+function PlayerLinks:OnDisable()
+    PlayerLinks:UnhookAll()
 end
