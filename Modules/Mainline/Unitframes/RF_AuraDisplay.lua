@@ -29,6 +29,17 @@ local function GetDefensivePosition()
     return point, x, y
 end
 
+-- Private auras sit directly above the debuffs, so they follow the "Debuff
+-- Anchor" option. Returns the anchor frame, the corner to use and the
+-- horizontal step direction for consecutive icons.
+local function GetPrivateAuraSide(data)
+    local raid = mUI.db and mUI.db.profile.unitframes.raidframes
+    if raid and raid.debuffPoint == "RIGHT" then
+        return data.buffAnchor, "BOTTOMRIGHT", -1
+    end
+    return data.debuffAnchor, "BOTTOMLEFT", 1
+end
+
 local function GetDispelScale()
     local raid = mUI.db and mUI.db.profile.unitframes.raidframes
     return (raid and raid.dispelScale) or 1.5
@@ -332,7 +343,8 @@ function RF_AuraDisplay:OnInitialize()
                 icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
                 icon:SetSize(size, size)
                 icon:ClearAllPoints()
-                icon:SetPoint("BOTTOMLEFT", data.debuffAnchor, "BOTTOMLEFT", (i - 1) * (size + ICON_GAP), (debuffSize or 0) + ICON_GAP)
+                local anchor, corner, step = GetPrivateAuraSide(data)
+                icon:SetPoint(corner, anchor, corner, step * (i - 1) * (size + ICON_GAP), (debuffSize or 0) + ICON_GAP)
                 icon:Show()
             elseif icon then
                 icon:Hide()
@@ -430,7 +442,8 @@ function RF_AuraDisplay:OnInitialize()
             local slot = data.privateSlots[i]
             slot:SetSize(size, size)
             slot:ClearAllPoints()
-            slot:SetPoint("BOTTOMLEFT", data.debuffAnchor, "BOTTOMLEFT", (i - 1) * (size + ICON_GAP), debuffSize + ICON_GAP)
+            local anchor, corner, step = GetPrivateAuraSide(data)
+            slot:SetPoint(corner, anchor, corner, step * (i - 1) * (size + ICON_GAP), debuffSize + ICON_GAP)
             slot:Show()
         end
     end
@@ -798,8 +811,13 @@ function RF_AuraDisplay:OnInitialize()
             end
         end
 
-        LayoutGrid(data.buffAnchor, data.buffs, math.min(#buffs, MAX_BUFFS), BUFFS_PER_ROW, true)
-        LayoutGrid(data.debuffAnchor, data.debuffs, math.min(#debuffs, MAX_DEBUFFS), MAX_DEBUFFS, false)
+        -- "Debuff Anchor" option: debuffs take the chosen bottom corner and grow
+        -- inwards, buffs take the other one.
+        local debuffsRight = mUI.db and mUI.db.profile.unitframes.raidframes.debuffPoint == "RIGHT"
+        local buffGridAnchor = debuffsRight and data.debuffAnchor or data.buffAnchor
+        local debuffGridAnchor = debuffsRight and data.buffAnchor or data.debuffAnchor
+        LayoutGrid(buffGridAnchor, data.buffs, math.min(#buffs, MAX_BUFFS), BUFFS_PER_ROW, not debuffsRight)
+        LayoutGrid(debuffGridAnchor, data.debuffs, math.min(#debuffs, MAX_DEBUFFS), MAX_DEBUFFS, debuffsRight)
         LayoutCentered(data.defensiveAnchor, data.defensives, defensiveCount, defensiveSize, defPoint)
     end
 

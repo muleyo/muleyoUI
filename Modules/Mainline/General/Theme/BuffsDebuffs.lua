@@ -168,9 +168,6 @@ local function CreateAuraButton(auraFrame, isDebuff, opts)
     end
 end
 
--- Exposed so other modules (nameplate aura containers) can build icons with the
--- exact same border/mask/cooldown treatment and Theme:RegisterBorder wiring,
--- instead of duplicating this construction.
 Theme.CreateAuraButton = CreateAuraButton
 
 -- ============================================================================
@@ -468,8 +465,9 @@ function Theme:CreateUnitAuraContainer(frame, unit)
         }
     })
 
-    -- PLAYER: show only debuffs cast by the player (or player's pet/vehicle).
-    local debuffFilterString = AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Harmful, AuraUtil.AuraFilters.Player)
+    local debuffFilterString = AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Harmful)
+    local debuffGroups = {}
+    debuffContainer.mUI_debuffGroups = debuffGroups
 
     if mUI.db.profile.unitframes.buffsdebuffs.debuffcolors then
         local DEBUFF_TYPE_GROUPS = {{
@@ -508,11 +506,13 @@ function Theme:CreateUnitAuraContainer(frame, unit)
         }}
 
         for _, groupInfo in ipairs(DEBUFF_TYPE_GROUPS) do
+            table.insert(debuffGroups, groupInfo)
             debuffContainer:AddAuraGroup(groupInfo.key, debuffFilterString, {
                 maxFrameCount = Theme.MAX_UNITFRAME_DEBUFFS,
                 candidateFilters = {
                     includeDispelTypes = groupInfo.includeDispelTypes,
-                    excludeDispelTypes = groupInfo.excludeDispelTypes
+                    excludeDispelTypes = groupInfo.excludeDispelTypes,
+                    isFromPlayerOrPlayerPet = true
                 },
                 initializeFrame = function(auraFrame)
                     Theme:InitializeCustomAuraButton(auraFrame, true, groupInfo.color, debuffSize)
@@ -524,8 +524,14 @@ function Theme:CreateUnitAuraContainer(frame, unit)
             })
         end
     else
+        table.insert(debuffGroups, {
+            key = "Debuffs"
+        })
         debuffContainer:AddAuraGroup("Debuffs", debuffFilterString, {
             maxFrameCount = Theme.MAX_UNITFRAME_DEBUFFS,
+            candidateFilters = {
+                isFromPlayerOrPlayerPet = true
+            },
             initializeFrame = function(auraFrame)
                 Theme:InitializeCustomAuraButton(auraFrame, true, nil, debuffSize)
             end,
@@ -536,8 +542,11 @@ function Theme:CreateUnitAuraContainer(frame, unit)
         })
     end
 
+    Theme:UpdateUnitDebuffCasterFilter(frame)
+
     if not Theme:IsHooked(frame, "UpdateAuras") then
         Theme:SecureHook(frame, "UpdateAuras", function(self)
+            Theme:UpdateUnitDebuffCasterFilter(self)
             buffContainer:UpdateAllAuras()
             debuffContainer:UpdateAllAuras()
             Theme:ReflowUnitAuraContainer(self)
@@ -546,6 +555,32 @@ function Theme:CreateUnitAuraContainer(frame, unit)
     end
 
     return buffContainer, debuffContainer
+end
+
+-- Debuffs are normally restricted to the ones the player (or their pet) applied,
+-- but when the frame shows the player themselves every caster's debuffs are
+-- relevant, so the restriction is lifted.
+function Theme:UpdateUnitDebuffCasterFilter(frame)
+    local debuffContainer = frame and frame.mUI_debuffContainer
+    local groups = debuffContainer and debuffContainer.mUI_debuffGroups
+    if not groups then
+        return
+    end
+
+    local unit = frame.unit or debuffContainer:GetUnit()
+    local showAllCasters = (unit ~= nil and UnitIsUnit(unit, "player")) == true
+    if debuffContainer.mUI_showAllCasters == showAllCasters then
+        return
+    end
+    debuffContainer.mUI_showAllCasters = showAllCasters
+
+    for _, groupInfo in ipairs(groups) do
+        debuffContainer:SetAuraGroupCandidateFilters(groupInfo.key, {
+            includeDispelTypes = groupInfo.includeDispelTypes,
+            excludeDispelTypes = groupInfo.excludeDispelTypes,
+            isFromPlayerOrPlayerPet = not showAllCasters or nil
+        })
+    end
 end
 
 function Theme:GetUnitframeAuraSizes()
@@ -606,9 +641,8 @@ function Theme:AnchorSpellbarToContainer(frame)
     end
 
     -- Watchdog: correct any future re-anchor, whatever its source. Installed once per bar.
-    if not spellbar.mUI_setpointHooked then
-        spellbar.mUI_setpointHooked = true
-        hooksecurefunc(spellbar, "SetPoint", function(bar)
+    if not Theme:IsHooked(spellbar, "SetPoint") then
+        Theme:SecureHook(spellbar, "SetPoint", function(bar)
             if not bar.mUI_reanchoring then
                 Theme:AnchorSpellbarToContainer(frame)
             end
@@ -905,10 +939,7 @@ function Theme:UpdateRaidAuraContainers(frame, data, unit, unreachable, buffSize
     debuffContainer:SetFlowLayoutMaximumLineSize(RAID_MAX_BIG_DEBUFFS * (bigS + RAID_ICON_GAP) + RAID_MAX_DEBUFFS * (normalS + RAID_ICON_GAP))
     defensiveContainer:SetFlowLayoutMaximumLineSize(RAID_MAX_DEFENSIVE * (defS + RAID_ICON_GAP))
 
-    buffContainer:ClearAllPoints()
-    buffContainer:SetPoint("BOTTOMRIGHT", data.buffAnchor, "BOTTOMRIGHT", 0, 0)
-    debuffContainer:ClearAllPoints()
-    debuffContainer:SetPoint("BOTTOMLEFT", data.debuffAnchor, "BOTTOMLEFT", 0, 0)
+    Theme:ApplyRaidAuraSides(data)
 
     defensiveContainer:ClearAllPoints()
     if defPoint == "RIGHT" then
@@ -962,6 +993,53 @@ end
 function Theme:GetDefensiveSize()
     local raid = mUI.db and mUI.db.profile.unitframes.raidframes
     return (raid and raid.centerDefensiveSize) or 60
+end
+
+-- Which bottom corner of the raid frame the debuffs sit in. Buffs always take
+-- the opposite corner, so the two never overlap.
+function Theme:GetRaidDebuffSide()
+    local raid = mUI.db and mUI.db.profile.unitframes.raidframes
+    return (raid and raid.debuffPoint == "RIGHT") and "RIGHT" or "LEFT"
+end
+
+-- Anchors the buff/debuff containers to their corner anchors and points their
+-- flow layout inwards. Called on every container update and by the config
+-- option so a side switch applies live.
+function Theme:ApplyRaidAuraSides(data)
+    local buffContainer = data.buffContainer
+    local debuffContainer = data.debuffContainer
+    if not buffContainer or not debuffContainer or not data.buffAnchor then
+        return
+    end
+
+    local debuffsRight = Theme:GetRaidDebuffSide() == "RIGHT"
+    -- buffAnchor sits in the bottom-right corner, debuffAnchor in the
+    -- bottom-left; the containers just swap which one they use.
+    local debuffAnchor = debuffsRight and data.buffAnchor or data.debuffAnchor
+    local buffAnchor = debuffsRight and data.debuffAnchor or data.buffAnchor
+    local debuffPoint = debuffsRight and "BOTTOMRIGHT" or "BOTTOMLEFT"
+    local buffPoint = debuffsRight and "BOTTOMLEFT" or "BOTTOMRIGHT"
+    local debuffGrowth = debuffsRight and AnchorUtil.FlowDirection.Left or AnchorUtil.FlowDirection.Right
+    local buffGrowth = debuffsRight and AnchorUtil.FlowDirection.Right or AnchorUtil.FlowDirection.Left
+
+    debuffContainer:ClearAllPoints()
+    debuffContainer:SetPoint(debuffPoint, debuffAnchor, debuffPoint, 0, 0)
+    debuffContainer:SetFlowLayoutAnchorPoint(debuffPoint)
+    debuffContainer:SetFlowLayoutGrowthDirection(debuffGrowth, AnchorUtil.FlowDirection.Up)
+
+    buffContainer:ClearAllPoints()
+    buffContainer:SetPoint(buffPoint, buffAnchor, buffPoint, 0, 0)
+    buffContainer:SetFlowLayoutAnchorPoint(buffPoint)
+    buffContainer:SetFlowLayoutGrowthDirection(buffGrowth, AnchorUtil.FlowDirection.Up)
+end
+
+function Theme:UpdateAllRaidAuraSides()
+    for frame in pairs(Theme.raidAuraFrames or {}) do
+        local data = frame and frame.mUI_AD
+        if data and data.buffContainer and not frame:IsForbidden() then
+            Theme:ApplyRaidAuraSides(data)
+        end
+    end
 end
 
 function Theme:GetDefensivePosition()

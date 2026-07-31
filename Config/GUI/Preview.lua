@@ -461,6 +461,17 @@ function Preview:UpdateParty()
         defensivePoint = "CENTER"
     end
 
+    -- "Debuff Anchor" option: debuffs take the chosen corner, buffs the other.
+    local debuffsRight = rf.debuffPoint == "RIGHT"
+    local debuffCorner = debuffsRight and "BOTTOMRIGHT" or "BOTTOMLEFT"
+    local buffCorner = debuffsRight and "BOTTOMLEFT" or "BOTTOMRIGHT"
+    local debuffStep = debuffsRight and -1 or 1
+    local buffStep = debuffsRight and 1 or -1
+    local debuffTopCorner = debuffsRight and "TOPRIGHT" or "TOPLEFT"
+    local buffTopCorner = debuffsRight and "TOPLEFT" or "TOPRIGHT"
+    local debuffPrevCorner = debuffsRight and "BOTTOMLEFT" or "BOTTOMRIGHT"
+    local buffPrevCorner = debuffsRight and "BOTTOMRIGHT" or "BOTTOMLEFT"
+
     for i, unit in ipairs(mock.units) do
         unit:SetSize(width * 1.5, unitHeight)
         unit:SetPoint("TOP", mock, "TOP", 0, -(i - 1) * (unitHeight + 4))
@@ -510,16 +521,17 @@ function Preview:UpdateParty()
                 icon:SetSize(buffSize, buffSize)
                 icon:ClearAllPoints()
                 if j == 1 then
-                    icon:SetPoint("BOTTOMRIGHT", unit.power, "TOPRIGHT", -2, 1)
+                    icon:SetPoint(buffCorner, unit.power, buffTopCorner, 2 * buffStep, 1)
                 else
-                    icon:SetPoint("BOTTOMRIGHT", unit.buffIcons[j - 1], "BOTTOMLEFT", -1, 0)
+                    icon:SetPoint(buffCorner, unit.buffIcons[j - 1], buffPrevCorner, buffStep, 0)
                 end
                 icon.border:SetVertexColor(unpack(mUI:Color(0.15)))
             end
         end
 
-        -- Debuffs (bottom-left of the power bar, growing right). The first is the
-        -- enlarged boss/role debuff ("Big Debuff Size"); the rest are normal size.
+        -- Debuffs (bottom corner of the power bar picked by "Debuff Anchor",
+        -- growing inwards). The first is the enlarged boss/role debuff
+        -- ("Big Debuff Size"); the rest are normal size.
         local debuffSizes = {math.floor(debuffSize * dispelScale + 0.5), debuffSize, debuffSize}
         for j, icon in ipairs(unit.debuffIcons) do
             icon:SetShown(showAuras)
@@ -528,9 +540,9 @@ function Preview:UpdateParty()
                 icon:SetSize(size, size)
                 icon:ClearAllPoints()
                 if j == 1 then
-                    icon:SetPoint("BOTTOMLEFT", unit.power, "TOPLEFT", 2, 1)
+                    icon:SetPoint(debuffCorner, unit.power, debuffTopCorner, 2 * debuffStep, 1)
                 else
-                    icon:SetPoint("BOTTOMLEFT", unit.debuffIcons[j - 1], "BOTTOMRIGHT", 1, 0)
+                    icon:SetPoint(debuffCorner, unit.debuffIcons[j - 1], debuffPrevCorner, debuffStep, 0)
                 end
             end
         end
