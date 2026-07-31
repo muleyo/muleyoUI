@@ -7,7 +7,6 @@ function PersonalResourceBar:OnInitialize()
     PersonalResourceBar.Core = mUI:GetModule("mUI.Modules.Nameplates.Core")
     local Core = PersonalResourceBar.Core
 
-    -- {classFrame's own point, target health bar's point, x sign, y sign}
     local ANCHORS = {
         TOP = {"BOTTOM", "TOP", 1, 1},
         BOTTOM = {"TOP", "BOTTOM", 1, -1},

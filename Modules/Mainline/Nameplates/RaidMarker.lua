@@ -8,7 +8,6 @@ function RaidMarker:OnInitialize()
 
     local Core = RaidMarker.Core
 
-    -- Where the marker sits relative to the health bar.
     local ANCHORS = {
         LEFT = {"RIGHT", "LEFT", -1, 1},
         RIGHT = {"LEFT", "RIGHT", 1, 1},
