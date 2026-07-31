@@ -8,15 +8,6 @@ function Style:OnInitialize()
 
     local Core = Style.Core
 
-    function Style:BarWidth(data, default)
-        if data and data.isFriend and Style.db.friendly.small then
-            return Style.db.friendly.width
-        end
-        return default
-    end
-
-    Style.handler = {}
-
     function Style:ApplyScale()
         if InCombatLockdown() then
             Style.pendingScale = true
@@ -47,11 +38,8 @@ function Style:OnEnable()
 
     Style:RegisterEvent("PLAYER_REGEN_ENABLED", "OnRegenEnabled")
     Style:ApplyScale()
-
-    Style.Core:Register("Style", Style.handler)
 end
 
 function Style:OnDisable()
     Style:UnregisterAllEvents()
-    Style.Core:Unregister("Style")
 end

@@ -40,8 +40,6 @@ function Units:OnInitialize()
         return info
     end
 
-    -- Arena ----------------------------------------------------------------
-
     function Units:ResolveArenaIndex(data)
         if not data.isPlayer or not data.isEnemy then
             return nil
@@ -91,13 +89,6 @@ function Units:OnInitialize()
             end
         end
 
-        if data.isSelf then
-            local specIndex = C_SpecializationInfo.GetSpecialization()
-            if specIndex then
-                return (C_SpecializationInfo.GetSpecializationInfo(specIndex))
-            end
-        end
-
         if data.guid and Units.specs[data.guid] then
             return Units.specs[data.guid]
         end
@@ -125,10 +116,6 @@ function Units:OnInitialize()
         return Units:GetRole(data) == "HEALER"
     end
 
-    function Units:IsTank(data)
-        return Units:GetRole(data) == "TANK"
-    end
-
     function Units:GetClassFile(data)
         if data.classFile then
             return data.classFile
@@ -137,21 +124,6 @@ function Units:OnInitialize()
         local info = Units:GetSpecInfo(Units:GetSpecID(data))
         if info then
             return info.classFile
-        end
-
-        return nil
-    end
-
-    function Units:GetSpecName(data)
-        local info = Units:GetSpecInfo(Units:GetSpecID(data))
-        if info then
-            return info.name
-        end
-
-        local classFile = Units:GetClassFile(data)
-        if classFile then
-            local localized = LOCALIZED_CLASS_NAMES_MALE and LOCALIZED_CLASS_NAMES_MALE[classFile]
-            return localized or classFile
         end
 
         return nil
