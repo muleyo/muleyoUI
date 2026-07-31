@@ -17,16 +17,26 @@ function Castbar:OnInitialize()
         return container and container.castBar, container, frame
     end
 
+    local edgeR, edgeG, edgeB, edgeA = 0, 0, 0, 1
+
+    local function RefreshCachedStyle()
+        local color = mUI:Color(0.15)
+        if color then
+            edgeR, edgeG, edgeB, edgeA = color[1], color[2], color[3], color[4]
+        end
+    end
+
+    Castbar.RefreshCachedStyle = RefreshCachedStyle
+
     local function SkinBackground(castBar)
-        if not castBar.Background then
+        local background = castBar.Background
+        if not background then
             return
         end
 
-        castBar.Background:ClearAllPoints()
-        castBar.Background:SetAllPoints(castBar)
-
-        local color = mUI:Color(0.15)
-        castBar.Background:SetVertexColor(color[1], color[2], color[3], color[4])
+        background:ClearAllPoints()
+        background:SetAllPoints(castBar)
+        background:SetVertexColor(edgeR, edgeG, edgeB, edgeA)
     end
 
     local ICON_GAP = 2
@@ -176,7 +186,12 @@ function Castbar:OnInitialize()
             return
         end
 
-        text:SetFont(mUI.db.profile.general.fontpath, TEXT_SIZE, "OUTLINE, SLUG")
+        local path = mUI.db.profile.general.fontpath
+        local currentPath, currentSize = text:GetFont()
+        if currentPath ~= path or currentSize ~= TEXT_SIZE then
+            text:SetFont(path, TEXT_SIZE, "OUTLINE, SLUG")
+        end
+
         text:SetJustifyH("CENTER")
 
         text:ClearAllPoints()
@@ -301,6 +316,7 @@ function Castbar:OnInitialize()
     end
 
     function Castbar:Update()
+        RefreshCachedStyle()
         Castbar.Core:ForEach(ApplyCastbar)
 
         local Health = mUI:GetModule("mUI.Modules.Nameplates.Health", true)
@@ -312,6 +328,7 @@ end
 
 function Castbar:OnEnable()
     Castbar.db = mUI.db.profile.nameplates
+    Castbar:RefreshCachedStyle()
     Castbar:InstallHooks()
     Castbar.Core:Register("Castbar", Castbar.handler)
 end
