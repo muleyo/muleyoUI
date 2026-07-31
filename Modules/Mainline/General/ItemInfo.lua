@@ -853,13 +853,13 @@ function ItemInfo:OnInitialize()
         talentButton.Text:SetPoint("CENTER", 0, 2)
         talentButton.Text:SetHeight(10)
 
-        talentButton:HookScript("OnEnter", function(ItemInfo)
+        ItemInfo:SecureHookScript(talentButton, "OnEnter", function(ItemInfo)
             for _, v in ipairs({"MiddleHighlight", "LeftHighlight", "RightHighlight"}) do
                 ItemInfo[v]:Show()
             end
         end)
 
-        talentButton:HookScript("OnLeave", function(ItemInfo)
+        ItemInfo:SecureHookScript(talentButton, "OnLeave", function(ItemInfo)
             for _, v in ipairs({"MiddleHighlight", "LeftHighlight", "RightHighlight"}) do
                 ItemInfo[v]:Hide()
             end

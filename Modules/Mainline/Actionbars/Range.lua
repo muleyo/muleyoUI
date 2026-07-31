@@ -137,9 +137,9 @@ function Range:OnEnable()
         Range:HookButtons(_G["MultiBar7Button" .. i])
     end
 
-    Range.updater:SetScript("OnEvent", function(_, event, ...)
+    Range:RawHookScript(Range.updater, "OnEvent", function(_, event, ...)
         Range:OnRangeEvent(event, ...)
-    end)
+    end, true)
 end
 
 function Range:OnDisable()

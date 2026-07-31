@@ -2,7 +2,6 @@ local Style = mUI:GetModule("mUI.Modules.Chat.Style")
 
 -- Lua
 local _G = getfenv(0)
-local hooksecurefunc = _G.hooksecurefunc
 local m_ceil = _G.math.ceil
 local m_max = _G.math.max
 local m_min = _G.math.min
@@ -189,11 +188,9 @@ end
 
 local hookedChatFrames = {}
 
-local CHAT_FRAME_TEXTURES = {"Background", "TopLeftTexture", "TopRightTexture", "BottomLeftTexture",
-                             "BottomRightTexture", "TopTexture", "BottomTexture", "LeftTexture", "RightTexture",
-
-                             "ButtonFrameBackground", "ButtonFrameTopLeftTexture", "ButtonFrameTopRightTexture",
-                             "ButtonFrameBottomLeftTexture", "ButtonFrameBottomRightTexture", "ButtonFrameTopTexture",
+local CHAT_FRAME_TEXTURES = {"Background", "TopLeftTexture", "TopRightTexture", "BottomLeftTexture", "BottomRightTexture", "TopTexture",
+                             "BottomTexture", "LeftTexture", "RightTexture", "ButtonFrameBackground", "ButtonFrameTopLeftTexture",
+                             "ButtonFrameTopRightTexture", "ButtonFrameBottomLeftTexture", "ButtonFrameBottomRightTexture", "ButtonFrameTopTexture",
                              "ButtonFrameBottomTexture", "ButtonFrameLeftTexture", "ButtonFrameRightTexture"}
 
 local object_proto = {
@@ -609,8 +606,7 @@ function object_proto:RefreshBackfill(startIndex, maxLines, maxPixels)
             end
         end
 
-        messageLine:SetMessage(messageID, messageInfo.timestamp, messageInfo.message, messageInfo.r, messageInfo.g,
-            messageInfo.b)
+        messageLine:SetMessage(messageID, messageInfo.timestamp, messageInfo.message, messageInfo.r, messageInfo.g, messageInfo.b)
         messageLine:StopFading(1)
 
         if checkLines then
@@ -760,8 +756,7 @@ function object_proto:RefreshActive(startIndex, maxPixels)
             messageLine:SetMessage(messageID, messageInfo.timestamp, coloredMessage, messageInfo.r, messageInfo.g,
                 messageInfo.b)
         else]]
-        messageLine:SetMessage(messageID, messageInfo.timestamp, messageInfo.message, messageInfo.r, messageInfo.g,
-            messageInfo.b)
+        messageLine:SetMessage(messageID, messageInfo.timestamp, messageInfo.message, messageInfo.r, messageInfo.g, messageInfo.b)
         -- end
         messageLine:StopFading(1)
 
@@ -777,8 +772,7 @@ function object_proto:RefreshActive(startIndex, maxPixels)
 
     if lineIndex > 0 then
         -- 2 is kinda arbitrary, I just want to make sure that only the first line of the last message is visible at the top
-        self:SetLastActiveMessageInfo(messageID, self.activeMessages[lineIndex]:GetTop() - self:GetBottom() -
-            self:GetMessageLineHeight() + 2)
+        self:SetLastActiveMessageInfo(messageID, self.activeMessages[lineIndex]:GetTop() - self:GetBottom() - self:GetMessageLineHeight() + 2)
     end
 
     -- just hide the excess, releasing and removing them here is expensive, they'll be taken care of when the frame gets
@@ -815,8 +809,7 @@ function object_proto:FastForward()
             self:RefreshActive(id)
             self:RefreshBackfill(id - 1, id - 1)
             self:EnableIncomingProcessing(true)
-            self:SetSmoothScroll(self.funcCache.baseScroll, self:GetNegativeVerticalOffset(),
-                self.funcCache.baseScrollCallback)
+            self:SetSmoothScroll(self.funcCache.baseScroll, self:GetNegativeVerticalOffset(), self.funcCache.baseScrollCallback)
         else
             local offset = self:GetNegativeVerticalOffset()
             if offset > 0 then
@@ -863,8 +856,7 @@ function object_proto:OnMouseWheel(delta)
 
     self:ResetState(true)
 
-    local offset = (IsShiftKeyDown() and MAX_SCROLL or IsControlKeyDown() and MIN_SCROLL or MED_SCROLL) *
-                       self:GetMessageLineHeight()
+    local offset = (IsShiftKeyDown() and MAX_SCROLL or IsControlKeyDown() and MIN_SCROLL or MED_SCROLL) * self:GetMessageLineHeight()
 
     if delta == UP then
         self:RefreshActive(self:GetFirstActiveMessageID())
@@ -1031,8 +1023,7 @@ end
 
 function object_proto:ProcessIncoming(num)
     self:RefreshBackfill(num, num)
-    self:SetSmoothScroll(self.funcCache.baseScroll, self:GetLastBackfillMessageOffset(),
-        self.funcCache.baseScrollCallback)
+    self:SetSmoothScroll(self.funcCache.baseScroll, self:GetLastBackfillMessageOffset(), self.funcCache.baseScrollCallback)
 end
 
 function object_proto:Release()
@@ -1044,8 +1035,7 @@ do
     local curID = nil
 
     local slidingMessageFramePool = CreateUnsecuredObjectPool(function(pool)
-        local frame = Mixin(CreateFrame("ScrollFrame", "mUIFrame" .. curID, UIParent, "mUIHyperlinkPropagator"),
-            object_proto)
+        local frame = Mixin(CreateFrame("ScrollFrame", "mUIFrame" .. curID, UIParent, "mUIHyperlinkPropagator"), object_proto)
         frame:EnableMouse(false)
         frame:Hide()
 
@@ -1215,8 +1205,7 @@ function Style:getBNetFriendClassColor(message)
             return nil
         else
             -- Apply cached class color
-            local colorCode = string.format("|cff%02x%02x%02x", cachedColor.r * 255, cachedColor.g * 255,
-                cachedColor.b * 255)
+            local colorCode = string.format("|cff%02x%02x%02x", cachedColor.r * 255, cachedColor.g * 255, cachedColor.b * 255)
             local coloredMessage = nil
             if fullPattern:match("^%[.-%] whispers:") then
                 coloredMessage = message:gsub("(%[)(.-)(%] whispers:)", "%1" .. colorCode .. "%2|r%3", 1)
@@ -1260,14 +1249,12 @@ function Style:getBNetFriendClassColor(message)
                         Style.bnetCache[senderName] = classColor
 
                         -- Apply class color to message
-                        local colorCode = string.format("|cff%02x%02x%02x", classColor.r * 255, classColor.g * 255,
-                            classColor.b * 255)
+                        local colorCode = string.format("|cff%02x%02x%02x", classColor.r * 255, classColor.g * 255, classColor.b * 255)
                         local coloredMessage = nil
                         if fullPattern:match("^%[.-%] whispers:") then
                             coloredMessage = message:gsub("(%[)(.-)(%] whispers:)", "%1" .. colorCode .. "%2|r%3", 1)
                         elseif fullPattern:match("|HBNplayer:.-|h%[.-%]|h") then
-                            coloredMessage = message:gsub("(|HBNplayer:.-|h%[)(.-)(%]|h)",
-                                "%1" .. colorCode .. "%2|r%3", 1)
+                            coloredMessage = message:gsub("(|HBNplayer:.-|h%[)(.-)(%]|h)", "%1" .. colorCode .. "%2|r%3", 1)
                         end
                         return coloredMessage
                     end

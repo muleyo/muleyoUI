@@ -137,11 +137,12 @@ local function UpdateCompactFrame(frame)
     if container.OverAbsorbGlow then
         ReanchorOverAbsorbGlow(container)
 
-        if frame.UpdateAnchors and not frame.mUIOvershieldsHooked then
-            hooksecurefunc(frame, "UpdateAnchors", function()
-                ReanchorOverAbsorbGlow(container)
-            end)
-            frame.mUIOvershieldsHooked = true
+        if frame.UpdateAnchors then
+            if not Overshields:IsHooked(frame, "UpdateAnchors") then
+                Overshields:SecureHook(frame, "UpdateAnchors", function()
+                    ReanchorOverAbsorbGlow(container)
+                end)
+            end
         end
     end
 end

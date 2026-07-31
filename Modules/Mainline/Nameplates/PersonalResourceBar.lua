@@ -1,4 +1,4 @@
-local PersonalResourceBar = mUI:NewModule("mUI.Modules.Nameplates.PersonalResourceBar", "AceEvent-3.0")
+local PersonalResourceBar = mUI:NewModule("mUI.Modules.Nameplates.PersonalResourceBar", "AceEvent-3.0", "AceHook-3.0")
 
 function PersonalResourceBar:OnInitialize()
     -- Load Database
@@ -55,7 +55,7 @@ function PersonalResourceBar:OnInitialize()
         end
 
         local plate = Core:GetPlateForUnit("target")
-        local health = plate and plate.Health
+        local health = plate and Core:GetHealthBar(plate)
 
         classFrame:ClearAllPoints()
         if health then
@@ -94,9 +94,10 @@ function PersonalResourceBar:OnInitialize()
 
         if not PersonalResourceBar.hooked then
             PersonalResourceBar.hooked = true
-            hooksecurefunc(frame, "UpdateAdditionalBarAnchors", function()
-                PersonalResourceBar:Reposition()
-            end)
+
+            if not PersonalResourceBar:IsHooked(frame, "UpdateAdditionalBarAnchors") then
+                PersonalResourceBar:SecureHook(frame, "UpdateAdditionalBarAnchors", PersonalResourceBar:Reposition())
+            end
         end
 
         PersonalResourceBar:Reposition()
