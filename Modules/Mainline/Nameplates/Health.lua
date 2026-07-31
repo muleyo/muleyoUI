@@ -165,11 +165,8 @@ function Health:OnInitialize()
         return unit ~= nil and strsub(unit, 1, 9) == "nameplate" and not frame:IsForbidden()
     end
 
-    -- Filled fresh on every call; never held across one. See Core:GetUnitData.
-    local scratch = {}
-
     local function GetInfo(frame, unit)
-        return Core:GetUnitData(unit, frame:GetParent(), scratch)
+        return Core:GetUnitData(unit, frame:GetParent())
     end
 
     local healthFormat = "%.0f%%"

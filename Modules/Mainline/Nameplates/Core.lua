@@ -197,7 +197,7 @@ function Core:OnInitialize()
         end
     end
 
-    function Core:GetUnitData(unit, namePlate, into)
+    function Core:GetUnitData(unit, namePlate)
         if not unit then
             return nil
         end
@@ -206,24 +206,23 @@ function Core:OnInitialize()
 
         local reaction = UnitReaction(unit, "player")
         local isPlayer = UnitIsPlayer(unit)
-        local data = into or {}
 
-        data.unit = unit
-        data.namePlate = namePlate
-        data.plate = namePlate and namePlate.mUIPlate
-        data.guid = Clean(UnitGUID(unit))
-        data.displayName = UnitName(unit)
-        data.name = Clean(UnitName(unit))
-        data.isFriend = reaction ~= nil and reaction >= 5
-        data.isNeutral = reaction ~= nil and reaction == 4
-        data.isEnemy = reaction ~= nil and reaction < 4
-        data.isPlayer = isPlayer
-        data.canAttack = UnitCanAttack("player", unit)
-        data.isTarget = Core:Safe(UnitIsUnit(unit, "target"), false)
-        data.isFocus = Core:Safe(UnitIsUnit(unit, "focus"), false)
-        data.classFile = isPlayer and Clean(select(2, UnitClass(unit))) or nil
-
-        return data
+        return {
+            unit = unit,
+            namePlate = namePlate,
+            plate = namePlate and namePlate.mUIPlate,
+            guid = Clean(UnitGUID(unit)),
+            displayName = UnitName(unit),
+            name = Clean(UnitName(unit)),
+            isFriend = reaction ~= nil and reaction >= 5,
+            isNeutral = reaction ~= nil and reaction == 4,
+            isEnemy = reaction ~= nil and reaction < 4,
+            isPlayer = isPlayer,
+            canAttack = UnitCanAttack("player", unit),
+            isTarget = Core:Safe(UnitIsUnit(unit, "target"), false),
+            isFocus = Core:Safe(UnitIsUnit(unit, "focus"), false),
+            classFile = isPlayer and Clean(select(2, UnitClass(unit))) or nil
+        }
     end
 
     function Core:GetData(namePlate)
