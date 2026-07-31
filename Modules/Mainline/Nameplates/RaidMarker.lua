@@ -53,7 +53,8 @@ function RaidMarker:OnInitialize()
 
     function RaidMarker.handler.Layout(plate)
         local holder = plate.RaidMarker
-        if not holder or not holder:IsShown() or not plate.Health then
+        local health = holder and holder:IsShown() and Core:GetHealthBar(plate)
+        if not health then
             return
         end
 
@@ -64,7 +65,7 @@ function RaidMarker:OnInitialize()
         holder:SetAlpha(config.alpha)
         holder:ClearAllPoints()
         holder:SetSize(config.size, config.size)
-        holder:SetPoint(point, plate.Health, relativePoint, config.x * xSign, config.y * ySign)
+        holder:SetPoint(point, health, relativePoint, config.x * xSign, config.y * ySign)
     end
 
     function RaidMarker.handler.Remove(plate)

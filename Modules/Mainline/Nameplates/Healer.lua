@@ -38,11 +38,17 @@ function Healer:OnInitialize()
             return false
         end
 
-        if data.isFriend then
-            return Healer.db.healer.friendly
+        local config = Healer.db.healer
+
+        if config.arenaonly and not Core.inArena then
+            return false
         end
 
-        return Healer.db.healer.enemy
+        if data.isFriend then
+            return config.friendly
+        end
+
+        return config.enemy
     end
 
     function Healer.handler.Update(plate, data)
@@ -54,9 +60,10 @@ function Healer:OnInitialize()
         holder:SetShown(ShouldShow(data) and Units:IsHealer(data))
     end
 
-    function Healer.handler.Layout(plate)
+    function Healer.handler.Layout(plate, data)
         local holder = plate.Healer
-        if not holder or not holder:IsShown() or not plate.Health then
+        local health = holder and holder:IsShown() and Core:GetHealthBar(plate)
+        if not health then
             return
         end
 
@@ -64,9 +71,13 @@ function Healer:OnInitialize()
         local anchor = ANCHORS[config.anchor] or ANCHORS.RIGHT
         local point, relativePoint, xSign, ySign = anchor[1], anchor[2], anchor[3], anchor[4]
 
+        local friendly = data and data.isFriend
+        local x = friendly and config.friendlyx or config.enemyx
+        local y = friendly and config.friendlyy or config.enemyy
+
         holder:ClearAllPoints()
         holder:SetSize(config.size, config.size)
-        holder:SetPoint(point, plate.Health, relativePoint, config.x * xSign, config.y * ySign)
+        holder:SetPoint(point, health, relativePoint, x * xSign, y * ySign)
     end
 
     function Healer.handler.Remove(plate)

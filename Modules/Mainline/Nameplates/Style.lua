@@ -7,7 +7,6 @@ function Style:OnInitialize()
     Style.Core = mUI:GetModule("mUI.Modules.Nameplates.Core")
 
     local Core = Style.Core
-    local NAME_SPACING = 2
 
     function Style:BarWidth(data, default)
         if data and data.isFriend and Style.db.friendly.small then
@@ -17,27 +16,6 @@ function Style:OnInitialize()
     end
 
     Style.handler = {}
-
-    function Style.handler.Layout(plate, data)
-        local health = plate.Health
-        local name = plate.Name
-        if not health or not name then
-            return
-        end
-
-        local config = Style.db.size
-
-        health:ClearAllPoints()
-        PixelUtil.SetSize(health, Style:BarWidth(data, config.healthwidth), config.healthheight)
-        health:SetPoint("CENTER", plate, "CENTER", 0, 0)
-
-        -- Unit name.
-        name:ClearAllPoints()
-        name:SetJustifyH("CENTER")
-        name:SetPoint("BOTTOM", health, "TOP", 0, NAME_SPACING)
-        name:SetWidth(0)
-        name:SetFont(mUI.db.profile.general.fontpath, Style.db.name.size, "OUTLINE")
-    end
 
     function Style:ApplyScale()
         if InCombatLockdown() then

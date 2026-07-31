@@ -36,21 +36,28 @@ function TargetIndicator:OnInitialize()
             return
         end
 
-        local hideBar = data.isFriend and data.isPlayer and TargetIndicator.db.friendly.hidehealthbar
+        local hideBar = data.isFriend and data.isPlayer and not data.canAttack and TargetIndicator.db.friendly.hidehealthbar
 
         holder:SetShown(data.isTarget == true and not hideBar)
     end
 
     function TargetIndicator.handler.Layout(plate, data)
         local holder = plate.TargetIndicator
-        if not holder or not holder:IsShown() or not plate.Health then
+        local health = holder and holder:IsShown() and Core:GetHealthBar(plate)
+        if not health then
             return
         end
 
-        local health = plate.Health
         local config = TargetIndicator.db.target
-        local size = config.size
 
+        holder.left:SetShown(config.arrows)
+        holder.right:SetShown(config.arrows)
+
+        if not config.arrows then
+            return
+        end
+
+        local size = config.size
         local r, g, b, a = config.color[1], config.color[2], config.color[3], config.color[4] or 1
         local classFile = config.classcolor and Units:GetClassFile(data)
         if classFile then
@@ -60,36 +67,20 @@ function TargetIndicator:OnInitialize()
             end
         end
 
-        holder.left:SetShown(config.arrows)
-        holder.right:SetShown(config.arrows)
-
-        if config.arrows then
-            holder.left:SetSize(size, size)
-            holder.right:SetSize(size, size)
-            holder.left:ClearAllPoints()
-            holder.right:ClearAllPoints()
-            holder.left:SetPoint("RIGHT", health, "LEFT", -config.offset, 0)
-            holder.right:SetPoint("LEFT", health, "RIGHT", config.offset, 0)
-            holder.left:SetVertexColor(r, g, b, a)
-            holder.right:SetVertexColor(r, g, b, a)
-        end
-
-        if not holder.border then
-            holder.border = Core:CreateBorder(holder, health, 1.25)
-        end
-
-        holder.border:SetThickness(1.25)
-
-        holder.border:SetShown(config.glow)
-
-        if config.glow then
-            holder.border:SetBorderColor(r, g, b, a)
-        end
+        holder.left:SetSize(size, size)
+        holder.right:SetSize(size, size)
+        holder.left:ClearAllPoints()
+        holder.right:ClearAllPoints()
+        holder.left:SetPoint("RIGHT", health, "LEFT", -config.offset, 0)
+        holder.right:SetPoint("LEFT", health, "RIGHT", config.offset, 0)
+        holder.left:SetVertexColor(r, g, b, a)
+        holder.right:SetVertexColor(r, g, b, a)
     end
 
     function TargetIndicator.handler.Remove(plate)
-        if plate.TargetIndicator then
-            plate.TargetIndicator:Hide()
+        local holder = plate.TargetIndicator
+        if holder then
+            holder:Hide()
         end
     end
 

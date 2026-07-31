@@ -1,4 +1,4 @@
-local Core = mUI:NewModule("mUI.Modules.Nameplates.Core", "AceEvent-3.0")
+local Core = mUI:NewModule("mUI.Modules.Nameplates.Core", "AceEvent-3.0", "AceHook-3.0")
 
 local IsSecret = issecretvalue or function()
     return false
@@ -33,14 +33,11 @@ function Core:OnInitialize()
         return value ~= nil
     end
 
-    -- Registered feature handlers
     Core.widgets = {}
     Core.order = {}
 
-    -- [base NamePlate frame] = unit snapshot, for every plate currently on screen
     Core.plates = {}
 
-    -- [mUIPlate] = { [widget name] = true }
     Core.built = setmetatable({}, {
         __mode = "k"
     })
@@ -55,9 +52,6 @@ function Core:OnInitialize()
     end
 
     local function ForEachHiddenRegion(frame, func)
-        func(frame.HealthBarsContainer)
-        func(frame.name)
-        func(frame.selectionHighlight)
         func(frame.ClassificationFrame)
         func(frame.LevelFrame)
         func(frame.RaidTargetFrame)
@@ -101,6 +95,13 @@ function Core:OnInitialize()
         frame:Show()
     end
 
+    function Core:GetHealthBar(plate)
+        local namePlate = plate:GetParent()
+        local frame = namePlate and namePlate.UnitFrame
+        local container = frame and frame.HealthBarsContainer
+        return container and container.healthBar, container, frame
+    end
+
     function Core:ApplyHitTest(namePlate, plate, data)
         if not namePlate.CanChangeHitTestPoints or not namePlate:CanChangeHitTestPoints() then
             return
@@ -108,8 +109,11 @@ function Core:OnInitialize()
 
         if Core.db.clickthrough and data and data.isFriend then
             namePlate:ClearAllHitTestPoints()
-        elseif plate and plate.Health then
-            namePlate:SetAllHitTestPoints(plate.Health)
+        else
+            local health = plate and Core:GetHealthBar(plate)
+            if health then
+                namePlate:SetAllHitTestPoints(health)
+            end
         end
     end
 
@@ -186,7 +190,6 @@ function Core:OnInitialize()
         return Core.plates[namePlate]
     end
 
-    -- Refresh the snapshot other modules read instead of re-querying the unit.
     function Core:BuildData(namePlate, unit)
         local data = Core.plates[namePlate]
         if not data then
@@ -197,19 +200,15 @@ function Core:OnInitialize()
         data.namePlate = namePlate
         data.plate = namePlate.mUIPlate
         data.unit = unit
-        data.guid = Clean(UnitGUID(unit))
-
+        data.guid = nil
         data.displayName = UnitName(unit)
         data.name = Clean(data.displayName)
-
-        -- Same as BetterBlizzPlates' GetNameplateUnitInfo: plain reads, a bare
-        -- nil check, no issecretvalue guarding.
         local reaction = UnitReaction(unit, "player")
         data.isFriend = reaction ~= nil and reaction >= 5
         data.isNeutral = reaction ~= nil and reaction == 4
         data.isEnemy = reaction ~= nil and reaction < 4
-
         data.isPlayer = UnitIsPlayer(unit) == true
+        data.canAttack = UnitCanAttack("player", unit) == true
         data.isSelf = Core:Safe(UnitIsUnit(unit, "player"), false)
         data.isTarget = Core:Safe(UnitIsUnit(unit, "target"), false)
         data.isFocus = Core:Safe(UnitIsUnit(unit, "focus"), false)
@@ -217,8 +216,6 @@ function Core:OnInitialize()
 
         return data
     end
-
-    -- Feature registration -------------------------------------------------
 
     function Core:Register(name, handler)
         if Core.widgets[name] then
@@ -264,7 +261,6 @@ function Core:OnInitialize()
         end
     end
 
-    -- Run a feature's Create exactly once for a given plate.
     function Core:Build(name, plate)
         local handler = Core.widgets[name]
         if not handler or not handler.Create then
@@ -304,8 +300,6 @@ function Core:OnInitialize()
         end
     end
 
-    -- Iteration ------------------------------------------------------------
-
     function Core:ForEach(func)
         for _, data in pairs(Core.plates) do
             if data.plate then
@@ -338,8 +332,6 @@ function Core:OnInitialize()
             end
         end)
     end
-
-    -- Lifecycle ------------------------------------------------------------
 
     function Core:OnUnitAdded(unit)
         local namePlate = C_NamePlate.GetNamePlateForUnit(unit, false)
@@ -385,7 +377,10 @@ function Core:OnInitialize()
         end
     end
 
-    -- Event handling -------------------------------------------------------
+    function Core:RefreshInstanceType()
+        local _, instanceType = IsInInstance()
+        Core.inArena = instanceType == "arena"
+    end
 
     function Core:OnNameplateEvent(event, unit)
         if event == "NAME_PLATE_UNIT_ADDED" then
@@ -393,6 +388,9 @@ function Core:OnInitialize()
         elseif event == "NAME_PLATE_UNIT_REMOVED" then
             Core:OnUnitRemoved(unit)
         else
+            if event == "PLAYER_ENTERING_WORLD" then
+                Core:RefreshInstanceType()
+            end
             Core:UpdateAll()
         end
     end
@@ -436,20 +434,8 @@ function Core:OnInitialize()
             return
         end
 
-        mUI:Debug("Nameplates: Health = " .. Describe(plate.Health))
-        mUI:Debug("Nameplates: Cast = " .. Describe(plate.Cast))
-
-        if plate.Health then
-            local percent = plate.Health.percent
-            mUI:Debug("Nameplates: percent = " .. Describe(percent) .. ", enabled = " .. tostring(Core.db.health and Core.db.health.percent))
-            if percent then
-                local text = percent:GetText()
-                mUI:Debug("Nameplates: percent text = " .. text)
-            end
-        end
-
-        local healthUnit = plate.Health and plate.Health:IsEventRegistered("UNIT_HEALTH")
-        mUI:Debug("Nameplates: subscribed health = " .. tostring(healthUnit))
+        local health = Core:GetHealthBar(plate)
+        mUI:Debug("Nameplates: Health = " .. Describe(health))
 
         local function Report(value)
             if IsSecret(value) then
@@ -494,10 +480,6 @@ function Core:OnInitialize()
 
     function Core:OnUnitEvent(_, unit)
         C_Timer.After(0.1, function()
-            -- UNIT_FACTION/UNIT_NAME_UPDATE can fire for a target-of-target-style
-            -- compound token (e.g. "targettarget"), which GetNamePlateForUnit
-            -- rejects outright rather than just returning nil -- pcall-guarded so
-            -- that case is skipped instead of throwing every time one fires.
             local ok, namePlate = pcall(C_NamePlate.GetNamePlateForUnit, unit, false)
             if not ok or not namePlate or not Core.plates[namePlate] then
                 return
@@ -515,6 +497,24 @@ function Core:OnInitialize()
                 Dispatch("Update", data.plate, data)
                 Dispatch("Layout", data.plate, data)
             end
+        end)
+    end
+
+    if not Core:IsHooked(NamePlateUnitFrameMixin, "OnUnitFactionChanged") then
+        Core:SecureHook(NamePlateUnitFrameMixin, "OnUnitFactionChanged", function(unitFrame)
+            if unitFrame:IsForbidden() or not unitFrame.unit then
+                return
+            end
+
+            local namePlate = unitFrame:GetParent()
+            local data = namePlate and Core.plates[namePlate]
+            if not data or not data.plate then
+                return
+            end
+
+            Core:BuildData(namePlate, unitFrame.unit)
+            Dispatch("Update", data.plate, data)
+            Dispatch("Layout", data.plate, data)
         end)
     end
 end
@@ -535,6 +535,8 @@ function Core:OnEnable()
     Core:RegisterEvent("PLAYER_ENTERING_WORLD", "OnNameplateEvent")
     Core:RegisterEvent("UNIT_FACTION", "OnUnitEvent")
     Core:RegisterEvent("UNIT_NAME_UPDATE", "OnUnitEvent")
+
+    Core:RefreshInstanceType()
 
     -- Adopt whatever is already on screen when the module is toggled on.
     for _, namePlate in pairs(C_NamePlate.GetNamePlates(false)) do

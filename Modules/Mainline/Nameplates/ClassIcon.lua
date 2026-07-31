@@ -71,11 +71,21 @@ function ClassIcon:OnInitialize()
             return false
         end
 
-        if data.isFriend then
-            return ClassIcon.db.classicons.friendly
+        local config = ClassIcon.db.classicons
+
+        if config.arenaonly and not Core.inArena then
+            return false
         end
 
-        return ClassIcon.db.classicons.enemy
+        if data.isFriend then
+            if config.hidehealers and Units:IsHealer(data) then
+                return false
+            end
+
+            return config.friendly
+        end
+
+        return config.enemy
     end
 
     function ClassIcon.handler.Update(plate, data)
@@ -114,7 +124,8 @@ function ClassIcon:OnInitialize()
 
     function ClassIcon.handler.Layout(plate, data)
         local holder = plate.ClassIcon
-        if not holder or not holder:IsShown() or not plate.Health then
+        local health = holder and holder:IsShown() and Core:GetHealthBar(plate)
+        if not health then
             return
         end
 
@@ -123,9 +134,13 @@ function ClassIcon:OnInitialize()
         local point, relativePoint, xSign, ySign = anchor[1], anchor[2], anchor[3], anchor[4]
         local outer = config.size * RING_SCALE
 
+        local friendly = data and data.isFriend
+        local x = friendly and config.friendlyx or config.enemyx
+        local y = friendly and config.friendlyy or config.enemyy
+
         holder:ClearAllPoints()
         holder:SetSize(outer, outer)
-        holder:SetPoint(point, plate.Health, relativePoint, config.x * xSign, config.y * ySign)
+        holder:SetPoint(point, health, relativePoint, x * xSign, y * ySign)
 
         holder.texture:SetSize(config.size, config.size)
         holder.mask:SetSize(config.size, config.size)

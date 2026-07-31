@@ -10,19 +10,13 @@ function Auras:OnInitialize()
 
     local Core = Auras.Core
     local Theme = Auras.Theme
-
-    -- Filters --------------------------------------------------------------
-
     local AF = AuraUtil.AuraFilters
     local CC_FILTER = AuraUtil.CreateFilterString(AF.Harmful, AF.CrowdControl)
     local PLAYER_DEBUFF_FILTER = AuraUtil.CreateFilterString(AF.Harmful, AF.Player, "!CROWD_CONTROL")
     local DEFENSIVE_FILTER = AuraUtil.CreateFilterString(AF.Helpful, AF.BigDefensive)
     local IMPORTANT_FILTER = AuraUtil.CreateFilterString(AF.Helpful, AF.Important, "!BIG_DEFENSIVE")
     local BASE_ICON_SIZE = 20
-
     local ICON_GAP = 2
-
-    -- Building the containers ------------------------------------------------
 
     local function InitIcon(auraFrame)
         Theme.CreateAuraButton(auraFrame, false, {
@@ -117,9 +111,6 @@ function Auras:OnInitialize()
         local left = NewContainer(plate, "left", "RIGHT", AnchorUtil.FlowDirection.Left, AnchorUtil.FlowDirection.Down)
         left:AddAuraGroup("Important", IMPORTANT_FILTER, {
             maxFrameCount = 2,
-            candidateFilters = {
-                isStealable = true
-            },
             initializeFrame = InitIcon,
             layout = {
                 elementSpacing = ICON_GAP,
@@ -158,8 +149,6 @@ function Auras:OnInitialize()
         end)
         plate.AuraWatcher = watcher
     end
-
-    -- Content ----------------------------------------------------------------
 
     local function SetContainerUnit(container, unit)
         if container.mUI_unit ~= unit then
@@ -215,8 +204,6 @@ function Auras:OnInitialize()
         end
     end
 
-    -- Position -----------------------------------------------------------------
-
     local SIDE_ANCHORS = {
         LEFT = {
             point = "RIGHT",
@@ -243,7 +230,7 @@ function Auras:OnInitialize()
     end
 
     function Auras.handler.Layout(plate)
-        local health = plate.Health
+        local health, _, frame = Core:GetHealthBar(plate)
         if not health or not plate.AuraCC then
             return
         end
@@ -259,7 +246,7 @@ function Auras:OnInitialize()
             plate.AuraCC:SetFlowLayoutMaximumLineSize(3 * (BASE_ICON_SIZE + ICON_GAP))
             ApplySize(plate.AuraCC, config.cc.size)
 
-            local topAnchor = plate.Name or health
+            local topAnchor = (frame and frame.name) or health
             plate.AuraTop:ClearAllPoints()
             plate.AuraTop:SetPoint("BOTTOM", topAnchor, "TOP", 0, config.top.y)
             plate.AuraTop:SetFlowLayoutMaximumLineSize(3 * (BASE_ICON_SIZE + ICON_GAP))

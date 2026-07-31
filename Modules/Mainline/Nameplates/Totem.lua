@@ -8,9 +8,11 @@ function Totem:OnInitialize()
 
     Totem.Core = mUI:GetModule("mUI.Modules.Nameplates.Core")
     Totem.Theme = mUI:GetModule("mUI.Modules.General.Theme")
+    Totem.Health = mUI:GetModule("mUI.Modules.Nameplates.Health")
 
     local Core = Totem.Core
     local Theme = Totem.Theme
+    local Health = Totem.Health
 
     local ICON_GENERIC = [[Interface\Icons\Spell_shaman_totemrecall]]
     local ICON_CAP = C_Spell.GetSpellTexture(192058) or ICON_GENERIC
@@ -163,6 +165,7 @@ function Totem:OnInitialize()
 
         if not config.enabled or not IsTotem(data.unit) or (config.enemyOnly and data.isFriend) then
             HideAll(holder)
+            Health:SetBarColor(plate, nil)
             return
         end
 
@@ -212,14 +215,13 @@ function Totem:OnInitialize()
             holder.animation:Play()
         end
 
-        if config.colorHealthBar and plate.Health then
-            plate.Health:SetStatusBarColor(color[1], color[2], color[3])
-        end
+        Health:SetBarColor(plate, config.colorHealthBar and color or nil)
     end
 
     function Totem.handler.Layout(plate)
         local holder = plate.Totem
-        if not holder or not holder:IsShown() or not plate.Health then
+        local health = holder and holder:IsShown() and Core:GetHealthBar(plate)
+        if not health then
             return
         end
 
@@ -228,7 +230,7 @@ function Totem:OnInitialize()
         local point, relativePoint, xSign, ySign = anchor[1], anchor[2], anchor[3], anchor[4]
 
         holder:ClearAllPoints()
-        holder:SetPoint(point, plate.Health, relativePoint, config.x * xSign, config.y * ySign)
+        holder:SetPoint(point, health, relativePoint, config.x * xSign, config.y * ySign)
         holder:SetScale(config.size / BASE_ICON_SIZE)
     end
 
@@ -236,6 +238,8 @@ function Totem:OnInitialize()
         if plate.Totem then
             HideAll(plate.Totem)
         end
+
+        Health:SetBarColor(plate, nil)
     end
 
     function Totem:Update()

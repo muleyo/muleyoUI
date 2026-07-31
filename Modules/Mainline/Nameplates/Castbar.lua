@@ -7,7 +7,7 @@ function Castbar:OnInitialize()
     Castbar.Core = mUI:GetModule("mUI.Modules.Nameplates.Core")
     Castbar.Theme = mUI:GetModule("mUI.Modules.General.Theme")
 
-    -- The moments Blizzard re-applies its own sizing.
+    -- The moments Blizzard re-applies its own styling.
     local CAST_EVENTS = {"UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_EMPOWER_START"}
 
     local function GetCastBar(plate)
@@ -17,20 +17,51 @@ function Castbar:OnInitialize()
         return container and container.castBar, container, frame
     end
 
-    -- Skinning ----------------------------------------------------------------
-
     local function SkinBackground(castBar)
         if not castBar.Background then
             return
         end
 
+        castBar.Background:ClearAllPoints()
+        castBar.Background:SetAllPoints(castBar)
+
         local color = mUI:Color(0.15)
         castBar.Background:SetVertexColor(color[1], color[2], color[3], color[4])
     end
 
-    local ICON_SIZE = 16
+    local ICON_GAP = 2
     local TEXT_SIZE = 12
-    local TEXT_PADDING = 4
+    local TEXT_PADDING = 2
+
+    local function IconSize()
+        return math.max((Castbar.db.size.castheight or 10), 16)
+    end
+
+    local function HookIcon(castBar, icon)
+        if not Castbar:IsHooked(icon, "SetTexture") then
+            Castbar:SecureHook(icon, "SetTexture", function(_, tex)
+                castBar.iconFrame.texture:SetTexture(tex)
+            end)
+        end
+
+        if not Castbar:IsHooked(icon, "SetShown") then
+            Castbar:SecureHook(icon, "SetShown", function(_, shown)
+                castBar.iconFrame:SetShown(shown)
+            end)
+        end
+
+        if not Castbar:IsHooked(icon, "Hide") then
+            Castbar:SecureHook(icon, "Hide", function()
+                castBar.iconFrame:Hide()
+            end)
+        end
+
+        if not Castbar:IsHooked(icon, "Show") then
+            Castbar:SecureHook(icon, "Show", function()
+                castBar.iconFrame:Show()
+            end)
+        end
+    end
 
     local function SkinIcon(castBar)
         local icon = castBar.Icon
@@ -68,19 +99,7 @@ function Castbar:OnInitialize()
             })
 
             icon:SetAlpha(0)
-
-            hooksecurefunc(icon, "SetTexture", function(_, tex)
-                texture:SetTexture(tex)
-            end)
-            hooksecurefunc(icon, "Show", function()
-                iconFrame:Show()
-            end)
-            hooksecurefunc(icon, "Hide", function()
-                iconFrame:Hide()
-            end)
-            hooksecurefunc(icon, "SetShown", function(_, shown)
-                iconFrame:SetShown(shown)
-            end)
+            icon:SetIgnoreParentAlpha(false)
 
             local currentTexture = icon:GetTexture()
             if currentTexture then
@@ -91,10 +110,13 @@ function Castbar:OnInitialize()
             castBar.iconFrame = iconFrame
         end
 
+        HookIcon(castBar, icon)
+
+        local size = IconSize()
         local iconFrame = castBar.iconFrame
         iconFrame:ClearAllPoints()
-        iconFrame:SetSize(ICON_SIZE, ICON_SIZE)
-        iconFrame:SetPoint("CENTER", castBar, "LEFT", -15, 0)
+        iconFrame:SetSize(size, size)
+        iconFrame:SetPoint("RIGHT", castBar, "LEFT", -ICON_GAP, 0)
     end
 
     local SHIELD_ATLAS = "ui-castingbar-shield"
@@ -131,15 +153,17 @@ function Castbar:OnInitialize()
 
             -- Hide default shield border
             shield:SetAlpha(0)
+            shield:SetIgnoreParentAlpha(false)
 
             castBar.shieldFrame = shieldFrame
         end
 
+        local size = IconSize()
         local shieldFrame = castBar.shieldFrame
         shieldFrame:ClearAllPoints()
-        shieldFrame:SetPoint("CENTER", castBar, "LEFT", -15, 0)
+        shieldFrame:SetPoint("CENTER", castBar.iconFrame, "CENTER", 0, 0)
+        shieldFrame:SetSize(size, size)
         shieldFrame:Show()
-        shieldFrame:SetSize(ICON_SIZE, ICON_SIZE)
 
         if uninterruptible ~= nil then
             shieldFrame:SetAlphaFromBoolean(uninterruptible, 1, 0)
@@ -152,23 +176,59 @@ function Castbar:OnInitialize()
             return
         end
 
-        text:SetFont(mUI.db.profile.general.fontpath, TEXT_SIZE, "OUTLINE")
+        text:SetFont(mUI.db.profile.general.fontpath, TEXT_SIZE, "OUTLINE, SLUG")
+        text:SetJustifyH("CENTER")
 
         text:ClearAllPoints()
-        if castBar.iconFrame then
-            text:SetPoint("LEFT", castBar.iconFrame, "RIGHT", TEXT_PADDING, 0)
-        else
-            text:SetPoint("LEFT", castBar, "LEFT", TEXT_PADDING, 0)
+        text:SetPoint("TOPLEFT", castBar, "TOPLEFT", -TEXT_PADDING, 0)
+        text:SetPoint("BOTTOMRIGHT", castBar, "BOTTOMRIGHT", TEXT_PADDING, 0)
+    end
+
+    local function SkinSpark(castBar)
+        if castBar.Spark then
+            castBar.Spark:SetSize(4, Castbar.db.size.castheight or 10)
         end
-        text:SetPoint("RIGHT", castBar, "RIGHT", -TEXT_PADDING, 0)
+    end
+
+    local function ReapplyStyle(unitFrame)
+        if not Castbar:IsEnabled() or issecretvalue(unitFrame) then
+            return
+        end
+        if not unitFrame.unit or unitFrame:IsForbidden() then
+            return
+        end
+
+        if Castbar.Core:Safe(UnitIsUnit(unitFrame.unit, "player"), false) then
+            return
+        end
+
+        local container = unitFrame.CastBarsContainer
+        local castBar = container and container.castBar
+        if not castBar then
+            return
+        end
+
+        SkinBackground(castBar)
+        SkinText(castBar)
+        SkinSpark(castBar)
+    end
+
+    function Castbar:InstallHooks()
+        if not Castbar:IsHooked(NamePlateUnitFrameMixin, "UpdateAnchors") then
+            Castbar:SecureHook(NamePlateUnitFrameMixin, "UpdateAnchors", ReapplyStyle)
+        end
     end
 
     local function ShouldHide(plate)
         local data = Castbar.Core:GetData(plate:GetParent())
-        return data and data.isFriend and data.isPlayer and Castbar.db.friendly.hidehealthbar
+        return data and data.isFriend and data.isPlayer and not data.canAttack and Castbar.db.friendly.hidehealthbar
     end
 
-    local function ApplySize(plate)
+    local function ApplyCastbar(plate)
+        if not Castbar:IsEnabled() or not plate then
+            return
+        end
+
         local castBar, container, frame = GetCastBar(plate)
         if not castBar or not container or not frame then
             return
@@ -179,55 +239,24 @@ function Castbar:OnInitialize()
             return
         end
 
-        local config = Castbar.db.size
-
-        castBar:SetHeight(config.castheight)
-
-        local anchorTo = plate.Health or frame
-        container:ClearAllPoints()
-        container:SetPoint("TOP", anchorTo, "BOTTOM", 0, -Castbar.db.castbar.y)
-        container:SetWidth(config.castwidth)
+        local uninterruptible = IsUninterruptible(plate)
 
         SkinBackground(castBar)
         SkinIcon(castBar)
-        SkinShield(castBar, IsUninterruptible(plate))
+        SkinShield(castBar, uninterruptible)
         SkinText(castBar)
+        SkinSpark(castBar)
     end
-
-    -- Cast bars are pooled with their UnitFrame, so each is only hooked once.
-    Castbar.hooked = setmetatable({}, {
-        __mode = "k"
-    })
 
     local function HookCastBar(plate)
         local castBar = GetCastBar(plate)
-        if not castBar or Castbar.hooked[castBar] then
+        if not castBar or Castbar:IsHooked(castBar, "OnEvent") then
             return
         end
 
-        Castbar.hooked[castBar] = true
-        castBar:HookScript("OnEvent", function()
-            ApplySize(plate)
+        Castbar:SecureHookScript(castBar, "OnEvent", function()
+            ApplyCastbar(plate)
         end)
-    end
-
-    local function WatchHealthContainer(plate)
-        if plate.CastResizeWatcher then
-            return
-        end
-
-        local _, _, frame = GetCastBar(plate)
-        if not frame or not frame.HealthBarsContainer then
-            return
-        end
-
-        local watcher = CreateFrame("Frame", nil, plate)
-        watcher:SetAllPoints(frame.HealthBarsContainer)
-        watcher:SetScript("OnSizeChanged", function()
-            ApplySize(plate)
-        end)
-
-        plate.CastResizeWatcher = watcher
     end
 
     Castbar.handler = {}
@@ -236,7 +265,7 @@ function Castbar:OnInitialize()
         local watcher = CreateFrame("Frame", nil, plate)
         watcher:SetScript("OnEvent", function()
             RunNextFrame(function()
-                ApplySize(plate)
+                ApplyCastbar(plate)
             end)
         end)
 
@@ -249,7 +278,6 @@ function Castbar:OnInitialize()
         end
 
         HookCastBar(plate)
-        WatchHealthContainer(plate)
 
         local watcher = plate.CastWatcher
         if watcher then
@@ -259,15 +287,11 @@ function Castbar:OnInitialize()
             end
         end
 
-        ApplySize(plate)
+        ApplyCastbar(plate)
     end
 
     function Castbar.handler.Layout(plate)
-        ApplySize(plate)
-
-        RunNextFrame(function()
-            ApplySize(plate)
-        end)
+        ApplyCastbar(plate)
     end
 
     function Castbar.handler.Remove(plate)
@@ -277,15 +301,22 @@ function Castbar:OnInitialize()
     end
 
     function Castbar:Update()
-        Castbar.Core:ForEach(ApplySize)
+        Castbar.Core:ForEach(ApplyCastbar)
+
+        local Health = mUI:GetModule("mUI.Modules.Nameplates.Health", true)
+        if Health and Health:IsEnabled() then
+            Health:Update()
+        end
     end
 end
 
 function Castbar:OnEnable()
     Castbar.db = mUI.db.profile.nameplates
+    Castbar:InstallHooks()
     Castbar.Core:Register("Castbar", Castbar.handler)
 end
 
 function Castbar:OnDisable()
     Castbar.Core:Unregister("Castbar")
+    Castbar:UnhookAll()
 end

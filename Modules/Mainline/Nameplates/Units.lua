@@ -16,8 +16,6 @@ function Units:OnInitialize()
 
     local Core = Units.Core
 
-    -- Spec lookups ---------------------------------------------------------
-
     function Units:GetSpecInfo(specID)
         if not specID or specID == 0 then
             return nil
@@ -60,15 +58,19 @@ function Units:OnInitialize()
 
     function Units:GetArenaIndex(data)
         local plate = data.plate
-        local cached = Units.arenaIndex[plate]
-        if cached then
-            return cached
+
+        if plate then
+            local cached = Units.arenaIndex[plate]
+            if cached then
+                return cached
+            end
         end
 
         local index = Units:ResolveArenaIndex(data)
-        if index then
+        if index and plate then
             Units.arenaIndex[plate] = index
         end
+
         return index
     end
 
@@ -80,9 +82,6 @@ function Units:OnInitialize()
         end
     end
 
-    -- Public accessors -----------------------------------------------------
-
-    -- The spec the unit is playing, or nil when we have not identified it yet.
     function Units:GetSpecID(data)
         local index = Units:GetArenaIndex(data)
         if index then
@@ -112,7 +111,6 @@ function Units:OnInitialize()
             return info.role
         end
 
-        -- Group members expose their assigned role without an inspect.
         if data.isPlayer and IsInGroup() then
             local role = Core:Safe(UnitGroupRolesAssigned(data.unit), "NONE")
             if role ~= "NONE" then
@@ -144,7 +142,6 @@ function Units:OnInitialize()
         return nil
     end
 
-    -- The spec name to show in place of the unit name, class name as fallback.
     function Units:GetSpecName(data)
         local info = Units:GetSpecInfo(Units:GetSpecID(data))
         if info then
@@ -160,15 +157,11 @@ function Units:OnInitialize()
         return nil
     end
 
-    -- Lifecycle ------------------------------------------------------------
-
     Units.handler = {}
 
     function Units.handler.Remove(plate)
         Units:ClearArenaIndex(plate)
     end
-
-    -- Events ---------------------------------------------------------------
 
     function Units:OnInspectReady(_, guid)
         guid = Core.Clean(guid)
