@@ -69,9 +69,6 @@ function Nameplates:OnInitialize()
                 end,
                 order = 1
             },
-
-            -- General ---------------------------------------------------------
-
             header1 = {
                 name = "Textures",
                 type = "header",
@@ -108,15 +105,12 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().focus
                 end,
-                order = 3.5
+                order = 4
             },
-
-            -- Size ------------------------------------------------------------
-
             header2 = {
                 name = "Sizes",
                 type = "header",
-                order = 4
+                order = 5
             },
             sizeHealthWidth = {
                 name = "Health Bar Width",
@@ -127,12 +121,12 @@ function Nameplates:OnInitialize()
                 step = 1,
                 set = function(_, val)
                     db().size.healthwidth = val
-                    Refresh(Nameplates.Module.Style)
+                    Refresh(Nameplates.Module.Health)
                 end,
                 get = function()
                     return db().size.healthwidth
                 end,
-                order = 5
+                order = 6
             },
             sizeHealthHeight = {
                 name = "Health Bar Height",
@@ -143,26 +137,10 @@ function Nameplates:OnInitialize()
                 step = 1,
                 set = function(_, val)
                     db().size.healthheight = val
-                    Refresh(Nameplates.Module.Style)
+                    Refresh(Nameplates.Module.Health)
                 end,
                 get = function()
                     return db().size.healthheight
-                end,
-                order = 6
-            },
-            sizeCastWidth = {
-                name = "Cast Bar Width",
-                desc = "Set the Width of the Cast Bar",
-                type = "range",
-                min = 50,
-                max = 400,
-                step = 1,
-                set = function(_, val)
-                    db().size.castwidth = val
-                    Refresh(Nameplates.Module.Castbar)
-                end,
-                get = function()
-                    return db().size.castwidth
                 end,
                 order = 7
             },
@@ -182,22 +160,6 @@ function Nameplates:OnInitialize()
                 end,
                 order = 8
             },
-            castbarY = {
-                name = "Cast Bar Vertical Offset",
-                desc = "Move the Cast Bar closer to or further from the Health Bar\n\n|cffffff00Info:|r Positive values move it further away, negative values pull it closer",
-                type = "range",
-                min = -30,
-                max = 50,
-                step = 1,
-                set = function(_, val)
-                    db().castbar.y = val
-                    Refresh(Nameplates.Module.Castbar)
-                end,
-                get = function()
-                    return db().castbar.y
-                end,
-                order = 9
-            },
             nameSize = {
                 name = "Name Text Size",
                 desc = "Set the Font Size of the Unit Name",
@@ -207,12 +169,12 @@ function Nameplates:OnInitialize()
                 step = 1,
                 set = function(_, val)
                     db().name.size = val
-                    Refresh(Nameplates.Module.Style)
+                    Refresh(Nameplates.Module.Health)
                 end,
                 get = function()
                     return db().name.size
                 end,
-                order = 10
+                order = 9
             },
             scaleTarget = {
                 name = "Target Scale",
@@ -229,7 +191,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().scale.target
                 end,
-                order = 11
+                order = 10
             },
             scaleOther = {
                 name = "Normal Scale",
@@ -246,15 +208,12 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().scale.other
                 end,
-                order = 12
+                order = 11
             },
-
-            -- Options ---------------------------------------------------------
-
             header3 = {
                 name = "Options",
                 type = "header",
-                order = 13
+                order = 12
             },
             healthPercent = {
                 name = "Health Percent",
@@ -267,7 +226,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().health.percent
                 end,
-                order = 14
+                order = 13
             },
             healthPercentAnchor = {
                 name = "Percent Position",
@@ -291,7 +250,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().health.anchor
                 end,
-                order = 15
+                order = 14
             },
             healthPercentX = {
                 name = "Percent Offset X",
@@ -310,7 +269,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().health.x
                 end,
-                order = 16
+                order = 15
             },
             healthPercentY = {
                 name = "Percent Offset Y",
@@ -329,7 +288,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().health.y
                 end,
-                order = 17
+                order = 16
             },
             namesArena = {
                 name = "Arena Number",
@@ -342,7 +301,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().names.arena
                 end,
-                order = 18
+                order = 17
             },
             namesSpec = {
                 name = "Specialization Name",
@@ -355,15 +314,150 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().names.spec
                 end,
-                order = 19
+                order = 18
             },
 
-            -- Friendly Players ------------------------------------------------
+            -- NPC Classification ----------------------------------------------
 
+            header35 = {
+                name = "NPC Type",
+                type = "header",
+                order = 19.1
+            },
+            classificationEnabled = {
+                name = "Color by NPC Type",
+                desc = "Color the Health Bar by the Unit's Type instead of its Reaction\n\n|cffffff00Info:|r Players keep their Class Color. Rares keep their Reaction Color",
+                type = "toggle",
+                set = function(_, val)
+                    db().classification.enabled = val
+                    Refresh(Nameplates.Module.Health)
+                end,
+                get = function()
+                    return db().classification.enabled
+                end,
+                order = 19
+            },
+            classificationInstancesOnly = {
+                name = "Dungeons and Raids Only",
+                desc = "Only color by NPC Type inside a Dungeon or Raid\n\n|cffffff00Info:|r The Boss and Miniboss tiers are worked out from Dungeon Level scaling, so they are only meaningful inside an Instance",
+                type = "toggle",
+                disabled = function()
+                    return not db().classification.enabled
+                end,
+                set = function(_, val)
+                    db().classification.instancesonly = val
+                    Refresh(Nameplates.Module.Health)
+                end,
+                get = function()
+                    return db().classification.instancesonly
+                end,
+                order = 20
+            },
+            classificationCasterAlways = {
+                name = "Color all Casters",
+                desc = "Use the Caster Color for non-Elite NPCs with Mana as well, instead of the Trivial Color",
+                type = "toggle",
+                disabled = function()
+                    return not db().classification.enabled
+                end,
+                set = function(_, val)
+                    db().classification.casteralways = val
+                    Refresh(Nameplates.Module.Health)
+                end,
+                get = function()
+                    return db().classification.casteralways
+                end,
+                order = 21
+            },
+            classificationBoss = {
+                name = "Boss",
+                desc = "Choose a Color for Bosses",
+                type = "color",
+                hasAlpha = true,
+                disabled = function()
+                    return not db().classification.enabled
+                end,
+                set = function(_, r, g, b, a)
+                    db().classification.boss = {r, g, b, a}
+                    Refresh(Nameplates.Module.Health)
+                end,
+                get = function()
+                    return unpack(db().classification.boss)
+                end,
+                order = 22
+            },
+            classificationMiniboss = {
+                name = "Miniboss",
+                desc = "Choose a Color for Minibosses (Lieutenants)",
+                type = "color",
+                hasAlpha = true,
+                disabled = function()
+                    return not db().classification.enabled
+                end,
+                set = function(_, r, g, b, a)
+                    db().classification.miniboss = {r, g, b, a}
+                    Refresh(Nameplates.Module.Health)
+                end,
+                get = function()
+                    return unpack(db().classification.miniboss)
+                end,
+                order = 23
+            },
+            classificationCaster = {
+                name = "Caster",
+                desc = "Choose a Color for Elite NPCs with Mana",
+                type = "color",
+                hasAlpha = true,
+                disabled = function()
+                    return not db().classification.enabled
+                end,
+                set = function(_, r, g, b, a)
+                    db().classification.caster = {r, g, b, a}
+                    Refresh(Nameplates.Module.Health)
+                end,
+                get = function()
+                    return unpack(db().classification.caster)
+                end,
+                order = 24
+            },
+            classificationMelee = {
+                name = "Melee",
+                desc = "Choose a Color for Elite NPCs without Mana",
+                type = "color",
+                hasAlpha = true,
+                disabled = function()
+                    return not db().classification.enabled
+                end,
+                set = function(_, r, g, b, a)
+                    db().classification.melee = {r, g, b, a}
+                    Refresh(Nameplates.Module.Health)
+                end,
+                get = function()
+                    return unpack(db().classification.melee)
+                end,
+                order = 25
+            },
+            classificationTrivial = {
+                name = "Trivial",
+                desc = "Choose a Color for non-Elite NPCs",
+                type = "color",
+                hasAlpha = true,
+                disabled = function()
+                    return not db().classification.enabled
+                end,
+                set = function(_, r, g, b, a)
+                    db().classification.trivial = {r, g, b, a}
+                    Refresh(Nameplates.Module.Health)
+                end,
+                get = function()
+                    return unpack(db().classification.trivial)
+                end,
+                order = 26
+            },
             header4 = {
                 name = "Friendly",
                 type = "header",
-                order = 19.5
+                order = 27
             },
             friendlyHideHealthBar = {
                 name = "Hide Health Bar",
@@ -378,7 +472,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().friendly.hidehealthbar
                 end,
-                order = 20
+                order = 28
             },
             friendlyHideNames = {
                 name = "Hide Names",
@@ -391,7 +485,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().friendly.hidenames
                 end,
-                order = 21
+                order = 29
             },
             clickthrough = {
                 name = "Clickthrough",
@@ -409,7 +503,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().clickthrough
                 end,
-                order = 22
+                order = 30
             },
             friendlyClasscolor = {
                 name = "Class Color",
@@ -422,7 +516,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().friendly.classcolor
                 end,
-                order = 23
+                order = 31
             },
             friendlySmall = {
                 name = "Small Friendly Plates",
@@ -430,12 +524,12 @@ function Nameplates:OnInitialize()
                 type = "toggle",
                 set = function(_, val)
                     db().friendly.small = val
-                    Refresh(Nameplates.Module.Style)
+                    Refresh(Nameplates.Module.Health)
                 end,
                 get = function()
                     return db().friendly.small
                 end,
-                order = 24
+                order = 32
             },
             friendlyWidth = {
                 name = "Friendly Bar Width",
@@ -449,20 +543,17 @@ function Nameplates:OnInitialize()
                 end,
                 set = function(_, val)
                     db().friendly.width = val
-                    Refresh(Nameplates.Module.Style)
+                    Refresh(Nameplates.Module.Health)
                 end,
                 get = function()
                     return db().friendly.width
                 end,
-                order = 25
+                order = 33
             },
-
-            -- Class Icons -----------------------------------------------------
-
             header5 = {
                 name = "Class Icon",
                 type = "header",
-                order = 26
+                order = 34
             },
             classiconsEnabled = {
                 name = "Class Icons",
@@ -475,7 +566,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().classicons.enabled
                 end,
-                order = 27
+                order = 35
             },
             classiconsSpec = {
                 name = "Specialization Icon",
@@ -491,7 +582,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().classicons.spec
                 end,
-                order = 28
+                order = 36
             },
             classiconsFriendly = {
                 name = "Friendly Players",
@@ -507,7 +598,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().classicons.friendly
                 end,
-                order = 29
+                order = 37
             },
             classiconsEnemy = {
                 name = "Enemy Players",
@@ -523,7 +614,39 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().classicons.enemy
                 end,
-                order = 30
+                order = 38
+            },
+            classiconsArenaOnly = {
+                name = "Arena Only",
+                desc = "Only show the Icon inside an Arena",
+                type = "toggle",
+                disabled = function()
+                    return not db().classicons.enabled
+                end,
+                set = function(_, val)
+                    db().classicons.arenaonly = val
+                    Refresh(Nameplates.Module.ClassIcon)
+                end,
+                get = function()
+                    return db().classicons.arenaonly
+                end,
+                order = 39
+            },
+            classiconsHideHealers = {
+                name = "Hide on Friendly Healers",
+                desc = "Hide the Class Icon on Friendly Healers, so only the Healer Indicator marks them",
+                type = "toggle",
+                disabled = function()
+                    return not db().classicons.enabled or not db().classicons.friendly
+                end,
+                set = function(_, val)
+                    db().classicons.hidehealers = val
+                    Refresh(Nameplates.Module.ClassIcon)
+                end,
+                get = function()
+                    return db().classicons.hidehealers
+                end,
+                order = 40
             },
             classiconsAnchor = {
                 name = "Position",
@@ -541,7 +664,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().classicons.anchor
                 end,
-                order = 31
+                order = 41
             },
             classiconsSize = {
                 name = "Icon Size",
@@ -560,53 +683,88 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().classicons.size
                 end,
-                order = 32
+                order = 42
             },
-            classiconsX = {
-                name = "Offset X",
-                desc = "Move the Icon horizontally away from the Nameplate",
+            classiconsFriendlyX = {
+                name = "Friendly Offset X",
+                desc = "Move the Icon horizontally on Friendly Nameplates",
                 type = "range",
                 min = -100,
                 max = 100,
                 step = 1,
                 disabled = function()
-                    return not db().classicons.enabled
+                    return not db().classicons.enabled or not db().classicons.friendly
                 end,
                 set = function(_, val)
-                    db().classicons.x = val
+                    db().classicons.friendlyx = val
                     Refresh(Nameplates.Module.ClassIcon)
                 end,
                 get = function()
-                    return db().classicons.x
+                    return db().classicons.friendlyx
                 end,
-                order = 33
+                order = 43
             },
-            classiconsY = {
-                name = "Offset Y",
-                desc = "Move the Icon vertically away from the Nameplate",
+            classiconsFriendlyY = {
+                name = "Friendly Offset Y",
+                desc = "Move the Icon vertically on Friendly Nameplates",
                 type = "range",
                 min = -100,
                 max = 100,
                 step = 1,
                 disabled = function()
-                    return not db().classicons.enabled
+                    return not db().classicons.enabled or not db().classicons.friendly
                 end,
                 set = function(_, val)
-                    db().classicons.y = val
+                    db().classicons.friendlyy = val
                     Refresh(Nameplates.Module.ClassIcon)
                 end,
                 get = function()
-                    return db().classicons.y
+                    return db().classicons.friendlyy
                 end,
-                order = 34
+                order = 44
             },
-
-            -- Healer ----------------------------------------------------------
-
+            classiconsEnemyX = {
+                name = "Enemy Offset X",
+                desc = "Move the Icon horizontally on Enemy Nameplates",
+                type = "range",
+                min = -100,
+                max = 100,
+                step = 1,
+                disabled = function()
+                    return not db().classicons.enabled or not db().classicons.enemy
+                end,
+                set = function(_, val)
+                    db().classicons.enemyx = val
+                    Refresh(Nameplates.Module.ClassIcon)
+                end,
+                get = function()
+                    return db().classicons.enemyx
+                end,
+                order = 45
+            },
+            classiconsEnemyY = {
+                name = "Enemy Offset Y",
+                desc = "Move the Icon vertically on Enemy Nameplates",
+                type = "range",
+                min = -100,
+                max = 100,
+                step = 1,
+                disabled = function()
+                    return not db().classicons.enabled or not db().classicons.enemy
+                end,
+                set = function(_, val)
+                    db().classicons.enemyy = val
+                    Refresh(Nameplates.Module.ClassIcon)
+                end,
+                get = function()
+                    return db().classicons.enemyy
+                end,
+                order = 46
+            },
             header6 = {
                 name = "Healer",
                 type = "header",
-                order = 35
+                order = 47
             },
             healerEnabled = {
                 name = "Healer Indicator",
@@ -619,7 +777,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().healer.enabled
                 end,
-                order = 36
+                order = 48
             },
             healerFriendly = {
                 name = "Friendly Players",
@@ -635,7 +793,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().healer.friendly
                 end,
-                order = 37
+                order = 49
             },
             healerEnemy = {
                 name = "Enemy Players",
@@ -651,7 +809,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().healer.enemy
                 end,
-                order = 38
+                order = 50
             },
             healerAnchor = {
                 name = "Position",
@@ -669,7 +827,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().healer.anchor
                 end,
-                order = 39
+                order = 51
             },
             healerSize = {
                 name = "Icon Size",
@@ -688,53 +846,104 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().healer.size
                 end,
-                order = 40
+                order = 52
             },
-            healerX = {
-                name = "Offset X",
-                desc = "Move the Icon horizontally away from the Nameplate",
+            healerArenaOnly = {
+                name = "Arena Only",
+                desc = "Only show the Indicator inside an Arena",
+                type = "toggle",
+                disabled = function()
+                    return not db().healer.enabled
+                end,
+                set = function(_, val)
+                    db().healer.arenaonly = val
+                    Refresh(Nameplates.Module.Healer)
+                end,
+                get = function()
+                    return db().healer.arenaonly
+                end,
+                order = 53
+            },
+            healerFriendlyX = {
+                name = "Friendly Offset X",
+                desc = "Move the Indicator horizontally on Friendly Nameplates",
                 type = "range",
                 min = -100,
                 max = 100,
                 step = 1,
                 disabled = function()
-                    return not db().healer.enabled
+                    return not db().healer.enabled or not db().healer.friendly
                 end,
                 set = function(_, val)
-                    db().healer.x = val
+                    db().healer.friendlyx = val
                     Refresh(Nameplates.Module.Healer)
                 end,
                 get = function()
-                    return db().healer.x
+                    return db().healer.friendlyx
                 end,
-                order = 41
+                order = 54
             },
-            healerY = {
-                name = "Offset Y",
-                desc = "Move the Icon vertically away from the Nameplate",
+            healerFriendlyY = {
+                name = "Friendly Offset Y",
+                desc = "Move the Indicator vertically on Friendly Nameplates",
                 type = "range",
                 min = -100,
                 max = 100,
                 step = 1,
                 disabled = function()
-                    return not db().healer.enabled
+                    return not db().healer.enabled or not db().healer.friendly
                 end,
                 set = function(_, val)
-                    db().healer.y = val
+                    db().healer.friendlyy = val
                     Refresh(Nameplates.Module.Healer)
                 end,
                 get = function()
-                    return db().healer.y
+                    return db().healer.friendlyy
                 end,
-                order = 42
+                order = 55
             },
-
-            -- Target Indicator ------------------------------------------------
-
+            healerEnemyX = {
+                name = "Enemy Offset X",
+                desc = "Move the Indicator horizontally on Enemy Nameplates",
+                type = "range",
+                min = -100,
+                max = 100,
+                step = 1,
+                disabled = function()
+                    return not db().healer.enabled or not db().healer.enemy
+                end,
+                set = function(_, val)
+                    db().healer.enemyx = val
+                    Refresh(Nameplates.Module.Healer)
+                end,
+                get = function()
+                    return db().healer.enemyx
+                end,
+                order = 56
+            },
+            healerEnemyY = {
+                name = "Enemy Offset Y",
+                desc = "Move the Indicator vertically on Enemy Nameplates",
+                type = "range",
+                min = -100,
+                max = 100,
+                step = 1,
+                disabled = function()
+                    return not db().healer.enabled or not db().healer.enemy
+                end,
+                set = function(_, val)
+                    db().healer.enemyy = val
+                    Refresh(Nameplates.Module.Healer)
+                end,
+                get = function()
+                    return db().healer.enemyy
+                end,
+                order = 57
+            },
             header7 = {
                 name = "Target",
                 type = "header",
-                order = 43
+                order = 58
             },
             targetEnabled = {
                 name = "Target Indicator",
@@ -747,7 +956,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().target.enabled
                 end,
-                order = 44
+                order = 59
             },
             targetArrows = {
                 name = "Arrows",
@@ -763,23 +972,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().target.arrows
                 end,
-                order = 45
-            },
-            targetGlow = {
-                name = "Border Highlight",
-                desc = "Draw a Border around the Target's Health Bar",
-                type = "toggle",
-                disabled = function()
-                    return not db().target.enabled
-                end,
-                set = function(_, val)
-                    db().target.glow = val
-                    Refresh(Nameplates.Module.TargetIndicator)
-                end,
-                get = function()
-                    return db().target.glow
-                end,
-                order = 46
+                order = 60
             },
             targetClasscolor = {
                 name = "Class Color",
@@ -795,7 +988,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().target.classcolor
                 end,
-                order = 47
+                order = 61
             },
             targetColor = {
                 name = "Color",
@@ -812,7 +1005,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return unpack(db().target.color)
                 end,
-                order = 48
+                order = 62
             },
             targetSize = {
                 name = "Arrow Size",
@@ -831,7 +1024,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().target.size
                 end,
-                order = 49
+                order = 63
             },
             targetOffset = {
                 name = "Arrow Offset",
@@ -850,15 +1043,12 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().target.offset
                 end,
-                order = 50
+                order = 64
             },
-
-            -- Raid Marker -----------------------------------------------------
-
             header8 = {
                 name = "Raid Marker",
                 type = "header",
-                order = 51
+                order = 65
             },
             raidmarkerEnabled = {
                 name = "Raid Marker",
@@ -871,7 +1061,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().raidmarker.enabled
                 end,
-                order = 52
+                order = 66
             },
             raidmarkerAnchor = {
                 name = "Position",
@@ -889,7 +1079,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().raidmarker.anchor
                 end,
-                order = 53
+                order = 67
             },
             raidmarkerSize = {
                 name = "Icon Size",
@@ -908,7 +1098,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().raidmarker.size
                 end,
-                order = 54
+                order = 68
             },
             raidmarkerAlpha = {
                 name = "Opacity",
@@ -928,7 +1118,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().raidmarker.alpha
                 end,
-                order = 55
+                order = 69
             },
             raidmarkerX = {
                 name = "Offset X",
@@ -947,7 +1137,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().raidmarker.x
                 end,
-                order = 56
+                order = 70
             },
             raidmarkerY = {
                 name = "Offset Y",
@@ -966,19 +1156,16 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().raidmarker.y
                 end,
-                order = 57
+                order = 71
             },
-
-            -- Auras -------------------------------------------------------------
-
             header9 = {
                 name = "Auras",
                 type = "header",
-                order = 58
+                order = 72
             },
             aurasEnabled = {
                 name = "Nameplate Auras",
-                desc = "Show three Aura groups on Nameplates\n\n|cffffff00Crowd Control|r: right of the Health Bar\n|cffffff00Your Debuffs|r: above the Nameplate\n|cffffff00Stealable / Important Buffs|r: left of the Health Bar",
+                desc = "Show three Aura groups on Nameplates\n\n|cffffff00Crowd Control|r: right of the Health Bar\n|cffffff00Your Debuffs|r: above the Nameplate\n|cffffff00Important Buffs|r: left of the Health Bar",
                 type = "toggle",
                 set = function(_, val)
                     db().auras.enabled = val
@@ -987,48 +1174,10 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().auras.enabled
                 end,
-                order = 59
-            },
-            aurasCCSize = {
-                name = "Crowd Control Size",
-                desc = "Set the Icon Size of the Crowd Control Aura group",
-                type = "range",
-                min = 8,
-                max = 40,
-                step = 1,
-                disabled = function()
-                    return not db().auras.enabled
-                end,
-                set = function(_, val)
-                    db().auras.cc.size = val
-                    Refresh(Nameplates.Module.Auras)
-                end,
-                get = function()
-                    return db().auras.cc.size
-                end,
-                order = 60
-            },
-            aurasCCOffset = {
-                name = "Crowd Control Offset",
-                desc = "Move the Crowd Control Aura group away from the Health Bar",
-                type = "range",
-                min = 0,
-                max = 60,
-                step = 1,
-                disabled = function()
-                    return not db().auras.enabled
-                end,
-                set = function(_, val)
-                    db().auras.cc.x = val
-                    Refresh(Nameplates.Module.Auras)
-                end,
-                get = function()
-                    return db().auras.cc.x
-                end,
-                order = 61
+                order = 73
             },
             aurasCCAnchor = {
-                name = "Crowd Control Side",
+                name = "CC Anchor",
                 desc = "Which side of the Health Bar the Crowd Control Aura group sits on",
                 type = "select",
                 values = {
@@ -1046,87 +1195,11 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().auras.cc.anchor
                 end,
-                order = 62
-            },
-            aurasTopSize = {
-                name = "Your Debuffs Size",
-                desc = "Set the Icon Size of the Aura group above the Nameplate showing your own Debuffs",
-                type = "range",
-                min = 8,
-                max = 40,
-                step = 1,
-                disabled = function()
-                    return not db().auras.enabled
-                end,
-                set = function(_, val)
-                    db().auras.top.size = val
-                    Refresh(Nameplates.Module.Auras)
-                end,
-                get = function()
-                    return db().auras.top.size
-                end,
-                order = 63
-            },
-            aurasTopOffset = {
-                name = "Your Debuffs Offset",
-                desc = "Move the Debuff Aura group away from the top of the Nameplate",
-                type = "range",
-                min = 0,
-                max = 60,
-                step = 1,
-                disabled = function()
-                    return not db().auras.enabled
-                end,
-                set = function(_, val)
-                    db().auras.top.y = val
-                    Refresh(Nameplates.Module.Auras)
-                end,
-                get = function()
-                    return db().auras.top.y
-                end,
-                order = 64
-            },
-            aurasLeftSize = {
-                name = "Stealable / Important Size",
-                desc = "Set the Icon Size of the Stealable and Important Buff Aura group",
-                type = "range",
-                min = 8,
-                max = 40,
-                step = 1,
-                disabled = function()
-                    return not db().auras.enabled
-                end,
-                set = function(_, val)
-                    db().auras.left.size = val
-                    Refresh(Nameplates.Module.Auras)
-                end,
-                get = function()
-                    return db().auras.left.size
-                end,
-                order = 65
-            },
-            aurasLeftOffset = {
-                name = "Stealable / Important Offset",
-                desc = "Move the Stealable / Important Aura group away from the Health Bar",
-                type = "range",
-                min = 0,
-                max = 60,
-                step = 1,
-                disabled = function()
-                    return not db().auras.enabled
-                end,
-                set = function(_, val)
-                    db().auras.left.x = val
-                    Refresh(Nameplates.Module.Auras)
-                end,
-                get = function()
-                    return db().auras.left.x
-                end,
-                order = 66
+                order = 74
             },
             aurasLeftAnchor = {
-                name = "Stealable / Important Side",
-                desc = "Which side of the Health Bar the Stealable / Important Buff Aura group sits on",
+                name = "Important Anchor",
+                desc = "Which side of the Health Bar the Important Buff Aura group sits on",
                 type = "select",
                 values = {
                     LEFT = "Left",
@@ -1143,15 +1216,126 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().auras.left.anchor
                 end,
-                order = 67
+                order = 75
             },
-
-            -- Totem -------------------------------------------------------------
-
+            aurasCCOffset = {
+                name = "CC Offset",
+                desc = "Move the Crowd Control Aura group away from the Health Bar",
+                type = "range",
+                min = 0,
+                max = 60,
+                step = 1,
+                disabled = function()
+                    return not db().auras.enabled
+                end,
+                set = function(_, val)
+                    db().auras.cc.x = val
+                    Refresh(Nameplates.Module.Auras)
+                end,
+                get = function()
+                    return db().auras.cc.x
+                end,
+                order = 76
+            },
+            aurasLeftOffset = {
+                name = "Important Offset",
+                desc = "Move the Important Aura group away from the Health Bar",
+                type = "range",
+                min = 0,
+                max = 60,
+                step = 1,
+                disabled = function()
+                    return not db().auras.enabled
+                end,
+                set = function(_, val)
+                    db().auras.left.x = val
+                    Refresh(Nameplates.Module.Auras)
+                end,
+                get = function()
+                    return db().auras.left.x
+                end,
+                order = 77
+            },
+            aurasTopOffset = {
+                name = "Debuffs Offset",
+                desc = "Move the Debuff Aura group away from the top of the Nameplate",
+                type = "range",
+                min = 0,
+                max = 60,
+                step = 1,
+                disabled = function()
+                    return not db().auras.enabled
+                end,
+                set = function(_, val)
+                    db().auras.top.y = val
+                    Refresh(Nameplates.Module.Auras)
+                end,
+                get = function()
+                    return db().auras.top.y
+                end,
+                order = 78
+            },
+            aurasCCSize = {
+                name = "CC Size",
+                desc = "Set the Icon Size of the Crowd Control Aura group",
+                type = "range",
+                min = 8,
+                max = 40,
+                step = 1,
+                disabled = function()
+                    return not db().auras.enabled
+                end,
+                set = function(_, val)
+                    db().auras.cc.size = val
+                    Refresh(Nameplates.Module.Auras)
+                end,
+                get = function()
+                    return db().auras.cc.size
+                end,
+                order = 79
+            },
+            aurasLeftSize = {
+                name = "Important Size",
+                desc = "Set the Icon Size of the Important Buff Aura group",
+                type = "range",
+                min = 8,
+                max = 40,
+                step = 1,
+                disabled = function()
+                    return not db().auras.enabled
+                end,
+                set = function(_, val)
+                    db().auras.left.size = val
+                    Refresh(Nameplates.Module.Auras)
+                end,
+                get = function()
+                    return db().auras.left.size
+                end,
+                order = 80
+            },
+            aurasTopSize = {
+                name = "Debuffs Size",
+                desc = "Set the Icon Size of the Aura group above the Nameplate showing your own Debuffs",
+                type = "range",
+                min = 8,
+                max = 40,
+                step = 1,
+                disabled = function()
+                    return not db().auras.enabled
+                end,
+                set = function(_, val)
+                    db().auras.top.size = val
+                    Refresh(Nameplates.Module.Auras)
+                end,
+                get = function()
+                    return db().auras.top.size
+                end,
+                order = 81
+            },
             header10 = {
                 name = "Totems",
                 type = "header",
-                order = 68
+                order = 82
             },
             totemEnabled = {
                 name = "Totem Indicator",
@@ -1164,7 +1348,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().totem.enabled
                 end,
-                order = 69
+                order = 83
             },
             totemEnemyOnly = {
                 name = "Enemy Totems Only",
@@ -1180,7 +1364,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().totem.enemyOnly
                 end,
-                order = 70
+                order = 84
             },
             totemNoAnimation = {
                 name = "Disable Pulse Animation",
@@ -1196,7 +1380,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().totem.noAnimation
                 end,
-                order = 71
+                order = 85
             },
             totemColorHealthBar = {
                 name = "Color Health Bar",
@@ -1212,7 +1396,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().totem.colorHealthBar
                 end,
-                order = 72
+                order = 86
             },
             totemColor = {
                 name = "Color",
@@ -1229,7 +1413,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return unpack(db().totem.color)
                 end,
-                order = 73
+                order = 87
             },
             totemAnchor = {
                 name = "Position",
@@ -1247,7 +1431,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().totem.anchor
                 end,
-                order = 74
+                order = 88
             },
             totemSize = {
                 name = "Size",
@@ -1266,7 +1450,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().totem.size
                 end,
-                order = 75
+                order = 89
             },
             totemX = {
                 name = "Offset X",
@@ -1285,7 +1469,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().totem.x
                 end,
-                order = 76
+                order = 90
             },
             totemY = {
                 name = "Offset Y",
@@ -1304,15 +1488,12 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().totem.y
                 end,
-                order = 77
+                order = 91
             },
-
-            -- Personal Resource Bar ----------------------------------------------
-
             header11 = {
                 name = "Personal Bar",
                 type = "header",
-                order = 78
+                order = 92
             },
             personalresourceEnabled = {
                 name = "Personal Resource Bar",
@@ -1325,7 +1506,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().personalresource.enabled
                 end,
-                order = 79
+                order = 93
             },
             personalresourceAnchor = {
                 name = "Position",
@@ -1343,7 +1524,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().personalresource.anchor
                 end,
-                order = 80
+                order = 94
             },
             personalresourceX = {
                 name = "Offset X",
@@ -1362,7 +1543,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().personalresource.x
                 end,
-                order = 81
+                order = 95
             },
             personalresourceY = {
                 name = "Offset Y",
@@ -1381,7 +1562,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().personalresource.y
                 end,
-                order = 82
+                order = 96
             }
         }
     }

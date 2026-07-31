@@ -136,6 +136,7 @@ local defaults = {
                 privateaurasize = 35,
                 centerDefensiveSize = 60,
                 centerDefensivePoint = "CENTER",
+                debuffPoint = "LEFT",
                 centerDefensiveX = 0,
                 centerDefensiveY = 0,
                 defensive = {
@@ -178,7 +179,7 @@ local defaults = {
             clickthrough = false,
             size = {
                 healthwidth = 150,
-                healthheight = 12,
+                healthheight = 16,
                 castwidth = 150,
                 castheight = 10
             },
@@ -201,9 +202,20 @@ local defaults = {
                 arena = false,
                 spec = false
             },
+            classification = {
+                enabled = false,
+                instancesonly = true,
+                casteralways = false,
+                boss = {0.737, 0.11, 0, 1},
+                miniboss = {0.565, 0, 0.737, 1},
+                caster = {0, 0.455, 0.737, 1},
+                melee = {0.988, 0.988, 0.988, 1},
+                trivial = {0.698, 0.557, 0.333, 1}
+            },
             scale = {
                 target = 1.2,
-                other = 1
+                other = 1,
+                global = 1
             },
             friendly = {
                 hidehealthbar = false,
@@ -212,24 +224,34 @@ local defaults = {
                 small = false,
                 width = 90
             },
+            -- The x/y offsets are split per reaction: the two indicators
+            -- usually want to sit on opposite sides in arena, where friendly
+            -- and enemy plates are read for different things.
             classicons = {
                 enabled = false,
                 friendly = true,
                 enemy = true,
+                arenaonly = false,
+                hidehealers = false,
                 spec = true,
                 size = 22,
                 anchor = "LEFT",
-                x = 4,
-                y = 0
+                friendlyx = 4,
+                friendlyy = 0,
+                enemyx = 4,
+                enemyy = 0
             },
             healer = {
                 enabled = false,
                 friendly = true,
                 enemy = true,
+                arenaonly = false,
                 size = 18,
                 anchor = "RIGHT",
-                x = 4,
-                y = 0
+                friendlyx = 4,
+                friendlyy = 0,
+                enemyx = 4,
+                enemyy = 0
             },
             target = {
                 enabled = false,
