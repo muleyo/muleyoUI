@@ -1558,6 +1558,40 @@ function Nameplates:OnInitialize()
                     return db().personalresource.y
                 end,
                 order = 97
+            },
+            header12 = {
+                name = "Cast Bar Colors",
+                type = "header",
+                order = 98
+            },
+            castbarColors = {
+                name = "Interrupt on Cooldown",
+                desc = "Recolor the Cast Bar of Interruptible Spells while your own Interrupt is on Cooldown\n\n|cffffff00Info:|r Does nothing if your Class has no Interrupt",
+                type = "toggle",
+                set = function(_, val)
+                    db().castbar.colors = val
+                    Refresh(Nameplates.Module.Castbar)
+                end,
+                get = function()
+                    return db().castbar.colors
+                end,
+                order = 99
+            },
+            castbarCooldownColor = {
+                name = "Cannot Interrupt",
+                desc = "Choose a Color for Spells you cannot Interrupt right now",
+                type = "color",
+                disabled = function()
+                    return not db().castbar.colors
+                end,
+                set = function(_, r, g, b)
+                    db().castbar.cooldowncolor = {r, g, b}
+                    Refresh(Nameplates.Module.Castbar)
+                end,
+                get = function()
+                    return unpack(db().castbar.cooldowncolor)
+                end,
+                order = 100
             }
         }
     }

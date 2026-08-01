@@ -184,7 +184,9 @@ local defaults = {
                 castheight = 10
             },
             castbar = {
-                y = 8
+                y = 8,
+                colors = true,
+                cooldowncolor = {0.85, 0.15, 0.15}
             },
             border = {
                 size = 1
