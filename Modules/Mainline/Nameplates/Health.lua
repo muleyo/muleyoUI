@@ -95,24 +95,23 @@ function Health:OnInitialize()
 
     local FOCUS_TEXTURE = [[Interface\AddOns\mUI\Media\Textures\Nameplates\focusTexture]]
     local CLASSIC_TEXTURE = [[Interface\TargetingFrame\UI-TargetingFrame-BarFill]]
+    local cachedTexture = CLASSIC_TEXTURE
 
     local function BarTexture(data)
         if data and data.isFocus and Health.db.focus then
             return FOCUS_TEXTURE
         end
 
-        local name = Health.db.texture
-        if name and name ~= "None" then
-            local fetched = Health.LSM:Fetch("statusbar", name, true)
-            if fetched then
-                return fetched
-            end
-        end
-        return CLASSIC_TEXTURE
+        return cachedTexture
     end
 
+    local Totem
+
     local function BarColor(data)
-        local Totem = mUI:GetModule("mUI.Modules.Nameplates.Totem", true)
+        if Totem == nil then
+            Totem = mUI:GetModule("mUI.Modules.Nameplates.Totem", true) or false
+        end
+
         local override = Totem and Totem.GetBarColor and Totem:GetBarColor(data)
         if override then
             return override[1], override[2], override[3]
@@ -154,7 +153,7 @@ function Health:OnInitialize()
         end
 
         local unit = frame.unit
-        return unit ~= nil and strsub(unit, 1, 9) == "nameplate" and not frame:IsForbidden()
+        return unit ~= nil and strfind(unit, "nameplate", 1, true) == 1 and not frame:IsForbidden()
     end
 
     local function GetInfo(frame, unit)
@@ -166,6 +165,12 @@ function Health:OnInitialize()
 
     local function RefreshCachedStyle()
         healthFormat = "%." .. (Health.db.decimals or 0) .. "f%%"
+
+        cachedTexture = CLASSIC_TEXTURE
+        local textureName = Health.db.texture
+        if textureName and textureName ~= "None" then
+            cachedTexture = Health.LSM:Fetch("statusbar", textureName, true) or CLASSIC_TEXTURE
+        end
 
         local color = mUI:Color(0.15)
         if color then
@@ -379,7 +384,6 @@ function Health:OnInitialize()
         text:ClearAllPoints()
         text:SetPoint(point, bar, relativePoint, config.x * xSign, config.y * ySign)
 
-        -- SetFont rebuilds the font binding, so only issue it on a real change.
         local path = mUI.db.profile.general.fontpath
         local size = Health.db.name.size
         if path and (text.mUIFontPath ~= path or text.mUIFontSize ~= size) then
@@ -482,8 +486,6 @@ function Health:OnInitialize()
         local classFile = Units:GetClassFile(data)
         local color = classFile and C_ClassColor.GetClassColor(classFile)
 
-        -- Not guarded, for the same reason as the health bar colour: Blizzard
-        -- writes this FontString inside the function this is hooked to.
         if data.isPlayer and color and classcolor then
             name:SetTextColor(color.r, color.g, color.b)
         else

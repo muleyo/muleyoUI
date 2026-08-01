@@ -41,7 +41,7 @@ function Units:OnInitialize()
     end
 
     function Units:ResolveArenaIndex(data)
-        if not data.isPlayer or not data.isEnemy then
+        if not Core.inArena or not data.isPlayer or not data.isEnemy then
             return nil
         end
 

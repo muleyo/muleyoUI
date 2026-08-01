@@ -4,6 +4,10 @@ function Auras:OnInitialize()
     -- Load Database
     Auras.db = mUI.db.profile.nameplates
 
+    if select(4, GetBuildInfo()) < 120100 then
+        return
+    end
+
     Auras.Core = mUI:GetModule("mUI.Modules.Nameplates.Core")
     Auras.Theme = mUI:GetModule("mUI.Modules.General.Theme")
     Auras.Health = mUI:GetModule("mUI.Modules.Nameplates.Health")
@@ -78,9 +82,37 @@ function Auras:OnInitialize()
         local container = CreateFrame("AuraContainer", nil, plate, "CustomAuraContainerTemplate")
         container:SetFlowLayoutAnchorPoint(anchorPoint)
         container:SetFlowLayoutGrowthDirection(growH, growV)
+        container:SetFlowLayoutMaximumLineSize(3 * (BASE_ICON_SIZE + ICON_GAP))
         container:SetEnabled(false)
         container.mUI_key = key
         return container
+    end
+
+    local function ForEachContainer(plate, func)
+        func(plate.AuraCC)
+        func(plate.AuraTop)
+        func(plate.AuraLeft)
+        func(plate.AuraFriendlyCC)
+    end
+
+    local function DisableContainer(container)
+        if not container then
+            return
+        end
+
+        container:SetEnabled(false)
+        container.mUI_unit = nil
+        container:Hide()
+    end
+
+    local function DisableAll(plate)
+        ForEachContainer(plate, DisableContainer)
+    end
+
+    local function UpdateContainer(container)
+        if container and container.mUI_unit then
+            container:UpdateAllAuras()
+        end
     end
 
     Auras.handler = {}
@@ -127,7 +159,6 @@ function Auras:OnInitialize()
         })
         plate.AuraLeft = left
 
-        -- Friendly-only: a single crowd-control icon shown inside the class icon
         local friendlyCC = NewContainer(plate, "friendlycc", "CENTER", AnchorUtil.FlowDirection.Right, AnchorUtil.FlowDirection.Down)
         friendlyCC:SetFrameLevel(plate:GetFrameLevel() + 6)
         friendlyCC:AddAuraGroup("FriendlyCrowdControl", CC_FILTER, {
@@ -142,12 +173,31 @@ function Auras:OnInitialize()
 
         local watcher = CreateFrame("Frame", nil, plate)
         watcher:SetScript("OnEvent", function()
-            cc:UpdateAllAuras()
-            top:UpdateAllAuras()
-            left:UpdateAllAuras()
-            friendlyCC:UpdateAllAuras()
+            ForEachContainer(plate, UpdateContainer)
         end)
         plate.AuraWatcher = watcher
+        plate:HookScript("OnHide", function()
+            if plate.AurasSuspended then
+                return
+            end
+
+            plate.AurasSuspended = true
+            DisableAll(plate)
+        end)
+
+        plate:HookScript("OnShow", function()
+            if not plate.AurasSuspended then
+                return
+            end
+
+            plate.AurasSuspended = nil
+
+            local data = Core:GetData(plate:GetParent())
+            if data then
+                Auras.handler.Update(plate, data)
+                Auras.handler.Layout(plate)
+            end
+        end)
     end
 
     local function SetContainerUnit(container, unit)
@@ -168,16 +218,26 @@ function Auras:OnInitialize()
             return
         end
 
+        if plate.AurasSuspended or not plate:IsShown() then
+            plate.AurasSuspended = true
+            plate.AurasHidden = true
+            plate.AurasShowFriendlyCC = nil
+            DisableAll(plate)
+
+            if plate.AuraWatcher then
+                plate.AuraWatcher:UnregisterAllEvents()
+            end
+            return
+        end
+
         local isMinion = Auras.db.totem.enabled and Core:Safe(UnitIsMinion(data.unit), false)
         local hideBar = (Auras.Health.HideFriendlyBar and Auras.Health.HideFriendlyBar(data)) or isMinion
         plate.AurasHidden = hideBar
 
         if hideBar then
-            for _, container in ipairs({plate.AuraCC, plate.AuraTop, plate.AuraLeft}) do
-                container:SetEnabled(false)
-                container.mUI_unit = nil
-                container:Hide()
-            end
+            DisableContainer(plate.AuraCC)
+            DisableContainer(plate.AuraTop)
+            DisableContainer(plate.AuraLeft)
         else
             plate.AuraCC:Show()
             plate.AuraTop:Show()
@@ -193,9 +253,7 @@ function Auras:OnInitialize()
             plate.AuraFriendlyCC:Show()
             SetContainerUnit(plate.AuraFriendlyCC, data.unit)
         else
-            plate.AuraFriendlyCC:SetEnabled(false)
-            plate.AuraFriendlyCC.mUI_unit = nil
-            plate.AuraFriendlyCC:Hide()
+            DisableContainer(plate.AuraFriendlyCC)
         end
 
         if plate.AuraWatcher then
@@ -222,11 +280,27 @@ function Auras:OnInitialize()
     }
 
     local function ApplySide(container, health, side, x)
+        if container.mUISide == side and container.mUIX == x and container.mUIAnchorTo == health then
+            return
+        end
+
+        container.mUISide, container.mUIX, container.mUIAnchorTo = side, x, health
+
         local anchor = SIDE_ANCHORS[side] or SIDE_ANCHORS.RIGHT
         container:SetFlowLayoutAnchorPoint(anchor.flowAnchor)
         container:SetFlowLayoutGrowthDirection(anchor.flowDirection, AnchorUtil.FlowDirection.Down)
         container:ClearAllPoints()
         container:SetPoint(anchor.point, health, anchor.relativePoint, x * anchor.xSign, 0)
+    end
+
+    local function ApplySize(container, size)
+        local scale = size / BASE_ICON_SIZE
+        if container.mUIScale == scale then
+            return
+        end
+
+        container.mUIScale = scale
+        container:SetScale(scale)
     end
 
     function Auras.handler.Layout(plate)
@@ -237,42 +311,37 @@ function Auras:OnInitialize()
 
         local config = Auras.db.auras
 
-        local function ApplySize(container, size)
-            container:SetScale(size / BASE_ICON_SIZE)
-        end
-
         if not plate.AurasHidden then
             ApplySide(plate.AuraCC, health, config.cc.anchor, config.cc.x)
-            plate.AuraCC:SetFlowLayoutMaximumLineSize(3 * (BASE_ICON_SIZE + ICON_GAP))
             ApplySize(plate.AuraCC, config.cc.size)
 
             local topAnchor = (frame and frame.name) or health
-            plate.AuraTop:ClearAllPoints()
-            plate.AuraTop:SetPoint("BOTTOM", topAnchor, "TOP", 0, config.top.y)
-            plate.AuraTop:SetFlowLayoutMaximumLineSize(3 * (BASE_ICON_SIZE + ICON_GAP))
+            if plate.AuraTop.mUIAnchorTo ~= topAnchor or plate.AuraTop.mUIY ~= config.top.y then
+                plate.AuraTop.mUIAnchorTo, plate.AuraTop.mUIY = topAnchor, config.top.y
+                plate.AuraTop:ClearAllPoints()
+                plate.AuraTop:SetPoint("BOTTOM", topAnchor, "TOP", 0, config.top.y)
+            end
             ApplySize(plate.AuraTop, config.top.size)
 
             ApplySide(plate.AuraLeft, health, config.left.anchor, config.left.x)
-            plate.AuraLeft:SetFlowLayoutMaximumLineSize(3 * (BASE_ICON_SIZE + ICON_GAP))
             ApplySize(plate.AuraLeft, config.left.size)
         end
 
         if plate.AurasShowFriendlyCC and plate.ClassIcon then
-            local size = Auras.db.classicons.size
-            plate.AuraFriendlyCC:ClearAllPoints()
-            plate.AuraFriendlyCC:SetPoint("CENTER", plate.ClassIcon.texture, "CENTER", 0, 0)
-            ApplySize(plate.AuraFriendlyCC, size)
+            local texture = plate.ClassIcon.texture
+            if plate.AuraFriendlyCC.mUIAnchorTo ~= texture then
+                plate.AuraFriendlyCC.mUIAnchorTo = texture
+                plate.AuraFriendlyCC:ClearAllPoints()
+                plate.AuraFriendlyCC:SetPoint("CENTER", texture, "CENTER", 0, 0)
+            end
+            ApplySize(plate.AuraFriendlyCC, Auras.db.classicons.size)
         end
     end
 
     function Auras.handler.Remove(plate)
-        for _, container in ipairs({plate.AuraCC, plate.AuraTop, plate.AuraLeft, plate.AuraFriendlyCC}) do
-            if container then
-                container:SetEnabled(false)
-                container.mUI_unit = nil
-                container:Hide()
-            end
-        end
+        DisableAll(plate)
+        plate.AurasHidden = true
+        plate.AurasShowFriendlyCC = nil
 
         if plate.AuraWatcher then
             plate.AuraWatcher:UnregisterAllEvents()

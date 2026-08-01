@@ -68,17 +68,25 @@ function Core:OnInitialize()
         end
     end
 
+    local function HideRegion(region)
+        if region then
+            region:SetAlpha(0)
+        end
+    end
+
+    local function ShowRegion(region)
+        if region then
+            region:SetAlpha(1)
+        end
+    end
+
     local function SuppressBlizzard(namePlate)
         local frame = namePlate.UnitFrame
         if not frame then
             return
         end
 
-        ForEachHiddenRegion(frame, function(region)
-            if region then
-                region:SetAlpha(0)
-            end
-        end)
+        ForEachHiddenRegion(frame, HideRegion)
     end
 
     function Core:RestoreBlizzard(namePlate)
@@ -87,11 +95,7 @@ function Core:OnInitialize()
             return
         end
 
-        ForEachHiddenRegion(frame, function(region)
-            if region then
-                region:SetAlpha(1)
-            end
-        end)
+        ForEachHiddenRegion(frame, ShowRegion)
 
         frame:SetAlpha(1)
         frame:Show()
@@ -201,6 +205,24 @@ function Core:OnInitialize()
         end
     end
 
+    local plateData = setmetatable({}, {
+        __mode = "k"
+    })
+
+    function Core:InvalidateData(namePlate)
+        if namePlate then
+            local data = plateData[namePlate]
+            if data then
+                data.stamp = nil
+            end
+            return
+        end
+
+        for _, data in pairs(plateData) do
+            data.stamp = nil
+        end
+    end
+
     function Core:GetUnitData(unit, namePlate)
         if not unit then
             return nil
@@ -208,25 +230,39 @@ function Core:OnInitialize()
 
         namePlate = namePlate or C_NamePlate.GetNamePlateForUnit(unit, false)
 
+        local data = namePlate and plateData[namePlate]
+        if data and data.stamp == GetTime() and data.unit == unit then
+            return data
+        end
+
+        if not data then
+            data = {}
+            if namePlate then
+                plateData[namePlate] = data
+            end
+        end
+
         local reaction = UnitReaction(unit, "player")
         local isPlayer = UnitIsPlayer(unit)
+        local displayName = UnitName(unit)
 
-        return {
-            unit = unit,
-            namePlate = namePlate,
-            plate = namePlate and namePlate.mUIPlate,
-            guid = Clean(UnitGUID(unit)),
-            displayName = UnitName(unit),
-            name = Clean(UnitName(unit)),
-            isFriend = reaction ~= nil and reaction >= 5,
-            isNeutral = reaction ~= nil and reaction == 4,
-            isEnemy = reaction ~= nil and reaction < 4,
-            isPlayer = isPlayer,
-            canAttack = UnitCanAttack("player", unit),
-            isTarget = Core:Safe(UnitIsUnit(unit, "target"), false),
-            isFocus = Core:Safe(UnitIsUnit(unit, "focus"), false),
-            classFile = isPlayer and Clean(select(2, UnitClass(unit))) or nil
-        }
+        data.stamp = GetTime()
+        data.unit = unit
+        data.namePlate = namePlate
+        data.plate = namePlate and namePlate.mUIPlate
+        data.guid = Clean(UnitGUID(unit))
+        data.displayName = displayName
+        data.name = Clean(displayName)
+        data.isFriend = reaction ~= nil and reaction >= 5
+        data.isNeutral = reaction ~= nil and reaction == 4
+        data.isEnemy = reaction ~= nil and reaction < 4
+        data.isPlayer = isPlayer
+        data.canAttack = UnitCanAttack("player", unit)
+        data.isTarget = Core:Safe(UnitIsUnit(unit, "target"), false)
+        data.isFocus = Core:Safe(UnitIsUnit(unit, "focus"), false)
+        data.classFile = isPlayer and Clean(select(2, UnitClass(unit))) or nil
+
+        return data
     end
 
     function Core:GetData(namePlate)
@@ -246,7 +282,6 @@ function Core:OnInitialize()
         Core.widgets[name] = handler
         Core.order[#Core.order + 1] = name
 
-        -- Catch up the plates that are already on screen.
         Core:ForEach(function(plate, data)
             Core:Build(name, plate)
             if handler.Update then
@@ -318,6 +353,8 @@ function Core:OnInitialize()
     end
 
     local function RefreshPlate(namePlate)
+        Core:InvalidateData(namePlate)
+
         local data = Core:GetData(namePlate)
         if data and data.plate then
             Dispatch("Update", data.plate, data)
@@ -370,8 +407,8 @@ function Core:OnInitialize()
     end
 
     function Core:ForEach(func)
-        for namePlate in pairs(Core.plates) do
-            local data = Core:GetData(namePlate)
+        for namePlate, unit in pairs(Core.plates) do
+            local data = Core:GetUnitData(unit, namePlate)
             if data and data.plate then
                 func(data.plate, data)
             end
@@ -379,8 +416,10 @@ function Core:OnInitialize()
     end
 
     function Core:UpdateAll()
-        for namePlate in pairs(Core.plates) do
-            local data = Core:GetData(namePlate)
+        Core:InvalidateData()
+
+        for namePlate, unit in pairs(Core.plates) do
+            local data = Core:GetUnitData(unit, namePlate)
             if data and data.plate then
                 SuppressBlizzard(namePlate)
                 AdoptSpecial(namePlate, data)
@@ -390,9 +429,28 @@ function Core:OnInitialize()
         end
     end
 
+    function Core:UpdateWidget(name)
+        local handler = Core.widgets[name]
+        if not handler then
+            return
+        end
+
+        for namePlate, unit in pairs(Core.plates) do
+            local data = Core:GetUnitData(unit, namePlate)
+            if data and data.plate then
+                if handler.Update then
+                    pcall(handler.Update, data.plate, data)
+                end
+                if handler.Layout then
+                    pcall(handler.Layout, data.plate, data)
+                end
+            end
+        end
+    end
+
     function Core:RefreshHitTest()
-        for namePlate in pairs(Core.plates) do
-            local data = Core:GetData(namePlate)
+        for namePlate, unit in pairs(Core.plates) do
+            local data = Core:GetUnitData(unit, namePlate)
             if data then
                 Core:ApplyHitTest(namePlate, data.plate, data)
             end
@@ -424,6 +482,7 @@ function Core:OnInitialize()
         SuppressBlizzard(namePlate)
 
         Core.plates[namePlate] = unit
+        Core:InvalidateData(namePlate)
         local data = Core:GetUnitData(unit, namePlate)
         AdoptSpecial(namePlate, data)
 
@@ -442,6 +501,7 @@ function Core:OnInitialize()
     function Core:OnUnitRemoved(unit)
         for namePlate, tracked in pairs(Core.plates) do
             if tracked == unit then
+                Core:InvalidateData(namePlate)
                 local data = Core:GetUnitData(unit, namePlate)
                 if data and data.plate then
                     Dispatch("Remove", data.plate, data)
@@ -470,6 +530,8 @@ function Core:OnInitialize()
             Core:OnUnitAdded(unit)
         elseif event == "NAME_PLATE_UNIT_REMOVED" then
             Core:OnUnitRemoved(unit)
+        elseif event == "RAID_TARGET_UPDATE" then
+            Core:UpdateWidget("RaidMarker")
         else
             if event == "PLAYER_ENTERING_WORLD" then
                 Core:RefreshInstanceType()
@@ -493,6 +555,7 @@ function Core:OnInitialize()
             end
 
             Core.plates[namePlate] = stableUnit
+            Core:InvalidateData(namePlate)
 
             local data = Core:GetUnitData(stableUnit, namePlate)
             if data and data.plate then
@@ -514,6 +577,7 @@ function Core:OnInitialize()
             end
 
             Core.plates[namePlate] = unitFrame.unit
+            Core:InvalidateData(namePlate)
 
             local data = Core:GetUnitData(unitFrame.unit, namePlate)
             if not data or not data.plate then
