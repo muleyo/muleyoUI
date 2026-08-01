@@ -1,5 +1,9 @@
 local Castbar = mUI:NewModule("mUI.Modules.Nameplates.Castbar", "AceHook-3.0")
 
+local IsSecret = issecretvalue or function()
+    return false
+end
+
 function Castbar:OnInitialize()
     -- Load Database
     Castbar.db = mUI.db.profile.nameplates
@@ -9,6 +13,62 @@ function Castbar:OnInitialize()
 
     -- The moments Blizzard re-applies its own styling.
     local CAST_EVENTS = {"UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_EMPOWER_START"}
+    local UPDATE_SPELLS = {"PLAYER_LOGIN", "SPELLS_CHANGED"}
+
+    local _, playerClass = UnitClass("player")
+
+    local interruptSpells = {
+        ["PALADIN"] = {96231, 31935},
+        ["WARRIOR"] = {6552},
+        ["PRIEST"] = {15487},
+        ["MAGE"] = {2139},
+        ["WARLOCK"] = {89766, 119910, 132409},
+        ["DRUID"] = {38675, 78675, 106839},
+        ["ROGUE"] = {1766},
+        ["HUNTER"] = {147362, 187707},
+        ["SHAMAN"] = {57994},
+        ["DEATHKNIGHT"] = {47528},
+        ["MONK"] = {116705},
+        ["DEMONHUNTER"] = {183752},
+        ["EVOKER"] = {351338}
+    }
+
+    local interrupts = {}
+
+    local function UpdateInterrupts()
+        table.wipe(interrupts)
+
+        local spells = interruptSpells[playerClass]
+        if not spells then
+            return
+        end
+
+        for _, spellID in ipairs(spells) do
+            if C_SpellBook.IsSpellKnownOrInSpellBook(spellID) or C_SpellBook.IsSpellKnownOrInSpellBook(spellID, Enum.SpellBookSpellBank.Pet) then
+                interrupts[#interrupts + 1] = spellID
+            end
+        end
+    end
+
+    -- SPELL_UPDATE_COOLDOWN fires on essentially every cast, so the ready state
+    -- is cached and only repaints plates when it actually flips.
+    local interruptReady = true
+
+    -- No known interrupt means no opinion, so casts keep their normal colour.
+    local function HasInterruptReady()
+        if #interrupts == 0 then
+            return true
+        end
+
+        for _, spellID in ipairs(interrupts) do
+            local duration = C_Spell.GetSpellCooldownDuration(spellID, true)
+            if not duration or duration:IsZero() or not duration:IsActive() then
+                return true
+            end
+        end
+
+        return false
+    end
 
     local function GetCastBar(plate)
         local namePlate = plate:GetParent()
@@ -122,8 +182,14 @@ function Castbar:OnInitialize()
 
         HookIcon(castBar, icon)
 
+        -- ApplyCastbar runs on every cast event; only re-anchor on a real change.
         local size = IconSize()
         local iconFrame = castBar.iconFrame
+        if iconFrame.mUISize == size then
+            return
+        end
+
+        iconFrame.mUISize = size
         iconFrame:ClearAllPoints()
         iconFrame:SetSize(size, size)
         iconFrame:SetPoint("RIGHT", castBar, "LEFT", -ICON_GAP, 0)
@@ -131,19 +197,55 @@ function Castbar:OnInitialize()
 
     local SHIELD_ATLAS = "ui-castingbar-shield"
 
+    -- nil when nothing is being cast, otherwise a (possibly secret) boolean.
     local function IsUninterruptible(plate)
         local data = Castbar.Core:GetData(plate:GetParent())
         local unit = data and data.unit
         if not unit then
+            return nil
+        end
+
+        local name, _, _, _, _, _, _, notInterruptible = UnitCastingInfo(unit)
+        if not Castbar.Core:Exists(name) then
+            name, _, _, _, _, _, notInterruptible = UnitChannelInfo(unit)
+        end
+
+        if not Castbar.Core:Exists(name) then
+            return nil
+        end
+
+        -- An interruptible cast reports nil rather than false.
+        if not Castbar.Core:Exists(notInterruptible) then
             return false
         end
 
-        local notInterruptible = select(8, UnitCastingInfo(unit))
-        if notInterruptible == nil then
-            notInterruptible = select(7, UnitChannelInfo(unit))
+        return notInterruptible
+    end
+
+    local COLOR_NORMAL = CreateColor(1, 1, 1, 1)
+    local COLOR_IMMUNE = CreateColor(0.6, 0.6, 0.6, 1)
+    local COLOR_NOKICK = CreateColor(0.85, 0.15, 0.15, 1)
+
+    local function ApplyCastColor(castBar, uninterruptible)
+        local texture = castBar:GetStatusBarTexture()
+        if not texture then
+            return
         end
 
-        return notInterruptible
+        if IsSecret(uninterruptible) then
+            local fallback = interruptReady and COLOR_NORMAL or COLOR_NOKICK
+            texture:SetVertexColorFromBoolean(uninterruptible, COLOR_IMMUNE, fallback)
+            return
+        end
+
+        local color = COLOR_NORMAL
+        if uninterruptible then
+            color = COLOR_IMMUNE
+        elseif uninterruptible ~= nil and not interruptReady then
+            color = COLOR_NOKICK
+        end
+
+        texture:SetVertexColor(color:GetRGBA())
     end
 
     local function SkinShield(castBar, uninterruptible)
@@ -170,12 +272,15 @@ function Castbar:OnInitialize()
 
         local size = IconSize()
         local shieldFrame = castBar.shieldFrame
-        shieldFrame:ClearAllPoints()
-        shieldFrame:SetPoint("CENTER", castBar.iconFrame, "CENTER", 0, 0)
-        shieldFrame:SetSize(size, size)
+        if shieldFrame.mUISize ~= size then
+            shieldFrame.mUISize = size
+            shieldFrame:ClearAllPoints()
+            shieldFrame:SetPoint("CENTER", castBar.iconFrame, "CENTER", 0, 0)
+            shieldFrame:SetSize(size, size)
+        end
         shieldFrame:Show()
 
-        if uninterruptible ~= nil then
+        if Castbar.Core:Exists(uninterruptible) then
             shieldFrame:SetAlphaFromBoolean(uninterruptible, 1, 0)
         end
     end
@@ -200,8 +305,11 @@ function Castbar:OnInitialize()
     end
 
     local function SkinSpark(castBar)
-        if castBar.Spark then
-            castBar.Spark:SetSize(4, Castbar.db.size.castheight or 10)
+        local spark = castBar.Spark
+        local height = Castbar.db.size.castheight or 10
+        if spark and spark.mUIHeight ~= height then
+            spark.mUIHeight = height
+            spark:SetSize(4, height)
         end
     end
 
@@ -261,27 +369,90 @@ function Castbar:OnInitialize()
         SkinShield(castBar, uninterruptible)
         SkinText(castBar)
         SkinSpark(castBar)
+        ApplyCastColor(castBar, uninterruptible)
+    end
+
+    local function RefreshColors()
+        if not Castbar:IsEnabled() then
+            return
+        end
+
+        Castbar.Core:ForEach(function(plate)
+            local castBar = GetCastBar(plate)
+            if castBar and castBar:IsShown() then
+                ApplyCastColor(castBar, IsUninterruptible(plate))
+            end
+        end)
     end
 
     local function HookCastBar(plate)
         local castBar = GetCastBar(plate)
-        if not castBar or Castbar:IsHooked(castBar, "OnEvent") then
+        if not castBar then
             return
         end
 
-        Castbar:SecureHookScript(castBar, "OnEvent", function()
-            ApplyCastbar(plate)
-        end)
+        if not Castbar:IsHooked(castBar, "OnEvent") then
+            Castbar:SecureHookScript(castBar, "OnEvent", function()
+                ApplyCastbar(plate)
+            end)
+        end
+
+        if not Castbar:IsHooked(castBar, "UpdateBarFillTexture") then
+            Castbar:SecureHook(castBar, "UpdateBarFillTexture", function()
+                ApplyCastColor(castBar, IsUninterruptible(plate))
+            end)
+        end
+    end
+
+    local function RefreshInterruptState()
+        local ready = HasInterruptReady()
+        if ready == interruptReady then
+            return false
+        end
+
+        interruptReady = ready
+        return true
+    end
+
+    local spellWatcher = CreateFrame("Frame")
+    spellWatcher:SetScript("OnEvent", function(_, event)
+        if event == "SPELL_UPDATE_COOLDOWN" then
+            if RefreshInterruptState() then
+                RefreshColors()
+            end
+            return
+        end
+
+        UpdateInterrupts()
+        RefreshInterruptState()
+        RefreshColors()
+    end)
+
+    function Castbar:RegisterSpellEvents()
+        for i = 1, #UPDATE_SPELLS do
+            spellWatcher:RegisterEvent(UPDATE_SPELLS[i])
+        end
+        spellWatcher:RegisterEvent("SPELL_UPDATE_COOLDOWN")
+
+        UpdateInterrupts()
+        RefreshInterruptState()
+    end
+
+    function Castbar:UnregisterSpellEvents()
+        spellWatcher:UnregisterAllEvents()
     end
 
     Castbar.handler = {}
 
     function Castbar.handler.Create(plate)
+        -- Built once per plate rather than two closures per cast event.
+        local function refresh()
+            ApplyCastbar(plate)
+        end
+
         local watcher = CreateFrame("Frame", nil, plate)
         watcher:SetScript("OnEvent", function()
-            RunNextFrame(function()
-                ApplyCastbar(plate)
-            end)
+            RunNextFrame(refresh)
         end)
 
         plate.CastWatcher = watcher
@@ -330,10 +501,12 @@ function Castbar:OnEnable()
     Castbar.db = mUI.db.profile.nameplates
     Castbar:RefreshCachedStyle()
     Castbar:InstallHooks()
+    Castbar:RegisterSpellEvents()
     Castbar.Core:Register("Castbar", Castbar.handler)
 end
 
 function Castbar:OnDisable()
     Castbar.Core:Unregister("Castbar")
+    Castbar:UnregisterSpellEvents()
     Castbar:UnhookAll()
 end
