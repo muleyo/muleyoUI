@@ -23,6 +23,7 @@ function Healer:OnInitialize()
     function Healer.handler.Create(plate)
         local holder = CreateFrame("Frame", nil, plate)
         holder:SetFrameLevel(plate:GetFrameLevel() + 6)
+        holder:SetIgnoreParentAlpha(true)
         holder:Hide()
 
         local texture = holder:CreateTexture(nil, "OVERLAY")

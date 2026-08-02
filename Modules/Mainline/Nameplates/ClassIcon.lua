@@ -42,6 +42,7 @@ function ClassIcon:OnInitialize()
     function ClassIcon.handler.Create(plate)
         local holder = CreateFrame("Frame", nil, plate)
         holder:SetFrameLevel(plate:GetFrameLevel() + 5)
+        holder:SetIgnoreParentAlpha(true)
         holder:Hide()
 
         local ringOverlay = CreateFrame("Frame", nil, holder)
