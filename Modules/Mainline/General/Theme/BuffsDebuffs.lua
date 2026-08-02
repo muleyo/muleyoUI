@@ -748,7 +748,8 @@ local RAID_DEFENSIVES = {
     [81256] = true, -- Dancing Rune Weapon
     [216331] = true, -- Avenging Crusader
     [389539] = true, -- Sentinel
-    [1261872] = true -- Heart of the Wild (Bear)
+    [1261872] = true, -- Heart of the Wild (Bear)
+    [5487] = true -- Bear Form
 }
 
 local RAID_CURATED_EXCLUDE = {}
