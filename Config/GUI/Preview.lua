@@ -5,6 +5,7 @@ mGUI.Preview = Preview
 
 local UNITFRAMES_KEY = "mUIOptions_Unitframes_Tab"
 local RAIDFRAMES_KEY = "mUIOptions_Raidframes_Tab"
+local NAMEPLATES_KEY = "mUIOptions_Nameplates_Tab"
 
 local PARTY_CLASSES = {"WARRIOR", "PRIEST", "MAGE", "HUNTER", "DRUID"}
 local PARTY_NAMES = {"Muleyo", "Lumen", "Arcanis", "Fenwick", "Thorn"}
@@ -365,6 +366,112 @@ local function GetPartyMock(content)
     return mock
 end
 
+local NAMEPLATE_CC_SPELLS = {408, 118, 853} -- Kidney Shot, Polymorph, Hammer of Justice
+local NAMEPLATE_TOP_SPELLS = {8921, 589, 172} -- Moonfire, Shadow Word: Pain, Corruption
+local NAMEPLATE_SIDE_SPELLS = {642, 45438} -- Divine Shield, Ice Block
+local NAMEPLATE_ICON_GAP = 2
+
+local NAMEPLATE_SIDES = {
+    LEFT = {
+        point = "RIGHT",
+        relativePoint = "LEFT",
+        xSign = -1,
+        step = -1
+    },
+    RIGHT = {
+        point = "LEFT",
+        relativePoint = "RIGHT",
+        xSign = 1,
+        step = 1
+    }
+}
+
+local function CreateBorderEdges(frame, anchorTo)
+    local edges = {}
+    for i = 1, 4 do
+        edges[i] = frame:CreateTexture(nil, "BORDER")
+    end
+
+    edges[1]:SetPoint("TOPLEFT", anchorTo, "TOPLEFT")
+    edges[1]:SetPoint("TOPRIGHT", anchorTo, "TOPRIGHT")
+    edges[2]:SetPoint("BOTTOMLEFT", anchorTo, "BOTTOMLEFT")
+    edges[2]:SetPoint("BOTTOMRIGHT", anchorTo, "BOTTOMRIGHT")
+    edges[3]:SetPoint("TOPLEFT", anchorTo, "TOPLEFT")
+    edges[3]:SetPoint("BOTTOMLEFT", anchorTo, "BOTTOMLEFT")
+    edges[4]:SetPoint("TOPRIGHT", anchorTo, "TOPRIGHT")
+    edges[4]:SetPoint("BOTTOMRIGHT", anchorTo, "BOTTOMRIGHT")
+
+    return edges
+end
+
+local function ApplyBorderEdges(edges, thickness, r, g, b, a)
+    for i = 1, 4 do
+        edges[i]:SetColorTexture(r, g, b, a or 1)
+    end
+
+    edges[1]:SetHeight(thickness)
+    edges[2]:SetHeight(thickness)
+    edges[3]:SetWidth(thickness)
+    edges[4]:SetWidth(thickness)
+end
+
+local function GetNameplateMock(content)
+    if Preview.nameplateMock then
+        return Preview.nameplateMock
+    end
+
+    local mock = CreateFrame("Frame", nil, content)
+    mock:SetPoint("CENTER", content, "CENTER", 0, 0)
+    mock:SetSize(150, 60)
+
+    local health = CreateFrame("StatusBar", nil, mock)
+    health:SetPoint("CENTER", mock, "CENTER", 0, 0)
+    health:SetMinMaxValues(0, 100)
+    health:SetValue(72)
+    mock.health = health
+
+    local healthBg = health:CreateTexture(nil, "BACKGROUND")
+    healthBg:SetAllPoints(health)
+    healthBg:SetColorTexture(0, 0, 0, 0.7)
+
+    mock.healthBorder = CreateBorderEdges(health, health)
+
+    local name = mock:CreateFontString(nil, "OVERLAY")
+    name:SetPoint("BOTTOM", health, "TOP", 0, 2)
+    mock.name = name
+
+    local castBar = CreateFrame("StatusBar", nil, mock)
+    castBar:SetMinMaxValues(0, 100)
+    castBar:SetValue(58)
+    castBar:SetStatusBarColor(1, 1, 1)
+    mock.castBar = castBar
+
+    local castBg = castBar:CreateTexture(nil, "BACKGROUND")
+    castBg:SetAllPoints(castBar)
+    castBg:SetColorTexture(0, 0, 0, 0.7)
+
+    mock.castIcon = CreateAuraIcon(mock)
+    mock.castIcon.icon:SetTexture(GetSpellIcon(116, 135846)) -- Frostbolt
+
+    local function BuildGroup(spells, elapsedStep)
+        local icons = {}
+        for i, spellID in ipairs(spells) do
+            local icon = CreateAuraIcon(mock)
+            icon.icon:SetTexture(GetSpellIcon(spellID, 136224))
+            StartAuraTimer(icon, 12, i * elapsedStep)
+            icons[i] = icon
+        end
+        return icons
+    end
+
+    mock.ccIcons = BuildGroup(NAMEPLATE_CC_SPELLS, 2)
+    mock.topIcons = BuildGroup(NAMEPLATE_TOP_SPELLS, 3)
+    mock.sideIcons = BuildGroup(NAMEPLATE_SIDE_SPELLS, 4)
+
+    Preview.nameplateMock = mock
+    return mock
+end
+
 -- ============================================================================
 -- Applying current settings to the mocks
 -- ============================================================================
@@ -561,6 +668,96 @@ function Preview:UpdateParty()
     mock:SetSize(width * 1.5, 5 * (unitHeight + 4))
 end
 
+function Preview:UpdateNameplate()
+    local db = mUI.db.profile.nameplates
+    local mock = GetNameplateMock(self.panel.content)
+    local texture = FetchStatusbar(db.texture)
+
+    local width = db.size.healthwidth
+    local height = db.size.healthheight
+
+    mock.health:SetSize(width, height)
+    mock.health:SetStatusBarTexture(texture)
+    mock.health:SetStatusBarColor(0.8, 0.2, 0.2)
+
+    local edge = mUI:Color(0.15)
+    ApplyBorderEdges(mock.healthBorder, math.max(1, db.border.size or 1), edge[1], edge[2], edge[3], edge[4])
+
+    StyleFont(mock.name, db.name.size)
+    mock.name:SetText("Nameplate")
+    mock.name:SetTextColor(1, 1, 1)
+
+    -- Cast bar, at its own configured size and vertical offset.
+    local castWidth = db.size.castwidth
+    local castHeight = db.size.castheight
+    mock.castBar:SetSize(castWidth, castHeight)
+    mock.castBar:SetStatusBarTexture(texture)
+    mock.castBar:ClearAllPoints()
+    mock.castBar:SetPoint("TOP", mock.health, "BOTTOM", 0, -(db.castbar.y or 8))
+
+    local castIconSize = math.max(castHeight, 16)
+    mock.castIcon:SetSize(castIconSize, castIconSize)
+    mock.castIcon:ClearAllPoints()
+    mock.castIcon:SetPoint("RIGHT", mock.castBar, "LEFT", -NAMEPLATE_ICON_GAP, 0)
+    mock.castIcon.border:SetVertexColor(unpack(mUI:Color(0.25)))
+
+    local auras = db.auras
+
+    -- Both side groups hang off the health bar on their configured side and
+    -- flow away from it, matching Auras.lua's ApplySide.
+    local function ApplySideGroup(icons, config)
+        local side = NAMEPLATE_SIDES[config.anchor] or NAMEPLATE_SIDES.RIGHT
+        local size = config.size
+
+        for i, icon in ipairs(icons) do
+            icon:SetSize(size, size)
+            icon:ClearAllPoints()
+            if i == 1 then
+                icon:SetPoint(side.point, mock.health, side.relativePoint, config.x * side.xSign, 0)
+            else
+                icon:SetPoint(side.point, icons[i - 1], side.relativePoint, NAMEPLATE_ICON_GAP * side.step, 0)
+            end
+            icon.border:SetVertexColor(unpack(mUI:Color(0.25)))
+            icon:Show()
+        end
+    end
+
+    ApplySideGroup(mock.ccIcons, auras.cc)
+    ApplySideGroup(mock.sideIcons, auras.left)
+
+    -- Top group is centred above the plate and grows to the right.
+    local topSize = auras.top.size
+    local topCount = #mock.topIcons
+    local topWidth = topCount * topSize + (topCount - 1) * NAMEPLATE_ICON_GAP
+
+    for i, icon in ipairs(mock.topIcons) do
+        icon:SetSize(topSize, topSize)
+        icon:ClearAllPoints()
+        icon:SetPoint("BOTTOMLEFT", mock.name, "TOP", -topWidth / 2 + (i - 1) * (topSize + NAMEPLATE_ICON_GAP), auras.top.y)
+        icon.border:SetVertexColor(unpack(mUI:Color(0.25)))
+        icon:Show()
+    end
+
+    -- Keep everything inside the panel however large the plate is configured.
+    local sideExtent = math.max(#mock.ccIcons * (auras.cc.size + NAMEPLATE_ICON_GAP) + auras.cc.x,
+        #mock.sideIcons * (auras.left.size + NAMEPLATE_ICON_GAP) + auras.left.x)
+    local totalWidth = width + 2 * sideExtent
+    local totalHeight = height + castHeight + (db.castbar.y or 8) + topSize + db.name.size + 24
+
+    local available = self.panel.content:GetWidth()
+    local availableHeight = self.panel.content:GetHeight()
+
+    -- The content frame can still measure 0 on the very first show, which would
+    -- otherwise scale the mock out of existence.
+    local scale = 1
+    if available > 0 and availableHeight > 0 then
+        scale = math.min(1, available / math.max(totalWidth, 1), availableHeight / math.max(totalHeight, 1))
+    end
+
+    mock:SetScale(math.max(scale, 0.1))
+    mock:SetSize(totalWidth, totalHeight)
+end
+
 -- ============================================================================
 -- Mode switching + wiring
 -- ============================================================================
@@ -581,11 +778,18 @@ function Preview:SetMode(mode)
     if self.partyMock then
         self.partyMock:Hide()
     end
+    if self.nameplateMock then
+        self.nameplateMock:Hide()
+    end
 
     if mode == "raid" then
         self.panel.title:SetText("Preview — Raidframes")
         GetPartyMock(self.panel.content):Show()
         self:UpdateParty()
+    elseif mode == "nameplate" then
+        self.panel.title:SetText("Preview — Nameplates")
+        GetNameplateMock(self.panel.content):Show()
+        self:UpdateNameplate()
     else
         self.panel.title:SetText("Preview — Unitframes")
         GetPlayerMock(self.panel.content):Show()
@@ -606,7 +810,14 @@ function Preview:Toggle()
 end
 
 function Preview:UpdateModeFromCategory()
-    self:SetMode(mGUI.Renderer.currentKey == RAIDFRAMES_KEY and "raid" or "player")
+    local key = mGUI.Renderer.currentKey
+    if key == RAIDFRAMES_KEY then
+        self:SetMode("raid")
+    elseif key == NAMEPLATES_KEY then
+        self:SetMode("nameplate")
+    else
+        self:SetMode("player")
+    end
 end
 
 -- Called by the Renderer after every category render/refresh
@@ -614,7 +825,7 @@ function Preview:OnCategoryChanged(key)
     if not self.panel or not self.panel:IsShown() then
         return
     end
-    if key ~= UNITFRAMES_KEY and key ~= RAIDFRAMES_KEY then
+    if key ~= UNITFRAMES_KEY and key ~= RAIDFRAMES_KEY and key ~= NAMEPLATES_KEY then
         mGUI:FadeHide(self.panel)
         return
     end

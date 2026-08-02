@@ -67,6 +67,15 @@ function Nameplates:OnInitialize()
                 end,
                 order = 1
             },
+            preview = {
+                name = "Preview",
+                desc = "Preview your Nameplate size and Aura placement in a side panel",
+                type = "execute",
+                func = function()
+                    mUI.mGUI.Preview:Toggle()
+                end,
+                order = 1.5
+            },
             header1 = {
                 name = "Textures",
                 type = "header",
