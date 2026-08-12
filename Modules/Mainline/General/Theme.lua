@@ -19,7 +19,7 @@ function Theme:OnInitialize()
             auraInsetRatio = 6 / 30,
             castbarInset = 4.5,
             castbarInsetSmall = 3.5,
-            nameplateIcons = 3.25,
+            nameplateIcons = 4.25,
             totemIcon = 4
         },
         Style2 = {
@@ -30,7 +30,7 @@ function Theme:OnInitialize()
             castbarInset = 8,
             castbarInsetSmall = 7,
             nameplateIcons = 6.75,
-            totemIcon = 9
+            totemIcon = 14
         }
     }
 
