@@ -60,14 +60,16 @@ local function CreateAuraButton(auraFrame, isDebuff, opts)
         auraFrame.Icon:AddMaskTexture(auraFrame.MaskTexture)
 
         -- Create Cooldown
-        auraFrame.Cooldown = CreateFrame("Cooldown", nil, auraFrame, "CooldownFrameTemplate")
-        auraFrame.Cooldown:SetAllPoints(auraFrame.Icon)
-        auraFrame.Cooldown:SetSwipeTexture(AURA_MASK_TEX)
-        auraFrame.Cooldown:SetSwipeColor(0, 0, 0, 0.75)
-        auraFrame.Cooldown:SetReverse(true)
-        auraFrame.Cooldown:SetDrawBling(false)
-        auraFrame.Cooldown:SetCountdownFont("NumberFontNormalSmall")
-        auraFrame:SetDurationCooldown(auraFrame.Cooldown)
+        if opts.category ~= "player" then
+            auraFrame.Cooldown = CreateFrame("Cooldown", nil, auraFrame, "CooldownFrameTemplate")
+            auraFrame.Cooldown:SetAllPoints(auraFrame.Icon)
+            auraFrame.Cooldown:SetSwipeTexture(AURA_MASK_TEX)
+            auraFrame.Cooldown:SetSwipeColor(0, 0, 0, 0.75)
+            auraFrame.Cooldown:SetReverse(true)
+            auraFrame.Cooldown:SetDrawBling(false)
+            auraFrame.Cooldown:SetCountdownFont("NumberFontNormalSmall")
+            auraFrame:SetDurationCooldown(auraFrame.Cooldown)
+        end
 
         local durationFontSize, countFontSize
         if opts.category == "player" then
@@ -82,7 +84,10 @@ local function CreateAuraButton(auraFrame, isDebuff, opts)
         -- the cooldown swipe - a child frame - draws over the border textures).
         auraFrame.BorderOverlay = CreateFrame("Frame", nil, auraFrame)
         auraFrame.BorderOverlay:SetAllPoints(auraFrame)
-        auraFrame.BorderOverlay:SetFrameLevel(auraFrame.Cooldown:GetFrameLevel() + 1)
+        if opts.category ~= "player" then
+
+            auraFrame.BorderOverlay:SetFrameLevel(auraFrame.Cooldown:GetFrameLevel() + 1)
+        end
 
         auraFrame.mUIBorder = auraFrame.BorderOverlay:CreateTexture(nil, "OVERLAY", nil, 6)
         auraFrame.mUIBorder:SetTexture(AURA_BORDER_TEX)
@@ -101,7 +106,7 @@ local function CreateAuraButton(auraFrame, isDebuff, opts)
 
         if opts.category == "player" then
             -- Player buffs/debuffs: custom suffixed countdown ("10s", "5m")
-            auraFrame.Cooldown:SetHideCountdownNumbers(true)
+            -- auraFrame.Cooldown:SetHideCountdownNumbers(true)
             auraFrame.CooldownText = auraFrame.CountOverlay:CreateFontString(nil, "OVERLAY")
             auraFrame.CooldownText:SetFont(STANDARD_TEXT_FONT, durationFontSize, "OUTLINE")
             auraFrame.CooldownText:SetPoint("BOTTOM", auraFrame.Icon, "BOTTOM", 0, 2)
