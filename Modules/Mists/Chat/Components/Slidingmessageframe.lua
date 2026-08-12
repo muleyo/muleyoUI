@@ -2,7 +2,6 @@ local Style = mUI:GetModule("mUI.Modules.Chat.Style")
 
 -- Lua
 local _G = getfenv(0)
-local hooksecurefunc = _G.hooksecurefunc
 local m_ceil = _G.math.ceil
 local m_max = _G.math.max
 local m_min = _G.math.min

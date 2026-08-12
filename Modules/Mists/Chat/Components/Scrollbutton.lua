@@ -17,7 +17,7 @@ local buttons = {}
 local button_proto = {}
 
 local _, class = UnitClass("player")
-local color = RAID_CLASS_COLORS[class]
+local color = C_ClassColor.GetClassColor(class)
 
 function button_proto:SetState(state, isInstant)
     if state ~= self.state then

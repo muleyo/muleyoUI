@@ -68,6 +68,10 @@ function RF_Textures:OnInitialize()
         -- Use custom selection highlight texture
         frame.selectionHighlight:SetTexture([[Interface\AddOns\mUI\Media\Textures\Raidframes\border.png]])
         frame.aggroHighlight:SetTexture([[Interface\AddOns\mUI\Media\Textures\Raidframes\border.png]])
+
+        frame.powerBar:SetFrameLevel(frame:GetFrameLevel())
+        frame.selectionHighlight:SetDrawLayer("OVERLAY", 7)
+        frame.aggroHighlight:SetDrawLayer("OVERLAY", 7)
     end
 
     function RF_Textures:UpdatePowerColor(frame)

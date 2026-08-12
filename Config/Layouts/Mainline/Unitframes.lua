@@ -240,28 +240,6 @@ function Unitframes:OnInitialize()
                 end,
                 order = 13
             },
-            classbar = {
-                name = "Hide ClassBar",
-                desc = "Hide ClassBar (Combo Points, Holy Power, etc.)",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.unitframes.classbar = val
-
-                    if not Unitframes.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val then
-                        Unitframes.Module.Classbar:Enable()
-                    else
-                        Unitframes.Module.Classbar:Disable()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.classbar
-                end,
-                order = 14
-            },
             cornericon = {
                 name = "Hide Corner Icon",
                 desc = "Hide the Corner Icon on the Player Unitframe",
@@ -282,7 +260,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.cornericon
                 end,
-                order = 15
+                order = 14
             },
             restingtextures = {
                 name = "Hide Rest Textures",
@@ -304,7 +282,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.restingtextures
                 end,
-                order = 16
+                order = 15
             },
             name = {
                 name = "Hide Name",
@@ -326,7 +304,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.name
                 end,
-                order = 17
+                order = 16
             },
             level = {
                 name = "Hide Level",
@@ -348,7 +326,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.level
                 end,
-                order = 18
+                order = 17
             },
             elitecolor = {
                 name = "Elitechain Color",
@@ -373,7 +351,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.elitecolor
                 end,
-                order = 19
+                order = 18
             },
             debuffcolors = {
                 name = "Debuff Colors",
@@ -388,7 +366,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.buffsdebuffs.debuffcolors
                 end,
-                order = 20
+                order = 19
             },
             overshields = {
                 name = "Overshields",
@@ -411,12 +389,12 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.overshields
                 end,
-                order = 21
+                order = 20
             },
             header3 = {
                 name = "Auras",
                 type = "header",
-                order = 22
+                order = 21
             },
             buffsize = {
                 name = "Buff Size",
@@ -431,7 +409,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.buffsdebuffs.buffsize
                 end,
-                order = 24
+                order = 22
             },
             debuffsize = {
                 name = "Debuff Size",
@@ -446,7 +424,7 @@ function Unitframes:OnInitialize()
                 get = function()
                     return mUI.db.profile.unitframes.buffsdebuffs.debuffsize
                 end,
-                order = 25
+                order = 23
             }
 
         }

@@ -533,6 +533,10 @@ function Theme:PVP()
         PVPQueueFrame.HonorInset:Hide()
         Theme:StyleTooltip(ConquestTooltip)
     end
+
+    if PVPFramePopup then
+        mUI:Skin(PVPFramePopup.Border)
+    end
 end
 
 function Theme:Macros()
@@ -1564,8 +1568,15 @@ function Theme:Auras()
     -- BuffFrame Expand/Collapse Button
     mUI:Skin(BuffFrame.CollapseAndExpandButton)
     for button, type in pairs(Theme.aurabuttons) do
-        if (type == "playerbuff" or type == "unitframebuff") and button.mUIBorder then
-            pcall(button.mUIBorder.SetVertexColor, button.mUIBorder, unpack(mUI:Color(0.25)))
+        if (type == "playerbuff" or type == "unitframebuff" or type == "raidframebuff") and button.mUIBorder then
+            -- Preserve a frame's custom border color (e.g. stealable buffs); only
+            -- reset plain buff borders to the theme's default shade.
+            local c = button.mUIBorderColor
+            if c then
+                pcall(button.mUIBorder.SetVertexColor, button.mUIBorder, c.r, c.g, c.b, 1)
+            else
+                pcall(button.mUIBorder.SetVertexColor, button.mUIBorder, unpack(mUI:Color(0.25)))
+            end
         end
     end
 end
@@ -1606,6 +1617,10 @@ function Theme:Housing()
     if HousingModelPreviewFrame then
         mUI:Skin(HousingModelPreviewFrame)
         mUI:Skin(HousingModelPreviewFrame.NineSlice)
+    end
+
+    if HouseListFrame then
+        mUI:Skin(HouseListFrame)
     end
 end
 
@@ -1667,6 +1682,9 @@ function Theme:Frames()
     mUI:Skin(StaticPopup1.BG)
     mUI:Skin(StaticPopup2.BG)
     mUI:Skin(StaticPopup3.BG)
+    mUI:Skin(StaticPopup1EditBox.NineSlice)
+    mUI:Skin(StaticPopup2EditBox.NineSlice)
+    mUI:Skin(StaticPopup3EditBox.NineSlice)
     mUI:Skin({StaticPopup1EditBoxLeft, StaticPopup1EditBoxMid, StaticPopup1EditBoxRight, StaticPopup2EditBoxLeft, StaticPopup2EditBoxMid,
               StaticPopup2EditBoxRight, StaticPopup3EditBoxLeft, StaticPopup3EditBoxMid, StaticPopup3EditBoxRight}, true)
 

@@ -47,9 +47,11 @@ function RF_RoleIcons:OnInitialize()
 end
 
 function RF_RoleIcons:OnEnable()
-    hooksecurefunc("CompactUnitFrame_UpdateRoleIcon", function(frame)
-        RF_RoleIcons:Update(frame)
-    end)
+    if not RF_RoleIcons:IsHooked("CompactUnitFrame_UpdateRoleIcon") then
+        RF_RoleIcons:SecureHook("CompactUnitFrame_UpdateRoleIcon", function(frame)
+            RF_RoleIcons:Update(frame)
+        end)
+    end
 
     RF_RoleIcons:Update()
 end

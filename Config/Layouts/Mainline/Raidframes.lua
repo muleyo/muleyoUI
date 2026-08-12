@@ -386,6 +386,32 @@ function Raidframes:OnInitialize()
                 end,
                 order = 17
             },
+            debuffPoint = {
+                name = "Debuff Anchor",
+                desc = "Which bottom corner of the raid frame debuffs grow from. Buffs automatically take the opposite corner.",
+                type = "select",
+                values = {
+                    LEFT = "Left",
+                    RIGHT = "Right"
+                },
+                sorting = {"LEFT", "RIGHT"},
+                hidden = function()
+                    return not (RAID_AURAS_FORCED or mUI.db.profile.unitframes.raidframes.auraDisplay)
+                end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.debuffPoint = val
+
+                    if select(4, GetBuildInfo()) >= 120100 then
+                        Raidframes.Theme:UpdateAllRaidAuraSides()
+                    elseif Raidframes.Module:IsEnabled() and Raidframes.Module.RF_AuraDisplay and Raidframes.Module.RF_AuraDisplay:IsEnabled() then
+                        Raidframes.Module.RF_AuraDisplay:UpdateAll()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.debuffPoint
+                end,
+                order = 17.5
+            },
             centerDefensivePoint = {
                 name = "Defensive Anchor",
                 desc = "Where on the raid frame the defensive icon(s) attach.",

@@ -141,13 +141,17 @@ function Overshields:OnInitialize()
 end
 
 function Overshields:OnEnable()
-    hooksecurefunc("CompactUnitFrame_UpdateHealPrediction", function(frame)
-        Overshields:UpdateHealPrediction(frame)
-    end)
+    if not Overshields:IsHooked("CompactUnitFrame_UpdateHealPrediction") then
+        Overshields:SecureHook("CompactUnitFrame_UpdateHealPrediction", function(frame)
+            Overshields:UpdateHealPrediction(frame)
+        end)
+    end
 
-    hooksecurefunc("UnitFrameHealPredictionBars_Update", function(frame)
-        Overshields:Update(frame)
-    end)
+    if not Overshields:IsHooked("UnitFrameHealPredictionBars_Update") then
+        Overshields:SecureHook("UnitFrameHealPredictionBars_Update", function(frame)
+            Overshields:Update(frame)
+        end)
+    end
 end
 
 function Overshields:OnDisable()

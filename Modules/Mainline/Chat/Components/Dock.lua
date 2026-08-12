@@ -9,7 +9,7 @@ local alertingFrames = {}
 local DOCK_FADE_IN_DURATION = 0.2
 
 local _, class = UnitClass("player")
-local color = RAID_CLASS_COLORS[class]
+local color = C_ClassColor.GetClassColor(class)
 
 -- Check whether any alerting chat frame has its tab hidden (behind the
 -- overflow) and update the overflow button glow accordingly.

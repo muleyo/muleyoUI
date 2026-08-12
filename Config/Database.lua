@@ -136,6 +136,7 @@ local defaults = {
                 privateaurasize = 35,
                 centerDefensiveSize = 60,
                 centerDefensivePoint = "CENTER",
+                debuffPoint = "LEFT",
                 centerDefensiveX = 0,
                 centerDefensiveY = 0,
                 defensive = {
@@ -171,12 +172,141 @@ local defaults = {
             classcolor = true,
             servername = true,
             arena = true,
-            totem = false,
             casttime = true,
             focus = false,
             debuffs = false,
             colors = false,
-            smallerfriends = false
+            clickthrough = false,
+            size = {
+                healthwidth = 150,
+                healthheight = 16,
+                castwidth = 150,
+                castheight = 10
+            },
+            castbar = {
+                y = 8,
+                colors = true,
+                cooldowncolor = {0.85, 0.15, 0.15}
+            },
+            border = {
+                size = 1
+            },
+            name = {
+                size = 12
+            },
+            health = {
+                percent = false,
+                anchor = "RIGHT",
+                x = 2,
+                y = 0
+            },
+            names = {
+                arena = false,
+                spec = false
+            },
+            classification = {
+                enabled = false,
+                instancesonly = true,
+                casteralways = false,
+                boss = {0.737, 0.11, 0, 1},
+                miniboss = {0.565, 0, 0.737, 1},
+                caster = {0, 0.455, 0.737, 1},
+                melee = {0.988, 0.988, 0.988, 1},
+                trivial = {0.698, 0.557, 0.333, 1}
+            },
+            scale = {
+                target = 1.2,
+                other = 1,
+                global = 1
+            },
+            friendly = {
+                hidehealthbar = false,
+                hidenames = false,
+                classcolor = false,
+                small = false,
+                width = 90
+            },
+            -- The x/y offsets are split per reaction: the two indicators
+            -- usually want to sit on opposite sides in arena, where friendly
+            -- and enemy plates are read for different things.
+            classicons = {
+                enabled = false,
+                friendly = true,
+                enemy = true,
+                arenaonly = false,
+                hidehealers = false,
+                spec = true,
+                size = 22,
+                anchor = "LEFT",
+                friendlyx = 4,
+                friendlyy = 0,
+                enemyx = 4,
+                enemyy = 0
+            },
+            healer = {
+                enabled = false,
+                friendly = true,
+                enemy = true,
+                arenaonly = false,
+                size = 18,
+                anchor = "RIGHT",
+                friendlyx = 4,
+                friendlyy = 0,
+                enemyx = 4,
+                enemyy = 0
+            },
+            target = {
+                enabled = false,
+                arrows = true,
+                glow = false,
+                classcolor = false,
+                color = {1, 1, 1, 1},
+                size = 16,
+                offset = 4
+            },
+            raidmarker = {
+                enabled = false,
+                hide = false,
+                alpha = 1,
+                size = 22,
+                anchor = "TOP",
+                x = 0,
+                y = 4
+            },
+            auras = {
+                enabled = false,
+                cc = {
+                    size = 20,
+                    x = 4,
+                    anchor = "RIGHT"
+                },
+                top = {
+                    size = 20,
+                    y = 4
+                },
+                left = {
+                    size = 20,
+                    x = 4,
+                    anchor = "LEFT"
+                }
+            },
+            personalresource = {
+                enabled = false,
+                anchor = "TOP",
+                x = 0,
+                y = 6
+            },
+            totem = {
+                enabled = false,
+                enemyOnly = false,
+                colorHealthBar = false,
+                noAnimation = false,
+                size = 24,
+                anchor = "TOP",
+                x = 0,
+                y = 4,
+                color = {1, 0.82, 0, 1}
+            }
         },
         tooltips = {
             enabled = true,

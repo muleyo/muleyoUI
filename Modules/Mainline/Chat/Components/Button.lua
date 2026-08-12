@@ -2,7 +2,6 @@ local Style = mUI:GetModule("mUI.Modules.Chat.Style")
 
 -- Lua
 local _G = getfenv(0)
-local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
 local t_remove = _G.table.remove
 local tonumber = _G.tonumber
@@ -11,7 +10,7 @@ local tonumber = _G.tonumber
 local handledbuttons = {}
 
 local _, class = UnitClass("player")
-local color = RAID_CLASS_COLORS[class]
+local color = C_ClassColor.GetClassColor(class)
 
 local function handleButton(frame, ...)
     if not handledbuttons[frame] then

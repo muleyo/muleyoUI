@@ -25,25 +25,41 @@ function mGUI.Widgets.ColorPicker(parent)
     color:SetTexture("Interface\\ChatFrame\\ChatFrameBackground")
     swatch.color = color
 
-    local function Apply(r, g, b, a)
-        container.r, container.g, container.b, container.a = r, g, b, a
-        color:SetVertexColor(r, g, b, a or 1)
-        if container.OnValueChanged then
-            container:OnValueChanged(r, g, b, a or 1)
-        end
-    end
-
     swatch:SetScript("OnClick", function()
         local prevR, prevG, prevB, prevA = container.r, container.g, container.b, container.a
+
+        -- Both the handler and hasAlpha are bound once, here, rather than
+        -- looked up on every swatch tick.
+        --
+        -- Applying a colour re-renders the page, and the renderer releases
+        -- every widget back to its pool and re-acquires them LIFO -- so from
+        -- the second tick onward this container can be bound to a *different*
+        -- option than the one the picker was opened for, and a late lookup
+        -- writes the colour to whichever option happened to land on this
+        -- frame. The pool reverses the order, so in a section of five swatches
+        -- the first and last trade values, and so do the second and fourth,
+        -- while the middle one appears to work. That is the "changing boss
+        -- also changes trivial" symptom.
+        local handler = container.OnValueChanged
+        local hasAlpha = container.hasAlpha
+
+        local function Apply(r, g, b, a)
+            container.r, container.g, container.b, container.a = r, g, b, a
+            color:SetVertexColor(r, g, b, a or 1)
+            if handler then
+                handler(container, r, g, b, a or 1)
+            end
+        end
+
         ColorPickerFrame:SetupColorPickerAndShow({
             r = prevR,
             g = prevG,
             b = prevB,
             opacity = prevA,
-            hasOpacity = container.hasAlpha,
+            hasOpacity = hasAlpha,
             swatchFunc = function()
                 local r, g, b = ColorPickerFrame:GetColorRGB()
-                local a = container.hasAlpha and ColorPickerFrame:GetColorAlpha() or 1
+                local a = hasAlpha and ColorPickerFrame:GetColorAlpha() or 1
                 Apply(r, g, b, a)
             end,
             opacityFunc = function()

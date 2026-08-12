@@ -2,7 +2,6 @@ local Style = mUI:GetModule("mUI.Modules.Chat.Style")
 
 -- Lua
 local _G = getfenv(0)
-local hooksecurefunc = _G.hooksecurefunc
 
 -- Mine
 function Style:HandleDock(frame)
@@ -11,7 +10,7 @@ function Style:HandleDock(frame)
     frame.scrollFrame.child:SetHeight(20)
 
     frame.scrollFrame:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-    hooksecurefunc(frame.scrollFrame, "SetPoint", function(self, p, anchor, rP, x, _, shouldIgnore)
+    Style:SecureHook(frame.scrollFrame, "SetPoint", function(self, p, anchor, rP, x, _, shouldIgnore)
         if shouldIgnore then
             return
         end

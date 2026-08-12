@@ -2,7 +2,6 @@ local Style = mUI:GetModule("mUI.Modules.Chat.Style")
 
 -- Lua
 local _G = getfenv(0)
-local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
 local t_remove = _G.table.remove
 local tonumber = _G.tonumber

@@ -1,26 +1,19 @@
-local LFGTooltips = mUI:NewModule("mUI.Tooltips.LFGTooltips", "AceHook-3.0")
-
-local hookedButtons = setmetatable({}, {
-    __mode = "k"
-})
-local hookedMembers = setmetatable({}, {
-    __mode = "k"
-})
+local LFGTooltips = mUI:NewModule("mUI.Tooltips.LFGTooltips", "AceHook-3.0", "AceHook-3.0")
 
 function LFGTooltips:OnInitialize()
     LFGTooltips.db = mUI.db.profile.tooltips
 end
 
 function LFGTooltips:OnEnable()
-    if not LFGTooltips.hooked then
-        -- Hide the cover frame that blocks mouse interaction for non-leaders
-        if LFGListFrame and LFGListFrame.ApplicationViewer and LFGListFrame.ApplicationViewer.UnempoweredCover then
-            LFGTooltips.unempoweredCover = LFGListFrame.ApplicationViewer.UnempoweredCover
-            securecallfunction(LFGTooltips.unempoweredCover.EnableMouse, LFGTooltips.unempoweredCover, false)
-        end
+    -- Hide the cover frame that blocks mouse interaction for non-leaders
+    if LFGListFrame and LFGListFrame.ApplicationViewer and LFGListFrame.ApplicationViewer.UnempoweredCover then
+        LFGTooltips.unempoweredCover = LFGListFrame.ApplicationViewer.UnempoweredCover
+        securecallfunction(LFGTooltips.unempoweredCover.EnableMouse, LFGTooltips.unempoweredCover, false)
+    end
 
-        -- Hook applicant member frames so non-leaders can read notes
-        hooksecurefunc("LFGListApplicationViewer_UpdateResults", function(self)
+    -- Hook applicant member frames so non-leaders can read notes
+    if not LFGTooltips:IsHooked("LFGListApplicationViewer_UpdateResults") then
+        LFGTooltips:SecureHook("LFGListApplicationViewer_UpdateResults", function(self)
             local buttons = self.ScrollBox and self.ScrollBox:GetFrames()
             if buttons then
                 for _, button in ipairs(buttons) do
@@ -28,22 +21,18 @@ function LFGTooltips:OnEnable()
                 end
             end
         end)
-
-        LFGTooltips.hooked = true
     end
 end
 
 function LFGTooltips:HookApplicantEntry(button)
-    if not button or hookedButtons[button] then
+    if not button then
         return
     end
-    hookedButtons[button] = true
 
     if button.Members then
         for _, member in pairs(button.Members) do
-            if not hookedMembers[member] then
-                hookedMembers[member] = true
-                member:HookScript("OnEnter", function(self)
+            if not LFGTooltips:IsHooked(member, "OnEnter") then
+                LFGTooltips:SecureHookScript(member, "OnEnter", function(self)
                     local parent = self:GetParent()
                     if not parent or not parent.applicantID then
                         return
@@ -61,7 +50,7 @@ function LFGTooltips:HookApplicantEntry(button)
                     dungeonScore = tonumber(dungeonScore) or 0
 
                     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                    local classColor = RAID_CLASS_COLORS[classStr]
+                    local classColor = C_ClassColor.GetClassColor(classStr)
                     if classColor then
                         GameTooltip:SetText(name, classColor.r, classColor.g, classColor.b)
                     else
@@ -108,10 +97,6 @@ function LFGTooltips:HookApplicantEntry(button)
                     end
 
                     GameTooltip:Show()
-                end)
-
-                member:HookScript("OnLeave", function()
-                    GameTooltip:Hide()
                 end)
             end
         end

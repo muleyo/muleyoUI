@@ -12,7 +12,6 @@ function Modules:OnInitialize()
     Modules.UF_Textures = mUI:GetModule("mUI.Modules.Unitframes.Unitframes_Textures")
     Modules.Color = mUI:GetModule("mUI.Modules.Unitframes.Color")
     Modules.BuffsDebuffs = mUI:GetModule("mUI.Modules.Unitframes.BuffsDebuffs")
-    Modules.Classbar = mUI:GetModule("mUI.Modules.Unitframes.Classbar")
     Modules.Reputationcolor = mUI:GetModule("mUI.Modules.Unitframes.Reputationcolor")
     Modules.Combatindicator = mUI:GetModule("mUI.Modules.Unitframes.Combatindicator")
     Modules.Cornericon = mUI:GetModule("mUI.Modules.Unitframes.Cornericon")
@@ -59,9 +58,6 @@ function Modules:OnEnable()
         end
         if Modules.db.totemicons then
             Modules.Totemicons:Enable()
-        end
-        if Modules.db.classbar then
-            Modules.Classbar:Enable()
         end
         if Modules.db.cornericon then
             Modules.Cornericon:Enable()
@@ -128,7 +124,6 @@ end
 function Modules:OnDisable()
     -- Disable Modules
     Modules.BuffsDebuffs:Disable()
-    Modules.Classbar:Disable()
     Modules.Color:Disable()
     Modules.Combatindicator:Disable()
     Modules.Cornericon:Disable()

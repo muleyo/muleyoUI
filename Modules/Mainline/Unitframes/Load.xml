@@ -15,7 +15,6 @@
     <!-- Unitframes -->
     <Include file="UF_Textures.lua" />
     <Include file="BuffsDebuffs.lua" />
-    <Include file="Classbar.lua" />
     <Include file="Color.lua" />
     <Include file="Combatindicator.lua" />
     <Include file="Cornericon.lua" />

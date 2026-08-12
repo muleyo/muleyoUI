@@ -112,7 +112,7 @@ function Classcolor:OnEnable()
 
     -- Update PlayerFrame HealthColor
     local _, playerClass = UnitClass("player")
-    local color = RAID_CLASS_COLORS[playerClass]
+    local color = C_ClassColor.GetClassColor(playerClass)
     Classcolor.playerFrame.ReputationColor:SetVertexColor(color.r, color.g, color.b)
     local playerTex = Classcolor.playerFrame.HealthBarsContainer.HealthBar:GetStatusBarTexture()
     if playerTex then

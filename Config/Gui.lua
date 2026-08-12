@@ -421,12 +421,19 @@ function Gui:OnInitialize()
 
     -- On Show — reopen on whatever tab the user was last viewing, defaulting
     -- to General only the very first time the GUI is ever shown.
-    Gui.frame:SetScript("OnShow", function()
+    Gui.frame:SetScript("OnShow", function(self)
         Gui:RefreshSidebarToggles()
         Gui:SelectTab(Gui.currentTab or "General")
 
         if Gui.searchBox then
             mGUI:ApplyQuadBorder(Gui.searchBox, mGUI.Colors.border)
+        end
+
+        -- Closing with ESCAPE leaves propagation switched off, so restore it
+        -- here or the first keypress of the next session is swallowed. In
+        -- combat this is skipped along with everything else below.
+        if not InCombatLockdown() then
+            self:SetPropagateKeyboardInput(true)
         end
     end)
 
@@ -435,13 +442,28 @@ function Gui:OnInitialize()
     -- Handling ESCAPE ourselves lets it share the same smooth close as the
     -- titlebar close button.
     Gui.frame:EnableKeyboard(true)
-    Gui.frame:SetPropagateKeyboardInput(true)
+
+    -- Guarded for the same reason as the handler below: the GUI is built
+    -- lazily on first open, which can happen mid-fight.
+    if not InCombatLockdown() then
+        Gui.frame:SetPropagateKeyboardInput(true)
+    end
+
     Gui.frame:SetScript("OnKeyDown", function(self, key)
-        if key == "ESCAPE" then
-            self:SetPropagateKeyboardInput(false)
+        local escape = key == "ESCAPE"
+
+        -- SetPropagateKeyboardInput is protected, so calling it under combat
+        -- lockdown raises ADDON_ACTION_BLOCKED. This handler runs on every
+        -- keypress, so with the options open during a fight it fired on each
+        -- one. Out of combat we steer propagation as before; in combat we
+        -- leave it alone, which costs only that ESCAPE also reaches the game
+        -- menu instead of being swallowed here.
+        if not InCombatLockdown() then
+            self:SetPropagateKeyboardInput(not escape)
+        end
+
+        if escape then
             Gui:Close()
-        else
-            self:SetPropagateKeyboardInput(true)
         end
     end)
 
