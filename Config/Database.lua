@@ -179,6 +179,7 @@ local defaults = {
             smartstacking = false,
             healthtext = true,
             classcolor = true,
+            showClassColor = false,
             servername = true,
             arena = true,
             casttime = true,

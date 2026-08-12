@@ -248,6 +248,22 @@ function Nameplates:OnInitialize()
                 end,
                 order = 14
             },
+            showClassColor = {
+                name = "Class Colors",
+                desc = "Show Player Health Bars in Class Colors on Nameplates (Blizzard's nameplateShowClassColor CVar)",
+                type = "toggle",
+                set = function(_, val)
+                    db().showClassColor = val
+
+                    if Nameplates.Module:IsEnabled() and Nameplates.Module.Style:IsEnabled() then
+                        Nameplates.Module.Style:ApplyScale()
+                    end
+                end,
+                get = function()
+                    return db().showClassColor
+                end,
+                order = 14.1
+            },
             healthPercent = {
                 name = "Health Percent",
                 desc = "Show the Unit's Health as a Percentage on the Health Bar",
