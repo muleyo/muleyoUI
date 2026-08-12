@@ -77,7 +77,7 @@ function Modules:OnEnable()
     if Modules.db.display.errormessages then
         Modules.ErrorMessages:Enable()
     end
-    if select(4, GetBuildInfo()) < 120100 and Modules.db.display.friendlist then
+    if Modules.db.display.friendlist then
         Modules.Friendlist:Enable()
     end
     if Modules.db.display.mousecursor then
