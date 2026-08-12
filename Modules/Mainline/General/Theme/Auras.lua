@@ -39,6 +39,21 @@ local function ApplyAuraBorderGeometry(border, auraFrame, inset)
     border:SetPoint("BOTTOMRIGHT", auraFrame, "BOTTOMRIGHT", inset, -inset)
 end
 
+-- Duration/count text size multiplier
+local function GetAuraTextScale(category)
+    if category == "raidframe" then
+        local raid = mUI.db and mUI.db.profile.unitframes.raidframes
+        return ((raid and raid.durationTextSize) or 100) / 100, ((raid and raid.countTextSize) or 100) / 100
+    elseif category == "unitframe" then
+        local bd = mUI.db and mUI.db.profile.unitframes.buffsdebuffs
+        return ((bd and bd.durationTextSize) or 100) / 100, ((bd and bd.countTextSize) or 100) / 100
+    elseif category == "player" then
+        local pa = mUI.db and mUI.db.profile.general.playerauras
+        return ((pa and pa.durationTextSize) or 100) / 100, ((pa and pa.countTextSize) or 100) / 100
+    end
+    return 1, 1
+end
+
 local function CreateAuraButton(auraFrame, isDebuff, opts)
     opts = opts or {}
     local size = opts.size or Theme.PLAYER_AURA_SIZE
@@ -79,6 +94,16 @@ local function CreateAuraButton(auraFrame, isDebuff, opts)
             durationFontSize = math.max(math.floor(size / 3 + 2), 6)
             countFontSize = math.max(math.floor(size / 3), 6)
         end
+
+        -- Remember the un-scaled sizes so a text-size config change can be
+        -- re-applied later without recomputing from the icon size.
+        auraFrame.mUIBaseDurationFontSize = durationFontSize
+        auraFrame.mUIBaseCountFontSize = countFontSize
+        auraFrame.mUICategory = opts.category
+
+        local durationScale, countScale = GetAuraTextScale(opts.category)
+        durationFontSize = math.max(math.floor(durationFontSize * durationScale), 6)
+        countFontSize = math.max(math.floor(countFontSize * countScale), 6)
 
         -- Create Border (in its own overlay above the Cooldown frame, otherwise
         -- the cooldown swipe - a child frame - draws over the border textures).
@@ -174,6 +199,34 @@ local function CreateAuraButton(auraFrame, isDebuff, opts)
 end
 
 Theme.CreateAuraButton = CreateAuraButton
+
+-- Re-applies the current duration/count text size config to an already-created
+-- aura button, without touching icon size or recreating anything.
+function Theme:ApplyAuraTextScale(auraFrame)
+    if not auraFrame.mUIBaseDurationFontSize or not auraFrame.CooldownText then
+        return
+    end
+
+    local durationScale, countScale = GetAuraTextScale(auraFrame.mUICategory)
+    local durationFontSize = math.max(math.floor(auraFrame.mUIBaseDurationFontSize * durationScale), 6)
+    local countFontSize = math.max(math.floor(auraFrame.mUIBaseCountFontSize * countScale), 6)
+
+    local _, _, flags = auraFrame.CooldownText:GetFont()
+    auraFrame.CooldownText:SetFont(STANDARD_TEXT_FONT, durationFontSize, flags)
+    if auraFrame.Count then
+        local _, _, countFlags = auraFrame.Count:GetFont()
+        auraFrame.Count:SetFont(STANDARD_TEXT_FONT, countFontSize, countFlags)
+    end
+end
+
+-- Re-applies the text size
+function Theme:UpdateAuraTextSizesForCategory(category)
+    for auraFrame, buttonCategory in pairs(Theme.aurabuttons) do
+        if buttonCategory == category .. "buff" or buttonCategory == category .. "debuff" then
+            Theme:ApplyAuraTextScale(auraFrame)
+        end
+    end
+end
 
 -- ============================================================================
 -- Player Auras
@@ -312,6 +365,11 @@ function Theme:ResizePlayerAuraHost(hostFrame, settings)
     hostFrame:SetSize(width * settings.iconScale, height * settings.iconScale)
 end
 
+-- Re-applies the duration/count text size
+function Theme:UpdateAllPlayerAuraTextSizes()
+    Theme:UpdateAuraTextSizesForCategory("player")
+end
+
 function Theme:SetPlayerDebuffDispelTypeShown(shown)
     local container = DebuffFrame.mUIAuraContainer
     if not container then
@@ -398,16 +456,27 @@ function Theme:InitializeCustomAuraButton(auraFrame, isDebuff, borderColor, size
     })
 end
 
+-- Fully disables Blizzard's built-in aura container on a unit frame. Called
+-- whether or not mUI replaces it with a custom one, so target/focus never
+-- show the default buffs/debuffs even with our own auras turned off.
+function Theme:DisableDefaultUnitAuraContainer(frame)
+    if not frame or not frame.GetAuraContainer then
+        return
+    end
+
+    local defaultAuraContainer = frame:GetAuraContainer()
+    frame.maxBuffs = 0
+    frame.maxDebuffs = 0
+    defaultAuraContainer:SetEnabled(false)
+    defaultAuraContainer:Hide()
+end
+
 function Theme:CreateUnitAuraContainer(frame, unit)
     if not frame or not frame.GetAuraContainer then
         return
     end
 
-    -- Fully disable Blizzard's built-in aura container
-    local defaultAuraContainer = frame:GetAuraContainer()
-    frame.maxBuffs = 0
-    frame.maxDebuffs = 0
-    defaultAuraContainer:SetEnabled(false)
+    Theme:DisableDefaultUnitAuraContainer(frame)
 
     local parent = frame.TargetFrameContent.TargetFrameContentContextual
 
@@ -547,6 +616,26 @@ function Theme:CreateUnitAuraContainer(frame, unit)
         })
     end
 
+    -- Always-visible debuffs (Forbearance, Bloodlust/Sated, boss mechanics, etc,
+    -- flagged nameplateShowAll by Blizzard) bypass the own-casters-only
+    -- restriction applied on enemy targets below. isFromPlayerOrPlayerPet=false
+    -- here keeps it from double-showing auras the main group(s) already catch.
+    debuffContainer.mUI_alwaysShownGroupKey = "DebuffsAlwaysShown"
+    debuffContainer:AddAuraGroup("DebuffsAlwaysShown", debuffFilterString, {
+        maxFrameCount = Theme.MAX_UNITFRAME_DEBUFFS,
+        candidateFilters = {
+            nameplateShowAll = true,
+            isFromPlayerOrPlayerPet = false
+        },
+        initializeFrame = function(auraFrame)
+            Theme:InitializeCustomAuraButton(auraFrame, true, nil, debuffSize)
+        end,
+        layout = {
+            elementSpacing = 3,
+            lineSpacing = 3
+        }
+    })
+
     Theme:UpdateUnitDebuffCasterFilter(frame)
 
     if not Theme:IsHooked(frame, "UpdateAuras") then
@@ -562,9 +651,11 @@ function Theme:CreateUnitAuraContainer(frame, unit)
     return buffContainer, debuffContainer
 end
 
--- Debuffs are normally restricted to the ones the player (or their pet) applied,
--- but when the frame shows the player themselves every caster's debuffs are
--- relevant, so the restriction is lifted.
+-- Debuffs are normally restricted to the ones the player (or their pet)
+-- applied, but every caster's debuffs are relevant when the frame shows the
+-- player themselves or a friendly unit. Against an enemy, only our own
+-- debuffs are shown - always-visible ones (Forbearance, Bloodlust/Sated,
+-- etc.) are handled by the separate DebuffsAlwaysShown group.
 function Theme:UpdateUnitDebuffCasterFilter(frame)
     local debuffContainer = frame and frame.mUI_debuffContainer
     local groups = debuffContainer and debuffContainer.mUI_debuffGroups
@@ -573,7 +664,7 @@ function Theme:UpdateUnitDebuffCasterFilter(frame)
     end
 
     local unit = frame.unit or debuffContainer:GetUnit()
-    local showAllCasters = (unit ~= nil and UnitIsUnit(unit, "player")) == true
+    local showAllCasters = unit ~= nil and (UnitIsUnit(unit, "player") or UnitIsFriend("player", unit)) == true
     if debuffContainer.mUI_showAllCasters == showAllCasters then
         return
     end
@@ -585,6 +676,13 @@ function Theme:UpdateUnitDebuffCasterFilter(frame)
             excludeDispelTypes = groupInfo.excludeDispelTypes,
             isFromPlayerOrPlayerPet = not showAllCasters or nil
         })
+    end
+
+    -- Redundant against self/friendly targets (the main groups above already
+    -- show everything), so keep it empty there instead of double-showing.
+    local alwaysShownKey = debuffContainer.mUI_alwaysShownGroupKey
+    if alwaysShownKey then
+        debuffContainer:SetAuraGroupMaxFrameCount(alwaysShownKey, showAllCasters and 0 or Theme.MAX_UNITFRAME_DEBUFFS)
     end
 end
 
@@ -686,7 +784,7 @@ end
 -- Raid- & Partyframe Auras
 -- ============================================================================
 local RAID_MAX_BUFFS = 6
-local RAID_MAX_DEBUFFS = 5
+local RAID_MAX_DEBUFFS = 5 -- Default for the configurable "Max Debuff Icons" option.
 local RAID_MAX_DEFENSIVE = 3
 local RAID_BUFFS_PER_ROW = 3
 local RAID_ICON_GAP = 1
@@ -776,6 +874,11 @@ end
 
 local function RaidFilter(...)
     return AuraUtil.CreateFilterString(...)
+end
+
+local function GetRaidMaxDebuffIcons()
+    local raid = mUI.db and mUI.db.profile.unitframes.raidframes
+    return (raid and raid.maxDebuffIcons) or RAID_MAX_DEBUFFS
 end
 
 local function InitRaidAuraButton(auraFrame, container, groupKey, isDebuff)
@@ -871,7 +974,7 @@ function Theme:EnsureRaidAuraContainers(frame, data)
     })
     -- Normal: everything else (not boss/role), shown at the base debuff size.
     debuffContainer:AddAuraGroup("DebuffsNormal", RaidFilter("HARMFUL"), {
-        maxFrameCount = RAID_MAX_DEBUFFS,
+        maxFrameCount = GetRaidMaxDebuffIcons(),
         candidateFilters = {
             isBossOrRoleAura = false,
             excludeSpellIDs = RAID_DEBUFF_EXCLUDE,
@@ -942,7 +1045,7 @@ function Theme:UpdateRaidAuraContainers(frame, data, unit, unreachable, buffSize
     local normalS = debuffContainer.mUI_groupSizes.DebuffsNormal or debuffSize
     local defS = defensiveContainer.mUI_groupSizes.BigDefensives or defensiveSize
     buffContainer:SetFlowLayoutMaximumLineSize(RAID_BUFFS_PER_ROW * (buffS + RAID_ICON_GAP))
-    debuffContainer:SetFlowLayoutMaximumLineSize(RAID_MAX_BIG_DEBUFFS * (bigS + RAID_ICON_GAP) + RAID_MAX_DEBUFFS * (normalS + RAID_ICON_GAP))
+    debuffContainer:SetFlowLayoutMaximumLineSize(RAID_MAX_BIG_DEBUFFS * (bigS + RAID_ICON_GAP) + GetRaidMaxDebuffIcons() * (normalS + RAID_ICON_GAP))
     defensiveContainer:SetFlowLayoutMaximumLineSize(RAID_MAX_DEFENSIVE * (defS + RAID_ICON_GAP))
 
     Theme:ApplyRaidAuraSides(data)
@@ -1124,6 +1227,25 @@ function Theme:UpdateAllRaidAuras()
             if base and base > 0 then
                 data.defensiveContainer:SetScale(defensiveSize / base)
             end
+        end
+    end
+end
+
+-- Re-applies the duration/count text size config to every live raid aura
+-- button, without touching icon size (see Theme:ApplyAuraTextScale).
+function Theme:UpdateAllRaidAuraTextSizes()
+    Theme:UpdateAuraTextSizesForCategory("raidframe")
+end
+
+-- Re-applies the "Max Debuff Icons" config to every live raid debuff group.
+-- The flow layout's max line size follows on the next refresh tick/SetUnit
+-- (see Theme:UpdateRaidAuraContainers, which reads the same config live).
+function Theme:UpdateAllRaidAuraDebuffLimit()
+    local maxDebuffs = GetRaidMaxDebuffIcons()
+    for frame in pairs(Theme.raidAuraFrames or {}) do
+        local data = frame and frame.mUI_AD
+        if data and data.debuffContainer and not frame:IsForbidden() then
+            data.debuffContainer:SetAuraGroupMaxFrameCount("DebuffsNormal", maxDebuffs)
         end
     end
 end

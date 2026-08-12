@@ -36,6 +36,10 @@ local defaults = {
                 errormessages = true,
                 friendlist = true,
                 mousecursor = false
+            },
+            playerauras = {
+                durationTextSize = 100,
+                countTextSize = 100
             }
         },
         actionbars = {
@@ -110,7 +114,9 @@ local defaults = {
                 enabled = true,
                 buffsize = 24,
                 debuffsize = 24,
-                debuffcolors = false
+                debuffcolors = false,
+                durationTextSize = 100,
+                countTextSize = 100
             },
             raidframes = {
                 enabled = true,
@@ -133,7 +139,10 @@ local defaults = {
                 skinicons = true,
                 buffsize = 28,
                 debuffsize = 35,
+                maxDebuffIcons = 5,
                 privateaurasize = 35,
+                durationTextSize = 100,
+                countTextSize = 100,
                 centerDefensiveSize = 60,
                 centerDefensivePoint = "CENTER",
                 debuffPoint = "LEFT",
