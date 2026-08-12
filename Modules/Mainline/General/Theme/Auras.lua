@@ -615,10 +615,6 @@ function Theme:CreateUnitAuraContainer(frame, unit)
         })
     end
 
-    -- Always-visible debuffs (Forbearance, Bloodlust/Sated, boss mechanics, etc,
-    -- flagged nameplateShowAll by Blizzard) bypass the own-casters-only
-    -- restriction applied on enemy targets below. isFromPlayerOrPlayerPet=false
-    -- here keeps it from double-showing auras the main group(s) already catch.
     debuffContainer.mUI_alwaysShownGroupKey = "DebuffsAlwaysShown"
     debuffContainer:AddAuraGroup("DebuffsAlwaysShown", debuffFilterString, {
         maxFrameCount = Theme.MAX_UNITFRAME_DEBUFFS,
@@ -650,11 +646,6 @@ function Theme:CreateUnitAuraContainer(frame, unit)
     return buffContainer, debuffContainer
 end
 
--- Debuffs are normally restricted to the ones the player (or their pet)
--- applied, but every caster's debuffs are relevant when the frame shows the
--- player themselves or a friendly unit. Against an enemy, only our own
--- debuffs are shown - always-visible ones (Forbearance, Bloodlust/Sated,
--- etc.) are handled by the separate DebuffsAlwaysShown group.
 function Theme:UpdateUnitDebuffCasterFilter(frame)
     local debuffContainer = frame and frame.mUI_debuffContainer
     local groups = debuffContainer and debuffContainer.mUI_debuffGroups
