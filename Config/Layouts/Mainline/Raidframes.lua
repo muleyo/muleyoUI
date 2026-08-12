@@ -308,6 +308,14 @@ function Raidframes:OnInitialize()
                 sorting = {"LEFT", "CENTER", "RIGHT"},
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.centerDefensivePoint = val
+
+                    if select(4, GetBuildInfo()) >= 120100 then
+                        Raidframes.Theme:UpdateAllRaidDefensivePositions()
+                    else
+                        if Raidframes.Module:IsEnabled() and Raidframes.Module.RF_AuraDisplay and Raidframes.Module.RF_AuraDisplay:IsEnabled() then
+                            Raidframes.Module.RF_AuraDisplay:UpdateAll()
+                        end
+                    end
                 end,
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.centerDefensivePoint
@@ -343,7 +351,7 @@ function Raidframes:OnInitialize()
                     mUI.db.profile.unitframes.raidframes.centerDefensiveX = val
 
                     if select(4, GetBuildInfo()) >= 120100 then
-                        Raidframes.Theme:UpdateAllRaidAuras()
+                        Raidframes.Theme:UpdateAllRaidDefensivePositions()
                     else
                         if Raidframes.Module:IsEnabled() and Raidframes.Module.RF_AuraDisplay and Raidframes.Module.RF_AuraDisplay:IsEnabled() then
                             Raidframes.Module.RF_AuraDisplay:UpdateAll()
@@ -367,7 +375,7 @@ function Raidframes:OnInitialize()
                     mUI.db.profile.unitframes.raidframes.centerDefensiveY = val
 
                     if select(4, GetBuildInfo()) >= 120100 then
-                        Raidframes.Theme:UpdateAllRaidAuras()
+                        Raidframes.Theme:UpdateAllRaidDefensivePositions()
                     else
                         if Raidframes.Module:IsEnabled() and Raidframes.Module.RF_AuraDisplay and Raidframes.Module.RF_AuraDisplay:IsEnabled() then
                             Raidframes.Module.RF_AuraDisplay:UpdateAll()
