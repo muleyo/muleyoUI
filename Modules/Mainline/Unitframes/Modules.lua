@@ -11,7 +11,6 @@ function Modules:OnInitialize()
     Modules.RF_Scale = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Scale")
     Modules.UF_Textures = mUI:GetModule("mUI.Modules.Unitframes.Unitframes_Textures")
     Modules.Color = mUI:GetModule("mUI.Modules.Unitframes.Color")
-    Modules.BuffsDebuffs = mUI:GetModule("mUI.Modules.Unitframes.BuffsDebuffs")
     Modules.Reputationcolor = mUI:GetModule("mUI.Modules.Unitframes.Reputationcolor")
     Modules.Combatindicator = mUI:GetModule("mUI.Modules.Unitframes.Combatindicator")
     Modules.Cornericon = mUI:GetModule("mUI.Modules.Unitframes.Cornericon")
@@ -24,11 +23,6 @@ function Modules:OnInitialize()
     Modules.Elitecolor = mUI:GetModule("mUI.Modules.Unitframes.Elitecolor")
     Modules.Smooth = mUI:GetModule("mUI.Modules.Unitframes.SmoothHealth")
     Modules.Overshields = mUI:GetModule("mUI.Modules.Unitframes.Overshields")
-
-    -- LEGACY MODULES
-    Modules.RF_Defensive = mUI:GetModule("mUI.Modules.Unitframes.RF_Defensive")
-    Modules.RF_Auras = mUI:GetModule("mUI.Modules.Unitframes.RF_Auras")
-    Modules.RF_AuraDisplay = mUI:GetModule("mUI.Modules.Unitframes.RF_AuraDisplay")
 end
 
 function Modules:OnEnable()
@@ -71,9 +65,6 @@ function Modules:OnEnable()
         if Modules.db.level then
             Modules.Level:Enable()
         end
-        if Modules.db.buffsdebuffs.enabled then
-            Modules.BuffsDebuffs:Enable()
-        end
         if Modules.db.elitecolor then
             Modules.Elitecolor:Enable()
         end
@@ -108,22 +99,11 @@ function Modules:OnEnable()
         if Modules.db.smooth then
             Modules.Smooth:Enable()
         end
-
-        -- LEGACY MODULES
-        if select(4, GetBuildInfo()) < 120100 then
-            if Modules.db.raidframes.dispelGlow then
-                Modules.RF_Auras:Enable()
-            end
-            if Modules.db.raidframes.auraDisplay then
-                Modules.RF_AuraDisplay:Enable()
-            end
-        end
     end
 end
 
 function Modules:OnDisable()
     -- Disable Modules
-    Modules.BuffsDebuffs:Disable()
     Modules.Color:Disable()
     Modules.Combatindicator:Disable()
     Modules.Cornericon:Disable()
@@ -145,8 +125,4 @@ function Modules:OnDisable()
     Modules.RF_Scale:Disable()
     Modules.Smooth:Disable()
     Modules.Overshields:Disable()
-
-    -- LEGACY MODULES
-    Modules.RF_Auras:Disable()
-    Modules.RF_AuraDisplay:Disable()
 end
