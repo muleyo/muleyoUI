@@ -3,6 +3,9 @@ local Core = mUI:NewModule("mUI.Core")
 -- Enable Module
 Core:Enable()
 
+-- Always show spell IDs in tooltips while mUI is loaded
+C_CVar.SetCVar("tooltipShowAuraSpellIDs", 1)
+
 function Core:OnInitialize()
     -- Load Database
     Core.db = mUI.db.profile

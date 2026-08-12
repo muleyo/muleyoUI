@@ -7,14 +7,9 @@
     <Include file="RF_RoleIcons.lua" />
     <Include file="RF_Solo.lua" />
     <Include file="RF_Scale.lua" />
-    <!-- LEGACY CODE-->
-    <Include file="RF_Defensive.lua" />
-    <Include file="RF_Auras.lua" />
-    <Include file="RF_AuraDisplay.lua" />
 
     <!-- Unitframes -->
     <Include file="UF_Textures.lua" />
-    <Include file="BuffsDebuffs.lua" />
     <Include file="Color.lua" />
     <Include file="Combatindicator.lua" />
     <Include file="Cornericon.lua" />

@@ -39,6 +39,21 @@ local function ApplyAuraBorderGeometry(border, auraFrame, inset)
     border:SetPoint("BOTTOMRIGHT", auraFrame, "BOTTOMRIGHT", inset, -inset)
 end
 
+-- Duration/count text size multiplier
+local function GetAuraTextScale(category)
+    if category == "raidframe" then
+        local raid = mUI.db and mUI.db.profile.unitframes.raidframes
+        return ((raid and raid.durationTextSize) or 100) / 100, ((raid and raid.countTextSize) or 100) / 100
+    elseif category == "unitframe" then
+        local bd = mUI.db and mUI.db.profile.unitframes.buffsdebuffs
+        return ((bd and bd.durationTextSize) or 100) / 100, ((bd and bd.countTextSize) or 100) / 100
+    elseif category == "player" then
+        local pa = mUI.db and mUI.db.profile.general.playerauras
+        return ((pa and pa.durationTextSize) or 100) / 100, ((pa and pa.countTextSize) or 100) / 100
+    end
+    return 1, 1
+end
+
 local function CreateAuraButton(auraFrame, isDebuff, opts)
     opts = opts or {}
     local size = opts.size or Theme.PLAYER_AURA_SIZE
@@ -60,14 +75,16 @@ local function CreateAuraButton(auraFrame, isDebuff, opts)
         auraFrame.Icon:AddMaskTexture(auraFrame.MaskTexture)
 
         -- Create Cooldown
-        auraFrame.Cooldown = CreateFrame("Cooldown", nil, auraFrame, "CooldownFrameTemplate")
-        auraFrame.Cooldown:SetAllPoints(auraFrame.Icon)
-        auraFrame.Cooldown:SetSwipeTexture(AURA_MASK_TEX)
-        auraFrame.Cooldown:SetSwipeColor(0, 0, 0, 0.75)
-        auraFrame.Cooldown:SetReverse(true)
-        auraFrame.Cooldown:SetDrawBling(false)
-        auraFrame.Cooldown:SetCountdownFont("NumberFontNormalSmall")
-        auraFrame:SetDurationCooldown(auraFrame.Cooldown)
+        if opts.category ~= "player" then
+            auraFrame.Cooldown = CreateFrame("Cooldown", nil, auraFrame, "CooldownFrameTemplate")
+            auraFrame.Cooldown:SetAllPoints(auraFrame.Icon)
+            auraFrame.Cooldown:SetSwipeTexture(AURA_MASK_TEX)
+            auraFrame.Cooldown:SetSwipeColor(0, 0, 0, 0.75)
+            auraFrame.Cooldown:SetReverse(true)
+            auraFrame.Cooldown:SetDrawBling(false)
+            auraFrame.Cooldown:SetCountdownFont("NumberFontNormalSmall")
+            auraFrame:SetDurationCooldown(auraFrame.Cooldown)
+        end
 
         local durationFontSize, countFontSize
         if opts.category == "player" then
@@ -78,11 +95,24 @@ local function CreateAuraButton(auraFrame, isDebuff, opts)
             countFontSize = math.max(math.floor(size / 3), 6)
         end
 
+        -- Remember the un-scaled sizes so a text-size config change can be
+        -- re-applied later without recomputing from the icon size.
+        auraFrame.mUIBaseDurationFontSize = durationFontSize
+        auraFrame.mUIBaseCountFontSize = countFontSize
+        auraFrame.mUICategory = opts.category
+
+        local durationScale, countScale = GetAuraTextScale(opts.category)
+        durationFontSize = math.max(math.floor(durationFontSize * durationScale), 6)
+        countFontSize = math.max(math.floor(countFontSize * countScale), 6)
+
         -- Create Border (in its own overlay above the Cooldown frame, otherwise
         -- the cooldown swipe - a child frame - draws over the border textures).
         auraFrame.BorderOverlay = CreateFrame("Frame", nil, auraFrame)
         auraFrame.BorderOverlay:SetAllPoints(auraFrame)
-        auraFrame.BorderOverlay:SetFrameLevel(auraFrame.Cooldown:GetFrameLevel() + 1)
+        if opts.category ~= "player" then
+
+            auraFrame.BorderOverlay:SetFrameLevel(auraFrame.Cooldown:GetFrameLevel() + 1)
+        end
 
         auraFrame.mUIBorder = auraFrame.BorderOverlay:CreateTexture(nil, "OVERLAY", nil, 6)
         auraFrame.mUIBorder:SetTexture(AURA_BORDER_TEX)
@@ -101,7 +131,7 @@ local function CreateAuraButton(auraFrame, isDebuff, opts)
 
         if opts.category == "player" then
             -- Player buffs/debuffs: custom suffixed countdown ("10s", "5m")
-            auraFrame.Cooldown:SetHideCountdownNumbers(true)
+            -- auraFrame.Cooldown:SetHideCountdownNumbers(true)
             auraFrame.CooldownText = auraFrame.CountOverlay:CreateFontString(nil, "OVERLAY")
             auraFrame.CooldownText:SetFont(STANDARD_TEXT_FONT, durationFontSize, "OUTLINE")
             auraFrame.CooldownText:SetPoint("BOTTOM", auraFrame.Icon, "BOTTOM", 0, 2)
@@ -169,6 +199,34 @@ local function CreateAuraButton(auraFrame, isDebuff, opts)
 end
 
 Theme.CreateAuraButton = CreateAuraButton
+
+-- Re-applies the current duration/count text size config to an already-created
+-- aura button, without touching icon size or recreating anything.
+function Theme:ApplyAuraTextScale(auraFrame)
+    if not auraFrame.mUIBaseDurationFontSize or not auraFrame.CooldownText then
+        return
+    end
+
+    local durationScale, countScale = GetAuraTextScale(auraFrame.mUICategory)
+    local durationFontSize = math.max(math.floor(auraFrame.mUIBaseDurationFontSize * durationScale), 6)
+    local countFontSize = math.max(math.floor(auraFrame.mUIBaseCountFontSize * countScale), 6)
+
+    local _, _, flags = auraFrame.CooldownText:GetFont()
+    auraFrame.CooldownText:SetFont(STANDARD_TEXT_FONT, durationFontSize, flags)
+    if auraFrame.Count then
+        local _, _, countFlags = auraFrame.Count:GetFont()
+        auraFrame.Count:SetFont(STANDARD_TEXT_FONT, countFontSize, countFlags)
+    end
+end
+
+-- Re-applies the text size
+function Theme:UpdateAuraTextSizesForCategory(category)
+    for auraFrame, buttonCategory in pairs(Theme.aurabuttons) do
+        if buttonCategory == category .. "buff" or buttonCategory == category .. "debuff" then
+            Theme:ApplyAuraTextScale(auraFrame)
+        end
+    end
+end
 
 -- ============================================================================
 -- Player Auras
@@ -307,6 +365,11 @@ function Theme:ResizePlayerAuraHost(hostFrame, settings)
     hostFrame:SetSize(width * settings.iconScale, height * settings.iconScale)
 end
 
+-- Re-applies the duration/count text size
+function Theme:UpdateAllPlayerAuraTextSizes()
+    Theme:UpdateAuraTextSizesForCategory("player")
+end
+
 function Theme:SetPlayerDebuffDispelTypeShown(shown)
     local container = DebuffFrame.mUIAuraContainer
     if not container then
@@ -381,7 +444,6 @@ local AURA_START_X = 5
 local AURA_START_Y = 4
 local AURA_MIRRORED_START_Y = -6
 local AURA_LINE_SIZE = 155
-local AURA_LINE_SIZE_TOT = 125
 
 function Theme:InitializeCustomAuraButton(auraFrame, isDebuff, borderColor, size)
     -- Debuff coloring is baked per aura group (see CreateUnitAuraContainer), so
@@ -393,16 +455,27 @@ function Theme:InitializeCustomAuraButton(auraFrame, isDebuff, borderColor, size
     })
 end
 
+-- Fully disables Blizzard's built-in aura container on a unit frame. Called
+-- whether or not mUI replaces it with a custom one, so target/focus never
+-- show the default buffs/debuffs even with our own auras turned off.
+function Theme:DisableDefaultUnitAuraContainer(frame)
+    if not frame or not frame.GetAuraContainer then
+        return
+    end
+
+    local defaultAuraContainer = frame:GetAuraContainer()
+    frame.maxBuffs = 0
+    frame.maxDebuffs = 0
+    defaultAuraContainer:SetEnabled(false)
+    defaultAuraContainer:Hide()
+end
+
 function Theme:CreateUnitAuraContainer(frame, unit)
     if not frame or not frame.GetAuraContainer then
         return
     end
 
-    -- Fully disable Blizzard's built-in aura container
-    local defaultAuraContainer = frame:GetAuraContainer()
-    frame.maxBuffs = 0
-    frame.maxDebuffs = 0
-    defaultAuraContainer:SetEnabled(false)
+    Theme:DisableDefaultUnitAuraContainer(frame)
 
     local parent = frame.TargetFrameContent.TargetFrameContentContextual
 
@@ -542,6 +615,22 @@ function Theme:CreateUnitAuraContainer(frame, unit)
         })
     end
 
+    debuffContainer.mUI_alwaysShownGroupKey = "DebuffsAlwaysShown"
+    debuffContainer:AddAuraGroup("DebuffsAlwaysShown", debuffFilterString, {
+        maxFrameCount = Theme.MAX_UNITFRAME_DEBUFFS,
+        candidateFilters = {
+            nameplateShowAll = true,
+            isFromPlayerOrPlayerPet = false
+        },
+        initializeFrame = function(auraFrame)
+            Theme:InitializeCustomAuraButton(auraFrame, true, nil, debuffSize)
+        end,
+        layout = {
+            elementSpacing = 3,
+            lineSpacing = 3
+        }
+    })
+
     Theme:UpdateUnitDebuffCasterFilter(frame)
 
     if not Theme:IsHooked(frame, "UpdateAuras") then
@@ -557,9 +646,6 @@ function Theme:CreateUnitAuraContainer(frame, unit)
     return buffContainer, debuffContainer
 end
 
--- Debuffs are normally restricted to the ones the player (or their pet) applied,
--- but when the frame shows the player themselves every caster's debuffs are
--- relevant, so the restriction is lifted.
 function Theme:UpdateUnitDebuffCasterFilter(frame)
     local debuffContainer = frame and frame.mUI_debuffContainer
     local groups = debuffContainer and debuffContainer.mUI_debuffGroups
@@ -568,7 +654,7 @@ function Theme:UpdateUnitDebuffCasterFilter(frame)
     end
 
     local unit = frame.unit or debuffContainer:GetUnit()
-    local showAllCasters = (unit ~= nil and UnitIsUnit(unit, "player")) == true
+    local showAllCasters = unit ~= nil and (UnitIsUnit(unit, "player") or UnitIsFriend("player", unit)) == true
     if debuffContainer.mUI_showAllCasters == showAllCasters then
         return
     end
@@ -580,6 +666,13 @@ function Theme:UpdateUnitDebuffCasterFilter(frame)
             excludeDispelTypes = groupInfo.excludeDispelTypes,
             isFromPlayerOrPlayerPet = not showAllCasters or nil
         })
+    end
+
+    -- Redundant against self/friendly targets (the main groups above already
+    -- show everything), so keep it empty there instead of double-showing.
+    local alwaysShownKey = debuffContainer.mUI_alwaysShownGroupKey
+    if alwaysShownKey then
+        debuffContainer:SetAuraGroupMaxFrameCount(alwaysShownKey, showAllCasters and 0 or Theme.MAX_UNITFRAME_DEBUFFS)
     end
 end
 
@@ -607,8 +700,7 @@ function Theme:ReflowUnitAuraContainer(frame)
     end
 
     local vGrowth = mirrorVertically and AnchorUtil.FlowDirection.Up or AnchorUtil.FlowDirection.Down
-    local totShown = frame.IsTargetOfTargetShown and frame:IsTargetOfTargetShown()
-    local lineSize = (not mirrorVertically and totShown) and AURA_LINE_SIZE_TOT or AURA_LINE_SIZE
+    local lineSize = AURA_LINE_SIZE
 
     -- Debuffs: anchored to the frame (always the block nearest the unit frame).
     -- Not on top: debuffs sit above buffs. On top: debuffs sit below buffs.
@@ -681,7 +773,7 @@ end
 -- Raid- & Partyframe Auras
 -- ============================================================================
 local RAID_MAX_BUFFS = 6
-local RAID_MAX_DEBUFFS = 5
+local RAID_MAX_DEBUFFS = 5 -- Default for the configurable "Max Debuff Icons" option.
 local RAID_MAX_DEFENSIVE = 3
 local RAID_BUFFS_PER_ROW = 3
 local RAID_ICON_GAP = 1
@@ -771,6 +863,11 @@ end
 
 local function RaidFilter(...)
     return AuraUtil.CreateFilterString(...)
+end
+
+local function GetRaidMaxDebuffIcons()
+    local raid = mUI.db and mUI.db.profile.unitframes.raidframes
+    return (raid and raid.maxDebuffIcons) or RAID_MAX_DEBUFFS
 end
 
 local function InitRaidAuraButton(auraFrame, container, groupKey, isDebuff)
@@ -866,7 +963,7 @@ function Theme:EnsureRaidAuraContainers(frame, data)
     })
     -- Normal: everything else (not boss/role), shown at the base debuff size.
     debuffContainer:AddAuraGroup("DebuffsNormal", RaidFilter("HARMFUL"), {
-        maxFrameCount = RAID_MAX_DEBUFFS,
+        maxFrameCount = GetRaidMaxDebuffIcons(),
         candidateFilters = {
             isBossOrRoleAura = false,
             excludeSpellIDs = RAID_DEBUFF_EXCLUDE,
@@ -937,7 +1034,7 @@ function Theme:UpdateRaidAuraContainers(frame, data, unit, unreachable, buffSize
     local normalS = debuffContainer.mUI_groupSizes.DebuffsNormal or debuffSize
     local defS = defensiveContainer.mUI_groupSizes.BigDefensives or defensiveSize
     buffContainer:SetFlowLayoutMaximumLineSize(RAID_BUFFS_PER_ROW * (buffS + RAID_ICON_GAP))
-    debuffContainer:SetFlowLayoutMaximumLineSize(RAID_MAX_BIG_DEBUFFS * (bigS + RAID_ICON_GAP) + RAID_MAX_DEBUFFS * (normalS + RAID_ICON_GAP))
+    debuffContainer:SetFlowLayoutMaximumLineSize(RAID_MAX_BIG_DEBUFFS * (bigS + RAID_ICON_GAP) + GetRaidMaxDebuffIcons() * (normalS + RAID_ICON_GAP))
     defensiveContainer:SetFlowLayoutMaximumLineSize(RAID_MAX_DEFENSIVE * (defS + RAID_ICON_GAP))
 
     Theme:ApplyRaidAuraSides(data)
@@ -1123,6 +1220,25 @@ function Theme:UpdateAllRaidAuras()
     end
 end
 
+-- Re-applies the duration/count text size config to every live raid aura
+-- button, without touching icon size (see Theme:ApplyAuraTextScale).
+function Theme:UpdateAllRaidAuraTextSizes()
+    Theme:UpdateAuraTextSizesForCategory("raidframe")
+end
+
+-- Re-applies the "Max Debuff Icons" config to every live raid debuff group.
+-- The flow layout's max line size follows on the next refresh tick/SetUnit
+-- (see Theme:UpdateRaidAuraContainers, which reads the same config live).
+function Theme:UpdateAllRaidAuraDebuffLimit()
+    local maxDebuffs = GetRaidMaxDebuffIcons()
+    for frame in pairs(Theme.raidAuraFrames or {}) do
+        local data = frame and frame.mUI_AD
+        if data and data.debuffContainer and not frame:IsForbidden() then
+            data.debuffContainer:SetAuraGroupMaxFrameCount("DebuffsNormal", maxDebuffs)
+        end
+    end
+end
+
 function Theme:PositionAnchors(frame, data)
     local powerBar = frame.powerBar
     local hasPower = powerBar and powerBar:IsShown()
@@ -1136,220 +1252,4 @@ function Theme:PositionAnchors(frame, data)
 
     data.debuffAnchor:ClearAllPoints()
     data.debuffAnchor:SetPoint("BOTTOMLEFT", refFrame, leftRef, 2, yOffset)
-end
-
--- ============================================================================
--- Pre 12.1.0 Code
--- ============================================================================
-
-local function SkinLegacyAuraButton(frame, category, opts)
-    opts = opts or {}
-
-    if not frame.mUIBorder then
-        frame.Icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-
-        -- Border
-        frame.mUIBorder = frame:CreateTexture(nil, "OVERLAY", nil, 7)
-        frame.mUIBorder:SetDesaturated(true)
-        frame.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
-
-        -- Icon mask
-        frame.mUIBorder.mask = frame:CreateMaskTexture()
-        frame.mUIBorder.mask:SetAllPoints(frame.Icon)
-        frame.Icon:AddMaskTexture(frame.mUIBorder.mask)
-
-        if opts.swipe then
-            opts.swipe:SetSwipeColor(0, 0, 0, 0.75)
-        end
-
-        local geom = {
-            size = opts.size
-        }
-
-        frame.mUIBorderRecord = Theme:RegisterBorder({
-            border = frame.mUIBorder,
-            coord = true,
-            mask = frame.mUIBorder.mask,
-            swipe = opts.swipe,
-            applyGeometry = function(style)
-                local size = geom.size or frame.Icon:GetWidth()
-                ApplyAuraBorderGeometry(frame.mUIBorder, frame.Icon, size * style.auraInsetRatio)
-            end
-        })
-        frame.mUIBorderRecord.geom = geom
-
-        if category then
-            Theme.aurabuttons[frame] = category
-        end
-    end
-
-    return frame.mUIBorderRecord
-end
-
-function Theme:ButtonDefault(button, isDebuff)
-    SkinLegacyAuraButton(button, isDebuff and "playerdebuff" or "playerbuff", {
-        size = Theme.PLAYER_AURA_SIZE
-    })
-end
-
--- Disable Flashing of Buffs and Debuffs
-BuffFrame.AuraContainer.GetAuraWarningAlphaForDuration = nil
-DebuffFrame.AuraContainer.GetAuraWarningAlphaForDuration = nil
-
-function Theme:UpdatePlayerBuffs()
-    local Children = BuffFrame.auraFrames
-
-    for index, child in pairs(Children) do
-        local frame = select(index, BuffFrame.AuraContainer:GetChildren())
-        frame.TempEnchantBorder:SetAlpha(0)
-
-        if not frame.mUIBorder then
-            Theme:ButtonDefault(frame)
-        end
-    end
-end
-
-function Theme:UpdatePlayerDebuffs()
-    local Children = {DebuffFrame.AuraContainer:GetChildren()}
-
-    for index, child in pairs(Children) do
-        local frame = select(index, DebuffFrame.AuraContainer:GetChildren())
-        if not frame.mUIBorder then
-            Theme:ButtonDefault(frame, true)
-        end
-
-        if frame.DebuffBorder then
-            frame.DebuffBorder:SetAlpha(0)
-
-            local auraData = C_UnitAuras.GetDebuffDataByIndex("player", index)
-
-            if auraData and auraData.auraInstanceID then
-                local color = C_UnitAuras.GetAuraDispelTypeColor("player", auraData.auraInstanceID, Theme.colorCurve)
-                if color then
-                    -- Set the color of the Debuff Border
-                    frame.mUIBorder:SetVertexColor(color.r, color.g, color.b, 1)
-                else
-                    color = DEBUFF_TYPE_NONE_COLOR
-                    frame.mUIBorder:SetVertexColor(color.r, color.g, color.b, 1)
-                end
-            end
-        end
-    end
-end
-
-function Theme:UpdateUnitframeAuras(aura, isDebuff, unit)
-    local db = mUI.db.profile.unitframes.buffsdebuffs
-    local size = isDebuff and db.debuffsize or db.buffsize
-
-    local record = SkinLegacyAuraButton(aura, isDebuff and "unitframedebuff" or "unitframebuff", {
-        swipe = aura.Cooldown,
-        size = size
-    })
-
-    if record then
-        if record.geom then
-            record.geom.size = size
-        end
-        if record.applyGeometry then
-            record.applyGeometry(Theme:GetBorderStyle())
-        end
-    end
-
-    -- Set Count Position
-    if aura.Count then
-        aura.Count:ClearAllPoints()
-        aura.Count:SetPoint("BOTTOMRIGHT", aura.Icon, "BOTTOMRIGHT", -2, 2.5)
-    end
-
-    if aura.Border and mUI.db.profile.unitframes.buffsdebuffs.debuffcolors then
-        local r, g, b = aura.Border:GetVertexColor()
-        aura.mUIBorder:SetVertexColor(r, g, b, 1)
-        aura.Border:SetAlpha(0)
-    else
-        aura.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
-    end
-end
-
-function Theme:AuraPositions()
-    -- Buffs - Text Positioning
-    for i = 1, #BuffFrame.auraFrames do
-        local duration = BuffFrame.auraFrames[i].Duration
-        local count = BuffFrame.auraFrames[i].Count
-
-        count:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
-        duration:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
-        duration:ClearAllPoints()
-        duration:SetDrawLayer("OVERLAY")
-
-        if BuffFrame.AuraContainer.isHorizontal then
-            if BuffFrame.AuraContainer.addIconsToTop then
-                count:SetPoint("TOPRIGHT", -1, 0)
-                duration:SetPoint("CENTER", 0, -14)
-            else
-                count:SetPoint("TOPRIGHT", -1, 12)
-                duration:SetPoint("CENTER", 0, -4)
-            end
-        else
-            if not BuffFrame.AuraContainer.addIconsToRight then
-                count:SetPoint("TOPRIGHT", -1, 12)
-                duration:SetPoint("CENTER", 15, -9)
-            else
-                count:SetPoint("TOPRIGHT", -31, 12)
-                duration:SetPoint("CENTER", -13.5, -9)
-            end
-        end
-    end
-
-    -- Debuffs - Text Positioning
-    for i = 1, #DebuffFrame.auraFrames do
-        local duration = DebuffFrame.auraFrames[i].Duration
-        local count = DebuffFrame.auraFrames[i].Count
-
-        if count and count.SetFont then
-            count:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
-        end
-
-        if duration and duration.SetFont then
-            duration:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE")
-            duration:ClearAllPoints()
-        end
-
-        if DebuffFrame.AuraContainer.isHorizontal then
-            if DebuffFrame.AuraContainer.addIconsToTop then
-                if count then
-                    count:SetPoint("TOPRIGHT", -1, 0)
-                end
-
-                if duration then
-                    duration:SetPoint("CENTER", 0, -14)
-                end
-            else
-                if count then
-                    count:SetPoint("TOPRIGHT", -1, 12)
-                end
-
-                if duration then
-                    duration:SetPoint("CENTER", 0, -4)
-                end
-            end
-        else
-            if not DebuffFrame.AuraContainer.addIconsToRight then
-                if count then
-                    count:SetPoint("TOPRIGHT", 0, 13)
-                end
-
-                if duration then
-                    duration:SetPoint("CENTER", 16, -9)
-                end
-            else
-                if count then
-                    count:SetPoint("TOPRIGHT", -30, 13)
-                end
-
-                if duration then
-                    duration:SetPoint("CENTER", -14.5, -9)
-                end
-            end
-        end
-    end
 end

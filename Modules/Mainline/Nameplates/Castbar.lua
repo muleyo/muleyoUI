@@ -152,24 +152,14 @@ function Castbar:OnInitialize()
             texture:SetTexCoord(0.08, 0.92, 0.08, 0.92)
             iconFrame.texture = texture
 
-            local mUIBorder = iconFrame:CreateTexture(nil, "OVERLAY", nil, 7)
-            mUIBorder:SetDesaturated(true)
-            mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
-
             local mask = iconFrame:CreateMaskTexture()
             mask:SetAllPoints(texture)
             texture:AddMaskTexture(mask)
 
+            -- No border texture on castbar icons, but the mask still needs to
+            -- follow border-style swaps (Style1/Style2 use different masks).
             Castbar.Theme:RegisterBorder({
-                border = mUIBorder,
-                coord = true,
-                mask = mask,
-                applyGeometry = function(style)
-                    local inset = style.nameplateIcons or 3.5
-                    mUIBorder:ClearAllPoints()
-                    mUIBorder:SetPoint("TOPLEFT", texture, "TOPLEFT", -inset, inset)
-                    mUIBorder:SetPoint("BOTTOMRIGHT", texture, "BOTTOMRIGHT", inset, -inset)
-                end
+                mask = mask
             })
 
             icon:SetAlpha(0)

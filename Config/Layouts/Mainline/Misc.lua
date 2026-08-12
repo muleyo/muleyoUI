@@ -166,28 +166,6 @@ function Misc:OnInitialize()
                 end,
                 order = 9
             },
-            buffcollapse = {
-                name = "Collapse Button",
-                desc = "Hide the BuffFrame Collapse Button",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.misc.buffcollapse = val
-
-                    if not Misc.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val then
-                        Misc.Module.Buffcollapse:Enable()
-                    else
-                        Misc.Module.Buffcollapse:Disable()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.misc.buffcollapse
-                end,
-                order = 10
-            },
             header3 = {
                 name = "PvP Options",
                 type = "header",

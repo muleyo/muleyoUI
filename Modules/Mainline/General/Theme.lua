@@ -19,8 +19,8 @@ function Theme:OnInitialize()
             auraInsetRatio = 6 / 30,
             castbarInset = 4.5,
             castbarInsetSmall = 3.5,
-            nameplateIcons = 3.25,
-            totemIcon = 5
+            nameplateIcons = 4.25,
+            totemIcon = 4
         },
         Style2 = {
             border = [[Interface\AddOns\mUI\Media\Textures\Core\atlas_v2.png]],
@@ -30,7 +30,7 @@ function Theme:OnInitialize()
             castbarInset = 8,
             castbarInsetSmall = 7,
             nameplateIcons = 6.75,
-            totemIcon = 9
+            totemIcon = 14
         }
     }
 
@@ -135,98 +135,68 @@ function Theme:OnEnable()
         ["Blizzard_HouseList"] = Theme.Housing
     }
 
-    -- Buffs & Debuffs
-    if select(4, GetBuildInfo()) >= 120100 then
-        -- Player Auras
-        Theme:InitPlayerAuraContainers()
+    -- Player Auras
+    Theme:InitPlayerAuraContainers()
 
-        if mUI.db.profile.unitframes.enabled then
-            -- Target/Focus Auras
+    if mUI.db.profile.unitframes.enabled then
+        if mUI.db.profile.unitframes.buffsdebuffs.enabled then
             Theme:CreateUnitAuraContainer(TargetFrame, "target")
             Theme:CreateUnitAuraContainer(FocusFrame, "focus")
-        end
-
-        if mUI.db.profile.unitframes.raidframes.enabled then
-            -- Raidframe Auras
-            Theme:DisableDefaultRaidAuras(true)
-            local function RefreshRaidFrameAuras(frame)
-                if not frame or (frame and frame:IsForbidden()) or (frame and not frame.unit) then
-                    return
-                end
-
-                local name = frame:GetName()
-
-                if not name or not (name:match("^CompactParty") or name:match("^CompactRaid")) then
-                    return
-                end
-
-                local data = Theme:EnsureContainers(frame)
-                Theme:PositionAnchors(frame, data)
-
-                local unit = frame.displayedUnit or frame.unit
-                if not unit or unit:match("target") then
-                    return
-                end
-
-                local unreachable = (UnitIsConnected and not UnitIsConnected(unit)) or (UnitPhaseReason and UnitPhaseReason(unit) ~= nil) or
-                                        (UnitIsVisible and not UnitIsVisible(unit)) or (UnitCanAssist and not UnitCanAssist("player", unit))
-
-                local buffSize, debuffSize = Theme:GetSizes(frame)
-                local frameH = frame:GetHeight()
-                if not frameH or frameH < 1 then
-                    frameH = 36
-                end
-
-                local defensiveSize = math.floor(frameH * (Theme:GetDefensiveSize() / 100) + 0.5)
-                local defPoint, defX, defY = Theme:GetDefensivePosition()
-
-                Theme:UpdateRaidAuraContainers(frame, data, unit, unreachable, buffSize, debuffSize, defensiveSize, defPoint, defX, defY)
-            end
-
-            Theme:SecureHook("CompactUnitFrame_SetUnit", RefreshRaidFrameAuras)
-
-            if Theme.raidAuraVisibilityTicker then
-                Theme.raidAuraVisibilityTicker:Cancel()
-            end
-            Theme.raidAuraVisibilityTicker = C_Timer.NewTicker(1, function()
-                for frame in pairs(Theme.raidAuraFrames or {}) do
-                    RefreshRaidFrameAuras(frame)
-                end
-            end)
         else
-            Theme:DisableDefaultRaidAuras(false)
+            Theme:DisableDefaultUnitAuraContainer(TargetFrame)
+            Theme:DisableDefaultUnitAuraContainer(FocusFrame)
         end
-    else
-        Theme.auras:RegisterEvent("PLAYER_ENTERING_WORLD")
-        Theme.auras:RegisterEvent("PLAYER_TARGET_CHANGED")
-        Theme.auras:RegisterEvent("PLAYER_FOCUS_CHANGED")
-        Theme.auras:RegisterEvent("WEAPON_ENCHANT_CHANGED")
-        Theme.auras:RegisterUnitEvent("UNIT_AURA", "player", "target", "focus")
-        Theme:SecureHookScript(Theme.auras, "OnEvent", function()
-            -- Player Auras
-            Theme:UpdatePlayerBuffs()
-            Theme:UpdatePlayerDebuffs()
+    end
 
-            -- Target Auras
-            for aura in TargetFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
-                Theme:UpdateUnitframeAuras(aura)
-            end
-            for aura in TargetFrame.auraPools:GetPool("TargetDebuffFrameTemplate"):EnumerateActive() do
-                Theme:UpdateUnitframeAuras(aura, true, "target")
+    if mUI.db.profile.unitframes.raidframes.enabled then
+        -- Raidframe Auras
+        Theme:DisableDefaultRaidAuras(true)
+        local function RefreshRaidFrameAuras(frame)
+            if not frame or (frame and frame:IsForbidden()) or (frame and not frame.unit) then
+                return
             end
 
-            -- Focus Auras
-            for aura in FocusFrame.auraPools:GetPool("TargetBuffFrameTemplate"):EnumerateActive() do
-                Theme:UpdateUnitframeAuras(aura)
+            local name = frame:GetName()
+
+            if not name or not (name:match("^CompactParty") or name:match("^CompactRaid")) then
+                return
             end
-            for aura in FocusFrame.auraPools:GetPool("TargetDebuffFrameTemplate"):EnumerateActive() do
-                Theme:UpdateUnitframeAuras(aura, true, "focus")
+
+            local data = Theme:EnsureContainers(frame)
+            Theme:PositionAnchors(frame, data)
+
+            local unit = frame.displayedUnit or frame.unit
+            if not unit or unit:match("target") then
+                return
+            end
+
+            local unreachable = (UnitIsConnected and not UnitIsConnected(unit)) or (UnitPhaseReason and UnitPhaseReason(unit) ~= nil) or
+                                    (UnitIsVisible and not UnitIsVisible(unit)) or (UnitCanAssist and not UnitCanAssist("player", unit))
+
+            local buffSize, debuffSize = Theme:GetSizes(frame)
+            local frameH = frame:GetHeight()
+            if not frameH or frameH < 1 then
+                frameH = 36
+            end
+
+            local defensiveSize = math.floor(frameH * (Theme:GetDefensiveSize() / 100) + 0.5)
+            local defPoint, defX, defY = Theme:GetDefensivePosition()
+
+            Theme:UpdateRaidAuraContainers(frame, data, unit, unreachable, buffSize, debuffSize, defensiveSize, defPoint, defX, defY)
+        end
+
+        Theme:SecureHook("CompactUnitFrame_SetUnit", RefreshRaidFrameAuras)
+
+        if Theme.raidAuraVisibilityTicker then
+            Theme.raidAuraVisibilityTicker:Cancel()
+        end
+        Theme.raidAuraVisibilityTicker = C_Timer.NewTicker(1, function()
+            for frame in pairs(Theme.raidAuraFrames or {}) do
+                RefreshRaidFrameAuras(frame)
             end
         end)
-
-        -- Only the legacy path uses Blizzard's aura buttons, so this is the
-        -- only path that needs their text repositioned.
-        Theme:SecureHook(AuraFrameMixin, "UpdateAuraButtons", Theme.AuraPositions)
+    else
+        Theme:DisableDefaultRaidAuras(false)
     end
 
     -- Castbar Icon Skins

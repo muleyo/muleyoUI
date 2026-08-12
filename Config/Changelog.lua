@@ -3,11 +3,13 @@ local Changelog = mUI:NewModule("mUI.Config.Changelog")
 -- Maintainer note: this window intentionally shows ONLY the latest update.
 -- Keep this as a single entry and update it each release.
 local CHANGELOG = {
-    version = "4.1.0",
+    version = "4.1.1",
     affected = {"Mainline"},
-    changes = {"AddOn has been updated for patch 12.1.0.", "Reworked nameplate module - there's plenty of new stuff, inspired by BetterBlizzPlates.",
-               "Auras have been reworked, making use of the new AuraContainer system.",
-               "ClassBar option has been removed as it's available in Edit Mode now (Personal Resource Bar)"}
+    changes = {"Added Classcolor nameplate option to the nameplate module.", "Removed nameplate casbar icon borders.",
+               "Added CVar enforcement so SpellIDs are always being shown on auras.",
+               "Added options to change cooldown text and count text sizes on auras.", "Added option to limit the amount of debuffs on Raidframes",
+               "Added back Friendlist Colors options as the new Friends Frame is not available yet.", "Removed Player Auras Cooldown swipe.",
+               "Target of Target position has been slightly adjusted."}
 }
 
 function Changelog:OnInitialize()
