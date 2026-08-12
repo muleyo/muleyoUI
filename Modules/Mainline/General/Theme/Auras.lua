@@ -493,6 +493,12 @@ function Theme:CreateUnitAuraContainer(frame, unit)
 
     -- Buff/Debuff sizes
     local buffSize, debuffSize = Theme:GetUnitframeAuraSizes()
+    buffContainer.mUI_baseSize = buffSize
+    debuffContainer.mUI_baseSize = debuffSize
+
+    -- Track for live size updates (config sliders re-scale these containers).
+    Theme.unitframeAuraFrames = Theme.unitframeAuraFrames or {}
+    Theme.unitframeAuraFrames[frame] = true
 
     Theme:ReflowUnitAuraContainer(frame)
     buffContainer:SetUnit(unit)
@@ -683,6 +689,25 @@ function Theme:GetUnitframeAuraSizes()
     return buffSize, debuffSize
 end
 
+-- Re-scales every live unitframe (target/focus) aura container to the current
+-- Buff/Debuff Size config, without recreating any buttons (see
+-- Theme:UpdateAllRaidAuras for the same technique on raid frames).
+function Theme:UpdateAllUnitframeAuraSizes()
+    local buffSize, debuffSize = Theme:GetUnitframeAuraSizes()
+    for frame in pairs(Theme.unitframeAuraFrames or {}) do
+        local buffContainer = frame and frame.mUI_buffContainer
+        local debuffContainer = frame and frame.mUI_debuffContainer
+
+        if buffContainer and buffContainer.mUI_baseSize and buffContainer.mUI_baseSize > 0 then
+            buffContainer:SetScale(buffSize / buffContainer.mUI_baseSize)
+        end
+
+        if debuffContainer and debuffContainer.mUI_baseSize and debuffContainer.mUI_baseSize > 0 then
+            debuffContainer:SetScale(debuffSize / debuffContainer.mUI_baseSize)
+        end
+    end
+end
+
 function Theme:ReflowUnitAuraContainer(frame)
     local buffContainer = frame.mUI_buffContainer
     local debuffContainer = frame.mUI_debuffContainer
@@ -816,6 +841,7 @@ local RAID_DEFENSIVES = {
     [33206] = true, -- Pain Suppression
     [228050] = true, -- Guardian of the Forgotten Queen
     [211210] = true, -- Aura Mastery
+    [31821] = true, -- Aura Mastery
     [363534] = true, -- Rewind
     [370960] = true, -- Emerald Communion
     [378441] = true, -- Time Stop

@@ -411,7 +411,7 @@ function Unitframes:OnInitialize()
             },
             buffsize = {
                 name = "Buff Size",
-                desc = "Set the Size of Buffs on Unitframes (Target / Focus)\n\n|cffffff00Info:|r Requires Reload",
+                desc = "Set the Size of Buffs on Unitframes (Target / Focus)",
                 type = "range",
                 min = 0,
                 max = 30,
@@ -421,6 +421,7 @@ function Unitframes:OnInitialize()
                 end,
                 set = function(_, val)
                     mUI.db.profile.unitframes.buffsdebuffs.buffsize = val
+                    Unitframes.Theme:UpdateAllUnitframeAuraSizes()
                 end,
                 get = function()
                     return mUI.db.profile.unitframes.buffsdebuffs.buffsize
@@ -429,7 +430,7 @@ function Unitframes:OnInitialize()
             },
             debuffsize = {
                 name = "Debuff Size",
-                desc = "Set the Size of Debuffs on Unitframes (Target / Focus)\n\n|cffffff00Info:|r Requires Reload",
+                desc = "Set the Size of Debuffs on Unitframes (Target / Focus)",
                 type = "range",
                 min = 0,
                 max = 30,
@@ -439,6 +440,7 @@ function Unitframes:OnInitialize()
                 end,
                 set = function(_, val)
                     mUI.db.profile.unitframes.buffsdebuffs.debuffsize = val
+                    Unitframes.Theme:UpdateAllUnitframeAuraSizes()
                 end,
                 get = function()
                     return mUI.db.profile.unitframes.buffsdebuffs.debuffsize
@@ -447,7 +449,7 @@ function Unitframes:OnInitialize()
             },
             durationTextSize = {
                 name = "Cooldown Text Size",
-                desc = "Scale the aura cooldown/duration text on Unitframes (Target / Focus), as a percent of the default size.\n\n|cffffff00Info:|r Requires Reload",
+                desc = "Scale the aura cooldown/duration text on Unitframes (Target / Focus), as a percent of the default size.",
                 type = "range",
                 min = 50,
                 max = 200,
@@ -457,6 +459,7 @@ function Unitframes:OnInitialize()
                 end,
                 set = function(_, val)
                     mUI.db.profile.unitframes.buffsdebuffs.durationTextSize = val
+                    Unitframes.Theme:UpdateAuraTextSizesForCategory("unitframe")
                 end,
                 get = function()
                     return mUI.db.profile.unitframes.buffsdebuffs.durationTextSize
@@ -465,7 +468,7 @@ function Unitframes:OnInitialize()
             },
             countTextSize = {
                 name = "Stack Count Text Size",
-                desc = "Scale the aura stack count text on Unitframes (Target / Focus), as a percent of the default size.\n\n|cffffff00Info:|r Requires Reload",
+                desc = "Scale the aura stack count text on Unitframes (Target / Focus), as a percent of the default size.",
                 type = "range",
                 min = 50,
                 max = 200,
@@ -475,6 +478,7 @@ function Unitframes:OnInitialize()
                 end,
                 set = function(_, val)
                     mUI.db.profile.unitframes.buffsdebuffs.countTextSize = val
+                    Unitframes.Theme:UpdateAuraTextSizesForCategory("unitframe")
                 end,
                 get = function()
                     return mUI.db.profile.unitframes.buffsdebuffs.countTextSize
