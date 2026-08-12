@@ -139,9 +139,13 @@ function Theme:OnEnable()
     Theme:InitPlayerAuraContainers()
 
     if mUI.db.profile.unitframes.enabled then
-        -- Target/Focus Auras
-        Theme:CreateUnitAuraContainer(TargetFrame, "target")
-        Theme:CreateUnitAuraContainer(FocusFrame, "focus")
+        if mUI.db.profile.unitframes.buffsdebuffs.enabled then
+            Theme:CreateUnitAuraContainer(TargetFrame, "target")
+            Theme:CreateUnitAuraContainer(FocusFrame, "focus")
+        else
+            Theme:DisableDefaultUnitAuraContainer(TargetFrame)
+            Theme:DisableDefaultUnitAuraContainer(FocusFrame)
+        end
     end
 
     if mUI.db.profile.unitframes.raidframes.enabled then
