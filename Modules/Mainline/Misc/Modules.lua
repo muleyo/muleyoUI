@@ -9,7 +9,6 @@ function Modules:OnInitialize()
     Modules.Statusbar = mUI:GetModule("mUI.Modules.Misc.Statusbar")
     Modules.Surrender = mUI:GetModule("mUI.Modules.Misc.Surrender")
     Modules.Tabbinder = mUI:GetModule("mUI.Modules.Misc.Tabbinder")
-    Modules.Buffcollapse = mUI:GetModule("mUI.Modules.Misc.Buffcollapse")
     Modules.Achievements = mUI:GetModule("mUI.Modules.Misc.Achievements")
     Modules.Fastloot = mUI:GetModule("mUI.Modules.Misc.Fastloot")
     Modules.PlayerLinks = mUI:GetModule("mUI.Modules.Misc.PlayerLinks")
@@ -40,9 +39,6 @@ function Modules:OnEnable()
     if Modules.db.tabbinder then
         Modules.Tabbinder:Enable()
     end
-    if Modules.db.buffcollapse then
-        Modules.Buffcollapse:Enable()
-    end
     if Modules.db.achievements then
         Modules.Achievements:Enable()
     end
@@ -66,7 +62,6 @@ function Modules:OnDisable()
     Modules.Statusbar:Disable()
     Modules.Surrender:Disable()
     Modules.Tabbinder:Disable()
-    Modules.Buffcollapse:Disable()
     Modules.Achievements:Disable()
     Modules.Fastloot:Disable()
     Modules.PlayerLinks:Disable()
