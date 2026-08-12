@@ -444,7 +444,6 @@ local AURA_START_X = 5
 local AURA_START_Y = 4
 local AURA_MIRRORED_START_Y = -6
 local AURA_LINE_SIZE = 155
-local AURA_LINE_SIZE_TOT = 125
 
 function Theme:InitializeCustomAuraButton(auraFrame, isDebuff, borderColor, size)
     -- Debuff coloring is baked per aura group (see CreateUnitAuraContainer), so
@@ -710,8 +709,7 @@ function Theme:ReflowUnitAuraContainer(frame)
     end
 
     local vGrowth = mirrorVertically and AnchorUtil.FlowDirection.Up or AnchorUtil.FlowDirection.Down
-    local totShown = frame.IsTargetOfTargetShown and frame:IsTargetOfTargetShown()
-    local lineSize = (not mirrorVertically and totShown) and AURA_LINE_SIZE_TOT or AURA_LINE_SIZE
+    local lineSize = AURA_LINE_SIZE
 
     -- Debuffs: anchored to the frame (always the block nearest the unit frame).
     -- Not on top: debuffs sit above buffs. On top: debuffs sit below buffs.
