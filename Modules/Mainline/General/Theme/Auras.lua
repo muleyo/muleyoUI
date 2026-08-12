@@ -1046,6 +1046,40 @@ function Theme:EnsureRaidAuraContainers(frame, data)
     data.defensiveContainer = defensiveContainer
 end
 
+-- Anchors the defensive container to its chosen edge/center and points its
+-- flow layout outwards from there. Shared by the per-tick refresh and the
+-- config option's live-update path (Theme:UpdateAllRaidDefensivePositions).
+local function ApplyRaidDefensivePosition(frame, defensiveContainer, defPoint, defX, defY)
+    defensiveContainer:ClearAllPoints()
+    if defPoint == "RIGHT" then
+        defensiveContainer:SetFlowLayoutAnchorPoint("RIGHT")
+        defensiveContainer:SetFlowLayoutGrowthDirection(AnchorUtil.FlowDirection.Left, AnchorUtil.FlowDirection.Down)
+        defensiveContainer:SetPoint("RIGHT", frame, "RIGHT", defX, defY)
+    elseif defPoint == "LEFT" then
+        defensiveContainer:SetFlowLayoutAnchorPoint("LEFT")
+        defensiveContainer:SetFlowLayoutGrowthDirection(AnchorUtil.FlowDirection.Right, AnchorUtil.FlowDirection.Down)
+        defensiveContainer:SetPoint("LEFT", frame, "LEFT", defX, defY)
+    else
+        defensiveContainer:SetFlowLayoutAnchorPoint("LEFT")
+        defensiveContainer:SetFlowLayoutGrowthDirection(AnchorUtil.FlowDirection.Right, AnchorUtil.FlowDirection.Down)
+        defensiveContainer:SetPoint("CENTER", frame, "CENTER", defX, defY)
+    end
+end
+
+-- Re-applies the defensive anchor/offset config to every live raid frame
+-- immediately, instead of waiting on the once-a-second visibility ticker.
+function Theme:UpdateAllRaidDefensivePositions()
+    local defPoint, defX, defY = Theme:GetDefensivePosition()
+    for frame in pairs(Theme.raidAuraFrames or {}) do
+        local data = frame and frame.mUI_AD
+        local defensiveContainer = data and data.defensiveContainer
+        if defensiveContainer and not frame:IsForbidden() then
+            ApplyRaidDefensivePosition(frame, defensiveContainer, defPoint, defX, defY)
+            defensiveContainer:UpdateAllAuras()
+        end
+    end
+end
+
 function Theme:UpdateRaidAuraContainers(frame, data, unit, unreachable, buffSize, debuffSize, defensiveSize, defPoint, defX, defY)
     local buffContainer = data.buffContainer
     local debuffContainer = data.debuffContainer
@@ -1065,20 +1099,7 @@ function Theme:UpdateRaidAuraContainers(frame, data, unit, unreachable, buffSize
 
     Theme:ApplyRaidAuraSides(data)
 
-    defensiveContainer:ClearAllPoints()
-    if defPoint == "RIGHT" then
-        defensiveContainer:SetFlowLayoutAnchorPoint("RIGHT")
-        defensiveContainer:SetFlowLayoutGrowthDirection(AnchorUtil.FlowDirection.Left, AnchorUtil.FlowDirection.Down)
-        defensiveContainer:SetPoint("RIGHT", frame, "RIGHT", defX, defY)
-    elseif defPoint == "LEFT" then
-        defensiveContainer:SetFlowLayoutAnchorPoint("LEFT")
-        defensiveContainer:SetFlowLayoutGrowthDirection(AnchorUtil.FlowDirection.Right, AnchorUtil.FlowDirection.Down)
-        defensiveContainer:SetPoint("LEFT", frame, "LEFT", defX, defY)
-    else
-        defensiveContainer:SetFlowLayoutAnchorPoint("LEFT")
-        defensiveContainer:SetFlowLayoutGrowthDirection(AnchorUtil.FlowDirection.Right, AnchorUtil.FlowDirection.Down)
-        defensiveContainer:SetPoint("CENTER", frame, "CENTER", defX, defY)
-    end
+    ApplyRaidDefensivePosition(frame, defensiveContainer, defPoint, defX, defY)
 
     -- Out of phase/range
     if unreachable then

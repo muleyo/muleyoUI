@@ -132,35 +132,6 @@ function Raidframes:OnInitialize()
                 end,
                 order = 6
             },
-            partyScale = {
-                name = "Party Frame Scale",
-                desc = "Scale of the CompactPartyFrame (party container).",
-                type = "range",
-                min = 50,
-                max = 200,
-                step = 1,
-                set = function(_, val)
-                    mUI.db.profile.unitframes.raidframes.partyScale = val
-
-                    if not Raidframes.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val == 100 then
-                        Raidframes.Module.RF_Scale:Disable()
-                    else
-                        if Raidframes.Module.RF_Scale:IsEnabled() then
-                            Raidframes.Module.RF_Scale:Update()
-                        else
-                            Raidframes.Module.RF_Scale:Enable()
-                        end
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.raidframes.partyScale
-                end,
-                order = 7
-            },
             roleicons = {
                 name = "Hide Role Icons",
                 desc = "Hide Role Icons on Party/Raidframes",
@@ -337,6 +308,14 @@ function Raidframes:OnInitialize()
                 sorting = {"LEFT", "CENTER", "RIGHT"},
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.centerDefensivePoint = val
+
+                    if select(4, GetBuildInfo()) >= 120100 then
+                        Raidframes.Theme:UpdateAllRaidDefensivePositions()
+                    else
+                        if Raidframes.Module:IsEnabled() and Raidframes.Module.RF_AuraDisplay and Raidframes.Module.RF_AuraDisplay:IsEnabled() then
+                            Raidframes.Module.RF_AuraDisplay:UpdateAll()
+                        end
+                    end
                 end,
                 get = function()
                     return mUI.db.profile.unitframes.raidframes.centerDefensivePoint
@@ -372,7 +351,7 @@ function Raidframes:OnInitialize()
                     mUI.db.profile.unitframes.raidframes.centerDefensiveX = val
 
                     if select(4, GetBuildInfo()) >= 120100 then
-                        Raidframes.Theme:UpdateAllRaidAuras()
+                        Raidframes.Theme:UpdateAllRaidDefensivePositions()
                     else
                         if Raidframes.Module:IsEnabled() and Raidframes.Module.RF_AuraDisplay and Raidframes.Module.RF_AuraDisplay:IsEnabled() then
                             Raidframes.Module.RF_AuraDisplay:UpdateAll()
@@ -396,7 +375,7 @@ function Raidframes:OnInitialize()
                     mUI.db.profile.unitframes.raidframes.centerDefensiveY = val
 
                     if select(4, GetBuildInfo()) >= 120100 then
-                        Raidframes.Theme:UpdateAllRaidAuras()
+                        Raidframes.Theme:UpdateAllRaidDefensivePositions()
                     else
                         if Raidframes.Module:IsEnabled() and Raidframes.Module.RF_AuraDisplay and Raidframes.Module.RF_AuraDisplay:IsEnabled() then
                             Raidframes.Module.RF_AuraDisplay:UpdateAll()
