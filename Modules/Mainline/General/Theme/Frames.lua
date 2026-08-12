@@ -1548,6 +1548,12 @@ function Theme:Unitframes()
     mUI:Skin(Boss5TargetFrame.TargetFrameContainer)
     mUI:Skin({PetFrameTexture, TargetFrameToT.FrameTexture, FocusFrameToT.FrameTexture,
               PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PlayerPortraitCornerIcon}, true)
+
+    -- Move Target-of-Target/Focus-of-Target frames further out from their parent.
+    TargetFrameToT:ClearAllPoints()
+    FocusFrameToT:ClearAllPoints()
+    TargetFrameToT:SetPoint("RIGHT", TargetFrame, "RIGHT", 45, -55)
+    FocusFrameToT:SetPoint("RIGHT", FocusFrame, "RIGHT", 45, -55)
 end
 
 function Theme:Castbars()
