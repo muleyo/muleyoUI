@@ -281,6 +281,9 @@ function Health:OnInitialize()
     end
 
     local NAME_SPACING = 4
+    -- Independent from the Name Text Size setting, so changing one doesn't
+    -- resize the other.
+    local HEALTH_TEXT_SIZE = 12
 
     local function WithSlug(flags)
         if not flags or flags == "" then
@@ -369,6 +372,19 @@ function Health:OnInitialize()
         bar.mUIHealthText:SetFormattedText(healthFormat, UnitHealthPercent(frame.unit, true, CurveConstants.ScaleTo100))
     end
 
+    -- Blizzard's own health text (frame.statusText) would otherwise overlap
+    -- ours whenever the nameplate's healthText option shows a percentage too.
+    local function OnStatusTextUpdate(frame)
+        if not Health:IsEnabled() or not Health.db.health.percent then
+            return
+        end
+        if not IsNamePlate(frame) or not frame.statusText then
+            return
+        end
+
+        frame.statusText:Hide()
+    end
+
     local function ApplyHealthText(frame)
         local container = frame.HealthBarsContainer
         local bar = container and container.healthBar
@@ -391,7 +407,7 @@ function Health:OnInitialize()
         text:SetPoint(point, bar, relativePoint, config.x * xSign, config.y * ySign)
 
         local path = mUI.db.profile.general.fontpath
-        local size = Health.db.name.size
+        local size = HEALTH_TEXT_SIZE
         if path and (text.mUIFontPath ~= path or text.mUIFontSize ~= size) then
             text.mUIFontPath, text.mUIFontSize = path, size
             text:SetFont(path, size, WithSlug("OUTLINE"))
@@ -509,6 +525,10 @@ function Health:OnInitialize()
 
     if not Health:IsHooked("CompactUnitFrame_UpdateHealth") then
         Health:SecureHook("CompactUnitFrame_UpdateHealth", UpdateHealthText)
+    end
+
+    if not Health:IsHooked("CompactUnitFrame_UpdateStatusText") then
+        Health:SecureHook("CompactUnitFrame_UpdateStatusText", OnStatusTextUpdate)
     end
 
     if not Health:IsHooked(NamePlateUnitFrameMixin, "UpdateAnchors") then
