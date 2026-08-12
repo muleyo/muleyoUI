@@ -258,6 +258,7 @@ function Core:OnInitialize()
         data.isEnemy = reaction ~= nil and reaction < 4
         data.isPlayer = isPlayer
         data.canAttack = UnitCanAttack("player", unit)
+        data.isTapDenied = not UnitPlayerControlled(unit) and UnitIsTapDenied(unit)
         data.isTarget = Core:Safe(UnitIsUnit(unit, "target"), false)
         data.isFocus = Core:Safe(UnitIsUnit(unit, "focus"), false)
         data.classFile = isPlayer and Clean(select(2, UnitClass(unit))) or nil

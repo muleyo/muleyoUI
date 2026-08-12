@@ -117,6 +117,12 @@ function Health:OnInitialize()
             return override[1], override[2], override[3]
         end
 
+        -- Tapped by another player/group: grey out instead of applying our own
+        -- reaction/class/NPC-type coloring, matching Blizzard's default behavior.
+        if data.isTapDenied then
+            return 0.9, 0.9, 0.9
+        end
+
         local npc = Health.db.classification
         if npc.enabled and not data.isPlayer and (inRelevantInstance or not npc.instancesonly) then
             local npcType = NpcType(data.unit)

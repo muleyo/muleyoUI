@@ -19,6 +19,7 @@ function Style:OnInitialize()
         local scale = Style.db.scale
         C_CVar.SetCVar("nameplateSelectedScale", scale.target)
         C_CVar.SetCVar("nameplateMinScale", scale.other)
+        C_CVar.SetCVar("nameplateShowClassColor", Style.db.showClassColor and "1" or "0")
     end
 
     function Style:OnRegenEnabled()
