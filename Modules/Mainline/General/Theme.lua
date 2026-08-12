@@ -20,7 +20,7 @@ function Theme:OnInitialize()
             castbarInset = 4.5,
             castbarInsetSmall = 3.5,
             nameplateIcons = 3.25,
-            totemIcon = 5
+            totemIcon = 4
         },
         Style2 = {
             border = [[Interface\AddOns\mUI\Media\Textures\Core\atlas_v2.png]],
