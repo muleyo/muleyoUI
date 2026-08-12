@@ -562,6 +562,51 @@ function General:OnInitialize()
                     return mUI.db.profile.general.display.mousecursor
                 end,
                 order = 25
+            },
+            header4 = {
+                name = "Player Auras",
+                type = "header",
+                order = 26
+            },
+            playerAuraDurationTextSize = {
+                name = "Cooldown Text Size",
+                desc = "Scale the aura cooldown/duration text on the player buff/debuff icons (percent of the default size).",
+                type = "range",
+                min = 50,
+                max = 200,
+                step = 5,
+                set = function(_, val)
+                    mUI.db.profile.general.playerauras.durationTextSize = val
+
+                    local Theme = mUI:GetModule("mUI.Modules.General.Theme", true)
+                    if Theme and Theme.UpdateAllPlayerAuraTextSizes then
+                        Theme:UpdateAllPlayerAuraTextSizes()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.general.playerauras.durationTextSize
+                end,
+                order = 27
+            },
+            playerAuraCountTextSize = {
+                name = "Stack Count Text Size",
+                desc = "Scale the aura stack count text on the player buff/debuff icons (percent of the default size).",
+                type = "range",
+                min = 50,
+                max = 200,
+                step = 5,
+                set = function(_, val)
+                    mUI.db.profile.general.playerauras.countTextSize = val
+
+                    local Theme = mUI:GetModule("mUI.Modules.General.Theme", true)
+                    if Theme and Theme.UpdateAllPlayerAuraTextSizes then
+                        Theme:UpdateAllPlayerAuraTextSizes()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.general.playerauras.countTextSize
+                end,
+                order = 28
             }
         }
     }

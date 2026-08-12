@@ -222,6 +222,32 @@ function Nameplates:OnInitialize()
                 type = "header",
                 order = 12
             },
+            namesArena = {
+                name = "Arena Number",
+                desc = "Show the Arena Number instead of the Name on Enemy Player Nameplates\n\n|cffffff00Info:|r Always Class Colored",
+                type = "toggle",
+                set = function(_, val)
+                    db().names.arena = val
+                    Refresh(Nameplates.Module.Health)
+                end,
+                get = function()
+                    return db().names.arena
+                end,
+                order = 13
+            },
+            namesSpec = {
+                name = "Specialization Name",
+                desc = "Show the Specialization instead of the Name on Enemy Player Nameplates\n\n|cffffff00Info:|r Combines with Arena Number, e.g. |cffffffffHoly 1|r",
+                type = "toggle",
+                set = function(_, val)
+                    db().names.spec = val
+                    Refresh(Nameplates.Module.Health)
+                end,
+                get = function()
+                    return db().names.spec
+                end,
+                order = 14
+            },
             healthPercent = {
                 name = "Health Percent",
                 desc = "Show the Unit's Health as a Percentage on the Health Bar",
@@ -233,7 +259,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().health.percent
                 end,
-                order = 13
+                order = 15
             },
             healthPercentAnchor = {
                 name = "Percent Position",
@@ -257,7 +283,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().health.anchor
                 end,
-                order = 14
+                order = 16
             },
             healthPercentX = {
                 name = "Percent Offset X",
@@ -276,7 +302,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().health.x
                 end,
-                order = 15
+                order = 17
             },
             healthPercentY = {
                 name = "Percent Offset Y",
@@ -294,32 +320,6 @@ function Nameplates:OnInitialize()
                 end,
                 get = function()
                     return db().health.y
-                end,
-                order = 16
-            },
-            namesArena = {
-                name = "Arena Number",
-                desc = "Show the Arena Number instead of the Name on Enemy Player Nameplates\n\n|cffffff00Info:|r Always Class Colored",
-                type = "toggle",
-                set = function(_, val)
-                    db().names.arena = val
-                    Refresh(Nameplates.Module.Health)
-                end,
-                get = function()
-                    return db().names.arena
-                end,
-                order = 17
-            },
-            namesSpec = {
-                name = "Specialization Name",
-                desc = "Show the Specialization instead of the Name on Enemy Player Nameplates\n\n|cffffff00Info:|r Combines with Arena Number, e.g. |cffffffffHoly 1|r",
-                type = "toggle",
-                set = function(_, val)
-                    db().names.spec = val
-                    Refresh(Nameplates.Module.Health)
-                end,
-                get = function()
-                    return db().names.spec
                 end,
                 order = 18
             },
@@ -815,6 +815,22 @@ function Nameplates:OnInitialize()
                 end,
                 order = 51
             },
+            healerArenaOnly = {
+                name = "Arena Only",
+                desc = "Only show the Indicator inside an Arena",
+                type = "toggle",
+                disabled = function()
+                    return not db().healer.enabled
+                end,
+                set = function(_, val)
+                    db().healer.arenaonly = val
+                    Refresh(Nameplates.Module.Healer)
+                end,
+                get = function()
+                    return db().healer.arenaonly
+                end,
+                order = 52
+            },
             healerAnchor = {
                 name = "Position",
                 desc = "Select where the Icon is anchored on the Nameplate",
@@ -831,7 +847,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().healer.anchor
                 end,
-                order = 52
+                order = 53
             },
             healerSize = {
                 name = "Icon Size",
@@ -849,22 +865,6 @@ function Nameplates:OnInitialize()
                 end,
                 get = function()
                     return db().healer.size
-                end,
-                order = 53
-            },
-            healerArenaOnly = {
-                name = "Arena Only",
-                desc = "Only show the Indicator inside an Arena",
-                type = "toggle",
-                disabled = function()
-                    return not db().healer.enabled
-                end,
-                set = function(_, val)
-                    db().healer.arenaonly = val
-                    Refresh(Nameplates.Module.Healer)
-                end,
-                get = function()
-                    return db().healer.arenaonly
                 end,
                 order = 54
             },

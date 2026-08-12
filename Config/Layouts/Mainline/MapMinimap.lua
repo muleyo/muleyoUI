@@ -34,38 +34,6 @@ function MapMinimap:OnInitialize()
                 end,
                 order = 1
             },
-            header1 = {
-                name = "Map",
-                type = "header",
-                order = 2
-            },
-            coordinates = {
-                name = "Coordinates",
-                desc = "Display Coordinates on the Worldmap",
-                type = "toggle",
-                hidden = function()
-                    if select(4, GetBuildInfo()) >= 120100 then
-                        return true
-                    end
-                end,
-                set = function(_, val)
-                    mUI.db.profile.map.coordinates = val
-
-                    if not MapMinimap.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val then
-                        MapMinimap.Module.Coords:Enable()
-                    else
-                        MapMinimap.Module.Coords:Disable()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.map.coordinates
-                end,
-                order = 3
-            },
             header2 = {
                 name = "Minimap",
                 type = "header",
