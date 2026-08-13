@@ -170,8 +170,14 @@ function Theme:OnEnable()
                 return
             end
 
+            -- Truly unreachable (disconnected/phased/not visible): hide everything,
+            -- there's no reliable aura data to show at all.
             local unreachable = (UnitIsConnected and not UnitIsConnected(unit)) or (UnitPhaseReason and UnitPhaseReason(unit) ~= nil) or
-                                    (UnitIsVisible and not UnitIsVisible(unit)) or (UnitCanAssist and not UnitCanAssist("player", unit))
+                                    (UnitIsVisible and not UnitIsVisible(unit))
+            -- Not assistable (e.g. dueling a friendly unit): buffs/debuffs keep
+            -- working via the isFriendly candidate filter, but the defensive
+            -- container still breaks in this state, so hide just that one.
+            local notAssistable = UnitCanAssist and not UnitCanAssist("player", unit)
 
             local buffSize, debuffSize = Theme:GetSizes(frame)
             local frameH = frame:GetHeight()
@@ -182,7 +188,8 @@ function Theme:OnEnable()
             local defensiveSize = math.floor(frameH * (Theme:GetDefensiveSize() / 100) + 0.5)
             local defPoint, defX, defY = Theme:GetDefensivePosition()
 
-            Theme:UpdateRaidAuraContainers(frame, data, unit, unreachable, buffSize, debuffSize, defensiveSize, defPoint, defX, defY)
+            Theme:UpdateRaidAuraContainers(frame, data, unit, unreachable, notAssistable, buffSize, debuffSize, defensiveSize, defPoint, defX,
+                defY)
         end
 
         Theme:SecureHook("CompactUnitFrame_SetUnit", RefreshRaidFrameAuras)
