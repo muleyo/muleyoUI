@@ -170,8 +170,9 @@ function Theme:OnEnable()
                 return
             end
 
-            local unreachable = (UnitIsConnected and not UnitIsConnected(unit)) or (UnitPhaseReason and UnitPhaseReason(unit) ~= nil) or
-                                    (UnitIsVisible and not UnitIsVisible(unit)) or (UnitCanAssist and not UnitCanAssist("player", unit))
+            -- Truly unreachable (disconnected/phased/not visible): hide everything
+            local unreachable = (UnitPhaseReason and UnitPhaseReason(unit) ~= nil) or (UnitIsVisible and not UnitIsVisible(unit))
+            local notAssistable = UnitCanAssist and not UnitCanAssist("player", unit)
 
             local buffSize, debuffSize = Theme:GetSizes(frame)
             local frameH = frame:GetHeight()
@@ -182,7 +183,7 @@ function Theme:OnEnable()
             local defensiveSize = math.floor(frameH * (Theme:GetDefensiveSize() / 100) + 0.5)
             local defPoint, defX, defY = Theme:GetDefensivePosition()
 
-            Theme:UpdateRaidAuraContainers(frame, data, unit, unreachable, buffSize, debuffSize, defensiveSize, defPoint, defX, defY)
+            Theme:UpdateRaidAuraContainers(frame, data, unit, unreachable, notAssistable, buffSize, debuffSize, defensiveSize, defPoint, defX, defY)
         end
 
         Theme:SecureHook("CompactUnitFrame_SetUnit", RefreshRaidFrameAuras)

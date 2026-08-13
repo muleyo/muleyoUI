@@ -457,7 +457,8 @@ local IMPORTANT_BUFFS = {
     [53563] = true, -- Beacon of Light
     [156910] = true, -- Beacon of Faith
     [200025] = true, -- Beacon of Virtue
-    [1244893] = true -- Beacon of the Survivor
+    [1244893] = true, -- Beacon of the Survivor
+    [974] = true -- Earth Shield
 }
 
 local UNITFRAME_DEBUFF_FILTER_MINE = AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Harmful, AuraUtil.AuraFilters.Player)
@@ -994,7 +995,8 @@ function Theme:EnsureRaidAuraContainers(frame, data)
         maxFrameCount = RAID_MAX_BUFFS,
         candidateFilters = {
             excludeSpellIDs = RAID_CURATED_EXCLUDE,
-            maxDuration = RAID_BUFF_MAX_DURATION
+            maxDuration = RAID_BUFF_MAX_DURATION,
+            isFriendly = true
         },
         initializeFrame = function(auraFrame)
             InitRaidAuraButton(auraFrame, buffContainer, "Buffs", false)
@@ -1007,7 +1009,8 @@ function Theme:EnsureRaidAuraContainers(frame, data)
     buffContainer:AddAuraGroup("BuffsImportant", RaidFilter("HELPFUL", "PLAYER"), {
         maxFrameCount = RAID_MAX_BUFFS,
         candidateFilters = {
-            includeSpellIDs = IMPORTANT_BUFFS
+            includeSpellIDs = IMPORTANT_BUFFS,
+            isFriendly = true
         },
         initializeFrame = function(auraFrame)
             InitRaidAuraButton(auraFrame, buffContainer, "BuffsImportant", false)
@@ -1036,7 +1039,8 @@ function Theme:EnsureRaidAuraContainers(frame, data)
         candidateFilters = {
             isBossOrRoleAura = true,
             excludeSpellIDs = RAID_DEBUFF_EXCLUDE,
-            maxDuration = RAID_DEBUFF_MAX_DURATION
+            maxDuration = RAID_DEBUFF_MAX_DURATION,
+            isFriendly = true
         },
         initializeFrame = function(auraFrame)
             InitRaidAuraButton(auraFrame, debuffContainer, "DebuffsBig", true)
@@ -1052,7 +1056,8 @@ function Theme:EnsureRaidAuraContainers(frame, data)
         candidateFilters = {
             isBossOrRoleAura = false,
             excludeSpellIDs = RAID_DEBUFF_EXCLUDE,
-            maxDuration = RAID_DEBUFF_MAX_DURATION
+            maxDuration = RAID_DEBUFF_MAX_DURATION,
+            isFriendly = true
         },
         initializeFrame = function(auraFrame)
             InitRaidAuraButton(auraFrame, debuffContainer, "DebuffsNormal", true)
@@ -1078,7 +1083,8 @@ function Theme:EnsureRaidAuraContainers(frame, data)
     defensiveContainer:AddAuraGroup("BigDefensives", RaidFilter("HELPFUL", "BIG_DEFENSIVE"), {
         maxFrameCount = RAID_MAX_DEFENSIVE,
         candidateFilters = {
-            excludeSpellIDs = RAID_CURATED_EXCLUDE
+            excludeSpellIDs = RAID_CURATED_EXCLUDE,
+            isFriendly = true
         },
         initializeFrame = function(auraFrame)
             InitRaidAuraButton(auraFrame, defensiveContainer, "BigDefensives", false)
@@ -1092,7 +1098,8 @@ function Theme:EnsureRaidAuraContainers(frame, data)
         maxFrameCount = RAID_MAX_DEFENSIVE,
         candidateFilters = {
             includeSpellIDs = RAID_DEFENSIVES,
-            maxDuration = RAID_BUFF_MAX_DURATION
+            maxDuration = RAID_BUFF_MAX_DURATION,
+            isFriendly = true
         },
         initializeFrame = function(auraFrame)
             InitRaidAuraButton(auraFrame, defensiveContainer, "BigDefensives", false)
@@ -1107,7 +1114,8 @@ function Theme:EnsureRaidAuraContainers(frame, data)
     defensiveContainer:AddAuraGroup("DefensivesImportant", RaidFilter("HELPFUL", "IMPORTANT", "!BIG_DEFENSIVE", "!EXTERNAL_DEFENSIVE"), {
         maxFrameCount = Theme:ShowImportantDefensives() and RAID_MAX_DEFENSIVE or 0,
         candidateFilters = {
-            excludeSpellIDs = RAID_CURATED_EXCLUDE
+            excludeSpellIDs = RAID_CURATED_EXCLUDE,
+            isFriendly = true
         },
         initializeFrame = function(auraFrame)
             InitRaidAuraButton(auraFrame, defensiveContainer, "DefensivesImportant", false)
@@ -1150,7 +1158,7 @@ function Theme:UpdateAllRaidDefensivePositions()
     end
 end
 
-function Theme:UpdateRaidAuraContainers(frame, data, unit, unreachable, buffSize, debuffSize, defensiveSize, defPoint, defX, defY)
+function Theme:UpdateRaidAuraContainers(frame, data, unit, unreachable, notAssistable, buffSize, debuffSize, defensiveSize, defPoint, defX, defY)
     local buffContainer = data.buffContainer
     local debuffContainer = data.debuffContainer
     local defensiveContainer = data.defensiveContainer
@@ -1171,7 +1179,7 @@ function Theme:UpdateRaidAuraContainers(frame, data, unit, unreachable, buffSize
 
     ApplyRaidDefensivePosition(frame, defensiveContainer, defPoint, defX, defY)
 
-    -- Out of phase/range
+    -- Out of phase/range: no reliable aura data at all, hide everything.
     if unreachable then
         for _, container in ipairs({buffContainer, debuffContainer, defensiveContainer}) do
             if container.mUI_unit ~= nil then
@@ -1183,7 +1191,26 @@ function Theme:UpdateRaidAuraContainers(frame, data, unit, unreachable, buffSize
         return
     end
 
-    for _, container in ipairs({buffContainer, debuffContainer, defensiveContainer}) do
+    -- Not assistable (e.g. dueling a friendly unit): buffs/debuffs keep
+    -- working via the isFriendly candidate filter, but the defensive
+    -- container still breaks in this state, so hide just that one.
+    if notAssistable then
+        if defensiveContainer.mUI_unit ~= nil then
+            defensiveContainer:SetEnabled(false)
+            defensiveContainer.mUI_unit = nil
+            defensiveContainer:Hide()
+        end
+    else
+        if defensiveContainer.mUI_unit ~= unit then
+            defensiveContainer:SetUnit(unit)
+            defensiveContainer:SetEnabled(true)
+            defensiveContainer.mUI_unit = unit
+            defensiveContainer:Show()
+        end
+        defensiveContainer:UpdateAllAuras()
+    end
+
+    for _, container in ipairs({buffContainer, debuffContainer}) do
         if container.mUI_unit ~= unit then
             container:SetUnit(unit)
             container:SetEnabled(true)
