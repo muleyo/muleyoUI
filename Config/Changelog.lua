@@ -3,12 +3,9 @@ local Changelog = mUI:NewModule("mUI.Config.Changelog")
 -- Maintainer note: this window intentionally shows ONLY the latest update.
 -- Keep this as a single entry and update it each release.
 local CHANGELOG = {
-    version = "4.1.4",
+    version = "4.1.5",
     affected = {"Mainline"},
-    changes = {"Added Paladin's  'Beacon of the Survivor' to raidframe buffs.",
-               "Fixed an issue which would show all debuffs on enemy targets. You can only see your own debuffs now again.",
-               "Added an option to only show dispellable/important buffs on unitframes (target/focus)",
-               "Added an option to show important buffs along with defensive buffs on raidframes."}
+    changes = {"Fixed an issue which would disable the Personal Resource Display on every reload."}
 }
 
 function Changelog:OnInitialize()
