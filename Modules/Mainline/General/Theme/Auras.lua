@@ -831,7 +831,8 @@ local RAID_IMPORTANT_BUFFS = {
     [116841] = true, -- Tiger's Lust
     [53563] = true, -- Beacon of Light
     [156910] = true, -- Beacon of Faith
-    [200025] = true -- Beacon of Virtue
+    [200025] = true, -- Beacon of Virtue
+    [1244893] = true -- Beacon of the Survivor
 }
 
 -- Cooldowns force-shown in the BIG DEFENSIVE frame
@@ -840,7 +841,6 @@ local RAID_DEFENSIVES = {
     [403876] = true, -- Divine Protection
     [33206] = true, -- Pain Suppression
     [228050] = true, -- Guardian of the Forgotten Queen
-    [211210] = true, -- Aura Mastery
     [31821] = true, -- Aura Mastery
     [363534] = true, -- Rewind
     [370960] = true, -- Emerald Communion
