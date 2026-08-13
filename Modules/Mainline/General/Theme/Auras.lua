@@ -996,10 +996,6 @@ function Theme:EnsureRaidAuraContainers(frame, data)
         candidateFilters = {
             excludeSpellIDs = RAID_CURATED_EXCLUDE,
             maxDuration = RAID_BUFF_MAX_DURATION,
-            -- EXPERIMENTAL: raid/party members are always "our side" even if
-            -- momentarily not assistable (mind control, duels), so pin this
-            -- rather than letting a transient UnitCanAssist flip silently
-            -- disable the spell-ID filters above.
             isFriendly = true
         },
         initializeFrame = function(auraFrame)
