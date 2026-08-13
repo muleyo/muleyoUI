@@ -116,7 +116,8 @@ local defaults = {
                 debuffsize = 24,
                 debuffcolors = false,
                 durationTextSize = 100,
-                countTextSize = 100
+                countTextSize = 100,
+                dispellableOnly = false
             },
             raidframes = {
                 enabled = true,
@@ -144,6 +145,7 @@ local defaults = {
                 durationTextSize = 100,
                 countTextSize = 100,
                 centerDefensiveSize = 60,
+                defensivesShowImportant = false,
                 centerDefensivePoint = "CENTER",
                 debuffPoint = "LEFT",
                 centerDefensiveX = 0,
