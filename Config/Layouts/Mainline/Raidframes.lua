@@ -322,6 +322,19 @@ function Raidframes:OnInitialize()
                 end,
                 order = 18
             },
+            defensivesShowImportant = {
+                name = "Show Important Buffs",
+                desc = "Also show important buffs in the Defensive cooldown display (e.g. Ascendance)",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.defensivesShowImportant = val
+                    Raidframes.Theme:UpdateAllRaidDefensiveImportantFilter()
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.defensivesShowImportant
+                end,
+                order = 18.5
+            },
             centerDefensiveSize = {
                 name = "Center Defensive Size",
                 desc = "Size of the centered defensive cooldown icon",
@@ -473,9 +486,6 @@ function Raidframes:OnInitialize()
                 min = 50,
                 max = 200,
                 step = 5,
-                hidden = function()
-                    return not (RAID_AURAS_FORCED or mUI.db.profile.unitframes.raidframes.auraDisplay)
-                end,
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.durationTextSize = val
                     Raidframes.Theme:UpdateAllRaidAuraTextSizes()
@@ -492,9 +502,6 @@ function Raidframes:OnInitialize()
                 min = 50,
                 max = 200,
                 step = 5,
-                hidden = function()
-                    return not (RAID_AURAS_FORCED or mUI.db.profile.unitframes.raidframes.auraDisplay)
-                end,
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.countTextSize = val
                     Raidframes.Theme:UpdateAllRaidAuraTextSizes()

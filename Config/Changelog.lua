@@ -3,13 +3,12 @@ local Changelog = mUI:NewModule("mUI.Config.Changelog")
 -- Maintainer note: this window intentionally shows ONLY the latest update.
 -- Keep this as a single entry and update it each release.
 local CHANGELOG = {
-    version = "4.1.1",
+    version = "4.1.4",
     affected = {"Mainline"},
-    changes = {"Added Classcolor nameplate option to the nameplate module.", "Removed nameplate casbar icon borders.",
-               "Added CVar enforcement so SpellIDs are always being shown on auras.",
-               "Added options to change cooldown text and count text sizes on auras.", "Added option to limit the amount of debuffs on Raidframes",
-               "Added back Friendlist Colors options as the new Friends Frame is not available yet.", "Removed Player Auras Cooldown swipe.",
-               "Target of Target position has been slightly adjusted."}
+    changes = {"Added Paladin's  'Beacon of the Survivor' to raidframe buffs.",
+               "Fixed an issue which would show all debuffs on enemy targets. You can only see your own debuffs now again.",
+               "Added an option to only show dispellable/important buffs on unitframes (target/focus)",
+               "Added an option to show important buffs along with defensive buffs on raidframes."}
 }
 
 function Changelog:OnInitialize()
