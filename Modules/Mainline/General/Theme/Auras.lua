@@ -434,30 +434,53 @@ end
 Theme.MAX_UNITFRAME_BUFFS = 32
 Theme.MAX_UNITFRAME_DEBUFFS = 16
 Theme.UNITFRAME_AURA_SIZE = 24
--- Border color for stealable/purgeable buffs (target/focus). Change to taste.
+
 local STEALABLE_BORDER_COLOR = {
     r = 0.8,
     g = 0.3,
     b = 1
 }
+
+local IMPORTANT_DEBUFFS = {
+    [25771] = true, -- Forbearance
+    [41425] = true -- Hypothermia
+}
+
+local IMPORTANT_BUFFS = {
+    [10060] = true, -- Power Infusion
+    [1044] = true, -- Blessing of Freedom
+    [210256] = true, -- Blessing of Sanctuary
+    [106898] = true, -- Stampeding Roar (No Form)
+    [77764] = true, -- Stampeding Roar (Cat)
+    [77761] = true, -- Stampeding Roar (Bear)
+    [116841] = true, -- Tiger's Lust
+    [53563] = true, -- Beacon of Light
+    [156910] = true, -- Beacon of Faith
+    [200025] = true, -- Beacon of Virtue
+    [1244893] = true -- Beacon of the Survivor
+}
+
+local UNITFRAME_DEBUFF_FILTER_MINE = AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Harmful, AuraUtil.AuraFilters.Player)
+local UNITFRAME_DEBUFF_FILTER_ALL = AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Harmful)
+local UNITFRAME_BUFF_FILTER_ALL = AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Helpful)
+local UNITFRAME_BUFF_FILTER_DISPELLABLE = AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Helpful, AuraUtil.AuraFilters.Dispellable,
+    "!" .. AuraUtil.AuraFilters.Important)
+local UNITFRAME_BUFF_FILTER_IMPORTANT = AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Helpful, AuraUtil.AuraFilters.Important)
+
 local AURA_START_X = 5
 local AURA_START_Y = 4
 local AURA_MIRRORED_START_Y = -6
 local AURA_LINE_SIZE = 155
 
-function Theme:InitializeCustomAuraButton(auraFrame, isDebuff, borderColor, size)
-    -- Debuff coloring is baked per aura group (see CreateUnitAuraContainer), so
-    -- the color is passed in statically rather than via a live dispel border.
+function Theme:InitializeCustomAuraButton(auraFrame, isDebuff, borderColor, size, dispelBorder)
     CreateAuraButton(auraFrame, isDebuff, {
         size = size or Theme.UNITFRAME_AURA_SIZE,
         category = "unitframe",
-        borderColor = borderColor
+        borderColor = borderColor,
+        dispelBorder = dispelBorder
     })
 end
 
--- Fully disables Blizzard's built-in aura container on a unit frame. Called
--- whether or not mUI replaces it with a custom one, so target/focus never
--- show the default buffs/debuffs even with our own auras turned off.
 function Theme:DisableDefaultUnitAuraContainer(frame)
     if not frame or not frame.GetAuraContainer then
         return
@@ -472,6 +495,10 @@ end
 
 function Theme:CreateUnitAuraContainer(frame, unit)
     if not frame or not frame.GetAuraContainer then
+        return
+    end
+
+    if frame.mUI_debuffContainer then
         return
     end
 
@@ -514,14 +541,16 @@ function Theme:CreateUnitAuraContainer(frame, unit)
     buffContainer:SetEnabled(true)
     debuffContainer:SetEnabled(true)
 
-    -- Regular buffs: everything NOT stealable
-    buffContainer:AddAuraGroup("Buffs", AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Helpful), {
+    local dispellableOnly = mUI.db.profile.unitframes.buffsdebuffs.dispellableOnly
+    buffContainer.mUI_dispellableButtons = {}
+    buffContainer:AddAuraGroup("Buffs", dispellableOnly and UNITFRAME_BUFF_FILTER_DISPELLABLE or UNITFRAME_BUFF_FILTER_ALL, {
         maxFrameCount = Theme.MAX_UNITFRAME_BUFFS,
         candidateFilters = {
             isStealable = false
         },
         initializeFrame = function(auraFrame)
-            Theme:InitializeCustomAuraButton(auraFrame, false, nil, buffSize)
+            Theme:InitializeCustomAuraButton(auraFrame, false, dispellableOnly and STEALABLE_BORDER_COLOR or nil, buffSize)
+            table.insert(buffContainer.mUI_dispellableButtons, auraFrame)
         end,
         layout = {
             elementSpacing = 3,
@@ -544,7 +573,22 @@ function Theme:CreateUnitAuraContainer(frame, unit)
         }
     })
 
-    local debuffFilterString = AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Harmful)
+    buffContainer.mUI_importantBuffGroupKey = "BuffsImportantFilter"
+    buffContainer:AddAuraGroup("BuffsImportantFilter", UNITFRAME_BUFF_FILTER_IMPORTANT, {
+        maxFrameCount = dispellableOnly and Theme.MAX_UNITFRAME_BUFFS or 0,
+        candidateFilters = {
+            isStealable = false
+        },
+        initializeFrame = function(auraFrame)
+            Theme:InitializeCustomAuraButton(auraFrame, false, nil, buffSize)
+        end,
+        layout = {
+            elementSpacing = 3,
+            lineSpacing = 3
+        }
+    })
+
+    local debuffFilterString = UNITFRAME_DEBUFF_FILTER_MINE
     local debuffGroups = {}
     debuffContainer.mUI_debuffGroups = debuffGroups
 
@@ -591,7 +635,7 @@ function Theme:CreateUnitAuraContainer(frame, unit)
                 candidateFilters = {
                     includeDispelTypes = groupInfo.includeDispelTypes,
                     excludeDispelTypes = groupInfo.excludeDispelTypes,
-                    isFromPlayerOrPlayerPet = true
+                    excludeSpellIDs = IMPORTANT_DEBUFFS
                 },
                 initializeFrame = function(auraFrame)
                     Theme:InitializeCustomAuraButton(auraFrame, true, groupInfo.color, debuffSize)
@@ -609,7 +653,7 @@ function Theme:CreateUnitAuraContainer(frame, unit)
         debuffContainer:AddAuraGroup("Debuffs", debuffFilterString, {
             maxFrameCount = Theme.MAX_UNITFRAME_DEBUFFS,
             candidateFilters = {
-                isFromPlayerOrPlayerPet = true
+                excludeSpellIDs = IMPORTANT_DEBUFFS
             },
             initializeFrame = function(auraFrame)
                 Theme:InitializeCustomAuraButton(auraFrame, true, nil, debuffSize)
@@ -621,15 +665,14 @@ function Theme:CreateUnitAuraContainer(frame, unit)
         })
     end
 
-    debuffContainer.mUI_alwaysShownGroupKey = "DebuffsAlwaysShown"
-    debuffContainer:AddAuraGroup("DebuffsAlwaysShown", debuffFilterString, {
+    debuffContainer.mUI_importantGroupKey = "DebuffsImportant"
+    debuffContainer:AddAuraGroup("DebuffsImportant", UNITFRAME_DEBUFF_FILTER_ALL, {
         maxFrameCount = Theme.MAX_UNITFRAME_DEBUFFS,
         candidateFilters = {
-            nameplateShowAll = true,
-            isFromPlayerOrPlayerPet = false
+            includeSpellIDs = IMPORTANT_DEBUFFS
         },
         initializeFrame = function(auraFrame)
-            Theme:InitializeCustomAuraButton(auraFrame, true, nil, debuffSize)
+            Theme:InitializeCustomAuraButton(auraFrame, true, nil, debuffSize, true)
         end,
         layout = {
             elementSpacing = 3,
@@ -638,10 +681,12 @@ function Theme:CreateUnitAuraContainer(frame, unit)
     })
 
     Theme:UpdateUnitDebuffCasterFilter(frame)
+    Theme:UpdateUnitBuffFilter(frame)
 
     if not Theme:IsHooked(frame, "UpdateAuras") then
         Theme:SecureHook(frame, "UpdateAuras", function(self)
             Theme:UpdateUnitDebuffCasterFilter(self)
+            Theme:UpdateUnitBuffFilter(self)
             buffContainer:UpdateAllAuras()
             debuffContainer:UpdateAllAuras()
             Theme:ReflowUnitAuraContainer(self)
@@ -660,25 +705,56 @@ function Theme:UpdateUnitDebuffCasterFilter(frame)
     end
 
     local unit = frame.unit or debuffContainer:GetUnit()
-    local showAllCasters = unit ~= nil and (UnitIsUnit(unit, "player") or UnitIsFriend("player", unit)) == true
-    if debuffContainer.mUI_showAllCasters == showAllCasters then
-        return
-    end
-    debuffContainer.mUI_showAllCasters = showAllCasters
+    local showAllCasters = unit ~= nil and not UnitCanAttack("player", unit)
 
+    local filterString = showAllCasters and UNITFRAME_DEBUFF_FILTER_ALL or UNITFRAME_DEBUFF_FILTER_MINE
     for _, groupInfo in ipairs(groups) do
+        debuffContainer:SetAuraGroupFilterString(groupInfo.key, filterString)
         debuffContainer:SetAuraGroupCandidateFilters(groupInfo.key, {
             includeDispelTypes = groupInfo.includeDispelTypes,
             excludeDispelTypes = groupInfo.excludeDispelTypes,
-            isFromPlayerOrPlayerPet = not showAllCasters or nil
+            excludeSpellIDs = IMPORTANT_DEBUFFS
         })
     end
 
-    -- Redundant against self/friendly targets (the main groups above already
-    -- show everything), so keep it empty there instead of double-showing.
-    local alwaysShownKey = debuffContainer.mUI_alwaysShownGroupKey
-    if alwaysShownKey then
-        debuffContainer:SetAuraGroupMaxFrameCount(alwaysShownKey, showAllCasters and 0 or Theme.MAX_UNITFRAME_DEBUFFS)
+    local importantKey = debuffContainer.mUI_importantGroupKey
+    if importantKey then
+        debuffContainer:SetAuraGroupMaxFrameCount(importantKey, showAllCasters and 0 or Theme.MAX_UNITFRAME_DEBUFFS)
+    end
+end
+
+function Theme:UpdateUnitBuffFilter(frame)
+    local buffContainer = frame and frame.mUI_buffContainer
+    if not buffContainer then
+        return
+    end
+
+    local unit = frame.unit or buffContainer:GetUnit()
+    local dispellableOnly = mUI.db.profile.unitframes.buffsdebuffs.dispellableOnly and unit ~= nil and UnitCanAttack("player", unit)
+    buffContainer:SetAuraGroupFilterString("Buffs", dispellableOnly and UNITFRAME_BUFF_FILTER_DISPELLABLE or UNITFRAME_BUFF_FILTER_ALL)
+
+    for _, auraFrame in ipairs(buffContainer.mUI_dispellableButtons or {}) do
+        if dispellableOnly then
+            auraFrame.mUIBorderColor = STEALABLE_BORDER_COLOR
+            pcall(auraFrame.mUIBorder.SetVertexColor, auraFrame.mUIBorder, STEALABLE_BORDER_COLOR.r, STEALABLE_BORDER_COLOR.g,
+                STEALABLE_BORDER_COLOR.b, 1)
+        else
+            auraFrame.mUIBorderColor = nil
+            pcall(auraFrame.mUIBorder.SetVertexColor, auraFrame.mUIBorder, unpack(mUI:Color(0.25)))
+        end
+    end
+
+    local importantKey = buffContainer.mUI_importantBuffGroupKey
+    if importantKey then
+        buffContainer:SetAuraGroupMaxFrameCount(importantKey, dispellableOnly and Theme.MAX_UNITFRAME_BUFFS or 0)
+    end
+end
+
+-- Re-applies it to every live target/focus frame, for the config option's
+-- live-update path.
+function Theme:UpdateAllUnitframeBuffFilters()
+    for frame in pairs(Theme.unitframeAuraFrames or {}) do
+        Theme:UpdateUnitBuffFilter(frame)
     end
 end
 
@@ -689,9 +765,6 @@ function Theme:GetUnitframeAuraSizes()
     return buffSize, debuffSize
 end
 
--- Re-scales every live unitframe (target/focus) aura container to the current
--- Buff/Debuff Size config, without recreating any buttons (see
--- Theme:UpdateAllRaidAuras for the same technique on raid frames).
 function Theme:UpdateAllUnitframeAuraSizes()
     local buffSize, debuffSize = Theme:GetUnitframeAuraSizes()
     for frame in pairs(Theme.unitframeAuraFrames or {}) do
@@ -820,21 +893,6 @@ local RAID_DEBUFF_EXCLUDE = {
     [405692] = true -- Deserter
 }
 
--- Buffs force-shown in the NORMAL buff frame regardless of caster / visibility flags.
-local RAID_IMPORTANT_BUFFS = {
-    [10060] = true, -- Power Infusion
-    [1044] = true, -- Blessing of Freedom
-    [210256] = true, -- Blessing of Sanctuary
-    [106898] = true, -- Stampeding Roar (No Form)
-    [77764] = true, -- Stampeding Roar (Cat)
-    [77761] = true, -- Stampeding Roar (Bear)
-    [116841] = true, -- Tiger's Lust
-    [53563] = true, -- Beacon of Light
-    [156910] = true, -- Beacon of Faith
-    [200025] = true, -- Beacon of Virtue
-    [1244893] = true -- Beacon of the Survivor
-}
-
 -- Cooldowns force-shown in the BIG DEFENSIVE frame
 local RAID_DEFENSIVES = {
     [498] = true, -- Divine Protection
@@ -862,6 +920,7 @@ local RAID_DEFENSIVES = {
     [5277] = true, -- Evasion
     [187827] = true, -- Metamorphosis
     [145629] = true, -- Anti-Magic Zone
+    [410358] = true, -- Spellwarden (AMS)
     [49039] = true, -- Lichborne
     [81256] = true, -- Dancing Rune Weapon
     [216331] = true, -- Avenging Crusader
@@ -871,7 +930,7 @@ local RAID_DEFENSIVES = {
 }
 
 local RAID_CURATED_EXCLUDE = {}
-for id in pairs(RAID_IMPORTANT_BUFFS) do
+for id in pairs(IMPORTANT_BUFFS) do
     RAID_CURATED_EXCLUDE[id] = true
 end
 for id in pairs(RAID_DEFENSIVES) do
@@ -948,7 +1007,7 @@ function Theme:EnsureRaidAuraContainers(frame, data)
     buffContainer:AddAuraGroup("BuffsImportant", RaidFilter("HELPFUL", "PLAYER"), {
         maxFrameCount = RAID_MAX_BUFFS,
         candidateFilters = {
-            includeSpellIDs = RAID_IMPORTANT_BUFFS
+            includeSpellIDs = IMPORTANT_BUFFS
         },
         initializeFrame = function(auraFrame)
             InitRaidAuraButton(auraFrame, buffContainer, "BuffsImportant", false)
@@ -1012,9 +1071,10 @@ function Theme:EnsureRaidAuraContainers(frame, data)
     defensiveContainer:SetFrameLevel(math.max(healthLevel, frame:GetFrameLevel()) + 10)
     defensiveContainer.mUI_groupSizes = {
         BigDefensives = defensiveSize,
-        AdditionalDefensives = defensiveSize
+        AdditionalDefensives = defensiveSize,
+        DefensivesImportant = defensiveSize
     }
-    defensiveContainer.mUI_groupKeys = {"BigDefensives", "AdditionalDefensives"}
+    defensiveContainer.mUI_groupKeys = {"BigDefensives", "AdditionalDefensives", "DefensivesImportant"}
     defensiveContainer:AddAuraGroup("BigDefensives", RaidFilter("HELPFUL", "BIG_DEFENSIVE"), {
         maxFrameCount = RAID_MAX_DEFENSIVE,
         candidateFilters = {
@@ -1042,13 +1102,25 @@ function Theme:EnsureRaidAuraContainers(frame, data)
             lineSpacing = RAID_ICON_GAP
         }
     })
+
+    defensiveContainer.mUI_importantGroupKey = "DefensivesImportant"
+    defensiveContainer:AddAuraGroup("DefensivesImportant", RaidFilter("HELPFUL", "IMPORTANT", "!BIG_DEFENSIVE", "!EXTERNAL_DEFENSIVE"), {
+        maxFrameCount = Theme:ShowImportantDefensives() and RAID_MAX_DEFENSIVE or 0,
+        candidateFilters = {
+            excludeSpellIDs = RAID_CURATED_EXCLUDE
+        },
+        initializeFrame = function(auraFrame)
+            InitRaidAuraButton(auraFrame, defensiveContainer, "DefensivesImportant", false)
+        end,
+        layout = {
+            elementSpacing = RAID_ICON_GAP,
+            lineSpacing = RAID_ICON_GAP
+        }
+    })
     defensiveContainer:SetEnabled(false)
     data.defensiveContainer = defensiveContainer
 end
 
--- Anchors the defensive container to its chosen edge/center and points its
--- flow layout outwards from there. Shared by the per-tick refresh and the
--- config option's live-update path (Theme:UpdateAllRaidDefensivePositions).
 local function ApplyRaidDefensivePosition(frame, defensiveContainer, defPoint, defX, defY)
     defensiveContainer:ClearAllPoints()
     if defPoint == "RIGHT" then
@@ -1066,8 +1138,6 @@ local function ApplyRaidDefensivePosition(frame, defensiveContainer, defPoint, d
     end
 end
 
--- Re-applies the defensive anchor/offset config to every live raid frame
--- immediately, instead of waiting on the once-a-second visibility ticker.
 function Theme:UpdateAllRaidDefensivePositions()
     local defPoint, defX, defY = Theme:GetDefensivePosition()
     for frame in pairs(Theme.raidAuraFrames or {}) do
@@ -1140,16 +1210,28 @@ function Theme:GetDefensiveSize()
     return (raid and raid.centerDefensiveSize) or 60
 end
 
--- Which bottom corner of the raid frame the debuffs sit in. Buffs always take
--- the opposite corner, so the two never overlap.
+function Theme:ShowImportantDefensives()
+    local raid = mUI.db and mUI.db.profile.unitframes.raidframes
+    return (raid and raid.defensivesShowImportant) == true
+end
+
+function Theme:UpdateAllRaidDefensiveImportantFilter()
+    local maxCount = Theme:ShowImportantDefensives() and RAID_MAX_DEFENSIVE or 0
+    for frame in pairs(Theme.raidAuraFrames or {}) do
+        local data = frame and frame.mUI_AD
+        local defensiveContainer = data and data.defensiveContainer
+        local importantKey = defensiveContainer and defensiveContainer.mUI_importantGroupKey
+        if importantKey and not frame:IsForbidden() then
+            defensiveContainer:SetAuraGroupMaxFrameCount(importantKey, maxCount)
+        end
+    end
+end
+
 function Theme:GetRaidDebuffSide()
     local raid = mUI.db and mUI.db.profile.unitframes.raidframes
     return (raid and raid.debuffPoint == "RIGHT") and "RIGHT" or "LEFT"
 end
 
--- Anchors the buff/debuff containers to their corner anchors and points their
--- flow layout inwards. Called on every container update and by the config
--- option so a side switch applies live.
 function Theme:ApplyRaidAuraSides(data)
     local buffContainer = data.buffContainer
     local debuffContainer = data.debuffContainer
@@ -1267,15 +1349,10 @@ function Theme:UpdateAllRaidAuras()
     end
 end
 
--- Re-applies the duration/count text size config to every live raid aura
--- button, without touching icon size (see Theme:ApplyAuraTextScale).
 function Theme:UpdateAllRaidAuraTextSizes()
     Theme:UpdateAuraTextSizesForCategory("raidframe")
 end
 
--- Re-applies the "Max Debuff Icons" config to every live raid debuff group.
--- The flow layout's max line size follows on the next refresh tick/SetUnit
--- (see Theme:UpdateRaidAuraContainers, which reads the same config live).
 function Theme:UpdateAllRaidAuraDebuffLimit()
     local maxDebuffs = GetRaidMaxDebuffIcons()
     for frame in pairs(Theme.raidAuraFrames or {}) do
