@@ -1517,11 +1517,30 @@ function Nameplates:OnInitialize()
             },
             personalresourceEnabled = {
                 name = "Personal Resource Bar",
-                desc = "Show your Class Resources (Combo Points, Runes, Holy Power, etc.) above your own Character\n\n|cffffff00Info:|r Wraps Blizzard's native Personal Resource Display, Health / Power Bars hidden",
+                desc = "Show your Class Resources (Combo Points, Runes, Holy Power, etc.) above your own Character\n\n|cffffff00Info:|r Wraps Blizzard's native Personal Resource Display, Health / Power Bars hidden\n\n|cffffff00Note:|r Works independently of the \"Enable Module\" toggle above.",
                 type = "toggle",
                 set = function(_, val)
                     db().personalresource.enabled = val
-                    Refresh(Nameplates.Module.PersonalResourceBar)
+
+                    local Core = mUI:GetModule("mUI.Modules.Nameplates.Core")
+                    local PersonalResourceBar = mUI:GetModule("mUI.Modules.Nameplates.PersonalResourceBar")
+                    if val then
+                        if not Core:IsEnabled() then
+                            Core:Enable()
+                        end
+                        if not PersonalResourceBar:IsEnabled() then
+                            PersonalResourceBar:Enable()
+                        else
+                            PersonalResourceBar:Update()
+                        end
+                    elseif PersonalResourceBar:IsEnabled() then
+                        PersonalResourceBar:Update()
+
+                        if not Nameplates.Module:IsEnabled() then
+                            PersonalResourceBar:Disable()
+                            Core:Disable()
+                        end
+                    end
                 end,
                 get = function()
                     return db().personalresource.enabled
@@ -1539,7 +1558,10 @@ function Nameplates:OnInitialize()
                 end,
                 set = function(_, val)
                     db().personalresource.anchor = val
-                    Refresh(Nameplates.Module.PersonalResourceBar)
+                    local PersonalResourceBar = mUI:GetModule("mUI.Modules.Nameplates.PersonalResourceBar")
+                    if PersonalResourceBar:IsEnabled() then
+                        PersonalResourceBar:Update()
+                    end
                 end,
                 get = function()
                     return db().personalresource.anchor
@@ -1558,7 +1580,10 @@ function Nameplates:OnInitialize()
                 end,
                 set = function(_, val)
                     db().personalresource.x = val
-                    Refresh(Nameplates.Module.PersonalResourceBar)
+                    local PersonalResourceBar = mUI:GetModule("mUI.Modules.Nameplates.PersonalResourceBar")
+                    if PersonalResourceBar:IsEnabled() then
+                        PersonalResourceBar:Update()
+                    end
                 end,
                 get = function()
                     return db().personalresource.x
@@ -1577,7 +1602,10 @@ function Nameplates:OnInitialize()
                 end,
                 set = function(_, val)
                     db().personalresource.y = val
-                    Refresh(Nameplates.Module.PersonalResourceBar)
+                    local PersonalResourceBar = mUI:GetModule("mUI.Modules.Nameplates.PersonalResourceBar")
+                    if PersonalResourceBar:IsEnabled() then
+                        PersonalResourceBar:Update()
+                    end
                 end,
                 get = function()
                     return db().personalresource.y
