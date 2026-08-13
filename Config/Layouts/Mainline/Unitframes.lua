@@ -353,21 +353,6 @@ function Unitframes:OnInitialize()
                 end,
                 order = 18
             },
-            debuffcolors = {
-                name = "Debuff Colors",
-                desc = "Color borders of Debuffs by their type on Target/Focus Frames\n\n|cffffff00Info:|r Requires Reload",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.unitframes.buffsdebuffs.debuffcolors = val
-                    if select(4, GetBuildInfo()) >= 120100 then
-                        mUI:Reload("Debuff Colors")
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.buffsdebuffs.debuffcolors
-                end,
-                order = 19
-            },
             overshields = {
                 name = "Overshields",
                 desc = "Show Absorbshields on Unitframes\n\n|cffffff00Info:|r Requires Reload",
@@ -408,6 +393,37 @@ function Unitframes:OnInitialize()
                     return mUI.db.profile.unitframes.buffsdebuffs.enabled
                 end,
                 order = 21.5
+            },
+            dispellableOnly = {
+                name = "Important Buffs only",
+                desc = "Only show important and dispellable buffs on unitframes",
+                type = "toggle",
+                hidden = function()
+                    return not mUI.db.profile.unitframes.buffsdebuffs.enabled
+                end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.buffsdebuffs.dispellableOnly = val
+                    Unitframes.Theme:UpdateAllUnitframeBuffFilters()
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.buffsdebuffs.dispellableOnly
+                end,
+                order = 21.6
+            },
+            debuffcolors = {
+                name = "Debuff Colors",
+                desc = "Color borders of Debuffs by their type on Target/Focus Frames\n\n|cffffff00Info:|r Requires Reload",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.buffsdebuffs.debuffcolors = val
+                    if select(4, GetBuildInfo()) >= 120100 then
+                        mUI:Reload("Debuff Colors")
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.buffsdebuffs.debuffcolors
+                end,
+                order = 21.7
             },
             buffsize = {
                 name = "Buff Size",
