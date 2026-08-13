@@ -551,7 +551,7 @@ function Health:OnInitialize()
 
     if NamePlateClassificationFrameMixin and not Health:IsHooked(NamePlateClassificationFrameMixin, "UpdateClassificationIndicator") then
         Health:SecureHook(NamePlateClassificationFrameMixin, "UpdateClassificationIndicator", function(classificationFrame)
-            if not Health.db.classification.enabled then
+            if not Health.db or not Health.db.classification or not Health.db.classification.enabled then
                 return
             end
 
