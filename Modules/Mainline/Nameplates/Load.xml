@@ -7,6 +7,7 @@
     <Include file="Health.lua" />
     <Include file="Castbar.lua" />
     <Include file="Style.lua" />
+    <Include file="Cvars.lua" />
     <Include file="PersonalResourceBar.lua" />
 
     <!-- Features -->

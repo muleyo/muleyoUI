@@ -6,6 +6,7 @@
     <Include file="GUI\Widgets\Dropdown.lua" />
     <Include file="GUI\Widgets\Dropdown_Font.lua" />
     <Include file="GUI\Widgets\Dropdown_Statusbar.lua" />
+    <Include file="GUI\Widgets\Dropdown_Multiselect.lua" />
     <Include file="GUI\Widgets\Slider.lua" />
     <Include file="GUI\Widgets\EditBox.lua" />
     <Include file="GUI\Widgets\MultiLineEditBox.lua" />

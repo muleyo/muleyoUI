@@ -27,6 +27,7 @@ local RESIZABLE = {
     Dropdown = true,
     DropdownFont = true,
     DropdownStatusbar = true,
+    DropdownMultiselect = true,
     Slider = true,
     EditBox = true,
     MultiLineEditBox = true,
@@ -270,6 +271,33 @@ Builders.select = function(parent, option)
             Renderer:Refresh()
         end)
     end
+    local width = WidthFor(option, 190)
+    if width ~= "full" then
+        width = math.max(width, 190)
+    end
+    return widget, width, 46
+end
+
+-- AceConfig-style multiselect: get(info, key) / set(info, key, value) per
+-- entry in option.values. The dropdown stays open across clicks, so unlike
+-- every other builder this does NOT call Renderer:Refresh() from its
+-- OnValueChanged -- that would release/rebuild the whole page (via
+-- ReleaseAll) and close the open menu after every single checkbox click.
+Builders.multiselect = function(parent, option)
+    local widget = Acquire("DropdownMultiselect", parent)
+    widget:SetLabel(Resolve(option.name, option))
+    widget.optionInfo = InfoFor(option)
+    widget.noneText = option.noneText
+    widget:SetOptions(option.values, option.sorting)
+    widget:SetGetter(function(key)
+        return option.get(InfoFor(option), key)
+    end)
+    widget:SetToggle(function(key, checked)
+        RunGuarded(option, function()
+            option.set(InfoFor(option), key, checked)
+            widget:UpdateText()
+        end)
+    end)
     local width = WidthFor(option, 190)
     if width ~= "full" then
         width = math.max(width, 190)

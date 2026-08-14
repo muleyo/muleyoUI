@@ -231,6 +231,22 @@ local defaults = {
                 other = 1,
                 global = 1
             },
+            cvars = {
+                onlyShowNames = false,
+                realmName = false,
+                friendlyNpcs = false,
+                offscreen = true,
+                stacking = {
+                    enemy = false,
+                    friendly = false
+                },
+                simplify = {
+                    minions = false,
+                    minor = false,
+                    friendlyPlayers = false,
+                    friendlyNpcs = false
+                }
+            },
             friendly = {
                 hidehealthbar = false,
                 hidenames = false,
@@ -238,9 +254,6 @@ local defaults = {
                 small = false,
                 width = 90
             },
-            -- The x/y offsets are split per reaction: the two indicators
-            -- usually want to sit on opposite sides in arena, where friendly
-            -- and enemy plates are read for different things.
             classicons = {
                 enabled = false,
                 friendly = true,
