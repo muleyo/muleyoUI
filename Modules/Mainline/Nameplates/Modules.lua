@@ -7,6 +7,7 @@ function Modules:OnInitialize()
     Modules.Health = mUI:GetModule("mUI.Modules.Nameplates.Health")
     Modules.Castbar = mUI:GetModule("mUI.Modules.Nameplates.Castbar")
     Modules.Style = mUI:GetModule("mUI.Modules.Nameplates.Style")
+    Modules.Cvars = mUI:GetModule("mUI.Modules.Nameplates.Cvars")
     Modules.PersonalResourceBar = mUI:GetModule("mUI.Modules.Nameplates.PersonalResourceBar")
     Modules.ClassIcon = mUI:GetModule("mUI.Modules.Nameplates.ClassIcon")
     Modules.Healer = mUI:GetModule("mUI.Modules.Nameplates.Healer")
@@ -25,9 +26,13 @@ function Modules:OnEnable()
     Modules.Health:Enable()
     Modules.Castbar:Enable()
     Modules.Style:Enable()
-    Modules.PersonalResourceBar:Enable()
+    Modules.Cvars:Enable()
 
     -- Enable Modules
+    if Modules.db.personalresource.enabled then
+        Modules.PersonalResourceBar:Enable()
+    end
+
     if Modules.db.classicons.enabled then
         Modules.ClassIcon:Enable()
     end
@@ -61,6 +66,7 @@ function Modules:OnDisable()
     Modules.Auras:Disable()
     Modules.Totem:Disable()
     Modules.PersonalResourceBar:Disable()
+    Modules.Cvars:Disable()
     Modules.Style:Disable()
     Modules.Castbar:Disable()
     Modules.Health:Disable()

@@ -71,20 +71,11 @@ function PersonalResourceBar:OnInitialize()
     function PersonalResourceBar:Apply()
         C_CVar.SetCVar("nameplateShowSelf", "1")
 
-        if not PersonalResourceDisplayFrame then
-            C_AddOns.LoadAddOn("Blizzard_PersonalResourceDisplay")
-        end
-
         local frame = PersonalResourceDisplayFrame
-        if not frame then
-            return
-        end
-
         frame:SetHideHealth(true)
         frame:SetHidePower(true)
         frame:SetHideAltPower(true)
         frame:SetHideClassInfo(false)
-        PersonalResourceBar.applied = true
 
         if not PersonalResourceBar:IsHooked(frame, "UpdateAdditionalBarAnchors") then
             PersonalResourceBar:SecureHook(frame, "UpdateAdditionalBarAnchors", "Reposition")

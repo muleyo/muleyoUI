@@ -479,6 +479,34 @@ function Nameplates:OnInitialize()
                 type = "header",
                 order = 28
             },
+            cvarOnlyShowNames = {
+                name = "Only Show Names",
+                desc = "Hide the Health Bar for Friendly Player Nameplates and only show their Name\n\n|cffffff00CVar:|r nameplateShowOnlyNameForFriendlyPlayerUnits",
+                type = "toggle",
+                set = function(_, val)
+                    db().cvars.onlyShowNames = val
+                    Refresh(Nameplates.Module.Cvars)
+                    Refresh(Nameplates.Module.Health)
+                end,
+                get = function()
+                    return db().cvars.onlyShowNames
+                end,
+                order = 28.1
+            },
+            friendlyClasscolor = {
+                name = "Class Color",
+                desc = "Color Friendly Player Health Bars and Names by Class\n\n|cffffff00CVar:|r nameplateUseClassColorForFriendlyPlayerUnitNames",
+                type = "toggle",
+                set = function(_, val)
+                    db().friendly.classcolor = val
+                    Refresh(Nameplates.Module.Health)
+                    Refresh(Nameplates.Module.Cvars)
+                end,
+                get = function()
+                    return db().friendly.classcolor
+                end,
+                order = 28.2
+            },
             friendlyHideHealthBar = {
                 name = "Hide Health Bar",
                 desc = "Hide the Health Bar, Cast Bar, Name and Target Indicator on Friendly Player Nameplates",
@@ -492,6 +520,9 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().friendly.hidehealthbar
                 end,
+                disabled = function()
+                    return db().cvars.onlyShowNames
+                end,
                 order = 29
             },
             friendlyHideNames = {
@@ -504,6 +535,9 @@ function Nameplates:OnInitialize()
                 end,
                 get = function()
                     return db().friendly.hidenames
+                end,
+                disabled = function()
+                    return db().cvars.onlyShowNames
                 end,
                 order = 30
             },
@@ -525,19 +559,6 @@ function Nameplates:OnInitialize()
                 end,
                 order = 31
             },
-            friendlyClasscolor = {
-                name = "Class Color",
-                desc = "Color Friendly Player Health Bars and Names by Class",
-                type = "toggle",
-                set = function(_, val)
-                    db().friendly.classcolor = val
-                    Refresh(Nameplates.Module.Health)
-                end,
-                get = function()
-                    return db().friendly.classcolor
-                end,
-                order = 32
-            },
             friendlySmall = {
                 name = "Small Friendly Plates",
                 desc = "Narrow the Health Bar and Cast Bar on Friendly Nameplates\n\n|cffffff00Info:|r Bar Height stays on the shared sliders",
@@ -548,6 +569,9 @@ function Nameplates:OnInitialize()
                 end,
                 get = function()
                     return db().friendly.small
+                end,
+                disabled = function()
+                    return db().cvars.onlyShowNames
                 end,
                 order = 33
             },
@@ -1645,6 +1669,88 @@ function Nameplates:OnInitialize()
                     return unpack(db().castbar.cooldowncolor)
                 end,
                 order = 100
+            },
+            header13 = {
+                name = "CVars",
+                type = "header",
+                order = 101
+            },
+            cvarStack = {
+                name = "Stack Nameplates",
+                desc = "Stack overlapping Nameplates instead of pushing them apart\n\n|cffffff00CVar:|r nameplateStackingTypes",
+                type = "multiselect",
+                values = {
+                    enemy = "Enemy Units",
+                    friendly = "Friendly Units"
+                },
+                sorting = {"enemy", "friendly"},
+                set = function(_, key, val)
+                    db().cvars.stacking[key] = val
+                    Refresh(Nameplates.Module.Cvars)
+                end,
+                get = function(_, key)
+                    return db().cvars.stacking[key]
+                end,
+                order = 102
+            },
+            cvarSimplify = {
+                name = "Simplify Nameplates",
+                desc = "Show a simplified Nameplate for the selected unit types\n\n|cffffff00CVar:|r nameplateSimplifiedTypes",
+                type = "multiselect",
+                values = {
+                    minions = "Minions",
+                    minor = "Minor",
+                    friendlyPlayers = "Friendly Players",
+                    friendlyNpcs = "Friendly NPCs"
+                },
+                sorting = {"minions", "minor", "friendlyPlayers", "friendlyNpcs"},
+                set = function(_, key, val)
+                    db().cvars.simplify[key] = val
+                    Refresh(Nameplates.Module.Cvars)
+                end,
+                get = function(_, key)
+                    return db().cvars.simplify[key]
+                end,
+                order = 103
+            },
+            cvarRealmName = {
+                name = "Realm Name",
+                desc = "Show the Realm Name on Friendly Player Nameplates\n\n|cffffff00CVar:|r nameplateShowFriendlyRealmName",
+                type = "toggle",
+                set = function(_, val)
+                    db().cvars.realmName = val
+                    Refresh(Nameplates.Module.Cvars)
+                end,
+                get = function()
+                    return db().cvars.realmName
+                end,
+                order = 106
+            },
+            cvarFriendlyNpcs = {
+                name = "Friendly NPC Nameplates",
+                desc = "Show Nameplates for Friendly NPCs\n\n|cffffff00CVar:|r nameplateShowFriendlyNpcs",
+                type = "toggle",
+                set = function(_, val)
+                    db().cvars.friendlyNpcs = val
+                    Refresh(Nameplates.Module.Cvars)
+                end,
+                get = function()
+                    return db().cvars.friendlyNpcs
+                end,
+                order = 107
+            },
+            cvarOffscreen = {
+                name = "Show Offscreen Nameplates",
+                desc = "Show indicators for Nameplates that are currently offscreen\n\n|cffffff00CVar:|r nameplateShowOffscreen",
+                type = "toggle",
+                set = function(_, val)
+                    db().cvars.offscreen = val
+                    Refresh(Nameplates.Module.Cvars)
+                end,
+                get = function()
+                    return db().cvars.offscreen
+                end,
+                order = 108
             }
         }
     }
