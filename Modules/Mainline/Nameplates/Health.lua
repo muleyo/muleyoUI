@@ -453,14 +453,18 @@ function Health:OnInitialize()
 
         local data = GetInfo(frame, frame.unit)
 
-        -- Only force a hide here for mUI's own "Hide Health Bar" setting. Never
-        -- force it shown: Blizzard already drives this bar's shown state itself
-        -- (ShouldBeShown/UpdateShownState, wired to nameplateShowOnlyNameForFriendlyPlayerUnits
-        -- via CVarCallbackRegistry), and unconditionally calling SetShown(true)
-        -- here was stomping that decision right back to visible.
+        -- mUI's own "Hide Health Bar" setting always wins. Otherwise, only
+        -- re-show the bar if Blizzard's own cvar-driven state (ShouldBeShown/
+        -- UpdateShownState, wired to nameplateShowOnlyNameForFriendlyPlayerUnits
+        -- via CVarCallbackRegistry) isn't also asking for it to stay hidden --
+        -- unconditionally forcing it shown here was stomping that decision
+        -- right back to visible; never touching it at all left toggling
+        -- "Hide Health Bar" back off with no way to re-show the bar.
         local hideBar = HideFriendlyBar(data)
         if hideBar then
             bar:SetShown(false)
+        elseif not bar:IsShowOnlyName() then
+            bar:SetShown(true)
         end
 
         local texture = BarTexture(data)
