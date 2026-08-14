@@ -3,9 +3,9 @@ local Changelog = mUI:NewModule("mUI.Config.Changelog")
 -- Maintainer note: this window intentionally shows ONLY the latest update.
 -- Keep this as a single entry and update it each release.
 local CHANGELOG = {
-    version = "4.1.5",
+    version = "4.1.8",
     affected = {"Mainline"},
-    changes = {"Fixed an issue which would disable the Personal Resource Display on every reload."}
+    changes = {"Added Nameplate CVar controls to the settings panel.", "Fixed secret errors."}
 }
 
 function Changelog:OnInitialize()
