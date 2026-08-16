@@ -42,6 +42,22 @@ function Raidframes:OnInitialize()
                 end,
                 order = 1
             },
+            customAuras = {
+                name = "Custom Raid Auras",
+                desc = "Show Buffs/Debuffs/Defensives using mUI's own Aura display on Party / Raidframes\n\n|cffffff00Info:|r Requires Reload\n\n|cffffff00Info:|r Disabling this switches back to Blizzard's default Raidframe Auras",
+                type = "toggle",
+                disabled = function()
+                    return not mUI.db.profile.unitframes.raidframes.enabled
+                end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.customAuras = val
+                    mUI:Reload(val and 'Enable Custom Raid Auras' or 'Disable Custom Raid Auras')
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.customAuras
+                end,
+                order = 1.6
+            },
             header1 = {
                 name = "Textures",
                 type = "header",

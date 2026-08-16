@@ -148,7 +148,7 @@ function Theme:OnEnable()
         end
     end
 
-    if mUI.db.profile.unitframes.raidframes.enabled then
+    if mUI.db.profile.unitframes.raidframes.enabled and mUI.db.profile.unitframes.raidframes.customAuras then
         -- Raidframe Auras
         Theme:DisableDefaultRaidAuras(true)
         local function RefreshRaidFrameAuras(frame)
