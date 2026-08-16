@@ -191,6 +191,7 @@ local defaults = {
             colors = false,
             clickthrough = false,
             hitbox = 0,
+            totemicons = false,
             size = {
                 healthwidth = 150,
                 healthheight = 16,
@@ -436,6 +437,15 @@ function Database:OnInitialize()
     mUI.db.RegisterCallback(self, "OnProfileChanged", "RefreshConfig")
     mUI.db.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
     mUI.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
+
+    -- Repair profiles from before the Mists Totem Icons toggle was moved off
+    -- this key: it used to write a boolean straight into nameplates.totem,
+    -- which mUI.db.profile shares with Mainline's nameplates.totem *table*
+    -- (Totem Indicator config) -- corrupting it for any account also played
+    -- on Mainline, crashing anything indexing nameplates.totem.enabled.
+    if type(mUI.db.profile.nameplates.totem) ~= "table" then
+        mUI.db.profile.nameplates.totem = nil
+    end
 end
 
 function Database:RefreshConfig()

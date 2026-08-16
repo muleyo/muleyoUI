@@ -26,7 +26,7 @@ function Modules:OnEnable()
     if Modules.db.debuffs then
         Modules.Debuffs:Enable()
     end
-    if Modules.db.totem then
+    if Modules.db.totemicons then
         Modules.Totemicons:Enable()
     end
     Modules.Options:Enable()
