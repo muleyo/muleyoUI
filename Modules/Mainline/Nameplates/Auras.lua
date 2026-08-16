@@ -17,6 +17,9 @@ function Auras:OnInitialize()
     local AF = AuraUtil.AuraFilters
     local CC_FILTER = AuraUtil.CreateFilterString(AF.Harmful, AF.CrowdControl)
     local PLAYER_DEBUFF_FILTER = AuraUtil.CreateFilterString(AF.Harmful, AF.Player, "!CROWD_CONTROL")
+    local PLAYER_DEBUFF_EXCLUDE = {
+        [1287555] = true
+    }
     local DEFENSIVE_FILTER = AuraUtil.CreateFilterString(AF.Helpful, AF.BigDefensive)
     local IMPORTANT_FILTER = AuraUtil.CreateFilterString(AF.Helpful, AF.Important, "!BIG_DEFENSIVE")
     local BASE_ICON_SIZE = 20
@@ -132,6 +135,9 @@ function Auras:OnInitialize()
         local top = NewContainer(plate, "top", "BOTTOMLEFT", AnchorUtil.FlowDirection.Right, AnchorUtil.FlowDirection.Up)
         top:AddAuraGroup("PlayerDebuffs", PLAYER_DEBUFF_FILTER, {
             maxFrameCount = 3,
+            candidateFilters = {
+                excludeSpellIDs = PLAYER_DEBUFF_EXCLUDE
+            },
             initializeFrame = InitIcon,
             layout = {
                 elementSpacing = ICON_GAP,
