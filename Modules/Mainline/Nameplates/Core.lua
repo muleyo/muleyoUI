@@ -115,12 +115,42 @@ function Core:OnInitialize()
 
         if Core.db.clickthrough and data and data.isFriend then
             namePlate:ClearAllHitTestPoints()
-        else
-            local health = plate and Core:GetHealthBar(plate)
-            if health then
-                namePlate:SetAllHitTestPoints(health)
+            return
+        end
+
+        if not plate then
+            return
+        end
+
+        local health, _, frame = Core:GetHealthBar(plate)
+        if not health then
+            return
+        end
+
+        local padding = Core.db.hitbox or 0
+        local name = frame and frame.name
+        local topFrame, bottomFrame = health, health
+        if name and name:IsShown() then
+            if Core.db.name and Core.db.name.anchor == "BELOW" then
+                bottomFrame = name
+            else
+                topFrame = name
             end
         end
+
+        namePlate:SetHitTestPoints({{
+            point = "TOPLEFT",
+            relativeTo = topFrame,
+            relativePoint = "TOPLEFT",
+            offsetX = -padding,
+            offsetY = padding
+        }, {
+            point = "BOTTOMRIGHT",
+            relativeTo = bottomFrame,
+            relativePoint = "BOTTOMRIGHT",
+            offsetX = padding,
+            offsetY = -padding
+        }})
     end
 
     function Core:AcquirePlate(namePlate)

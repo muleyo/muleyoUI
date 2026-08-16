@@ -19,6 +19,11 @@ curve:AddPoint(1 + (mult * 60), Enum.SecondsFormatterInterval.Minutes)
 curve:AddPoint(1 + (mult * 3600), Enum.SecondsFormatterInterval.Hours)
 curve:AddPoint(1 + (mult * 86400), Enum.SecondsFormatterInterval.Days)
 AuraDurationFormatter:SetDefaultAbbreviation(Enum.SecondsFormatterAbbreviation.OneLetter)
+-- Matches Blizzard's own DefaultAuraDurationFormatter: without this, the last
+-- unit truncates instead of rounding, so e.g. a fresh 2h weapon oil buff reads
+-- "2h" then immediately drops to "1h" the moment any time at all has elapsed.
+AuraDurationFormatter:SetRounding(Enum.SecondsFormatterRounding.Truncate)
+AuraDurationFormatter:SetCanRoundUpLastUnit(true)
 AuraDurationFormatter:SetMinInterval(Enum.SecondsFormatterInterval.Seconds)
 AuraDurationFormatter:SetMaxIntervalCurve(curve)
 AuraDurationFormatter:SetDesiredUnitCount(1)

@@ -49,6 +49,7 @@ function Cvars:OnInitialize()
 
         CVarCallbackRegistry:SetCVarBitfieldMask("nameplateStackingTypes", Cvars:GetStackingMask())
         CVarCallbackRegistry:SetCVarBitfieldMask("nameplateSimplifiedTypes", Cvars:GetSimplifiedMask())
+        CVarCallbackRegistry:SetCVarBitfieldMask("nameplateInfoDisplay", 0)
     end
 
     function Cvars:OnRegenEnabled()

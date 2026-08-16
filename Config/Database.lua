@@ -189,6 +189,7 @@ local defaults = {
             debuffs = false,
             colors = false,
             clickthrough = false,
+            hitbox = 0,
             size = {
                 healthwidth = 150,
                 healthheight = 16,
@@ -204,12 +205,15 @@ local defaults = {
                 size = 1
             },
             name = {
-                size = 12
+                size = 12,
+                anchor = "ABOVE",
+                x = 0,
+                y = 4
             },
             health = {
                 percent = false,
-                anchor = "RIGHT",
-                x = 2,
+                value = false,
+                x = 0,
                 y = 0
             },
             names = {
