@@ -201,6 +201,25 @@ function Nameplates:OnInitialize()
                 end,
                 order = 9.1
             },
+            nameAlign = {
+                name = "Name Align",
+                desc = "Select how the Unit Name aligns relative to the Health Bar",
+                type = "select",
+                values = {
+                    LEFT = "Left",
+                    CENTER = "Center",
+                    RIGHT = "Right"
+                },
+                sorting = {"LEFT", "CENTER", "RIGHT"},
+                set = function(_, val)
+                    db().name.align = val
+                    Refresh(Nameplates.Module.Health)
+                end,
+                get = function()
+                    return db().name.align
+                end,
+                order = 9.15
+            },
             nameOffsetX = {
                 name = "Name Offset X",
                 desc = "Move the Unit Name horizontally",

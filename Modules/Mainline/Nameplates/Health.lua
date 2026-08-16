@@ -285,8 +285,14 @@ function Health:OnInitialize()
     local HEALTH_TEXT_SIZE = 12
 
     local NAME_ANCHORS = {
-        ABOVE = {"BOTTOM", "TOP", 1, 1},
-        BELOW = {"TOP", "BOTTOM", 1, -1}
+        ABOVE = {point = "BOTTOM", relativePoint = "TOP", ySign = 1},
+        BELOW = {point = "TOP", relativePoint = "BOTTOM", ySign = -1}
+    }
+
+    local NAME_ALIGN_SUFFIX = {
+        LEFT = "LEFT",
+        CENTER = "",
+        RIGHT = "RIGHT"
     }
 
     local function WithSlug(flags)
@@ -335,11 +341,12 @@ function Health:OnInitialize()
 
         local config = Health.db.name
         local anchor = NAME_ANCHORS[config.anchor] or NAME_ANCHORS.ABOVE
-        local point, relativePoint, xSign, ySign = anchor[1], anchor[2], anchor[3], anchor[4]
+        local align = config.align or "CENTER"
+        local suffix = NAME_ALIGN_SUFFIX[align] or ""
 
         name:ClearAllPoints()
-        name:SetJustifyH("CENTER")
-        name:SetPoint(point, container, relativePoint, config.x * xSign, config.y * ySign)
+        name:SetJustifyH(align)
+        name:SetPoint(anchor.point .. suffix, container, anchor.relativePoint .. suffix, config.x, config.y * anchor.ySign)
 
         name:SetTextHeight(config.size)
         name:SetWidth(0)

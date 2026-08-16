@@ -208,6 +208,7 @@ local defaults = {
             name = {
                 size = 12,
                 anchor = "ABOVE",
+                align = "CENTER",
                 x = 0,
                 y = 4
             },
