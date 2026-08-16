@@ -18,7 +18,8 @@ function Auras:OnInitialize()
     local CC_FILTER = AuraUtil.CreateFilterString(AF.Harmful, AF.CrowdControl)
     local PLAYER_DEBUFF_FILTER = AuraUtil.CreateFilterString(AF.Harmful, AF.Player, "!CROWD_CONTROL")
     local PLAYER_DEBUFF_EXCLUDE = {
-        [1287555] = true
+        [1287555] = true,
+        [1287663] = true
     }
     local DEFENSIVE_FILTER = AuraUtil.CreateFilterString(AF.Helpful, AF.BigDefensive)
     local IMPORTANT_FILTER = AuraUtil.CreateFilterString(AF.Helpful, AF.Important, "!BIG_DEFENSIVE")
