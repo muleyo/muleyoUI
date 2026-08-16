@@ -388,10 +388,6 @@ function Health:OnInitialize()
         end
     end
 
-    -- Blizzard's own nameplate health text isn't frame.statusText (that field
-    -- only exists on party/raid CompactUnitFrames) -- it's healthBar.Text/
-    -- LeftText/RightText, driven by the "nameplateInfoDisplay" cvar. Hide those
-    -- directly whenever ours would otherwise overlap them.
     local function SuppressBlizzardHealthText(bar)
         if bar.Text then
             bar.Text:SetShown(false)
@@ -415,10 +411,6 @@ function Health:OnInitialize()
 
         if HasHealthText() then
             SuppressBlizzardHealthText(bar)
-        elseif bar.UpdateTextDisplay then
-            -- Let Blizzard recompute its own natural (cvar-driven) shown state
-            -- instead of leaving it stuck hidden from a previous SetShown(false).
-            bar:UpdateTextDisplay()
         end
 
         local percentText = EnsureHealthText(bar, "percent")
@@ -485,10 +477,6 @@ function Health:OnInitialize()
         ApplyNamePosition(frame)
         ApplyHealthText(frame)
 
-        -- Hit-test anchors track their target frames live, so it's safe (and
-        -- necessary, since Blizzard's UpdateHitTestArea runs before its own
-        -- UpdateAnchors) to reapply this on every layout pass rather than only
-        -- at plate creation, which is the only other point Core calls it from.
         local namePlate = frame:GetParent()
         local unit = namePlate and Core.plates[namePlate]
         local data = unit and Core:GetUnitData(unit, namePlate)
@@ -509,14 +497,6 @@ function Health:OnInitialize()
         end
 
         local data = GetInfo(frame, frame.unit)
-
-        -- mUI's own "Hide Health Bar" setting always wins. Otherwise, only
-        -- re-show the bar if Blizzard's own cvar-driven state (ShouldBeShown/
-        -- UpdateShownState, wired to nameplateShowOnlyNameForFriendlyPlayerUnits
-        -- via CVarCallbackRegistry) isn't also asking for it to stay hidden --
-        -- unconditionally forcing it shown here was stomping that decision
-        -- right back to visible; never touching it at all left toggling
-        -- "Hide Health Bar" back off with no way to re-show the bar.
         local hideBar = HideFriendlyBar(data)
         if hideBar then
             bar:SetShown(false)
