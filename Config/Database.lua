@@ -208,6 +208,7 @@ local defaults = {
             name = {
                 size = 12,
                 anchor = "ABOVE",
+                align = "CENTER",
                 x = 0,
                 y = 4
             },
@@ -436,6 +437,20 @@ function Database:OnInitialize()
     mUI.db.RegisterCallback(self, "OnProfileChanged", "RefreshConfig")
     mUI.db.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
     mUI.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
+
+    if type(mUI.db.profile.nameplates.totem) ~= "table" then
+        mUI.db.profile.nameplates.totem = {
+            enabled = false,
+            enemyOnly = false,
+            colorHealthBar = false,
+            noAnimation = false,
+            size = 24,
+            anchor = "TOP",
+            x = 0,
+            y = 4,
+            color = {1, 0.82, 0, 1}
+        }
+    end
 end
 
 function Database:RefreshConfig()

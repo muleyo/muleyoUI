@@ -17,6 +17,10 @@ function Auras:OnInitialize()
     local AF = AuraUtil.AuraFilters
     local CC_FILTER = AuraUtil.CreateFilterString(AF.Harmful, AF.CrowdControl)
     local PLAYER_DEBUFF_FILTER = AuraUtil.CreateFilterString(AF.Harmful, AF.Player, "!CROWD_CONTROL")
+    local PLAYER_DEBUFF_EXCLUDE = {
+        [1287555] = true,
+        [1287663] = true
+    }
     local DEFENSIVE_FILTER = AuraUtil.CreateFilterString(AF.Helpful, AF.BigDefensive)
     local IMPORTANT_FILTER = AuraUtil.CreateFilterString(AF.Helpful, AF.Important, "!BIG_DEFENSIVE")
     local BASE_ICON_SIZE = 20
@@ -132,6 +136,9 @@ function Auras:OnInitialize()
         local top = NewContainer(plate, "top", "BOTTOMLEFT", AnchorUtil.FlowDirection.Right, AnchorUtil.FlowDirection.Up)
         top:AddAuraGroup("PlayerDebuffs", PLAYER_DEBUFF_FILTER, {
             maxFrameCount = 3,
+            candidateFilters = {
+                excludeSpellIDs = PLAYER_DEBUFF_EXCLUDE
+            },
             initializeFrame = InitIcon,
             layout = {
                 elementSpacing = ICON_GAP,
@@ -209,8 +216,8 @@ function Auras:OnInitialize()
         container:UpdateAllAuras()
     end
 
-    local function ShouldShowFriendlyCC(plate, data)
-        return data.isFriend and Auras.db.classicons.enabled and Auras.db.classicons.friendly and plate.ClassIcon ~= nil
+    local function ShouldShowFriendlyCC(plate, data, showOnlyName)
+        return not showOnlyName and data.isFriend and Auras.db.classicons.enabled and Auras.db.classicons.friendly and plate.ClassIcon ~= nil
     end
 
     function Auras.handler.Update(plate, data)
@@ -231,7 +238,13 @@ function Auras:OnInitialize()
         end
 
         local isMinion = Auras.db.totem.enabled and Core:Safe(UnitIsMinion(data.unit), false)
-        local hideBar = (Auras.Health.HideFriendlyBar and Auras.Health.HideFriendlyBar(data)) or isMinion
+
+        -- "Only Show Names" leaves just the name on friendly units - no Health
+        -- Bar, so an Aura group anchored to it (or shown at all) makes no sense.
+        local health = Core:GetHealthBar(plate)
+        local showOnlyName = health and health.IsShowOnlyName and health:IsShowOnlyName()
+
+        local hideBar = (Auras.Health.HideFriendlyBar and Auras.Health.HideFriendlyBar(data)) or isMinion or showOnlyName
         plate.AurasHidden = hideBar
 
         if hideBar then
@@ -248,7 +261,7 @@ function Auras:OnInitialize()
             SetContainerUnit(plate.AuraLeft, data.unit)
         end
 
-        plate.AurasShowFriendlyCC = ShouldShowFriendlyCC(plate, data)
+        plate.AurasShowFriendlyCC = ShouldShowFriendlyCC(plate, data, showOnlyName)
         if plate.AurasShowFriendlyCC then
             plate.AuraFriendlyCC:Show()
             SetContainerUnit(plate.AuraFriendlyCC, data.unit)

@@ -3,10 +3,11 @@ local Changelog = mUI:NewModule("mUI.Config.Changelog")
 -- Maintainer note: this window intentionally shows ONLY the latest update.
 -- Keep this as a single entry and update it each release.
 local CHANGELOG = {
-    version = "4.1.9",
+    version = "4.1.10",
     affected = {"Mainline"},
-    changes = {"Added several nameplate options for nameplate healthtext / name (position, values etc.)",
-               "Added option to adjust nameplate clickable area", "Added option to disable mUI's auras for raidframes"}
+    changes = {"Added option to adjust nameplate name alignment",
+               "Auras are no longer being shown for friendly units when 'Only Show Names' is enabled.",
+               "Omnium Folio debuff should no longer show up on nameplate debuffs."}
 }
 
 function Changelog:OnInitialize()
