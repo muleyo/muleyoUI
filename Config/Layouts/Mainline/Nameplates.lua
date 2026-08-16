@@ -183,6 +183,56 @@ function Nameplates:OnInitialize()
                 end,
                 order = 9
             },
+            nameAnchor = {
+                name = "Name Position",
+                desc = "Select whether the Unit Name sits above or below the Health Bar",
+                type = "select",
+                values = {
+                    ABOVE = "Top",
+                    BELOW = "Bottom"
+                },
+                sorting = {"ABOVE", "BELOW"},
+                set = function(_, val)
+                    db().name.anchor = val
+                    Refresh(Nameplates.Module.Health)
+                end,
+                get = function()
+                    return db().name.anchor
+                end,
+                order = 9.1
+            },
+            nameOffsetX = {
+                name = "Name Offset X",
+                desc = "Move the Unit Name horizontally",
+                type = "range",
+                min = -50,
+                max = 50,
+                step = 1,
+                set = function(_, val)
+                    db().name.x = val
+                    Refresh(Nameplates.Module.Health)
+                end,
+                get = function()
+                    return db().name.x
+                end,
+                order = 9.2
+            },
+            nameOffsetY = {
+                name = "Name Offset Y",
+                desc = "Move the Unit Name away from the Health Bar",
+                type = "range",
+                min = -50,
+                max = 50,
+                step = 1,
+                set = function(_, val)
+                    db().name.y = val
+                    Refresh(Nameplates.Module.Health)
+                end,
+                get = function()
+                    return db().name.y
+                end,
+                order = 9.3
+            },
             scaleTarget = {
                 name = "Target Scale",
                 desc = "Set the Size of your Target's Nameplate",
@@ -250,66 +300,49 @@ function Nameplates:OnInitialize()
             },
             showClassColor = {
                 name = "Class Colors",
-                desc = "Show Player Health Bars in Class Colors on Nameplates (Blizzard's nameplateShowClassColor CVar)",
+                desc = "Color Enemy Player Health Bars by Class\n\n|cffffff00Info:|r Also sets Blizzard's nameplateShowClassColor CVar",
                 type = "toggle",
                 set = function(_, val)
+                    db().classcolor = val
                     db().showClassColor = val
+
+                    Refresh(Nameplates.Module.Health)
 
                     if Nameplates.Module:IsEnabled() and Nameplates.Module.Style:IsEnabled() then
                         Nameplates.Module.Style:ApplyScale()
                     end
                 end,
                 get = function()
-                    return db().showClassColor
+                    return db().classcolor
                 end,
                 order = 14.1
             },
-            healthPercent = {
-                name = "Health Percent",
-                desc = "Show the Unit's Health as a Percentage on the Health Bar",
-                type = "toggle",
-                set = function(_, val)
-                    db().health.percent = val
+            healthDisplay = {
+                name = "Health Text",
+                desc = "Show the Unit's Health as a Percentage and/or a Value on the Health Bar\n\n|cffffff00Info:|r Disables Blizzard's own Health Percentage/Value text\n\n|cffffff00Info:|r With both enabled, Value sits on the Left and Percentage on the Right",
+                type = "multiselect",
+                values = {
+                    percent = "Percentage",
+                    value = "Value"
+                },
+                set = function(_, key, val)
+                    db().health[key] = val
                     Refresh(Nameplates.Module.Health)
                 end,
-                get = function()
-                    return db().health.percent
+                get = function(_, key)
+                    return db().health[key]
                 end,
                 order = 15
             },
-            healthPercentAnchor = {
-                name = "Percent Position",
-                desc = "Select where the Percentage sits on the Health Bar",
-                type = "select",
-                values = {
-                    LEFT = "Left",
-                    CENTER = "Center",
-                    RIGHT = "Right",
-                    TOP = "Top",
-                    BOTTOM = "Bottom"
-                },
-                sorting = {"LEFT", "CENTER", "RIGHT", "TOP", "BOTTOM"},
-                disabled = function()
-                    return not db().health.percent
-                end,
-                set = function(_, val)
-                    db().health.anchor = val
-                    Refresh(Nameplates.Module.Health)
-                end,
-                get = function()
-                    return db().health.anchor
-                end,
-                order = 16
-            },
-            healthPercentX = {
-                name = "Percent Offset X",
-                desc = "Move the Percentage horizontally",
+            healthOffsetX = {
+                name = "Health Text Offset X",
+                desc = "Nudge the Health Text horizontally away from its anchor",
                 type = "range",
-                min = -100,
-                max = 100,
+                min = -50,
+                max = 50,
                 step = 1,
                 disabled = function()
-                    return not db().health.percent
+                    return not (db().health.percent or db().health.value)
                 end,
                 set = function(_, val)
                     db().health.x = val
@@ -318,17 +351,17 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().health.x
                 end,
-                order = 17
+                order = 16
             },
-            healthPercentY = {
-                name = "Percent Offset Y",
-                desc = "Move the Percentage vertically",
+            healthOffsetY = {
+                name = "Health Text Offset Y",
+                desc = "Move the Health Text vertically",
                 type = "range",
-                min = -100,
-                max = 100,
+                min = -50,
+                max = 50,
                 step = 1,
                 disabled = function()
-                    return not db().health.percent
+                    return not (db().health.percent or db().health.value)
                 end,
                 set = function(_, val)
                     db().health.y = val
@@ -337,7 +370,28 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().health.y
                 end,
-                order = 18
+                order = 17
+            },
+            hitbox = {
+                name = "Clickable Area",
+                desc = "Grow or shrink the area of the Nameplate that responds to the mouse\n\n|cffffff00Info:|r Always covers the Health Bar; positive values extend further past their edges, negative values shrink inside them",
+                type = "range",
+                min = -20,
+                max = 40,
+                step = 1,
+                set = function(_, val)
+                    db().hitbox = val
+
+                    if not Nameplates.Module:IsEnabled() then
+                        return
+                    end
+
+                    Nameplates.Module.Core:RefreshHitTest()
+                end,
+                get = function()
+                    return db().hitbox
+                end,
+                order = 17.1
             },
             header35 = {
                 name = "NPC Type",
