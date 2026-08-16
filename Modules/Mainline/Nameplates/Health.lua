@@ -280,10 +280,14 @@ function Health:OnInitialize()
         healthContainer:SetPoint("BOTTOMRIGHT", frame, "BOTTOM", widthToUse, hpBotPos)
     end
 
-    local NAME_SPACING = 4
     -- Independent from the Name Text Size setting, so changing one doesn't
     -- resize the other.
     local HEALTH_TEXT_SIZE = 12
+
+    local NAME_ANCHORS = {
+        ABOVE = {"BOTTOM", "TOP", 1, 1},
+        BELOW = {"TOP", "BOTTOM", 1, -1}
+    }
 
     local function WithSlug(flags)
         if not flags or flags == "" then
@@ -329,34 +333,40 @@ function Health:OnInitialize()
             return
         end
 
+        local config = Health.db.name
+        local anchor = NAME_ANCHORS[config.anchor] or NAME_ANCHORS.ABOVE
+        local point, relativePoint, xSign, ySign = anchor[1], anchor[2], anchor[3], anchor[4]
+
         name:ClearAllPoints()
         name:SetJustifyH("CENTER")
-        name:SetPoint("BOTTOM", container, "TOP", 0, NAME_SPACING)
+        name:SetPoint(point, container, relativePoint, config.x * xSign, config.y * ySign)
 
-        name:SetTextHeight(Health.db.name.size)
+        name:SetTextHeight(config.size)
         name:SetWidth(0)
         name:SetHeight(0)
     end
 
-    local HEALTH_TEXT_ANCHORS = {
-        LEFT = {"LEFT", "LEFT", 1, 1},
-        CENTER = {"CENTER", "CENTER", 1, 1},
-        RIGHT = {"RIGHT", "RIGHT", -1, 1},
-        TOP = {"BOTTOM", "TOP", 1, 1},
-        BOTTOM = {"TOP", "BOTTOM", 1, -1}
-    }
+    local function HasHealthText()
+        local config = Health.db.health
+        return config.percent or config.value
+    end
 
-    local function EnsureHealthText(bar)
-        if not bar.mUIHealthText then
-            local text = bar:CreateFontString(nil, "OVERLAY")
-            bar.mUIHealthText = text
+    local function EnsureHealthText(bar, key)
+        local store = bar.mUIHealthTexts
+        if not store then
+            store = {}
+            bar.mUIHealthTexts = store
         end
 
-        return bar.mUIHealthText
+        if not store[key] then
+            store[key] = bar:CreateFontString(nil, "OVERLAY")
+        end
+
+        return store[key]
     end
 
     local function UpdateHealthText(frame)
-        if not Health:IsEnabled() or not Health.db.health.percent or not UnitHealthPercent then
+        if not Health:IsEnabled() or not HasHealthText() or not UnitHealthPercent then
             return
         end
         if not IsNamePlate(frame) then
@@ -365,24 +375,33 @@ function Health:OnInitialize()
 
         local container = frame.HealthBarsContainer
         local bar = container and container.healthBar
-        if not bar or not bar.mUIHealthText then
+        if not bar or not bar.mUIHealthTexts then
             return
         end
 
-        bar.mUIHealthText:SetFormattedText(healthFormat, UnitHealthPercent(frame.unit, true, CurveConstants.ScaleTo100))
+        local config = Health.db.health
+        if config.percent and bar.mUIHealthTexts.percent then
+            bar.mUIHealthTexts.percent:SetFormattedText(healthFormat, UnitHealthPercent(frame.unit, true, CurveConstants.ScaleTo100))
+        end
+        if config.value and bar.mUIHealthTexts.value and AbbreviateNumbers then
+            bar.mUIHealthTexts.value:SetText(AbbreviateNumbers(UnitHealth(frame.unit)))
+        end
     end
 
-    -- Blizzard's own health text (frame.statusText) would otherwise overlap
-    -- ours whenever the nameplate's healthText option shows a percentage too.
-    local function OnStatusTextUpdate(frame)
-        if not Health:IsEnabled() or not Health.db.health.percent then
-            return
+    -- Blizzard's own nameplate health text isn't frame.statusText (that field
+    -- only exists on party/raid CompactUnitFrames) -- it's healthBar.Text/
+    -- LeftText/RightText, driven by the "nameplateInfoDisplay" cvar. Hide those
+    -- directly whenever ours would otherwise overlap them.
+    local function SuppressBlizzardHealthText(bar)
+        if bar.Text then
+            bar.Text:SetShown(false)
         end
-        if not IsNamePlate(frame) or not frame.statusText then
-            return
+        if bar.LeftText then
+            bar.LeftText:SetShown(false)
         end
-
-        frame.statusText:Hide()
+        if bar.RightText then
+            bar.RightText:SetShown(false)
+        end
     end
 
     local function ApplyHealthText(frame)
@@ -393,27 +412,54 @@ function Health:OnInitialize()
         end
 
         local config = Health.db.health
-        local text = EnsureHealthText(bar)
 
-        if not config.percent then
-            text:Hide()
-            return
+        if HasHealthText() then
+            SuppressBlizzardHealthText(bar)
+        elseif bar.UpdateTextDisplay then
+            -- Let Blizzard recompute its own natural (cvar-driven) shown state
+            -- instead of leaving it stuck hidden from a previous SetShown(false).
+            bar:UpdateTextDisplay()
         end
 
-        local anchor = HEALTH_TEXT_ANCHORS[config.anchor] or HEALTH_TEXT_ANCHORS.RIGHT
-        local point, relativePoint, xSign, ySign = anchor[1], anchor[2], anchor[3], anchor[4]
-
-        text:ClearAllPoints()
-        text:SetPoint(point, bar, relativePoint, config.x * xSign, config.y * ySign)
+        local percentText = EnsureHealthText(bar, "percent")
+        local valueText = EnsureHealthText(bar, "value")
 
         local path = mUI.db.profile.general.fontpath
         local size = HEALTH_TEXT_SIZE
-        if path and (text.mUIFontPath ~= path or text.mUIFontSize ~= size) then
-            text.mUIFontPath, text.mUIFontSize = path, size
-            text:SetFont(path, size, WithSlug("OUTLINE"))
+        for _, text in ipairs({percentText, valueText}) do
+            if path and (text.mUIFontPath ~= path or text.mUIFontSize ~= size) then
+                text.mUIFontPath, text.mUIFontSize = path, size
+                text:SetFont(path, size, WithSlug("OUTLINE"))
+            end
         end
 
-        text:Show()
+        if not config.percent and not config.value then
+            percentText:Hide()
+            valueText:Hide()
+            return
+        end
+
+        if config.percent and config.value then
+            -- Both shown: Value sits on the Left, Percent on the Right.
+            valueText:ClearAllPoints()
+            valueText:SetPoint("LEFT", bar, "LEFT", config.x, config.y)
+            valueText:Show()
+
+            percentText:ClearAllPoints()
+            percentText:SetPoint("RIGHT", bar, "RIGHT", -config.x, config.y)
+            percentText:Show()
+        elseif config.value then
+            valueText:ClearAllPoints()
+            valueText:SetPoint("CENTER", bar, "CENTER", config.x, config.y)
+            valueText:Show()
+            percentText:Hide()
+        else
+            percentText:ClearAllPoints()
+            percentText:SetPoint("CENTER", bar, "CENTER", config.x, config.y)
+            percentText:Show()
+            valueText:Hide()
+        end
+
         UpdateHealthText(frame)
     end
 
@@ -438,6 +484,17 @@ function Health:OnInitialize()
         ApplyBarLayout(frame)
         ApplyNamePosition(frame)
         ApplyHealthText(frame)
+
+        -- Hit-test anchors track their target frames live, so it's safe (and
+        -- necessary, since Blizzard's UpdateHitTestArea runs before its own
+        -- UpdateAnchors) to reapply this on every layout pass rather than only
+        -- at plate creation, which is the only other point Core calls it from.
+        local namePlate = frame:GetParent()
+        local unit = namePlate and Core.plates[namePlate]
+        local data = unit and Core:GetUnitData(unit, namePlate)
+        if data then
+            Core:ApplyHitTest(namePlate, data.plate, data)
+        end
     end
 
     local function OnHealthColorUpdate(frame)
@@ -538,10 +595,6 @@ function Health:OnInitialize()
 
     if not Health:IsHooked("CompactUnitFrame_UpdateHealth") then
         Health:SecureHook("CompactUnitFrame_UpdateHealth", UpdateHealthText)
-    end
-
-    if not Health:IsHooked("CompactUnitFrame_UpdateStatusText") then
-        Health:SecureHook("CompactUnitFrame_UpdateStatusText", OnStatusTextUpdate)
     end
 
     if not Health:IsHooked(NamePlateUnitFrameMixin, "UpdateAnchors") then
