@@ -556,8 +556,7 @@ function Preview:UpdateParty()
     local unitHeight = height * 0.8 + 25
 
     local activeSection = mGUI.Renderer.activeSection and mGUI.Renderer.activeSection[RAIDFRAMES_KEY]
-    local auraDisplay = rf.auraDisplay or select(4, GetBuildInfo()) >= 120100
-    local showAuras = auraDisplay and activeSection == "Auras"
+    local showAuras = rf.customAuras and activeSection == "Auras"
 
     local buffSize = math.floor(unitHeight * (rf.buffsize or 33) / 100 + 0.5)
     local debuffSize = math.floor(unitHeight * (rf.debuffsize or 55) / 100 + 0.5)

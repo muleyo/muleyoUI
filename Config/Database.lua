@@ -156,6 +156,7 @@ local defaults = {
                 },
                 dispelGlow = true,
                 auraDisplay = false,
+                customAuras = true,
                 auraTooltips = true,
                 dispelScale = 1.3,
                 ccScale = 1.15
