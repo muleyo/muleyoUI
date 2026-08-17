@@ -30,6 +30,8 @@ function Theme:StyleButton(Button, Type)
     end
 
     Cooldown:SetSwipeColor(0, 0, 0, 0.75)
+    Cooldown.SetSwipeColor = function()
+    end
 end
 
 function Theme:StyleAction(Bar, Num)
