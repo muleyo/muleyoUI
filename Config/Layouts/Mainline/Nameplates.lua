@@ -357,8 +357,8 @@ function Nameplates:OnInitialize()
                 name = "Health Text Offset X",
                 desc = "Nudge the Health Text horizontally away from its anchor",
                 type = "range",
-                min = -50,
-                max = 50,
+                min = -100,
+                max = 100,
                 step = 1,
                 disabled = function()
                     return not (db().health.percent or db().health.value)
@@ -376,8 +376,8 @@ function Nameplates:OnInitialize()
                 name = "Health Text Offset Y",
                 desc = "Move the Health Text vertically",
                 type = "range",
-                min = -50,
-                max = 50,
+                min = -100,
+                max = 100,
                 step = 1,
                 disabled = function()
                     return not (db().health.percent or db().health.value)
