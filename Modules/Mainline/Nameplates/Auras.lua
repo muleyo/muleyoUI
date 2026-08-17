@@ -317,7 +317,7 @@ function Auras:OnInitialize()
     end
 
     function Auras.handler.Layout(plate)
-        local health, _, frame = Core:GetHealthBar(plate)
+        local health = Core:GetHealthBar(plate)
         if not health or not plate.AuraCC then
             return
         end
@@ -328,11 +328,14 @@ function Auras:OnInitialize()
             ApplySide(plate.AuraCC, health, config.cc.anchor, config.cc.x)
             ApplySize(plate.AuraCC, config.cc.size)
 
-            local topAnchor = (frame and frame.name) or health
-            if plate.AuraTop.mUIAnchorTo ~= topAnchor or plate.AuraTop.mUIY ~= config.top.y then
-                plate.AuraTop.mUIAnchorTo, plate.AuraTop.mUIY = topAnchor, config.top.y
+            -- Always anchor to the health bar (not frame.name): the name
+            -- FontString auto-sizes to its own text and can be left/right
+            -- justified, so its horizontal center drifts off the plate's
+            -- actual center - anchoring debuffs to it visibly skewed them.
+            if plate.AuraTop.mUIAnchorTo ~= health or plate.AuraTop.mUIY ~= config.top.y then
+                plate.AuraTop.mUIAnchorTo, plate.AuraTop.mUIY = health, config.top.y
                 plate.AuraTop:ClearAllPoints()
-                plate.AuraTop:SetPoint("BOTTOM", topAnchor, "TOP", 0, config.top.y)
+                plate.AuraTop:SetPoint("BOTTOM", health, "TOP", 0, config.top.y)
             end
             ApplySize(plate.AuraTop, config.top.size)
 
