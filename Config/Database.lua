@@ -200,7 +200,8 @@ local defaults = {
             castbar = {
                 y = 8,
                 colors = true,
-                cooldowncolor = {0.85, 0.15, 0.15}
+                cooldowncolor = {0.85, 0.15, 0.15},
+                showTarget = true
             },
             border = {
                 size = 1

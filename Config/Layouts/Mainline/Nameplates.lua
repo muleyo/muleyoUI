@@ -1710,9 +1710,22 @@ function Nameplates:OnInitialize()
                 order = 97
             },
             header12 = {
-                name = "Cast Bar Colors",
+                name = "Cast Bar",
                 type = "header",
                 order = 98
+            },
+            castbarShowTarget = {
+                name = "Show Cast Target",
+                desc = "Show who a Spell is being cast on below the Cast Bar",
+                type = "toggle",
+                set = function(_, val)
+                    db().castbar.showTarget = val
+                    Refresh(Nameplates.Module.Castbar)
+                end,
+                get = function()
+                    return db().castbar.showTarget
+                end,
+                order = 98.1
             },
             castbarColors = {
                 name = "Interrupt on Cooldown",
