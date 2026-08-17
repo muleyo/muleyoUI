@@ -28,6 +28,8 @@ function Theme:StyleButton(Button, Type)
             Button:GetNormalTexture():SetSize(ButtonWidth + 6, ButtonHeight + 5)
         end
     end
+
+    Cooldown:SetSwipeColor(0, 0, 0, 0.75)
 end
 
 function Theme:StyleAction(Bar, Num)
