@@ -226,12 +226,10 @@ local defaults = {
             classification = {
                 enabled = false,
                 instancesonly = true,
-                casteralways = false,
                 boss = {0.737, 0.11, 0, 1},
                 miniboss = {0.565, 0, 0.737, 1},
                 caster = {0, 0.455, 0.737, 1},
-                melee = {0.988, 0.988, 0.988, 1},
-                trivial = {0.698, 0.557, 0.333, 1}
+                quest = {0.965, 0.816, 0.184, 1}
             },
             scale = {
                 target = 1.2,

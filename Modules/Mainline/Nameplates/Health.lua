@@ -61,15 +61,43 @@ function Health:OnInitialize()
         return UnitPowerType(unit) == Enum.PowerType.Mana
     end
 
+    local function IsQuestMob(unit)
+        if C_Secrets and C_Secrets.ShouldUnitIdentityBeSecret and C_Secrets.ShouldUnitIdentityBeSecret(unit) then
+            return false
+        end
+
+        local info = C_TooltipInfo.GetUnit(unit)
+        if not info or not info.lines then
+            return false
+        end
+
+        for _, line in ipairs(info.lines) do
+            if line.type == Enum.TooltipDataLineType.QuestObjective then
+                return true
+            end
+        end
+
+        return false
+    end
+
     local function NpcType(unit)
+        if IsQuestMob(unit) then
+            return "quest"
+        end
+
         local classification = UnitClassification(unit)
+        local allowInstanceTiers = inRelevantInstance or not Health.db.classification.instancesonly
 
         if classification == "elite" then
+            if not allowInstanceTiers then
+                return nil
+            end
+
             local level = UnitEffectiveLevel(unit)
 
             if level == instanceLevel + 1 or UnitIsLieutenant(unit) then
-                -- Remember what a lieutenant weighs here: the boss test keys
-                -- off being one level above it.
+                -- Remember what a lieutenant weighs here: the boss test
+                -- keys off being one level above it.
                 lieutenantLevel = level
                 return "miniboss"
             end
@@ -78,14 +106,16 @@ function Health:OnInitialize()
                 return "boss"
             end
 
-            return HasMana(unit) and "caster" or "melee"
+            -- Elite melee falls through to reaction/class coloring below.
+            return HasMana(unit) and "caster" or nil
         end
 
         if classification == "normal" or classification == "trivial" or classification == "minus" then
-            if Health.db.classification.casteralways and HasMana(unit) then
+            if allowInstanceTiers and HasMana(unit) then
                 return "caster"
             end
-            return "trivial"
+            -- Trivial mobs fall through to reaction/class coloring below.
+            return nil
         end
 
         return nil
@@ -124,7 +154,7 @@ function Health:OnInitialize()
         end
 
         local npc = Health.db.classification
-        if npc.enabled and not data.isPlayer and (inRelevantInstance or not npc.instancesonly) then
+        if npc.enabled and not data.isPlayer then
             local npcType = NpcType(data.unit)
             local color = npcType and npc[npcType]
             if color then
@@ -285,8 +315,16 @@ function Health:OnInitialize()
     local HEALTH_TEXT_SIZE = 12
 
     local NAME_ANCHORS = {
-        ABOVE = {point = "BOTTOM", relativePoint = "TOP", ySign = 1},
-        BELOW = {point = "TOP", relativePoint = "BOTTOM", ySign = -1}
+        ABOVE = {
+            point = "BOTTOM",
+            relativePoint = "TOP",
+            ySign = 1
+        },
+        BELOW = {
+            point = "TOP",
+            relativePoint = "BOTTOM",
+            ySign = -1
+        }
     }
 
     local NAME_ALIGN_SUFFIX = {
