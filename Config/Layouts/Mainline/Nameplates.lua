@@ -431,8 +431,8 @@ function Nameplates:OnInitialize()
                 order = 20
             },
             classificationInstancesOnly = {
-                name = "Dungeons and Raids Only",
-                desc = "Only color by NPC Type inside a Dungeon or Raid\n\n|cffffff00Info:|r The Boss and Miniboss tiers are worked out from Dungeon Level scaling, so they are only meaningful inside an Instance",
+                name = "Instance Only",
+                desc = "Only use the Boss, Miniboss and Caster colors inside a Dungeon or Raid\n\n|cffffff00Info:|r These tiers are worked out from Dungeon Level scaling, so they are only meaningful inside an Instance. Quest coloring always applies, indoors or out.",
                 type = "toggle",
                 disabled = function()
                     return not db().classification.enabled
@@ -445,22 +445,6 @@ function Nameplates:OnInitialize()
                     return db().classification.instancesonly
                 end,
                 order = 21
-            },
-            classificationCasterAlways = {
-                name = "Color all Casters",
-                desc = "Use the Caster Color for non-Elite NPCs with Mana as well, instead of the Trivial Color",
-                type = "toggle",
-                disabled = function()
-                    return not db().classification.enabled
-                end,
-                set = function(_, val)
-                    db().classification.casteralways = val
-                    Refresh(Nameplates.Module.Health)
-                end,
-                get = function()
-                    return db().classification.casteralways
-                end,
-                order = 22
             },
             classificationBoss = {
                 name = "Boss",
@@ -498,7 +482,7 @@ function Nameplates:OnInitialize()
             },
             classificationCaster = {
                 name = "Caster",
-                desc = "Choose a Color for Elite NPCs with Mana",
+                desc = "Choose a Color for NPCs with Mana",
                 type = "color",
                 hasAlpha = true,
                 disabled = function()
@@ -513,39 +497,22 @@ function Nameplates:OnInitialize()
                 end,
                 order = 25
             },
-            classificationMelee = {
-                name = "Melee",
-                desc = "Choose a Color for Elite NPCs without Mana",
+            classificationQuest = {
+                name = "Quest",
+                desc = "Choose a Color for Quest Mobs",
                 type = "color",
                 hasAlpha = true,
                 disabled = function()
                     return not db().classification.enabled
                 end,
                 set = function(_, r, g, b, a)
-                    db().classification.melee = {r, g, b, a}
+                    db().classification.quest = {r, g, b, a}
                     Refresh(Nameplates.Module.Health)
                 end,
                 get = function()
-                    return unpack(db().classification.melee)
+                    return unpack(db().classification.quest)
                 end,
                 order = 26
-            },
-            classificationTrivial = {
-                name = "Trivial",
-                desc = "Choose a Color for non-Elite NPCs",
-                type = "color",
-                hasAlpha = true,
-                disabled = function()
-                    return not db().classification.enabled
-                end,
-                set = function(_, r, g, b, a)
-                    db().classification.trivial = {r, g, b, a}
-                    Refresh(Nameplates.Module.Health)
-                end,
-                get = function()
-                    return unpack(db().classification.trivial)
-                end,
-                order = 27
             },
             header4 = {
                 name = "Friendly",
