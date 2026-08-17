@@ -1550,7 +1550,7 @@ function Theme:Unitframes()
               PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PlayerPortraitCornerIcon}, true)
 
     -- Move Target-of-Target/Focus-of-Target frames further out from their parent.
-    if not InCombatLockdown() then
+    if mUI.db.profile.unitframes.enabled and not InCombatLockdown() then
         TargetFrameToT:ClearAllPoints()
         FocusFrameToT:ClearAllPoints()
         TargetFrameToT:SetPoint("RIGHT", TargetFrame, "RIGHT", 45, -55)
