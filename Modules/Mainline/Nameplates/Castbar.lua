@@ -324,6 +324,31 @@ function Castbar:OnInitialize()
         text:SetPoint("BOTTOMRIGHT", castBar, "BOTTOMRIGHT", TEXT_PADDING, 0)
     end
 
+    local function SkinCastTargetText(castBar)
+        local targetText = castBar.CastTargetNameText
+        if not targetText then
+            return
+        end
+
+        if not Castbar.db.castbar.showTarget then
+            targetText:SetShown(false)
+            return
+        end
+
+        local path = mUI.db.profile.general.fontpath
+        local currentPath, currentSize = targetText:GetFont()
+        if currentPath ~= path or currentSize ~= TEXT_SIZE then
+            targetText:SetFont(path, TEXT_SIZE, "OUTLINE, SLUG")
+        end
+
+        targetText:SetJustifyH("CENTER")
+
+        targetText:ClearAllPoints()
+        targetText:SetWidth(0)
+        targetText:SetPoint("TOP", castBar, "BOTTOM", 0, -TEXT_PADDING)
+        targetText:SetShown(true)
+    end
+
     local function SkinSpark(castBar)
         local spark = castBar.Spark
         local height = Castbar.db.size.castheight or 10
@@ -353,6 +378,7 @@ function Castbar:OnInitialize()
 
         SkinBackground(castBar)
         SkinText(castBar)
+        SkinCastTargetText(castBar)
         SkinSpark(castBar)
     end
 
@@ -388,6 +414,7 @@ function Castbar:OnInitialize()
         SkinIcon(castBar)
         SkinShield(castBar, uninterruptible)
         SkinText(castBar)
+        SkinCastTargetText(castBar)
         SkinSpark(castBar)
         ApplyCastColor(castBar, uninterruptible)
     end

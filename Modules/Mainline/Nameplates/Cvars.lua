@@ -50,6 +50,10 @@ function Cvars:OnInitialize()
         CVarCallbackRegistry:SetCVarBitfieldMask("nameplateStackingTypes", Cvars:GetStackingMask())
         CVarCallbackRegistry:SetCVarBitfieldMask("nameplateSimplifiedTypes", Cvars:GetSimplifiedMask())
         CVarCallbackRegistry:SetCVarBitfieldMask("nameplateInfoDisplay", 0)
+        CVarCallbackRegistry:SetCVarBitfieldMask("nameplateCastBarDisplay",
+            bit.bor(bit.lshift(1, Enum.NamePlateCastBarDisplay.SpellName - 1), bit.lshift(1, Enum.NamePlateCastBarDisplay.SpellIcon - 1),
+                bit.lshift(1, Enum.NamePlateCastBarDisplay.SpellTarget - 1), bit.lshift(1, Enum.NamePlateCastBarDisplay.HighlightImportantCasts - 1),
+                bit.lshift(1, Enum.NamePlateCastBarDisplay.HighlightWhenCastTarget - 1)))
     end
 
     function Cvars:OnRegenEnabled()

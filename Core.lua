@@ -1,10 +1,85 @@
-local Core = mUI:NewModule("mUI.Core")
+local Core = mUI:NewModule("mUI.Core", "AceEvent-3.0")
 
 -- Enable Module
 Core:Enable()
 
 -- Always show spell IDs in tooltips while mUI is loaded
 C_CVar.SetCVar("tooltipShowAuraSpellIDs", 1)
+
+-- ============================================================================
+-- Conflicting Addon Detection
+-- ============================================================================
+local NAMEPLATE_CONFLICTS = {"Platynator", "BetterBlizzPlates", "TidyPlates_ThreatPlates", "Kui_Nameplates"}
+local UNITFRAME_CONFLICTS = {"BetterBlizzFrames"}
+
+local function IsAddonLoaded(name)
+    if C_AddOns and C_AddOns.IsAddOnLoaded then
+        return C_AddOns.IsAddOnLoaded(name)
+    end
+    return IsAddOnLoaded(name)
+end
+
+local function DisableAddon(name)
+    if C_AddOns and C_AddOns.DisableAddOn then
+        C_AddOns.DisableAddOn(name)
+    else
+        DisableAddOn(name)
+    end
+end
+
+local function FindLoadedConflict(addonNames)
+    for i = 1, #addonNames do
+        if IsAddonLoaded(addonNames[i]) then
+            return addonNames[i]
+        end
+    end
+    return nil
+end
+
+local function PromptModuleConflict(moduleKey, moduleLabel, conflictingAddon)
+    local popupKey = "mUIConflict_" .. moduleKey
+
+    StaticPopupDialogs[popupKey] = nil -- Clear Popup before creating a new one
+    StaticPopupDialogs[popupKey] = {
+        text = "|cff009cffmuleyo|r|cffffd100UI|r\n\n|cffffcc00" .. conflictingAddon .. " is loaded, which conflicts with mUI's " .. moduleLabel ..
+            " module.\n\nRunning both at once causes visual glitches and errors - choose which one to disable.|r",
+        button1 = "Disable mUI " .. moduleLabel,
+        button2 = "Disable " .. conflictingAddon,
+        OnAccept = function()
+            mUI.db.profile[moduleKey].enabled = false
+            ReloadUI()
+        end,
+        OnCancel = function()
+            DisableAddon(conflictingAddon)
+            ReloadUI()
+        end,
+        whileDead = true,
+        hideOnEscape = false,
+        timeout = 0
+    }
+    StaticPopup_Show(popupKey)
+end
+
+function Core:CheckAddonConflicts()
+    if Core.db.nameplates.enabled then
+        local conflict = FindLoadedConflict(NAMEPLATE_CONFLICTS)
+        if conflict then
+            PromptModuleConflict("nameplates", "Nameplates", conflict)
+            return
+        end
+    end
+
+    if Core.db.unitframes.enabled then
+        local conflict = FindLoadedConflict(UNITFRAME_CONFLICTS)
+        if conflict then
+            PromptModuleConflict("unitframes", "Unitframes", conflict)
+        end
+    end
+end
+
+function Core:OnEnable()
+    Core:RegisterEvent("PLAYER_ENTERING_WORLD", "CheckAddonConflicts")
+end
 
 function Core:OnInitialize()
     -- Load Database
