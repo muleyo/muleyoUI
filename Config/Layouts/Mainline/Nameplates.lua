@@ -1362,8 +1362,8 @@ function Nameplates:OnInitialize()
                 name = "Debuffs Offset X",
                 desc = "Move the Debuff Aura group horizontally away from the Health Bar",
                 type = "range",
-                min = 0,
-                max = 60,
+                min = -100,
+                max = 100,
                 step = 1,
                 disabled = function()
                     return not db().auras.enabled
@@ -1381,8 +1381,8 @@ function Nameplates:OnInitialize()
                 name = "Debuffs Offset Y",
                 desc = "Move the Debuff Aura group vertically away from the Health Bar",
                 type = "range",
-                min = -60,
-                max = 60,
+                min = -100,
+                max = 100,
                 step = 1,
                 disabled = function()
                     return not db().auras.enabled

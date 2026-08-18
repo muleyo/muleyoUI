@@ -295,21 +295,21 @@ function Auras:OnInitialize()
             flowV = AnchorUtil.FlowDirection.Down
         },
         LEFT = {
-            point = "RIGHT",
+            point = "LEFT",
             relativePoint = "LEFT",
             xSign = -1,
             ySign = 1,
-            flowAnchor = "RIGHT",
-            flowH = AnchorUtil.FlowDirection.Left,
+            flowAnchor = "LEFT",
+            flowH = AnchorUtil.FlowDirection.Right,
             flowV = AnchorUtil.FlowDirection.Down
         },
         RIGHT = {
-            point = "LEFT",
+            point = "RIGHT",
             relativePoint = "RIGHT",
             xSign = 1,
             ySign = 1,
-            flowAnchor = "LEFT",
-            flowH = AnchorUtil.FlowDirection.Right,
+            flowAnchor = "RIGHT",
+            flowH = AnchorUtil.FlowDirection.Left,
             flowV = AnchorUtil.FlowDirection.Down
         }
     }
