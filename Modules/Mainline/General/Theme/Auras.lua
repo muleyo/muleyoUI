@@ -966,6 +966,11 @@ local function GetRaidMaxDebuffIcons()
     return (raid and raid.maxDebuffIcons) or RAID_MAX_DEBUFFS
 end
 
+local function AreRaidAuraTooltipsEnabled()
+    local raid = mUI.db and mUI.db.profile.unitframes.raidframes
+    return not raid or raid.auraTooltips ~= false
+end
+
 local function InitRaidAuraButton(auraFrame, container, groupKey, isDebuff)
     local size = (container.mUI_groupSizes and container.mUI_groupSizes[groupKey]) or 16
     CreateAuraButton(auraFrame, isDebuff, {
@@ -976,6 +981,8 @@ local function InitRaidAuraButton(auraFrame, container, groupKey, isDebuff)
         countOffsetX = 1,
         countOffsetY = -1
     })
+
+    auraFrame:SetMouseMotionEnabled(AreRaidAuraTooltipsEnabled())
 end
 
 function Theme:EnsureRaidAuraContainers(frame, data)
@@ -1388,6 +1395,15 @@ end
 
 function Theme:UpdateAllRaidAuraTextSizes()
     Theme:UpdateAuraTextSizesForCategory("raidframe")
+end
+
+function Theme:UpdateAllRaidAuraTooltips()
+    local enabled = AreRaidAuraTooltipsEnabled()
+    for auraFrame, category in pairs(Theme.aurabuttons) do
+        if category == "raidframebuff" or category == "raidframedebuff" then
+            pcall(auraFrame.SetMouseMotionEnabled, auraFrame, enabled)
+        end
+    end
 end
 
 function Theme:UpdateAllRaidAuraDebuffLimit()

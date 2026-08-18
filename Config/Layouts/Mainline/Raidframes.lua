@@ -351,6 +351,26 @@ function Raidframes:OnInitialize()
                 end,
                 order = 18.5
             },
+            auraTooltips = {
+                name = "Aura Tooltips",
+                desc = "Show a Tooltip when hovering over Buffs/Debuffs/Defensives on Raidframes",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.auraTooltips = val
+
+                    if select(4, GetBuildInfo()) >= 120100 then
+                        Raidframes.Theme:UpdateAllRaidAuraTooltips()
+                    else
+                        if Raidframes.Module:IsEnabled() and Raidframes.Module.RF_AuraDisplay and Raidframes.Module.RF_AuraDisplay:IsEnabled() then
+                            Raidframes.Module.RF_AuraDisplay:UpdateAll()
+                        end
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.auraTooltips
+                end,
+                order = 18.6
+            },
             centerDefensiveSize = {
                 name = "Center Defensive Size",
                 desc = "Size of the centered defensive cooldown icon",
