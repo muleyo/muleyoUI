@@ -26,6 +26,10 @@ function Font:OnInitialize()
 
     -- Functions
     function Font:Update()
+        if Font.db.font == "None" then
+            return
+        end
+
         local fontSizes = {9, 9, 14, 14, 12, 64, 64}
 
         if (not C_AddOns.IsAddOnLoaded("NiceDamage")) and (not C_AddOns.IsAddOnLoaded("ClassicNumbers")) then
@@ -86,9 +90,7 @@ function Font:OnInitialize()
         PetFrameManaBarTextRight:SetFont(Font.db.fontpath, 9, "THINOUTLINE")
     end
 
-    if Font.db.font ~= "None" then
-        Font:Update()
-    end
+    Font:Update()
 end
 
 function Font:OnEnable()

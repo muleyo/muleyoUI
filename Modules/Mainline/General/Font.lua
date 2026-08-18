@@ -80,6 +80,10 @@ function Font:OnInitialize()
 
     -- Functions
     function Font:Update()
+        if Font.db.font == "None" then
+            return
+        end
+
         local fontSizes = {9, 9, 14, 14, 12}
 
         if (not C_AddOns.IsAddOnLoaded("NiceDamage")) and (not C_AddOns.IsAddOnLoaded("ClassicNumbers")) then
@@ -111,9 +115,7 @@ function Font:OnInitialize()
         CommunitiesFrame.Chat.MessageFrame:SetFont(Font.db.fontpath, 14, "OUTLINE")
     end
 
-    if Font.db.font ~= "None" then
-        Font:Update()
-    end
+    Font:Update()
 end
 
 function Font:OnEnable()
