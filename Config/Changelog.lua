@@ -3,10 +3,10 @@ local Changelog = mUI:NewModule("mUI.Config.Changelog")
 -- Maintainer note: this window intentionally shows ONLY the latest update.
 -- Keep this as a single entry and update it each release.
 local CHANGELOG = {
-    version = "4.1.12",
+    version = "4.1.15",
     affected = {"Mainline"},
-    changes = {"Increase Nameplate Healthtext X/Y Offset min/max values.", "Added nameplates questmob coloring.",
-               "Removed nameplates coloring for trivial/melee mobs.", "Removed Blizzard's timer for boss auras (debuffs)"}
+    changes = {"Fixed Target/Focus Castbar text width", "Added nameplates debuffs anchor and X/Y offset options",
+               "Font 'None' no longer applies to Chat/Actionbars."}
 }
 
 function Changelog:OnInitialize()
