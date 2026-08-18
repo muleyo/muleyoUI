@@ -29,8 +29,21 @@ function Theme:StyleButton(Button, Type)
         end
     end
 
-    Cooldown:SetSwipeColor(0, 0, 0, 0.75)
-    Cooldown.SetSwipeColor = function()
+    -- Cooldown:SetSwipeColor(0, 0, 0, 0.75)
+
+    local locking = false
+    if not Theme:IsHooked(Cooldown, "SetSwipeColor") then
+        Theme:SecureHook(Cooldown, "SetSwipeColor", function(self, r, g, b, a)
+            if locking then
+                return
+            end
+
+            if r ~= 0 or g ~= 0 or b ~= 0 or (a or 1) ~= 0.75 then
+                locking = true
+                self:SetSwipeColor(0, 0, 0, 0.75)
+                locking = false
+            end
+        end)
     end
 end
 
