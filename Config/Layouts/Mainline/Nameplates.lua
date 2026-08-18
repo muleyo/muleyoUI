@@ -1302,6 +1302,24 @@ function Nameplates:OnInitialize()
                 end,
                 order = 76
             },
+            aurasTopAnchor = {
+                name = "Debuffs Anchor",
+                desc = "Which side of the Health Bar the Debuff Aura group sits on",
+                type = "select",
+                values = ANCHOR_VALUES,
+                sorting = ANCHOR_SORTING,
+                disabled = function()
+                    return not db().auras.enabled
+                end,
+                set = function(_, val)
+                    db().auras.top.anchor = val
+                    Refresh(Nameplates.Module.Auras)
+                end,
+                get = function()
+                    return db().auras.top.anchor
+                end,
+                order = 77
+            },
             aurasCCOffset = {
                 name = "CC Offset",
                 desc = "Move the Crowd Control Aura group away from the Health Bar",
@@ -1319,7 +1337,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().auras.cc.x
                 end,
-                order = 77
+                order = 78
             },
             aurasLeftOffset = {
                 name = "Important Offset",
@@ -1338,13 +1356,32 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().auras.left.x
                 end,
-                order = 78
+                order = 79
             },
-            aurasTopOffset = {
-                name = "Debuffs Offset",
-                desc = "Move the Debuff Aura group away from the top of the Nameplate",
+            aurasTopOffsetX = {
+                name = "Debuffs Offset X",
+                desc = "Move the Debuff Aura group horizontally away from the Health Bar",
                 type = "range",
                 min = 0,
+                max = 60,
+                step = 1,
+                disabled = function()
+                    return not db().auras.enabled
+                end,
+                set = function(_, val)
+                    db().auras.top.x = val
+                    Refresh(Nameplates.Module.Auras)
+                end,
+                get = function()
+                    return db().auras.top.x
+                end,
+                order = 80
+            },
+            aurasTopOffset = {
+                name = "Debuffs Offset Y",
+                desc = "Move the Debuff Aura group vertically away from the Health Bar",
+                type = "range",
+                min = -60,
                 max = 60,
                 step = 1,
                 disabled = function()
@@ -1357,7 +1394,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().auras.top.y
                 end,
-                order = 79
+                order = 81
             },
             aurasCCSize = {
                 name = "CC Size",
@@ -1376,7 +1413,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().auras.cc.size
                 end,
-                order = 80
+                order = 82
             },
             aurasLeftSize = {
                 name = "Important Size",
@@ -1395,7 +1432,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().auras.left.size
                 end,
-                order = 81
+                order = 82.1
             },
             aurasTopSize = {
                 name = "Debuffs Size",
@@ -1414,7 +1451,7 @@ function Nameplates:OnInitialize()
                 get = function()
                     return db().auras.top.size
                 end,
-                order = 82
+                order = 82.2
             },
             header10 = {
                 name = "Totems",

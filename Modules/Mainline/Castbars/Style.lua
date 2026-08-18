@@ -59,6 +59,8 @@ function Style:OnInitialize()
             _G[castbar].BorderShield:ClearAllPoints()
             _G[castbar].BorderShield:SetPoint("CENTER", _G[castbar].Icon, "CENTER", 0, -2.5)
             _G[castbar].Text:SetPoint("TOP", _G[castbar], "TOP", 0, 2.5)
+            _G[castbar].Text:SetWidth(150)
+            _G[castbar].Text:SetWordWrap(false)
         end
     end
 

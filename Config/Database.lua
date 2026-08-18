@@ -312,6 +312,8 @@ local defaults = {
                 },
                 top = {
                     size = 20,
+                    anchor = "TOP",
+                    x = 0,
                     y = 4
                 },
                 left = {

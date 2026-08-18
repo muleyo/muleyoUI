@@ -275,6 +275,59 @@ function Auras:OnInitialize()
         end
     end
 
+    local TOP_ANCHORS = {
+        TOP = {
+            point = "BOTTOM",
+            relativePoint = "TOP",
+            xSign = 1,
+            ySign = 1,
+            flowAnchor = "BOTTOMLEFT",
+            flowH = AnchorUtil.FlowDirection.Right,
+            flowV = AnchorUtil.FlowDirection.Up
+        },
+        BOTTOM = {
+            point = "TOP",
+            relativePoint = "BOTTOM",
+            xSign = 1,
+            ySign = -1,
+            flowAnchor = "TOPLEFT",
+            flowH = AnchorUtil.FlowDirection.Right,
+            flowV = AnchorUtil.FlowDirection.Down
+        },
+        LEFT = {
+            point = "RIGHT",
+            relativePoint = "LEFT",
+            xSign = -1,
+            ySign = 1,
+            flowAnchor = "RIGHT",
+            flowH = AnchorUtil.FlowDirection.Left,
+            flowV = AnchorUtil.FlowDirection.Down
+        },
+        RIGHT = {
+            point = "LEFT",
+            relativePoint = "RIGHT",
+            xSign = 1,
+            ySign = 1,
+            flowAnchor = "LEFT",
+            flowH = AnchorUtil.FlowDirection.Right,
+            flowV = AnchorUtil.FlowDirection.Down
+        }
+    }
+
+    local function ApplyTopAnchor(container, health, side, x, y)
+        if container.mUISide == side and container.mUIX == x and container.mUIY == y and container.mUIAnchorTo == health then
+            return
+        end
+
+        container.mUISide, container.mUIX, container.mUIY, container.mUIAnchorTo = side, x, y, health
+
+        local anchor = TOP_ANCHORS[side] or TOP_ANCHORS.TOP
+        container:SetFlowLayoutAnchorPoint(anchor.flowAnchor)
+        container:SetFlowLayoutGrowthDirection(anchor.flowH, anchor.flowV)
+        container:ClearAllPoints()
+        container:SetPoint(anchor.point, health, anchor.relativePoint, x * anchor.xSign, y * anchor.ySign)
+    end
+
     local SIDE_ANCHORS = {
         LEFT = {
             point = "RIGHT",
@@ -328,15 +381,7 @@ function Auras:OnInitialize()
             ApplySide(plate.AuraCC, health, config.cc.anchor, config.cc.x)
             ApplySize(plate.AuraCC, config.cc.size)
 
-            -- Always anchor to the health bar (not frame.name): the name
-            -- FontString auto-sizes to its own text and can be left/right
-            -- justified, so its horizontal center drifts off the plate's
-            -- actual center - anchoring debuffs to it visibly skewed them.
-            if plate.AuraTop.mUIAnchorTo ~= health or plate.AuraTop.mUIY ~= config.top.y then
-                plate.AuraTop.mUIAnchorTo, plate.AuraTop.mUIY = health, config.top.y
-                plate.AuraTop:ClearAllPoints()
-                plate.AuraTop:SetPoint("BOTTOM", health, "TOP", 0, config.top.y)
-            end
+            ApplyTopAnchor(plate.AuraTop, health, config.top.anchor, config.top.x, config.top.y)
             ApplySize(plate.AuraTop, config.top.size)
 
             ApplySide(plate.AuraLeft, health, config.left.anchor, config.left.x)
