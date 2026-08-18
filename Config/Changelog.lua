@@ -3,10 +3,9 @@ local Changelog = mUI:NewModule("mUI.Config.Changelog")
 -- Maintainer note: this window intentionally shows ONLY the latest update.
 -- Keep this as a single entry and update it each release.
 local CHANGELOG = {
-    version = "4.1.15",
+    version = "4.1.16",
     affected = {"Mainline"},
-    changes = {"Fixed Target/Focus Castbar text width", "Added nameplates debuffs anchor and X/Y offset options",
-               "Font 'None' no longer applies to Chat/Actionbars."}
+    changes = {"Fixed nameplate debuffs anchor and X/Y offset options", "Added option to hide tooltips on raidframe auras."}
 }
 
 function Changelog:OnInitialize()
