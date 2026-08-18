@@ -935,7 +935,9 @@ local RAID_DEFENSIVES = {
     [216331] = true, -- Avenging Crusader
     [389539] = true, -- Sentinel
     [1261872] = true, -- Heart of the Wild (Bear)
-    [5487] = true -- Bear Form
+    [5487] = true, -- Bear Form
+    [1966] = true, -- Feint
+    [586] = true -- Fade
 }
 
 local RAID_CURATED_EXCLUDE = {}

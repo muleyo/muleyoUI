@@ -494,6 +494,8 @@ function Theme:Professions()
         mUI:Skin(ProfessionsFrame.CraftingPage.CraftingOutputLog.TitleContainer)
         mUI:Skin(ProfessionsFrame.CraftingPage.CraftingOutputLog.NineSlice)
         mUI:Skin({ProfessionsFrame.CraftingPage.RankBar.Border}, true)
+        mUI:Skin(ProfessionsFrame.OrdersPage.OrderView.OrderInfo.NineSlice)
+        mUI:Skin(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.NineSlice)
 
         C_Timer.After(0.1, function()
             for tab in ProfessionsFrame.SpecPage.tabsPool:EnumerateActive() do
