@@ -410,11 +410,20 @@ function Theme:DisableDefaultPlayerAuras()
             if not auraFrame.isAuraAnchor then
                 auraFrame:SetScript("OnUpdate", nil)
                 auraFrame:Hide()
-            elseif auraFrame.Duration and not Theme:IsHooked(auraFrame.Duration, "Show") then
-                auraFrame.Duration:Hide()
-                Theme:SecureHook(auraFrame.Duration, "Show", function(text)
-                    text:Hide()
-                end)
+            else
+                auraFrame:Hide()
+                if not Theme:IsHooked(auraFrame, "Show") then
+                    Theme:SecureHook(auraFrame, "Show", function(self)
+                        self:Hide()
+                    end)
+                end
+
+                if auraFrame.Duration and not Theme:IsHooked(auraFrame.Duration, "Show") then
+                    auraFrame.Duration:Hide()
+                    Theme:SecureHook(auraFrame.Duration, "Show", function(text)
+                        text:Hide()
+                    end)
+                end
             end
         end
     end
