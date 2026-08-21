@@ -56,6 +56,24 @@ function About:OnInitialize()
                 end,
                 width = 1,
                 order = 7
+            },
+            spacer2 = {
+                name = " ",
+                type = "description",
+                width = "full",
+                order = 8
+            },
+            creditsHeader = {
+                name = "Credits",
+                type = "header",
+                order = 9
+            },
+            credits = {
+                name = "- mMediaTag Textures by Blinkii",
+                type = "description",
+                fontSize = "medium",
+                width = "full",
+                order = 10
             }
         }
     }
