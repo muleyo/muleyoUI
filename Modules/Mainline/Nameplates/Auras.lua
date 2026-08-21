@@ -113,12 +113,6 @@ function Auras:OnInitialize()
         ForEachContainer(plate, DisableContainer)
     end
 
-    local function UpdateContainer(container)
-        if container and container.mUI_unit then
-            container:UpdateAllAuras()
-        end
-    end
-
     Auras.handler = {}
 
     function Auras.handler.Create(plate)
@@ -178,11 +172,6 @@ function Auras:OnInitialize()
         })
         plate.AuraFriendlyCC = friendlyCC
 
-        local watcher = CreateFrame("Frame", nil, plate)
-        watcher:SetScript("OnEvent", function()
-            ForEachContainer(plate, UpdateContainer)
-        end)
-        plate.AuraWatcher = watcher
         plate:HookScript("OnHide", function()
             if plate.AurasSuspended then
                 return
@@ -209,11 +198,12 @@ function Auras:OnInitialize()
 
     local function SetContainerUnit(container, unit)
         if container.mUI_unit ~= unit then
+            -- SetUnit/SetEnabled already force a full refresh internally when
+            -- either actually changes, so nothing further is needed here.
             container:SetUnit(unit)
             container:SetEnabled(true)
             container.mUI_unit = unit
         end
-        container:UpdateAllAuras()
     end
 
     local function ShouldShowFriendlyCC(plate, data, showOnlyName)
@@ -230,10 +220,6 @@ function Auras:OnInitialize()
             plate.AurasHidden = true
             plate.AurasShowFriendlyCC = nil
             DisableAll(plate)
-
-            if plate.AuraWatcher then
-                plate.AuraWatcher:UnregisterAllEvents()
-            end
             return
         end
 
@@ -267,11 +253,6 @@ function Auras:OnInitialize()
             SetContainerUnit(plate.AuraFriendlyCC, data.unit)
         else
             DisableContainer(plate.AuraFriendlyCC)
-        end
-
-        if plate.AuraWatcher then
-            plate.AuraWatcher:UnregisterAllEvents()
-            plate.AuraWatcher:RegisterUnitEvent("UNIT_AURA", data.unit)
         end
     end
 
@@ -403,10 +384,6 @@ function Auras:OnInitialize()
         DisableAll(plate)
         plate.AurasHidden = true
         plate.AurasShowFriendlyCC = nil
-
-        if plate.AuraWatcher then
-            plate.AuraWatcher:UnregisterAllEvents()
-        end
     end
 
     function Auras:Update()
