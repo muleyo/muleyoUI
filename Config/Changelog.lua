@@ -3,9 +3,9 @@ local Changelog = mUI:NewModule("mUI.Config.Changelog")
 -- Maintainer note: this window intentionally shows ONLY the latest update.
 -- Keep this as a single entry and update it each release.
 local CHANGELOG = {
-    version = "4.1.16",
+    version = "4.1.17",
     affected = {"Mainline"},
-    changes = {"Fixed nameplate debuffs anchor and X/Y offset options", "Added option to hide tooltips on raidframe auras."}
+    changes = {"Fixed Nameplate Auras performance issues"}
 }
 
 function Changelog:OnInitialize()
