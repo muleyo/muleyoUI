@@ -475,7 +475,10 @@ local IMPORTANT_BUFFS = {
     [200025] = true, -- Beacon of Virtue
     [1244893] = true, -- Beacon of the Survivor
     [974] = true, -- Earth Shield
-    [383648] = true -- Earth Shield
+    [383648] = true, -- Earth Shield
+    [57934] = true, -- Tricks of the Trade
+    [1224098] = true, -- Tricks of the Trade
+    [59628] = true -- Tricks of the Trade
 }
 
 local UNITFRAME_DEBUFF_FILTER_MINE = AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Harmful, AuraUtil.AuraFilters.Player)
