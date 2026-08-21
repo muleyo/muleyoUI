@@ -40,6 +40,7 @@ function Health:OnInitialize()
     local instanceLevel = UnitEffectiveLevel("player")
     local lieutenantLevel
     local inRelevantInstance = false
+    local questMobCache = {}
 
     local function RefreshInstanceInfo()
         local _, instanceType, _, _, _, _, _, _, _, lfgDungeonID = GetInstanceInfo()
@@ -52,6 +53,8 @@ function Health:OnInitialize()
         else
             instanceLevel = UnitEffectiveLevel("player")
         end
+
+        wipe(questMobCache)
     end
 
     local function HasMana(unit)
@@ -66,18 +69,32 @@ function Health:OnInitialize()
             return false
         end
 
+        local guid = Core:Safe(UnitGUID(unit), nil)
+        if guid then
+            local cached = questMobCache[guid]
+            if cached ~= nil then
+                return cached
+            end
+        end
+
         local info = C_TooltipInfo.GetUnit(unit)
         if not info or not info.lines then
             return false
         end
 
+        local isQuestMob = false
         for _, line in ipairs(info.lines) do
             if line.type == Enum.TooltipDataLineType.QuestObjective then
-                return true
+                isQuestMob = true
+                break
             end
         end
 
-        return false
+        if guid then
+            questMobCache[guid] = isQuestMob
+        end
+
+        return isQuestMob
     end
 
     local function NpcType(unit)
@@ -713,10 +730,12 @@ function Health:OnEnable()
     Health:RefreshCachedStyle()
     Health:RegisterEvent("PLAYER_ENTERING_WORLD", "RefreshInstanceInfo")
     Health:RegisterEvent("ZONE_CHANGED_NEW_AREA", "RefreshInstanceInfo")
+    Health:RegisterEvent("QUEST_LOG_UPDATE", "RefreshInstanceInfo")
     Health:RefreshInstanceInfo()
 end
 
 function Health:OnDisable()
+    Health:UnregisterEvent("QUEST_LOG_UPDATE")
     Health:UnregisterEvent("PLAYER_ENTERING_WORLD")
     Health:UnregisterEvent("ZONE_CHANGED_NEW_AREA")
 end

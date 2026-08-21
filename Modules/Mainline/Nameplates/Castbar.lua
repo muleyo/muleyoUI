@@ -393,6 +393,8 @@ function Castbar:OnInitialize()
         return data and data.isFriend and data.isPlayer and not data.canAttack and Castbar.db.friendly.hidehealthbar
     end
 
+    local activeCastPlates = {}
+
     local function ApplyCastbar(plate)
         if not Castbar:IsEnabled() or not plate then
             return
@@ -405,6 +407,7 @@ function Castbar:OnInitialize()
 
         if ShouldHide(plate) then
             castBar:Hide()
+            activeCastPlates[plate] = nil
             return
         end
 
@@ -417,6 +420,8 @@ function Castbar:OnInitialize()
         SkinCastTargetText(castBar)
         SkinSpark(castBar)
         ApplyCastColor(castBar, uninterruptible)
+
+        activeCastPlates[plate] = castBar:IsShown() or nil
     end
 
     local function RefreshColors()
@@ -424,12 +429,12 @@ function Castbar:OnInitialize()
             return
         end
 
-        Castbar.Core:ForEach(function(plate)
+        for plate in pairs(activeCastPlates) do
             local castBar = GetCastBar(plate)
             if castBar and castBar:IsShown() then
                 ApplyCastColor(castBar, IsUninterruptible(plate))
             end
-        end)
+        end
     end
 
     local function HookCastBar(plate)
@@ -519,6 +524,7 @@ function Castbar:OnInitialize()
         if plate.CastWatcher then
             plate.CastWatcher:UnregisterAllEvents()
         end
+        activeCastPlates[plate] = nil
     end
 
     function Castbar:Update()
