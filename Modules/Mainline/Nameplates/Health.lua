@@ -40,6 +40,7 @@ function Health:OnInitialize()
     local instanceLevel = UnitEffectiveLevel("player")
     local lieutenantLevel
     local inRelevantInstance = false
+    local questMobCache = {}
 
     local function RefreshInstanceInfo()
         local _, instanceType, _, _, _, _, _, _, _, lfgDungeonID = GetInstanceInfo()
@@ -52,6 +53,8 @@ function Health:OnInitialize()
         else
             instanceLevel = UnitEffectiveLevel("player")
         end
+
+        wipe(questMobCache)
     end
 
     local function HasMana(unit)
@@ -66,18 +69,32 @@ function Health:OnInitialize()
             return false
         end
 
+        local guid = Core:Safe(UnitGUID(unit), nil)
+        if guid then
+            local cached = questMobCache[guid]
+            if cached ~= nil then
+                return cached
+            end
+        end
+
         local info = C_TooltipInfo.GetUnit(unit)
         if not info or not info.lines then
             return false
         end
 
+        local isQuestMob = false
         for _, line in ipairs(info.lines) do
             if line.type == Enum.TooltipDataLineType.QuestObjective then
-                return true
+                isQuestMob = true
+                break
             end
         end
 
-        return false
+        if guid then
+            questMobCache[guid] = isQuestMob
+        end
+
+        return isQuestMob
     end
 
     local function NpcType(unit)
@@ -183,13 +200,22 @@ function Health:OnInitialize()
         return 0.8, 0.2, 0.2
     end
 
+    local function ShouldSkipUnit(frame)
+        local unit = frame.unit
+        if not unit then
+            return true
+        end
+
+        return frame.widgetsOnlyMode == true or Core:Safe(UnitIsGameObject(unit), false)
+    end
+
     local function IsNamePlate(frame)
         if issecretvalue(frame) then
             return false
         end
 
         local unit = frame.unit
-        return unit ~= nil and strfind(unit, "nameplate", 1, true) == 1 and not frame:IsForbidden()
+        return unit ~= nil and strfind(unit, "nameplate", 1, true) == 1 and not frame:IsForbidden() and not ShouldSkipUnit(frame)
     end
 
     local function GetInfo(frame, unit)
@@ -504,7 +530,7 @@ function Health:OnInitialize()
         if not Health:IsEnabled() or not frame then
             return
         end
-        if not frame.unit or frame:IsForbidden() then
+        if not frame.unit or frame:IsForbidden() or ShouldSkipUnit(frame) then
             return
         end
 
@@ -665,6 +691,55 @@ function Health:OnInitialize()
     local activeFrames = {}
     local unitToFrame = {}
 
+    local function RestoreDefaultHealthBar(frame)
+        local container = frame.HealthBarsContainer
+        local bar = container and container.healthBar
+        if not bar then
+            return
+        end
+
+        bar:SetShown(false)
+
+        if bar.bgTexture then
+            bar.bgTexture:SetAlpha(1)
+        end
+        if bar.selectedBorder then
+            bar.selectedBorder:SetAlpha(1)
+        end
+        if bar.deselectedOverlay then
+            bar.deselectedOverlay:SetAlpha(1)
+        end
+        if bar.MaskTexture then
+            bar.MaskTexture:Show()
+        end
+
+        if bar.Text then
+            bar.Text:SetShown(true)
+        end
+        if bar.LeftText then
+            bar.LeftText:SetShown(true)
+        end
+        if bar.RightText then
+            bar.RightText:SetShown(true)
+        end
+
+        if bar.mUIHealthTexts then
+            if bar.mUIHealthTexts.percent then
+                bar.mUIHealthTexts.percent:Hide()
+            end
+            if bar.mUIHealthTexts.value then
+                bar.mUIHealthTexts.value:Hide()
+            end
+        end
+
+        if container.mUIBackground then
+            container.mUIBackground:Hide()
+        end
+        if container.mUIBorder then
+            container.mUIBorder:Hide()
+        end
+    end
+
     local plateWatcher = CreateFrame("Frame")
     plateWatcher:RegisterEvent("NAME_PLATE_UNIT_ADDED")
     plateWatcher:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
@@ -672,7 +747,7 @@ function Health:OnInitialize()
         if event == "NAME_PLATE_UNIT_ADDED" then
             local namePlate = C_NamePlate.GetNamePlateForUnit(unit, false)
             local frame = namePlate and namePlate.UnitFrame
-            if frame then
+            if frame and not ShouldSkipUnit(frame) then
                 unitToFrame[unit] = frame
                 activeFrames[frame] = true
                 ApplyLayout(frame)
@@ -685,6 +760,24 @@ function Health:OnInitialize()
             end
         end
     end)
+
+    if not Health:IsHooked(NamePlateUnitFrameMixin, "UpdateWidgetsOnlyMode") then
+        Health:SecureHook(NamePlateUnitFrameMixin, "UpdateWidgetsOnlyMode", function(unitFrame)
+            if unitFrame:IsForbidden() or not unitFrame.unit then
+                return
+            end
+
+            if ShouldSkipUnit(unitFrame) then
+                activeFrames[unitFrame] = nil
+                unitToFrame[unitFrame.unit] = nil
+                RestoreDefaultHealthBar(unitFrame)
+            elseif not activeFrames[unitFrame] then
+                unitToFrame[unitFrame.unit] = unitFrame
+                activeFrames[unitFrame] = true
+                ApplyLayout(unitFrame)
+            end
+        end)
+    end
 
     local previousFocusFrame
 
@@ -713,10 +806,12 @@ function Health:OnEnable()
     Health:RefreshCachedStyle()
     Health:RegisterEvent("PLAYER_ENTERING_WORLD", "RefreshInstanceInfo")
     Health:RegisterEvent("ZONE_CHANGED_NEW_AREA", "RefreshInstanceInfo")
+    Health:RegisterEvent("QUEST_LOG_UPDATE", "RefreshInstanceInfo")
     Health:RefreshInstanceInfo()
 end
 
 function Health:OnDisable()
+    Health:UnregisterEvent("QUEST_LOG_UPDATE")
     Health:UnregisterEvent("PLAYER_ENTERING_WORLD")
     Health:UnregisterEvent("ZONE_CHANGED_NEW_AREA")
 end

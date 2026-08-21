@@ -50,7 +50,19 @@ function Core:OnInitialize()
         end
 
         local frame = namePlate.UnitFrame
-        return frame and not frame:IsForbidden() and frame.unit ~= nil
+        if not frame or frame:IsForbidden() or not frame.unit then
+            return false
+        end
+
+        if UnitNameplateShowsWidgetsOnly(frame.unit) then
+            return false
+        end
+
+        if UnitIsGameObject(frame.unit) then
+            return false
+        end
+
+        return true
     end
 
     local function ForEachHiddenRegion(frame, func)
@@ -617,6 +629,30 @@ function Core:OnInitialize()
 
             Dispatch("Update", data.plate, data)
             Dispatch("Layout", data.plate, data)
+        end)
+    end
+
+    if not Core:IsHooked(NamePlateUnitFrameMixin, "UpdateWidgetsOnlyMode") then
+        Core:SecureHook(NamePlateUnitFrameMixin, "UpdateWidgetsOnlyMode", function(unitFrame)
+            if unitFrame:IsForbidden() or not unitFrame.unit then
+                return
+            end
+
+            local namePlate = unitFrame:GetParent()
+            if not namePlate then
+                return
+            end
+
+            local shouldSkip = unitFrame.widgetsOnlyMode or UnitIsGameObject(unitFrame.unit)
+
+            if shouldSkip then
+                if Core.plates[namePlate] then
+                    Core:OnUnitRemoved(unitFrame.unit)
+                    Core:RestoreBlizzard(namePlate)
+                end
+            elseif not Core.plates[namePlate] then
+                Core:OnUnitAdded(unitFrame.unit)
+            end
         end)
     end
 end
