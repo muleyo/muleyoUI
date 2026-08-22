@@ -6,6 +6,7 @@
     <Include file="RF_HideNames.lua" />
     <Include file="RF_RoleIcons.lua" />
     <Include file="RF_Solo.lua" />
+    <Include file="RF_Mouseover.lua" />
 
     <!-- Unitframes -->
     <Include file="UF_Textures.lua" />
