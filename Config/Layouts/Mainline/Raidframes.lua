@@ -266,6 +266,28 @@ function Raidframes:OnInitialize()
                 end,
                 order = 12
             },
+            mouseoverHighlight = {
+                name = "Mouseover Highlight",
+                desc = "Highlight a Party/Raidframe with a border when hovering over it",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.mouseoverHighlight = val
+
+                    if not Raidframes.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Raidframes.Module.RF_Mouseover:Enable()
+                    else
+                        Raidframes.Module.RF_Mouseover:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.mouseoverHighlight
+                end,
+                order = 12.5
+            },
             smooth = {
                 name = "Smooth Healthbars",
                 desc = "Enable Smooth Healthbar Animation\n\n|cffffff00Info:|r Requires Reload",

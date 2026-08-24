@@ -663,7 +663,11 @@ function Health:OnInitialize()
     end
 
     if not Health:IsHooked(NamePlateUnitFrameMixin, "OnUnitFactionChanged") then
-        Health:SecureHook(NamePlateUnitFrameMixin, "OnUnitFactionChanged", ApplyLayout)
+        Health:SecureHook(NamePlateUnitFrameMixin, "OnUnitFactionChanged", function(unitFrame)
+            ApplyLayout(unitFrame)
+            OnHealthColorUpdate(unitFrame)
+            OnNameUpdate(unitFrame)
+        end)
     end
 
     if NamePlateClassificationFrameMixin and not Health:IsHooked(NamePlateClassificationFrameMixin, "UpdateClassificationIndicator") then
