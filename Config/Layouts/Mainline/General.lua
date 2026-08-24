@@ -144,7 +144,9 @@ function General:OnInitialize()
 
                     local Theme = mUI:GetModule("mUI.Modules.General.Theme", true)
                     if Theme and Theme.ApplyBorderStyle then
-                        Theme:ApplyBorderStyle()
+                        C_Timer.After(0, function()
+                            Theme:ApplyBorderStyle()
+                        end)
                     end
                 end,
                 get = function()

@@ -47,6 +47,10 @@ function Theme:OnInitialize()
     function Theme:SkinBorderRecord(rec, style)
         style = style or Theme:GetBorderStyle()
 
+        if rec.border and rec.border:IsForbidden() then
+            return
+        end
+
         if rec.border then
             rec.border:SetTexture(style.border)
             if rec.coord then
