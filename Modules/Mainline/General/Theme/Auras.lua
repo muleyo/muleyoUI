@@ -897,8 +897,17 @@ local RAID_MAX_DEFENSIVE = 3
 local RAID_BUFFS_PER_ROW = 3
 local RAID_ICON_GAP = 1
 local RAID_MAX_BIG_DEBUFFS = 2
+
+-- Only applied in PvP instances (see IsPvpInstance): permanent auras like
+-- Dampening would otherwise clutter raidframes, but PvE fights routinely have
+-- legitimate no-timer debuffs that should stay visible.
 local RAID_DEBUFF_MAX_DURATION = 100000
 local RAID_BUFF_MAX_DURATION = 100000
+
+local function IsPvpInstance()
+    local _, instanceType = IsInInstance()
+    return instanceType == "pvp" or instanceType == "arena"
+end
 
 local RAID_DEBUFF_EXCLUDE = {
     [57723] = true, -- Exhaustion (Heroism)
@@ -1020,13 +1029,13 @@ function Theme:EnsureRaidAuraContainers(frame, data)
     buffContainer.mUI_groupKeys = {"Buffs", "BuffsImportant"}
     buffContainer:SetFlowLayoutAnchorPoint("BOTTOMRIGHT")
     buffContainer:SetFlowLayoutGrowthDirection(AnchorUtil.FlowDirection.Left, AnchorUtil.FlowDirection.Up)
+    data.buffsFilters = {
+        excludeSpellIDs = RAID_CURATED_EXCLUDE,
+        isFriendly = true
+    }
     buffContainer:AddAuraGroup("Buffs", RaidFilter("HELPFUL", "PLAYER", "RAID_IN_COMBAT", "!BIG_DEFENSIVE", "!EXTERNAL_DEFENSIVE"), {
         maxFrameCount = RAID_MAX_BUFFS,
-        candidateFilters = {
-            excludeSpellIDs = RAID_CURATED_EXCLUDE,
-            maxDuration = RAID_BUFF_MAX_DURATION,
-            isFriendly = true
-        },
+        candidateFilters = data.buffsFilters,
         initializeFrame = function(auraFrame)
             InitRaidAuraButton(auraFrame, buffContainer, "Buffs", false)
         end,
@@ -1063,14 +1072,14 @@ function Theme:EnsureRaidAuraContainers(frame, data)
     debuffContainer:SetFlowLayoutAnchorPoint("BOTTOMLEFT")
     debuffContainer:SetFlowLayoutGrowthDirection(AnchorUtil.FlowDirection.Right, AnchorUtil.FlowDirection.Up)
     -- Enlarged: boss & role auras (exactly what the default frame enlarges).
+    data.debuffsBigFilters = {
+        isBossOrRoleAura = true,
+        excludeSpellIDs = RAID_DEBUFF_EXCLUDE,
+        isFriendly = true
+    }
     debuffContainer:AddAuraGroup("DebuffsBig", RaidFilter("HARMFUL"), {
         maxFrameCount = RAID_MAX_BIG_DEBUFFS,
-        candidateFilters = {
-            isBossOrRoleAura = true,
-            excludeSpellIDs = RAID_DEBUFF_EXCLUDE,
-            maxDuration = RAID_DEBUFF_MAX_DURATION,
-            isFriendly = true
-        },
+        candidateFilters = data.debuffsBigFilters,
         initializeFrame = function(auraFrame)
             InitRaidAuraButton(auraFrame, debuffContainer, "DebuffsBig", true)
         end,
@@ -1080,14 +1089,14 @@ function Theme:EnsureRaidAuraContainers(frame, data)
         }
     })
     -- Normal: everything else (not boss/role), shown at the base debuff size.
+    data.debuffsNormalFilters = {
+        isBossOrRoleAura = false,
+        excludeSpellIDs = RAID_DEBUFF_EXCLUDE,
+        isFriendly = true
+    }
     debuffContainer:AddAuraGroup("DebuffsNormal", RaidFilter("HARMFUL"), {
         maxFrameCount = GetRaidMaxDebuffIcons(),
-        candidateFilters = {
-            isBossOrRoleAura = false,
-            excludeSpellIDs = RAID_DEBUFF_EXCLUDE,
-            maxDuration = RAID_DEBUFF_MAX_DURATION,
-            isFriendly = true
-        },
+        candidateFilters = data.debuffsNormalFilters,
         initializeFrame = function(auraFrame)
             InitRaidAuraButton(auraFrame, debuffContainer, "DebuffsNormal", true)
         end,
@@ -1123,13 +1132,13 @@ function Theme:EnsureRaidAuraContainers(frame, data)
             lineSpacing = RAID_ICON_GAP
         }
     })
+    data.additionalDefensivesFilters = {
+        includeSpellIDs = RAID_DEFENSIVES,
+        isFriendly = true
+    }
     defensiveContainer:AddAuraGroup("AdditionalDefensives", RaidFilter("HELPFUL"), {
         maxFrameCount = RAID_MAX_DEFENSIVE,
-        candidateFilters = {
-            includeSpellIDs = RAID_DEFENSIVES,
-            maxDuration = RAID_BUFF_MAX_DURATION,
-            isFriendly = true
-        },
+        candidateFilters = data.additionalDefensivesFilters,
         initializeFrame = function(auraFrame)
             InitRaidAuraButton(auraFrame, defensiveContainer, "BigDefensives", false)
         end,
@@ -1156,6 +1165,38 @@ function Theme:EnsureRaidAuraContainers(frame, data)
     })
     defensiveContainer:SetEnabled(false)
     data.defensiveContainer = defensiveContainer
+end
+
+-- Re-applies the PvP-only maxDuration cap (see IsPvpInstance) to the groups
+-- that carry permanent/no-timer auras, only touching groups whose state
+-- actually changed.
+function Theme:ApplyRaidAuraDurationFilters(data)
+    if not data.buffContainer then
+        return
+    end
+
+    local maxDur = IsPvpInstance() and RAID_BUFF_MAX_DURATION or nil
+    local maxDebuffDur = IsPvpInstance() and RAID_DEBUFF_MAX_DURATION or nil
+
+    if data.buffsFilters.maxDuration ~= maxDur then
+        data.buffsFilters.maxDuration = maxDur
+        data.buffContainer:SetAuraGroupCandidateFilters("Buffs", data.buffsFilters)
+    end
+
+    if data.debuffsBigFilters.maxDuration ~= maxDebuffDur then
+        data.debuffsBigFilters.maxDuration = maxDebuffDur
+        data.debuffContainer:SetAuraGroupCandidateFilters("DebuffsBig", data.debuffsBigFilters)
+    end
+
+    if data.debuffsNormalFilters.maxDuration ~= maxDebuffDur then
+        data.debuffsNormalFilters.maxDuration = maxDebuffDur
+        data.debuffContainer:SetAuraGroupCandidateFilters("DebuffsNormal", data.debuffsNormalFilters)
+    end
+
+    if data.additionalDefensivesFilters.maxDuration ~= maxDur then
+        data.additionalDefensivesFilters.maxDuration = maxDur
+        data.defensiveContainer:SetAuraGroupCandidateFilters("AdditionalDefensives", data.additionalDefensivesFilters)
+    end
 end
 
 local function ApplyRaidDefensivePosition(frame, defensiveContainer, defPoint, defX, defY)
@@ -1194,6 +1235,8 @@ function Theme:UpdateRaidAuraContainers(frame, data, unit, unreachable, notAssis
     if not buffContainer then
         return
     end
+
+    Theme:ApplyRaidAuraDurationFilters(data)
 
     -- Sizes
     local buffS = buffContainer.mUI_groupSizes.Buffs or buffSize
