@@ -71,7 +71,6 @@ function Core:OnInitialize()
         func(frame.RaidTargetFrame)
         func(frame.aggroHighlight)
         func(frame.aggroFlash)
-        func(frame.AurasFrame)
 
         if frame.aggroHighlightTextures then
             for _, texture in ipairs(frame.aggroHighlightTextures) do
@@ -92,6 +91,14 @@ function Core:OnInitialize()
         end
     end
 
+    local function ApplyAurasFrameVisibility(frame)
+        if Core.db.auras and Core.db.auras.enabled then
+            HideRegion(frame.AurasFrame)
+        else
+            ShowRegion(frame.AurasFrame)
+        end
+    end
+
     local function SuppressBlizzard(namePlate)
         local frame = namePlate.UnitFrame
         if not frame then
@@ -99,6 +106,7 @@ function Core:OnInitialize()
         end
 
         ForEachHiddenRegion(frame, HideRegion)
+        ApplyAurasFrameVisibility(frame)
     end
 
     function Core:RestoreBlizzard(namePlate)
@@ -108,9 +116,21 @@ function Core:OnInitialize()
         end
 
         ForEachHiddenRegion(frame, ShowRegion)
+        ShowRegion(frame.AurasFrame)
 
         frame:SetAlpha(1)
         frame:Show()
+    end
+
+    -- Re-applies the AurasFrame visibility rule above to every currently
+    -- tracked plate, for when the "Nameplate Auras" option is toggled live.
+    function Core:RefreshAurasFrameVisibility()
+        for namePlate in pairs(Core.plates) do
+            local frame = namePlate.UnitFrame
+            if frame then
+                ApplyAurasFrameVisibility(frame)
+            end
+        end
     end
 
     function Core:GetHealthBar(plate)
