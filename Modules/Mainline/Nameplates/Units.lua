@@ -41,12 +41,13 @@ function Units:OnInitialize()
     end
 
     function Units:ResolveArenaIndex(data)
-        if not Core.inArena or not data.isPlayer or not data.isEnemy then
+        if not Core.inArena or not data.isPlayer or not data.isEnemy or not data.guid then
             return nil
         end
 
         for i = 1, 3 do
-            if UnitName(data.unit) == UnitName("arena" .. i) then
+            local guid = Core:Safe(UnitGUID("arena" .. i), nil)
+            if guid and guid == data.guid then
                 return i
             end
         end
