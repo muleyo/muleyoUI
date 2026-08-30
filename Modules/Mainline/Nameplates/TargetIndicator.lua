@@ -36,7 +36,10 @@ function TargetIndicator:OnInitialize()
             return
         end
 
-        local hideBar = data.isFriend and data.isPlayer and not data.canAttack and TargetIndicator.db.friendly.hidehealthbar
+        local health = Core:GetHealthBar(plate)
+        local showOnlyName = health and health.IsShowOnlyName and health:IsShowOnlyName()
+
+        local hideBar = showOnlyName or (data.isFriend and data.isPlayer and not data.canAttack and TargetIndicator.db.friendly.hidehealthbar)
 
         holder:SetShown(data.isTarget == true and not hideBar)
     end
