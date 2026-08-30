@@ -1254,6 +1254,10 @@ function Nameplates:OnInitialize()
                 set = function(_, val)
                     db().auras.enabled = val
                     SetFeature(Nameplates.Module.Auras, val)
+
+                    if Nameplates.Module:IsEnabled() then
+                        Nameplates.Module.Core:RefreshAurasFrameVisibility()
+                    end
                 end,
                 get = function()
                     return db().auras.enabled
