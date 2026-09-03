@@ -313,6 +313,7 @@ local defaults = {
                 },
                 top = {
                     size = 20,
+                    count = 3,
                     anchor = "TOP",
                     x = 0,
                     y = 4

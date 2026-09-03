@@ -25,6 +25,12 @@ function Auras:OnInitialize()
     local IMPORTANT_FILTER = AuraUtil.CreateFilterString(AF.Helpful, AF.Important, "!BIG_DEFENSIVE")
     local BASE_ICON_SIZE = 20
     local ICON_GAP = 2
+    local DEFAULT_DEBUFF_COUNT = 3
+
+    local function GetDebuffCount()
+        local top = Auras.db.auras and Auras.db.auras.top
+        return (top and top.count) or DEFAULT_DEBUFF_COUNT
+    end
 
     local function InitIcon(auraFrame)
         Theme.CreateAuraButton(auraFrame, false, {
@@ -129,7 +135,7 @@ function Auras:OnInitialize()
 
         local top = NewContainer(plate, "top", "BOTTOMLEFT", AnchorUtil.FlowDirection.Right, AnchorUtil.FlowDirection.Up)
         top:AddAuraGroup("PlayerDebuffs", PLAYER_DEBUFF_FILTER, {
-            maxFrameCount = 3,
+            maxFrameCount = GetDebuffCount(),
             candidateFilters = {
                 excludeSpellIDs = PLAYER_DEBUFF_EXCLUDE
             },
@@ -350,6 +356,18 @@ function Auras:OnInitialize()
         container:SetScale(scale)
     end
 
+    local function ApplyDebuffCount(container, count)
+        if container.mUIDebuffCount == count then
+            return
+        end
+
+        container.mUIDebuffCount = count
+        container:SetAuraGroupMaxFrameCount("PlayerDebuffs", count)
+        -- Widen the row to match, so the icons stay on one line instead of
+        -- wrapping at the container's default of three.
+        container:SetFlowLayoutMaximumLineSize(count * (BASE_ICON_SIZE + ICON_GAP))
+    end
+
     function Auras.handler.Layout(plate)
         local health = Core:GetHealthBar(plate)
         if not health or not plate.AuraCC then
@@ -364,6 +382,7 @@ function Auras:OnInitialize()
 
             ApplyTopAnchor(plate.AuraTop, health, config.top.anchor, config.top.x, config.top.y)
             ApplySize(plate.AuraTop, config.top.size)
+            ApplyDebuffCount(plate.AuraTop, GetDebuffCount())
 
             ApplySide(plate.AuraLeft, health, config.left.anchor, config.left.x)
             ApplySize(plate.AuraLeft, config.left.size)

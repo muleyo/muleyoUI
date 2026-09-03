@@ -1457,6 +1457,25 @@ function Nameplates:OnInitialize()
                 end,
                 order = 82.2
             },
+            aurasTopCount = {
+                name = "Debuffs Shown",
+                desc = "How many of your own Debuffs are shown above the Nameplate",
+                type = "range",
+                min = 1,
+                max = 6,
+                step = 1,
+                disabled = function()
+                    return not db().auras.enabled
+                end,
+                set = function(_, val)
+                    db().auras.top.count = val
+                    Refresh(Nameplates.Module.Auras)
+                end,
+                get = function()
+                    return db().auras.top.count
+                end,
+                order = 82.3
+            },
             header10 = {
                 name = "Totems",
                 type = "header",
