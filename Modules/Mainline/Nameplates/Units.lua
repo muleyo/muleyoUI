@@ -41,13 +41,13 @@ function Units:OnInitialize()
     end
 
     function Units:ResolveArenaIndex(data)
-        if not Core.inArena or not data.isPlayer or not data.isEnemy or not data.guid then
+        if not Core.inArena or not data.isPlayer or not data.isEnemy or not data.namePlate then
             return nil
         end
 
         for i = 1, 3 do
-            local guid = Core:Safe(UnitGUID("arena" .. i), nil)
-            if guid and guid == data.guid then
+            local ok, namePlate = pcall(C_NamePlate.GetNamePlateForUnit, "arena" .. i, false)
+            if ok and namePlate and namePlate == data.namePlate then
                 return i
             end
         end

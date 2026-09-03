@@ -181,11 +181,17 @@ function Health:OnInitialize()
 
         local classcolor = data.isFriend and Health.db.friendly.classcolor or (not data.isFriend and Health.db.classcolor)
 
-        local classFile = data.isPlayer and classcolor and Units:GetClassFile(data)
-        if classFile then
-            local color = C_ClassColor.GetClassColor(classFile)
-            if color then
-                return color.r, color.g, color.b
+        if data.isPlayer and classcolor then
+            local classFile = data.classFileSecret
+            if not Core:Exists(classFile) then
+                classFile = Units:GetClassFile(data)
+            end
+
+            if Core:Exists(classFile) then
+                local color = C_ClassColor.GetClassColor(classFile)
+                if color then
+                    return color.r, color.g, color.b
+                end
             end
         end
 
@@ -625,9 +631,15 @@ function Health:OnInitialize()
         name:SetShown(not (hideBar or (data.isFriend and data.isPlayer and Health.db.friendly.hidenames)))
 
         local classcolor = replaced or (data.isFriend and Health.db.friendly.classcolor or (not data.isFriend and Health.db.classcolor))
+        local classFile = data.classFileSecret
+        if not Core:Exists(classFile) then
+            classFile = Units:GetClassFile(data)
+        end
 
-        local classFile = Units:GetClassFile(data)
-        local color = classFile and C_ClassColor.GetClassColor(classFile)
+        local color
+        if Core:Exists(classFile) then
+            color = C_ClassColor.GetClassColor(classFile)
+        end
 
         if data.isPlayer and color and classcolor then
             name:SetTextColor(color.r, color.g, color.b)

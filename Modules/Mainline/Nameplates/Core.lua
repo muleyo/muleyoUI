@@ -323,7 +323,13 @@ function Core:OnInitialize()
         data.isTapDenied = not UnitPlayerControlled(unit) and UnitIsTapDenied(unit)
         data.isTarget = Core:Safe(UnitIsUnit(unit, "target"), false)
         data.isFocus = Core:Safe(UnitIsUnit(unit, "focus"), false)
-        data.classFile = isPlayer and Clean(select(2, UnitClass(unit))) or nil
+
+        local classFile
+        if isPlayer then
+            classFile = select(2, UnitClass(unit))
+        end
+        data.classFile = Clean(classFile)
+        data.classFileSecret = classFile
 
         return data
     end
