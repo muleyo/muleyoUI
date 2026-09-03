@@ -3,9 +3,9 @@ local Changelog = mUI:NewModule("mUI.Config.Changelog")
 -- Maintainer note: this window intentionally shows ONLY the latest update.
 -- Keep this as a single entry and update it each release.
 local CHANGELOG = {
-    version = "4.1.20",
+    version = "4.1.24",
     affected = {"Mainline"},
-    changes = {"Added option to highlight raidframes on mouseover", "Fixed an issue that would not update nameplates after a unit got mind-controlled"}
+    changes = {"Added a slider which allows you to choose how many debuffs you'd like to see on nameplates"}
 }
 
 function Changelog:OnInitialize()
