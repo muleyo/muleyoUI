@@ -548,6 +548,22 @@ function Theme:CreateUnitAuraContainer(frame, unit)
     Theme.unitframeAuraFrames = Theme.unitframeAuraFrames or {}
     Theme.unitframeAuraFrames[frame] = true
 
+    if not Theme.unitframeAuraRefreshTicker then
+        Theme.unitframeAuraRefreshTicker = C_Timer.NewTicker(1, function()
+            for auraFrame in pairs(Theme.unitframeAuraFrames or {}) do
+                local buffC = auraFrame.mUI_buffContainer
+                local debuffC = auraFrame.mUI_debuffContainer
+                if debuffC then
+                    Theme:UpdateUnitDebuffCasterFilter(auraFrame)
+                    debuffC:UpdateAllAuras()
+                end
+                if buffC then
+                    buffC:UpdateAllAuras()
+                end
+            end
+        end)
+    end
+
     Theme:ReflowUnitAuraContainer(frame)
     buffContainer:SetUnit(unit)
     debuffContainer:SetUnit(unit)
