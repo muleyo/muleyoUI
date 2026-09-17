@@ -974,7 +974,8 @@ local RAID_DEFENSIVES = {
     [1261872] = true, -- Heart of the Wild (Bear)
     [5487] = true, -- Bear Form
     [1966] = true, -- Feint
-    [586] = true -- Fade
+    [586] = true, -- Fade
+    [23920] = true -- Spell Reflect
 }
 
 local RAID_CURATED_EXCLUDE = {}
