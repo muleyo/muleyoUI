@@ -288,6 +288,28 @@ function Raidframes:OnInitialize()
                 end,
                 order = 12.5
             },
+            extraMouseButtons = {
+                name = "Mouse4/Mouse5 Keybinds",
+                desc = "Allow keybinds on Mouse4/Mouse5 (e.g. mouseover macros) to work while hovering over a Party/Raidframe\n\n|cffffff00Info:|r Blizzard's frames block these buttons, so the click is forwarded to the bound actionbutton",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.raidframes.extraMouseButtons = val
+
+                    if not Raidframes.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Raidframes.Module.RF_ExtraMouseButtons:Enable()
+                    else
+                        Raidframes.Module.RF_ExtraMouseButtons:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.raidframes.extraMouseButtons
+                end,
+                order = 12.6
+            },
             smooth = {
                 name = "Smooth Healthbars",
                 desc = "Enable Smooth Healthbar Animation\n\n|cffffff00Info:|r Requires Reload",

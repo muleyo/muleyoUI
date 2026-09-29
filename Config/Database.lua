@@ -137,6 +137,7 @@ local defaults = {
                 roleicons = false,
                 solo = false,
                 mouseoverHighlight = false,
+                extraMouseButtons = false,
                 partyScale = 100,
                 skinicons = true,
                 buffsize = 28,

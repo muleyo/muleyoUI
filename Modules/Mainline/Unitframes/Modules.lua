@@ -9,6 +9,7 @@ function Modules:OnInitialize()
     Modules.RF_RoleIcons = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_RoleIcons")
     Modules.RF_Solo = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Solo")
     Modules.RF_Mouseover = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_Mouseover")
+    Modules.RF_ExtraMouseButtons = mUI:GetModule("mUI.Modules.Unitframes.Raidframes_ExtraMouseButtons")
     Modules.UF_Textures = mUI:GetModule("mUI.Modules.Unitframes.Unitframes_Textures")
     Modules.Color = mUI:GetModule("mUI.Modules.Unitframes.Color")
     Modules.Reputationcolor = mUI:GetModule("mUI.Modules.Unitframes.Reputationcolor")
@@ -96,6 +97,9 @@ function Modules:OnEnable()
         if Modules.db.raidframes.mouseoverHighlight then
             Modules.RF_Mouseover:Enable()
         end
+        if Modules.db.raidframes.extraMouseButtons then
+            Modules.RF_ExtraMouseButtons:Enable()
+        end
         if Modules.db.smooth then
             Modules.Smooth:Enable()
         end
@@ -123,6 +127,7 @@ function Modules:OnDisable()
     Modules.RF_HideNames:Disable()
     Modules.RF_Solo:Disable()
     Modules.RF_Mouseover:Disable()
+    Modules.RF_ExtraMouseButtons:Disable()
     Modules.Smooth:Disable()
     Modules.Overshields:Disable()
 end
