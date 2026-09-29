@@ -76,4 +76,10 @@ end
 
 function Cvars:OnDisable()
     Cvars:UnregisterAllEvents()
+
+    -- Cvars persist between sessions: Apply() zeroes the info display (Blizzard's health text and elite/rarity icon),
+    -- so hand it back or the default nameplates stay stripped even with this module off
+    if not InCombatLockdown() then
+        CVarCallbackRegistry:SetCVarBitfieldMask("nameplateInfoDisplay", CVarCallbackRegistry:GetCVarBitfieldDefault("nameplateInfoDisplay"))
+    end
 end
