@@ -10,32 +10,24 @@
 ## X-Wago-ID: 5bGowYG0
 ## Category: muleyo AddOns
 
-## LIBS
+# Libs
 Libs\Load.xml
 
-## Init
+# Init
 Core\Load.xml
-
-## Media
 Media\Load.xml
-
-## Database
 Config\Database.lua
-
-## Functions
 Functions.lua
-
-## Config
 Config\Load.xml
 
-## Config Layouts
+# Config Layouts
 Config\Layouts\Forever\Load.xml
 
-## Core
+# Core
 Core.lua
 
-## Modules
+# Modules
 Modules\Forever\Load.xml
 
-## EditMode
+# EditMode
 EditMode.lua
