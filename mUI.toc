@@ -1,4 +1,4 @@
-## Interface: 120100, 50504, 20506, 11508
+## Interface: 120100, 50504, 20506, 11508, 16001
 ## Author: muleyo
 ## Version: @project-version@
 ## Title: |cff009cffmuleyo|r|cffffd100UI|r
@@ -11,7 +11,7 @@
 ## Category: muleyo AddOns
 
 # Libs
-Libs\Load.xml [AllowLoadGameType mainline]
+Libs\Load.xml [AllowLoadGameType mainline, forever]
 Libs\Load_Mists.xml [AllowLoadGameType mists]
 Libs\Load_TBC.xml [AllowLoadGameType tbc]
 Libs\Load_Vanilla.xml [AllowLoadGameType vanilla]
@@ -24,19 +24,21 @@ Functions.lua
 Config\Load.xml
 
 # Config Layouts
-Config\Layouts\Mainline\Load.xml [AllowLoadGameType mainline]
+Config\Layouts\Mainline\Load.xml [AllowLoadGameType standard]
 Config\Layouts\Mists\Load.xml [AllowLoadGameType mists]
 Config\Layouts\TBC\Load.xml [AllowLoadGameType tbc]
 Config\Layouts\Vanilla\Load.xml [AllowLoadGameType vanilla]
+Config\Layouts\Forever\Load.xml [AllowLoadGameType forever]
 
 # Core
 Core.lua
 
 # Modules
-Modules\Mainline\Load.xml [AllowLoadGameType mainline]
+Modules\Mainline\Load.xml [AllowLoadGameType standard]
 Modules\Mists\Load.xml [AllowLoadGameType mists]
 Modules\TBC\Load.xml [AllowLoadGameType tbc]
 Modules\Vanilla\Load.xml [AllowLoadGameType vanilla]
+Modules\Forever\Load.xml [AllowLoadGameType forever]
 
 # EditMode
 EditMode.lua
