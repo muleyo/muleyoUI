@@ -1,0 +1,22 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <!-- Foundation -->
+    <Include file="Core.lua" />
+    <Include file="Units.lua" />
+
+    <!-- The plate itself -->
+    <Include file="Health.lua" />
+    <Include file="Castbar.lua" />
+    <Include file="Style.lua" />
+    <Include file="Cvars.lua" />
+    <Include file="PersonalResourceBar.lua" />
+
+    <!-- Features -->
+    <Include file="ClassIcon.lua" />
+    <Include file="Healer.lua" />
+    <Include file="TargetIndicator.lua" />
+    <Include file="RaidMarker.lua" />
+    <Include file="Auras.lua" />
+    <Include file="Totem.lua" />
+
+    <Include file="Modules.lua" />
+</Ui>

@@ -1,0 +1,6 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Include file="Style.lua" />
+    <Include file="Combat.lua" />
+    <Include file="Anchor.lua" />
+    <Include file="Modules.lua" />
+</Ui>

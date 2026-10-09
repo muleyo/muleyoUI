@@ -110,7 +110,8 @@ function Functions:OnInitialize()
             ["Vanilla"] = WOW_PROJECT_CLASSIC == WOW_PROJECT_ID,
             ["TBC"] = WOW_PROJECT_BURNING_CRUSADE_CLASSIC == WOW_PROJECT_ID,
             ["Mists"] = WOW_PROJECT_MISTS_CLASSIC == WOW_PROJECT_ID,
-            ["Mainline"] = WOW_PROJECT_MAINLINE == WOW_PROJECT_ID
+            ["Mainline"] = WOW_PROJECT_MAINLINE == WOW_PROJECT_ID,
+            ["Forever"] = WOW_PROJECT_CAMELOT == WOW_PROJECT_ID
         }
     end
 

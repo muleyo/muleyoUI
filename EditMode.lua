@@ -61,12 +61,14 @@ function EditMode:OnInitialize()
             end
 
             mUI.statsFrame:ClearAllPoints()
-            mUI.statsFrame:SetPoint(EditMode.db[layout].statsframe.point, EditMode.db[layout].statsframe.x, EditMode.db[layout].statsframe.y)
+            mUI.statsFrame:SetPoint(EditMode.db[layout].statsframe.point, EditMode.db[layout].statsframe.x,
+                EditMode.db[layout].statsframe.y)
 
             mUIGameTooltip:ClearAllPoints()
-            mUIGameTooltip:SetPoint(EditMode.db[layout].gametooltip.point, EditMode.db[layout].gametooltip.x, EditMode.db[layout].gametooltip.y)
+            mUIGameTooltip:SetPoint(EditMode.db[layout].gametooltip.point, EditMode.db[layout].gametooltip.x,
+                EditMode.db[layout].gametooltip.y)
         end)
-    elseif mUI:GameVersion()["Mainline"] then
+    elseif mUI:GameVersion()["Mainline"] or mUI:GameVersion()["Forever"] then
         -- Load Libraries
         EditMode.LEM = ns.LibEditMode
 
@@ -143,23 +145,26 @@ function EditMode:OnInitialize()
             end
 
             mUI.statsFrame:ClearAllPoints()
-            mUI.statsFrame:SetPoint(EditMode.db[layout].statsframe.point, EditMode.db[layout].statsframe.x, EditMode.db[layout].statsframe.y)
+            mUI.statsFrame:SetPoint(EditMode.db[layout].statsframe.point, EditMode.db[layout].statsframe.x,
+                EditMode.db[layout].statsframe.y)
 
             -- Apply stats frame text size
             local textSize = EditMode.db[layout].statsframe.textsize or 13
             local Stats = mUI:GetModule("mUI.Modules.General.Stats")
-            local fontPath = Stats and Stats.db and Stats.db.general.font ~= "None" and Stats.db.general.fontpath or STANDARD_TEXT_FONT
+            local fontPath = Stats and Stats.db and Stats.db.general.font ~= "None" and Stats.db.general.fontpath or
+            STANDARD_TEXT_FONT
             mUI.statsFrame.text:SetFont(fontPath, textSize, "OUTLINE")
 
             EditMode.QueueStatus:ClearAllPoints()
-            EditMode.QueueStatus:SetPoint(EditMode.db[layout].queueicon.point, EditMode.db[layout].queueicon.x, EditMode.db[layout].queueicon.y)
+            EditMode.QueueStatus:SetPoint(EditMode.db[layout].queueicon.point, EditMode.db[layout].queueicon.x,
+                EditMode.db[layout].queueicon.y)
 
             -- Apply QueueStatusButton scale
             queueDesiredScale = EditMode.db[layout].queueicon.scale or 0.8
             QueueStatusButton:SetScale(queueDesiredScale)
         end)
 
-        EditMode.LEM:AddFrameSettings(mUI.statsFrame, {{
+        EditMode.LEM:AddFrameSettings(mUI.statsFrame, { {
             name = 'Text Size',
             kind = EditMode.LEM.SettingType.Slider,
             default = 13,
@@ -172,7 +177,8 @@ function EditMode:OnInitialize()
                 end
                 EditMode.db[layout].statsframe.textsize = value
                 local Stats = mUI:GetModule("mUI.Modules.General.Stats")
-                local fontPath = Stats and Stats.db and Stats.db.general.font ~= "None" and Stats.db.general.fontpath or STANDARD_TEXT_FONT
+                local fontPath = Stats and Stats.db and Stats.db.general.font ~= "None" and Stats.db.general.fontpath or
+                STANDARD_TEXT_FONT
                 mUI.statsFrame.text:SetFont(fontPath, value, "OUTLINE")
             end,
             minValue = 6,
@@ -181,9 +187,9 @@ function EditMode:OnInitialize()
             formatter = function(value)
                 return tostring(value)
             end
-        }})
+        } })
 
-        EditMode.LEM:AddFrameSettings(EditMode.QueueStatus, {{
+        EditMode.LEM:AddFrameSettings(EditMode.QueueStatus, { {
             name = 'Button Size',
             kind = EditMode.LEM.SettingType.Slider,
             default = 0.8,
@@ -204,6 +210,6 @@ function EditMode:OnInitialize()
             formatter = function(value)
                 return FormatPercentage(value, true)
             end
-        }})
+        } })
     end
 end
