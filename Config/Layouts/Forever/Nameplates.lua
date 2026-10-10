@@ -85,7 +85,7 @@ function Nameplates:OnInitialize()
                 name = "Health Texture",
                 desc = "Select a Texture for the Nameplates",
                 type = "select",
-                values = Nameplates.LSM:HashTable("statusbar"),
+                values = function() return mUI.mGUI.LSMValues("statusbar") end,
                 dialogControl = 'mUI_LSM30_Status',
                 set = function(_, val)
                     db().texture = val

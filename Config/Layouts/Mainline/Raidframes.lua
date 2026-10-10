@@ -67,7 +67,7 @@ function Raidframes:OnInitialize()
                 name = "Healthbar / Powerbar",
                 desc = "Select a Texture for the Party / Raidframes",
                 type = "select",
-                values = Raidframes.LSM:HashTable("statusbar"),
+                values = function() return mUI.mGUI.LSMValues("statusbar") end,
                 dialogControl = 'mUI_LSM30_Status',
                 set = function(_, val)
                     mUI.db.profile.unitframes.textures.raidframes = val

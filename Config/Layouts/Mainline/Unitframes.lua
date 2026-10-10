@@ -49,7 +49,7 @@ function Unitframes:OnInitialize()
                 name = "Healthbar / Powerbar",
                 desc = "Select a Texture for the Health-/Powerbars of Unitframes (Player, Target, Focus, etc.)",
                 type = "select",
-                values = Unitframes.LSM:HashTable("statusbar"),
+                values = function() return mUI.mGUI.LSMValues("statusbar") end,
                 dialogControl = 'mUI_LSM30_Status',
                 set = function(_, val)
                     mUI.db.profile.unitframes.textures.unitframes = val

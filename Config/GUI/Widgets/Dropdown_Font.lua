@@ -13,6 +13,14 @@ local function GetFontObject(key, path)
     return fontObject
 end
 
+function mGUI.LSMValues(mediaType)
+    local values = { None = "None" }
+    for name, path in pairs(LibStub("LibSharedMedia-3.0"):HashTable(mediaType)) do
+        values[name] = path
+    end
+    return values
+end
+
 function mGUI.Widgets.DropdownFont(parent)
     local container = mGUI.Widgets.Dropdown(parent)
     local LSM = LibStub("LibSharedMedia-3.0")
@@ -21,7 +29,7 @@ function mGUI.Widgets.DropdownFont(parent)
     container.DecorateEntry = function(radio, key)
         radio:AddInitializer(function(button)
             local fontString = button.fontString
-            local path = LSM:Fetch("font", key, true)
+            local path = key == "None" and STANDARD_TEXT_FONT or LSM:Fetch("font", key, true)
             if fontString and path then
                 fontString:SetFontObject(GetFontObject(key, path))
             end

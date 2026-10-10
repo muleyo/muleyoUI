@@ -7,7 +7,7 @@ function mGUI.Widgets.DropdownStatusbar(parent)
 
     container.DecorateEntry = function(radio, key)
         radio:AddInitializer(function(button)
-            local path = LSM:Fetch("statusbar", key, true)
+            local path = key == "None" and [[Interface\TargetingFrame\UI-StatusBar]] or LSM:Fetch("statusbar", key, true)
             if not path then
                 return
             end
