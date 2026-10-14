@@ -159,13 +159,12 @@ local function CreateAuraButton(auraFrame, isDebuff, opts)
             auraFrame.mUIDispelBorder:SetDesaturated(true)
             ApplyAuraBorderGeometry(auraFrame.mUIDispelBorder, auraFrame, inset)
 
-            auraFrame:SetAuraBorder(auraFrame.mUIDispelBorder, {
-                showIcon = false,
+            auraFrame:AddDispelTypeTexture(auraFrame.mUIDispelBorder, {
                 showWhenHarmful = true,
                 showWhenHelpful = false,
                 showWithoutDispelType = true,
                 customDispelColorCurve = Theme.colorCurve,
-                style = AuraButtonBorderStyle.Color
+                style = Enum.CustomAuraButtonDispelTypeTextureStyle.PreserveAsset
             })
 
             auraFrame.mUIDispelBorder:SetAlpha(Theme.showDispelType == false and 0 or 1)
