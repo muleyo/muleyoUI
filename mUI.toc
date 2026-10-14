@@ -1,4 +1,4 @@
-## Interface: 120100, 50504, 20506, 11508, 16001
+## Interface: 120105, 50504, 20506, 11508, 16001
 ## Author: muleyo
 ## Version: @project-version@
 ## Title: |cff009cffmuleyo|r|cffffd100UI|r
