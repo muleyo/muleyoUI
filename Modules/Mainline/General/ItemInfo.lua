@@ -417,7 +417,7 @@ function ItemInfo:OnInitialize()
         if (slot == INVSLOT_OFFHAND) then
             local offHandItemLink = GetInventoryItemLink(unit, slot)
             if (offHandItemLink) then
-                local itemEquipLoc = select(4, GetItemInfoInstant(offHandItemLink))
+                local itemEquipLoc = select(4, C_Item.GetItemInfoInstant(offHandItemLink))
                 return itemEquipLoc ~= "INVTYPE_HOLDABLE" and itemEquipLoc ~= "INVTYPE_SHIELD"
             end
             return false
@@ -626,8 +626,22 @@ function ItemInfo:OnInitialize()
 
             local canEnchant = ItemInfo:CanEnchantSlot(unit, slot)
 
+            -- Inspect data streams in: the link's enchant field or tooltip line can
+            -- be missing at first. Fall back to the enchant ID, and for other
+            -- players hold off on "No Enchant" until retries are exhausted.
+            local enchantPending = false
+            if (not enchantText and itemLink) then
+                local linkEnchantId = tonumber(itemLink:match("item:%-?%d+:(%d+)"))
+                if (linkEnchantId and linkEnchantId > 0) then
+                    enchantText = ItemInfo.enchantIdTable[linkEnchantId]
+                    enchantPending = enchantText == nil
+                elseif (canEnchant and not UnitIsUnit(unit, "player") and (additionalFrame.retryCount or 0) < 10) then
+                    enchantPending = true
+                end
+            end
+
             if (not enchantText) then
-                local shouldDisplayEchantMissingText = canEnchant and itemLink and IsUnitAtEffectiveMaxLevel(unit)
+                local shouldDisplayEchantMissingText = canEnchant and itemLink and not enchantPending and IsUnitAtEffectiveMaxLevel(unit)
                 additionalFrame.enchantDisplay:SetText(shouldDisplayEchantMissingText and "|cffff0000No Enchant|r" or "")
             else
                 -- trim size
@@ -674,7 +688,7 @@ function ItemInfo:OnInitialize()
                 end
             end
 
-            if socketsComplete then
+            if socketsComplete and not enchantPending then
                 additionalFrame.prevItemLink = itemLink
                 additionalFrame.retryCount = 0
             else
@@ -738,7 +752,7 @@ function ItemInfo:OnInitialize()
 
                     if slot == INVSLOT_MAINHAND then
                         mainHandItemLevel = itemLevel
-                        local _, _, _, _, _, _, _, _, equipSlot = GetItemInfo(itemLink)
+                        local _, _, _, _, _, _, _, _, equipSlot = C_Item.GetItemInfo(itemLink)
                         if equipSlot == "INVTYPE_2HWEAPON" or equipSlot == "INVTYPE_RANGED" or equipSlot == "INVTYPE_RANGEDRIGHT" then
                             mainHandIs2H = true
                         end
