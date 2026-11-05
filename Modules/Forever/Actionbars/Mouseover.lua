@@ -270,6 +270,30 @@ function Mouseover:OnInitialize()
         end
     end
 
+    -- Blizzard shows the micro menu and the bags bar again when it initializes the input device after the loading screen
+    -- (MainActionBar_InitializeMKB, and again on every switch between mouse/keyboard and gamepad), so "Hidden" has to be
+    -- enforced whenever they are shown
+    function Mouseover:KeepHidden(bar)
+        local frame = _G[Mouseover.ACTION_BARS[bar]]
+        if not frame then
+            return
+        end
+
+        local function HideAgain()
+            -- Not while the module is being disabled, that hands the frames back
+            if Mouseover:IsEnabled() and Mouseover.bars[bar] == "Hidden" then
+                frame:Hide()
+            end
+        end
+
+        if not Mouseover:IsHooked(frame, "Show") then
+            Mouseover:SecureHook(frame, "Show", HideAgain)
+        end
+        if not Mouseover:IsHooked(frame, "SetShown") then
+            Mouseover:SecureHook(frame, "SetShown", HideAgain)
+        end
+    end
+
     function Mouseover:Update(bar, state)
         if (not state) or state == "Default" then
             Mouseover:UnhookBars(bar)
@@ -285,8 +309,10 @@ function Mouseover:OnInitialize()
 
             if bar == "micromenu" then
                 MicroMenu:Hide()
+                Mouseover:KeepHidden(bar)
             elseif bar == "bagbuttons" then
                 BagsBar:Hide()
+                Mouseover:KeepHidden(bar)
             end
         else
             Mouseover:Mouseover(bar)
