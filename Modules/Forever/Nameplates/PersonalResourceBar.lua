@@ -8,10 +8,10 @@ function PersonalResourceBar:OnInitialize()
     local Core = PersonalResourceBar.Core
 
     local ANCHORS = {
-        TOP = {"BOTTOM", "TOP", 1, 1},
-        BOTTOM = {"TOP", "BOTTOM", 1, -1},
-        LEFT = {"RIGHT", "LEFT", -1, 1},
-        RIGHT = {"LEFT", "RIGHT", 1, 1}
+        TOP = { "BOTTOM", "TOP", 1, 1 },
+        BOTTOM = { "TOP", "BOTTOM", 1, -1 },
+        LEFT = { "RIGHT", "LEFT", -1, 1 },
+        RIGHT = { "LEFT", "RIGHT", 1, 1 }
     }
 
     local classResourceYOffsets = {
@@ -30,7 +30,9 @@ function PersonalResourceBar:OnInitialize()
     function PersonalResourceBar:FixRogue()
         local xOfs = 0
         if playerClass == "ROGUE" then
-            local maxComboPoints = RogueComboPointBarFrame.maxUsablePoints
+            local comboBar = RogueComboPointBarFrame or
+            (PersonalResourceDisplayFrame and PersonalResourceDisplayFrame.classFrame)
+            local maxComboPoints = comboBar and comboBar.maxUsablePoints
             if maxComboPoints == 7 then
                 xOfs = xOfs + 20
             elseif maxComboPoints == 6 then
