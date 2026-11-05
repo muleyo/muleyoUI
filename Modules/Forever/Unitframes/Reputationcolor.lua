@@ -4,22 +4,22 @@ function Reputationcolor:OnInitialize()
     -- Load Database
     Reputationcolor.db = mUI.db.profile.unitframes
     Reputationcolor.frame = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain
-    Reputationcolor.frame.ReputationColor = Reputationcolor.frame:CreateTexture(nil, "OVERLAY")
+    Reputationcolor.frame.ReputationColor = Reputationcolor.frame:CreateTexture(nil, "BACKGROUND")
     Reputationcolor.frame.ReputationColor:SetAtlas("UI-HUD-UnitFrame-Target-PortraitOn-Type")
-    Reputationcolor.frame.ReputationColor:SetSize(136, 20)
+    Reputationcolor.frame.ReputationColor:SetSize(135, 18)
     Reputationcolor.frame.ReputationColor:SetTexCoord(1, 0, 0, 1)
-    Reputationcolor.frame.ReputationColor:SetPoint("TOPRIGHT", Reputationcolor.frame, "TOPRIGHT", -21, -25)
+    Reputationcolor.frame.ReputationColor:SetPoint("TOPRIGHT", Reputationcolor.frame, "TOPRIGHT", -14, -28)
     Reputationcolor.frame.ReputationColor:SetVertexColor(0, 0, 1)
     Reputationcolor.frame.ReputationColor:Hide()
 
-    Reputationcolor.frames = {PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.ReputationColor,
-                              TargetFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor,
-                              FocusFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor,
-                              Boss1TargetFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor,
-                              Boss2TargetFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor,
-                              Boss3TargetFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor,
-                              Boss4TargetFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor,
-                              Boss5TargetFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor}
+    Reputationcolor.frames = { PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.ReputationColor,
+        TargetFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor,
+        FocusFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor,
+        Boss1TargetFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor,
+        Boss2TargetFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor,
+        Boss3TargetFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor,
+        Boss4TargetFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor,
+        Boss5TargetFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor }
 
     function Reputationcolor:Update(option, status)
         if option == "all" and status == "disabled" then
