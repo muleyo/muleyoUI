@@ -8,17 +8,17 @@ function Targetpos:OnInitialize()
 end
 
 function Targetpos:OnEnable()
-    -- On 12.1.x the target aura container owns the castbar position (it anchors the
-    -- bar to itself and no-ops AdjustPosition). Hooking here would re-pin the bar to
-    -- the frame on OnShow and fight that anchor, so stay out of the way.
-    if select(4, GetBuildInfo()) >= 120100 then
-        return
-    end
+    TargetFrame.mUI_castbarOnTop = true
 
     Targetpos:SecureHookScript(TargetFrameSpellBar, "OnShow", Targetpos.Update)
     Targetpos:SecureHook(TargetFrameSpellBar, "AdjustPosition", Targetpos.Update)
+    Targetpos:Update()
 end
 
 function Targetpos:OnDisable()
     Targetpos:UnhookAll()
+    TargetFrame.mUI_castbarOnTop = nil
+
+    -- Blizzard places the bar again, the aura container then corrects it if it is in use
+    TargetFrameSpellBar:AdjustPosition()
 end

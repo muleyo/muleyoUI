@@ -34,7 +34,6 @@ function Style:OnInitialize()
             _G[castbar]:SetSize(209, 18)
             _G[castbar].StandardGlow:Hide()
             _G[castbar].TextBorder:Hide()
-            _G[castbar].Border:Hide()
 
             _G[castbar].Text:ClearAllPoints()
             _G[castbar].Text:SetPoint("TOP", _G[castbar], "TOP", 0, 0)
@@ -119,9 +118,9 @@ function Style:OnEnable()
         end
     end
 
-    for _, signal in ipairs({"PlayerSpellsFrame.TalentTab.Show", "PlayerSpellsFrame.TalentTab.Hide", "PlayerSpellsFrame.SpecFrame.Show",
-                             "PlayerSpellsFrame.SpecFrame.Hide", "PlayerSpellsFrame.SpecFrame.ActivateSpec", "PlayerSpellsFrame.CloseFrame",
-                             "TalentFrameBase.ButtonsUpdated"}) do
+    for _, signal in ipairs({ "PlayerSpellsFrame.TalentTab.Show", "PlayerSpellsFrame.TalentTab.Hide", "PlayerSpellsFrame.SpecFrame.Show",
+        "PlayerSpellsFrame.SpecFrame.Hide", "PlayerSpellsFrame.SpecFrame.ActivateSpec", "PlayerSpellsFrame.CloseFrame",
+        "TalentFrameBase.ButtonsUpdated" }) do
         EventRegistry:RegisterCallback(signal, ReapplyPlayerCastbarStyle, Style)
     end
 end
@@ -130,9 +129,9 @@ function Style:OnDisable()
     -- Disable Style
     Style:UnhookAll()
 
-    for _, signal in ipairs({"PlayerSpellsFrame.TalentTab.Show", "PlayerSpellsFrame.TalentTab.Hide", "PlayerSpellsFrame.SpecFrame.Show",
-                             "PlayerSpellsFrame.SpecFrame.Hide", "PlayerSpellsFrame.SpecFrame.ActivateSpec", "PlayerSpellsFrame.CloseFrame",
-                             "TalentFrameBase.ButtonsUpdated"}) do
+    for _, signal in ipairs({ "PlayerSpellsFrame.TalentTab.Show", "PlayerSpellsFrame.TalentTab.Hide", "PlayerSpellsFrame.SpecFrame.Show",
+        "PlayerSpellsFrame.SpecFrame.Hide", "PlayerSpellsFrame.SpecFrame.ActivateSpec", "PlayerSpellsFrame.CloseFrame",
+        "TalentFrameBase.ButtonsUpdated" }) do
         EventRegistry:UnregisterCallback(signal, Style)
     end
 
