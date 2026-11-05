@@ -1,15 +1,11 @@
 local ItemInfo = mUI:NewModule("mUI.Modules.General.ItemInfo", "AceHook-3.0")
 
--- The global IsLevelAtEffectiveMaxLevel was removed in 12.1.0 in favour of
--- GameRulesUtil.GetEffectiveMaxLevelForPlayer. Keep using the old global on
--- live builds so retail keeps working.
-local USE_GAME_RULES_MAX_LEVEL = select(4, GetBuildInfo()) >= 120100
 local function IsUnitAtEffectiveMaxLevel(unit)
-    if USE_GAME_RULES_MAX_LEVEL then
-        return UnitLevel(unit) >= GameRulesUtil.GetEffectiveMaxLevelForPlayer()
+    if IsLevelAtEffectiveMaxLevel then
+        return IsLevelAtEffectiveMaxLevel(UnitLevel(unit))
     end
 
-    return IsLevelAtEffectiveMaxLevel(UnitLevel(unit))
+    return UnitLevel(unit) >= GameRulesUtil.GetEffectiveMaxLevelForPlayer()
 end
 
 function ItemInfo:OnInitialize()
@@ -418,7 +414,7 @@ function ItemInfo:OnInitialize()
         if (slot == INVSLOT_OFFHAND) then
             local offHandItemLink = GetInventoryItemLink(unit, slot)
             if (offHandItemLink) then
-                local itemEquipLoc = select(4, GetItemInfoInstant(offHandItemLink))
+                local itemEquipLoc = select(4, C_Item.GetItemInfoInstant(offHandItemLink))
                 return itemEquipLoc ~= "INVTYPE_HOLDABLE" and itemEquipLoc ~= "INVTYPE_SHIELD"
             end
             return false
@@ -741,7 +737,7 @@ function ItemInfo:OnInitialize()
 
                     if slot == INVSLOT_MAINHAND then
                         mainHandItemLevel = itemLevel
-                        local _, _, _, _, _, _, _, _, equipSlot = GetItemInfo(itemLink)
+                        local _, _, _, _, _, _, _, _, equipSlot = C_Item.GetItemInfo(itemLink)
                         if equipSlot == "INVTYPE_2HWEAPON" or equipSlot == "INVTYPE_RANGED" or equipSlot == "INVTYPE_RANGEDRIGHT" then
                             mainHandIs2H = true
                         end
