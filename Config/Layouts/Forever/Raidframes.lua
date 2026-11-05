@@ -1,6 +1,7 @@
 local Raidframes = mUI:NewModule("mUI.Config.Layouts.Raidframes")
 
-local RAID_AURAS_FORCED = select(4, GetBuildInfo()) >= 120100
+-- Forever has no legacy aura display module, the custom raid auras always go through the Theme aura containers
+local RAID_AURAS_FORCED = true
 
 function Raidframes:OnInitialize()
     -- Get LSM
@@ -369,7 +370,7 @@ function Raidframes:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.centerDefensivePoint = val
 
-                    if select(4, GetBuildInfo()) >= 120100 then
+                    if RAID_AURAS_FORCED then
                         Raidframes.Theme:UpdateAllRaidDefensivePositions()
                     else
                         if Raidframes.Module:IsEnabled() and Raidframes.Module.RF_AuraDisplay and Raidframes.Module.RF_AuraDisplay:IsEnabled() then
@@ -402,7 +403,7 @@ function Raidframes:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.auraTooltips = val
 
-                    if select(4, GetBuildInfo()) >= 120100 then
+                    if RAID_AURAS_FORCED then
                         Raidframes.Theme:UpdateAllRaidAuraTooltips()
                     else
                         if Raidframes.Module:IsEnabled() and Raidframes.Module.RF_AuraDisplay and Raidframes.Module.RF_AuraDisplay:IsEnabled() then
@@ -443,7 +444,7 @@ function Raidframes:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.centerDefensiveX = val
 
-                    if select(4, GetBuildInfo()) >= 120100 then
+                    if RAID_AURAS_FORCED then
                         Raidframes.Theme:UpdateAllRaidDefensivePositions()
                     else
                         if Raidframes.Module:IsEnabled() and Raidframes.Module.RF_AuraDisplay and Raidframes.Module.RF_AuraDisplay:IsEnabled() then
@@ -467,7 +468,7 @@ function Raidframes:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.centerDefensiveY = val
 
-                    if select(4, GetBuildInfo()) >= 120100 then
+                    if RAID_AURAS_FORCED then
                         Raidframes.Theme:UpdateAllRaidDefensivePositions()
                     else
                         if Raidframes.Module:IsEnabled() and Raidframes.Module.RF_AuraDisplay and Raidframes.Module.RF_AuraDisplay:IsEnabled() then
@@ -490,7 +491,7 @@ function Raidframes:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.buffsize = val
 
-                    if select(4, GetBuildInfo()) >= 120100 then
+                    if RAID_AURAS_FORCED then
                         Raidframes.Theme:UpdateAllRaidAuras()
                     else
                         if Raidframes.Module:IsEnabled() and Raidframes.Module.RF_AuraDisplay and Raidframes.Module.RF_AuraDisplay:IsEnabled() then
@@ -513,7 +514,7 @@ function Raidframes:OnInitialize()
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.debuffsize = val
 
-                    if select(4, GetBuildInfo()) >= 120100 then
+                    if RAID_AURAS_FORCED then
                         Raidframes.Theme:UpdateAllRaidAuras()
                     else
                         if Raidframes.Module:IsEnabled() and Raidframes.Module.RF_AuraDisplay and Raidframes.Module.RF_AuraDisplay:IsEnabled() then

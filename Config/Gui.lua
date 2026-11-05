@@ -240,10 +240,10 @@ function Gui:OnInitialize()
         icon = [[Interface\AddOns\mUI\Media\Logo.png]]
     }}
 
-    -- Raidframes is currently only split out into its own tab for Mainline -
-    -- Mists/TBC/Vanilla still have raidframe options folded into the
+    -- Raidframes is currently only split out into its own tab for Mainline and
+    -- Forever - Mists/TBC/Vanilla still have raidframe options folded into the
     -- Unitframes tab (see Core.lua), so there's no category for them here.
-    if mUI:GameVersion()["Mainline"] then
+    if mUI:GameVersion()["Mainline"] or mUI:GameVersion()["Forever"] then
         table.insert(tabData, 4, {
             name = "Raidframes",
             app = "mUIOptions_Raidframes_Tab",

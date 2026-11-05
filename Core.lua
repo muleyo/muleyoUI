@@ -98,12 +98,15 @@ function Core:OnInitialize()
     Core.modules.misc = mUI:GetModule("mUI.Modules.Misc")
     Core.modules.profiles = mUI:GetModule("mUI.Modules.Profiles")
 
+    -- Raidframes have their own options tab (and modules) on Mainline and Forever
+    local hasRaidframes = mUI:GameVersion()["Mainline"] or mUI:GameVersion()["Forever"]
+
     -- Get Layouts
     Core.layouts = {}
     Core.layouts.general = mUI:GetModule("mUI.Config.Layouts.General")
     Core.layouts.actionbars = mUI:GetModule("mUI.Config.Layouts.Actionbars")
     Core.layouts.unitframes = mUI:GetModule("mUI.Config.Layouts.Unitframes")
-    if mUI:GameVersion()["Mainline"] then
+    if hasRaidframes then
         Core.layouts.raidframes = mUI:GetModule("mUI.Config.Layouts.Raidframes")
     end
     Core.layouts.castbars = mUI:GetModule("mUI.Config.Layouts.Castbars")
@@ -124,7 +127,7 @@ function Core:OnInitialize()
         Core.modules.actionbars:Enable()
     end
 
-    if Core.db.unitframes.enabled or (mUI:GameVersion()["Mainline"] and Core.db.unitframes.raidframes.enabled) then
+    if Core.db.unitframes.enabled or (hasRaidframes and Core.db.unitframes.raidframes.enabled) then
         Core.modules.unitframes:Enable()
     end
 
