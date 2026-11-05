@@ -497,6 +497,8 @@ local AURA_START_X = 5
 local AURA_START_Y = 4
 local AURA_MIRRORED_START_Y = -6
 local AURA_LINE_SIZE = 155
+-- Height an aura container keeps below its auras, an empty one is exactly this tall
+local AURA_BOTTOM_PADDING = 10
 
 function Theme:InitializeCustomAuraButton(auraFrame, isDebuff, borderColor, size, dispelBorder)
     CreateAuraButton(auraFrame, isDebuff, {
@@ -535,13 +537,13 @@ function Theme:CreateUnitAuraContainer(frame, unit)
     local buffContainer = CreateFrame("AuraContainer", nil, parent, "CustomAuraContainerTemplate")
     buffContainer:SetFrameLevel(math.max(parent:GetFrameLevel() + 2, 0))
     buffContainer:SetSize(1, 1)
-    buffContainer:SetFlowLayoutPadding(0, 0, 0, 10)
+    buffContainer:SetFlowLayoutPadding(0, 0, 0, AURA_BOTTOM_PADDING)
     frame.mUI_buffContainer = buffContainer
 
     local debuffContainer = CreateFrame("AuraContainer", nil, parent, "CustomAuraContainerTemplate")
     debuffContainer:SetFrameLevel(math.max(parent:GetFrameLevel() + 2, 0))
     debuffContainer:SetSize(1, 1)
-    debuffContainer:SetFlowLayoutPadding(0, 0, 0, 10)
+    debuffContainer:SetFlowLayoutPadding(0, 0, 0, AURA_BOTTOM_PADDING)
     frame.mUI_debuffContainer = debuffContainer
 
     -- Buff/Debuff sizes
@@ -565,6 +567,7 @@ function Theme:CreateUnitAuraContainer(frame, unit)
                 if buffC then
                     buffC:UpdateAllAuras()
                 end
+                Theme:AnchorSpellbarToContainer(auraFrame)
             end
         end)
     end
@@ -574,7 +577,7 @@ function Theme:CreateUnitAuraContainer(frame, unit)
     debuffContainer:SetUnit(unit)
 
     local spellbar = _G[frame:GetName() .. "SpellBar"]
-    if spellbar then
+    if spellbar and not frame.mUI_castbarOnTop then
         spellbar:ClearAllPoints()
         spellbar:SetPoint("TOPLEFT", buffContainer, "BOTTOMLEFT", 18, -2)
     end
@@ -735,6 +738,15 @@ function Theme:CreateUnitAuraContainer(frame, unit)
             debuffContainer:UpdateAllAuras()
             Theme:ReflowUnitAuraContainer(self)
             Theme:AnchorSpellbarToContainer(self)
+
+            -- The containers lay out their auras after this, check again once the new size is known
+            if not self.mUI_spellbarCheck then
+                self.mUI_spellbarCheck = true
+                C_Timer.After(0, function()
+                    self.mUI_spellbarCheck = nil
+                    Theme:AnchorSpellbarToContainer(self)
+                end)
+            end
         end)
     end
 
@@ -863,6 +875,54 @@ function Theme:ReflowUnitAuraContainer(frame)
     buffContainer:SetFlowLayoutMaximumLineSize(lineSize)
 end
 
+-- An empty container still has its flow layout padding as height
+local function IsAuraContainerEmpty(container)
+    local height = container:GetHeight()
+    if issecretvalue(height) then
+        return false
+    end
+
+    local _, _, paddingTop, paddingBottom = container:GetFlowLayoutPadding()
+    return height <= (paddingTop or 0) + (paddingBottom or 0) + 0.5
+end
+
+-- How much further down the bar has to hang when the target of target frame is shown and there are no auras to push it down
+-- (Blizzard puts it 46 below the frame then, an empty aura block ends roughly 14 below it)
+local TOT_SPELLBAR_CLEARANCE = 32
+
+-- Once an aura container has aura groups Blizzard does not let addons anchor frames to it, only the very first anchor (made
+-- before the groups exist) works. So the bar can never be moved back onto the container, instead the container gets taller:
+-- the bar hangs from its bottom edge, and an empty one reserves room for the target of target frame.
+function Theme:UpdateSpellbarClearance(frame)
+    local buffContainer = frame.mUI_buffContainer
+    local debuffContainer = frame.mUI_debuffContainer
+    if not buffContainer or not debuffContainer then
+        return
+    end
+
+    local padding = AURA_BOTTOM_PADDING
+    if frame.haveToT and frame.buffsOnTop ~= true and IsAuraContainerEmpty(debuffContainer) and IsAuraContainerEmpty(buffContainer) then
+        padding = padding + TOT_SPELLBAR_CLEARANCE / (buffContainer:GetScale() or 1)
+    end
+
+    local _, _, _, current = buffContainer:GetFlowLayoutPadding()
+    if not current or math.abs(current - padding) > 0.01 then
+        buffContainer:SetFlowLayoutPadding(0, 0, 0, padding)
+    end
+end
+
+local function AnchorSpellbarToFrame(frame, spellbar)
+    local pointX = frame.smallSize and 38 or 43
+    local pointY = frame.smallSize and 3 or 5
+    if frame.haveToT then
+        pointY = frame.smallSize and -48 or -46
+    end
+    spellbar.mUI_reanchoring = true
+    spellbar:ClearAllPoints()
+    spellbar:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", pointX, pointY)
+    spellbar.mUI_reanchoring = false
+end
+
 function Theme:AnchorSpellbarToContainer(frame)
     local spellbar = _G[frame:GetName() .. "SpellBar"]
     if not spellbar then
@@ -886,32 +946,42 @@ function Theme:AnchorSpellbarToContainer(frame)
         end)
     end
 
+    -- The Castbars module owns the position while "Castbar on top" is enabled (Targetpos / Focuspos)
+    if frame.mUI_castbarOnTop then
+        return
+    end
+
     local _, relTo = spellbar:GetPoint()
 
     if frame.buffsOnTop == true then
         if relTo ~= container then
             return
         end
-        local pointX = frame.smallSize and 38 or 43
-        local pointY = frame.smallSize and 3 or 5
-        if frame.haveToT then
-            pointY = frame.smallSize and -48 or -46
-        end
-        spellbar.mUI_reanchoring = true
-        spellbar:ClearAllPoints()
-        spellbar:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", pointX, pointY)
-        spellbar.mUI_reanchoring = false
+        AnchorSpellbarToFrame(frame, spellbar)
         return
     end
 
     -- Buffs below: the bar goes just below the aura block (container BOTTOM).
+    if frame.mUI_spellbarAnchorBlocked then
+        return
+    end
+
+    Theme:UpdateSpellbarClearance(frame)
+
     if relTo == container then
         return
     end
+
     spellbar.mUI_reanchoring = true
     spellbar:ClearAllPoints()
-    spellbar:SetPoint("TOPLEFT", container, "BOTTOMLEFT", 18, -2)
+    local anchored = pcall(spellbar.SetPoint, spellbar, "TOPLEFT", container, "BOTTOMLEFT", 18, -2)
     spellbar.mUI_reanchoring = false
+
+    if not anchored then
+        -- Not allowed (see UpdateSpellbarClearance), leave the bar where Blizzard puts it and stop trying
+        frame.mUI_spellbarAnchorBlocked = true
+        AnchorSpellbarToFrame(frame, spellbar)
+    end
 end
 
 -- ============================================================================
