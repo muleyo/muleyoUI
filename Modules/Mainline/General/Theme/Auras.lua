@@ -568,7 +568,7 @@ function Theme:CreateUnitAuraContainer(frame, unit)
     debuffContainer:SetUnit(unit)
 
     local spellbar = _G[frame:GetName() .. "SpellBar"]
-    if spellbar then
+    if spellbar and not frame.mUI_castbarOnTop then
         spellbar:ClearAllPoints()
         spellbar:SetPoint("TOPLEFT", buffContainer, "BOTTOMLEFT", 18, -2)
     end
@@ -873,6 +873,11 @@ function Theme:AnchorSpellbarToContainer(frame)
                 Theme:AnchorSpellbarToContainer(frame)
             end
         end)
+    end
+
+    -- The Castbars module owns the position while "Castbar on top" is enabled (Targetpos / Focuspos)
+    if frame.mUI_castbarOnTop then
+        return
     end
 
     local _, relTo = spellbar:GetPoint()
