@@ -8,7 +8,7 @@ function mUI:OnInitialize()
     self:RegisterChatCommand("mui", "SlashCommand")
     self:RegisterChatCommand("rl", ReloadUI)
     self:RegisterChatCommand("fs", function(msg)
-        if select(4, GetBuildInfo()) >= 120100 then
+        if DebugTools_LoadUI then
             DebugTools_LoadUI()
         else
             UIParentLoadAddOn("Blizzard_DebugTools")
