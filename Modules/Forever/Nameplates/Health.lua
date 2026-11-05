@@ -179,7 +179,8 @@ function Health:OnInitialize()
             end
         end
 
-        local classcolor = data.isFriend and Health.db.friendly.classcolor or (not data.isFriend and Health.db.classcolor)
+        local classcolor = data.isFriend and Health.db.friendly.classcolor or
+            (not data.isFriend and Health.db.classcolor)
 
         if data.isPlayer and classcolor then
             local classFile = data.classFileSecret
@@ -221,7 +222,8 @@ function Health:OnInitialize()
         end
 
         local unit = frame.unit
-        return unit ~= nil and strfind(unit, "nameplate", 1, true) == 1 and not frame:IsForbidden() and not ShouldSkipUnit(frame)
+        return unit ~= nil and strfind(unit, "nameplate", 1, true) == 1 and not frame:IsForbidden() and
+            not ShouldSkipUnit(frame)
     end
 
     local function GetInfo(frame, unit)
@@ -266,6 +268,11 @@ function Health:OnInitialize()
         end
         if bar.MaskTexture then
             bar.MaskTexture:Hide()
+        end
+
+        local levelFrame = frame.PlayerLevelDiffFrame
+        if levelFrame and levelFrame.selectedBorder then
+            levelFrame.selectedBorder:SetAlpha(0)
         end
     end
 
@@ -384,8 +391,8 @@ function Health:OnInitialize()
         local size = Health.db.name.size
         local flags = WithSlug("OUTLINE")
 
-        local objects = {{SystemFont_NamePlate, size}, {SystemFont_NamePlate_Outlined, size}, {SystemFont_NamePlateFixed, size},
-                         {SystemFont_LargeNamePlate, size + 1}, {SystemFont_LargeNamePlateFixed, size + 1}}
+        local objects = { { SystemFont_NamePlate, size }, { SystemFont_NamePlate_Outlined, size }, { SystemFont_NamePlateFixed, size },
+            { SystemFont_LargeNamePlate, size + 1 }, { SystemFont_LargeNamePlateFixed, size + 1 } }
 
         for i = 1, #objects do
             local object, height = objects[i][1], objects[i][2]
@@ -416,7 +423,8 @@ function Health:OnInitialize()
 
         name:ClearAllPoints()
         name:SetJustifyH(align)
-        name:SetPoint(anchor.point .. suffix, container, anchor.relativePoint .. suffix, config.x, config.y * anchor.ySign)
+        name:SetPoint(anchor.point .. suffix, container, anchor.relativePoint .. suffix, config.x,
+            config.y * anchor.ySign)
 
         name:SetTextHeight(config.size)
         name:SetWidth(0)
@@ -458,7 +466,8 @@ function Health:OnInitialize()
 
         local config = Health.db.health
         if config.percent and bar.mUIHealthTexts.percent then
-            bar.mUIHealthTexts.percent:SetFormattedText(healthFormat, UnitHealthPercent(frame.unit, true, CurveConstants.ScaleTo100))
+            bar.mUIHealthTexts.percent:SetFormattedText(healthFormat,
+                UnitHealthPercent(frame.unit, true, CurveConstants.ScaleTo100))
         end
         if config.value and bar.mUIHealthTexts.value and AbbreviateNumbers then
             bar.mUIHealthTexts.value:SetText(AbbreviateNumbers(UnitHealth(frame.unit)))
@@ -495,7 +504,7 @@ function Health:OnInitialize()
 
         local path = mUI.db.profile.general.fontpath
         local size = HEALTH_TEXT_SIZE
-        for _, text in ipairs({percentText, valueText}) do
+        for _, text in ipairs({ percentText, valueText }) do
             if path and (text.mUIFontPath ~= path or text.mUIFontSize ~= size) then
                 text.mUIFontPath, text.mUIFontSize = path, size
                 text:SetFont(path, size, WithSlug("OUTLINE"))
@@ -562,6 +571,47 @@ function Health:OnInitialize()
         end
     end
 
+    local function UpdateLevelFrame(frame, hideBar)
+        local levelFrame = frame.PlayerLevelDiffFrame
+        if not levelFrame then
+            return
+        end
+
+        if hideBar then
+            levelFrame:Hide()
+            frame.mUILevelHidden = true
+        elseif frame.mUILevelHidden then
+            frame.mUILevelHidden = nil
+            levelFrame:SetShown(levelFrame:ShouldDisplay(frame.unit))
+        end
+    end
+
+    -- On attackable units the level indicator loses its background box and the level text gets a bit bigger
+    local LEVEL_TEXT_SIZE_BONUS = 2
+
+    local function StyleLevelFrame(frame, data)
+        local levelFrame = frame.PlayerLevelDiffFrame
+        local icon = levelFrame and levelFrame.playerLevelDiffIcon
+        local text = levelFrame and levelFrame.playerLevelDiffText
+        if not icon or not text then
+            return
+        end
+
+        -- Blizzard sets the base height in ApplyFrameOptions, the same value is used to hand it back
+        local height = (NamePlateSetupOptions and NamePlateSetupOptions.levelFontHeight) or
+            NamePlateConstants.LEVEL_FONT_HEIGHT
+
+        if data and Core:Safe(data.canAttack, false) then
+            levelFrame.mUILevelStyled = true
+            icon:SetAlpha(0)
+            text:SetTextHeight(height + LEVEL_TEXT_SIZE_BONUS)
+        elseif levelFrame.mUILevelStyled then
+            levelFrame.mUILevelStyled = nil
+            icon:SetAlpha(1)
+            text:SetTextHeight(height)
+        end
+    end
+
     local function OnHealthColorUpdate(frame)
         if not Health:IsEnabled() or not IsNamePlate(frame) then
             return
@@ -580,6 +630,9 @@ function Health:OnInitialize()
         elseif not bar:IsShowOnlyName() then
             bar:SetShown(true)
         end
+
+        UpdateLevelFrame(frame, hideBar)
+        StyleLevelFrame(frame, data)
 
         local texture = BarTexture(data)
         if bar.mUITexture ~= texture then
@@ -630,7 +683,8 @@ function Health:OnInitialize()
         -- Players only
         name:SetShown(not (hideBar or (data.isFriend and data.isPlayer and Health.db.friendly.hidenames)))
 
-        local classcolor = replaced or (data.isFriend and Health.db.friendly.classcolor or (not data.isFriend and Health.db.classcolor))
+        local classcolor = replaced or
+            (data.isFriend and Health.db.friendly.classcolor or (not data.isFriend and Health.db.classcolor))
         local classFile = data.classFileSecret
         if not Core:Exists(classFile) then
             classFile = Units:GetClassFile(data)
@@ -660,6 +714,20 @@ function Health:OnInitialize()
         Health:SecureHook("CompactUnitFrame_UpdateHealth", UpdateHealthText)
     end
 
+    -- Blizzard shows the level indicator again whenever it updates the level, hide it again for hidden friendly health bars
+    if CompactUnitFrame_UpdatePlayerLevelDiff and not Health:IsHooked("CompactUnitFrame_UpdatePlayerLevelDiff") then
+        Health:SecureHook("CompactUnitFrame_UpdatePlayerLevelDiff", function(frame)
+            if not Health:IsEnabled() or not IsNamePlate(frame) then
+                return
+            end
+
+            local data = GetInfo(frame, frame.unit)
+            if data and HideFriendlyBar(data) then
+                UpdateLevelFrame(frame, true)
+            end
+        end)
+    end
+
     if not Health:IsHooked(NamePlateUnitFrameMixin, "UpdateAnchors") then
         Health:SecureHook(NamePlateUnitFrameMixin, "UpdateAnchors", function(unitFrame)
             ApplyLayout(unitFrame)
@@ -671,6 +739,11 @@ function Health:OnInitialize()
     if not Health:IsHooked(NamePlateUnitFrameMixin, "ApplyFrameOptions") then
         Health:SecureHook(NamePlateUnitFrameMixin, "ApplyFrameOptions", function(unitFrame)
             OnNameUpdate(unitFrame)
+
+            -- Blizzard resets the level text height here
+            if IsNamePlate(unitFrame) then
+                StyleLevelFrame(unitFrame, GetInfo(unitFrame, unitFrame.unit))
+            end
         end)
     end
 
@@ -683,17 +756,18 @@ function Health:OnInitialize()
     end
 
     if NamePlateClassificationFrameMixin and not Health:IsHooked(NamePlateClassificationFrameMixin, "UpdateClassificationIndicator") then
-        Health:SecureHook(NamePlateClassificationFrameMixin, "UpdateClassificationIndicator", function(classificationFrame)
-            if not Health.db or not Health.db.classification or not Health.db.classification.enabled then
-                return
-            end
+        Health:SecureHook(NamePlateClassificationFrameMixin, "UpdateClassificationIndicator",
+            function(classificationFrame)
+                if not Health.db or not Health.db.classification or not Health.db.classification.enabled then
+                    return
+                end
 
-            if issecretvalue(classificationFrame) or classificationFrame:IsForbidden() then
-                return
-            end
+                if issecretvalue(classificationFrame) or classificationFrame:IsForbidden() then
+                    return
+                end
 
-            OnHealthColorUpdate(classificationFrame:GetParent())
-        end)
+                OnHealthColorUpdate(classificationFrame:GetParent())
+            end)
     end
 
     local function RefreshFrame(frame)
@@ -715,6 +789,16 @@ function Health:OnInitialize()
         end
 
         bar:SetShown(false)
+
+        if frame.mUILevelHidden then
+            UpdateLevelFrame(frame, false)
+        end
+        StyleLevelFrame(frame, nil)
+
+        local levelFrame = frame.PlayerLevelDiffFrame
+        if levelFrame and levelFrame.selectedBorder then
+            levelFrame.selectedBorder:SetAlpha(1)
+        end
 
         if bar.bgTexture then
             bar.bgTexture:SetAlpha(1)
@@ -806,6 +890,30 @@ function Health:OnInitialize()
         local frame = namePlate and namePlate.UnitFrame
         RefreshFrame(frame)
         previousFocusFrame = frame
+    end)
+
+    local previousTargetFrame
+
+    -- Nothing in Blizzard's target change flow touches the health color, so mUI's border would keep showing the previous target state
+    local function RefreshTargetFrame(frame)
+        if not frame or frame:IsForbidden() or not frame.unit then
+            return
+        end
+
+        -- Unit data is cached per frame, drop it so isTarget is read again
+        Core:InvalidateData(frame:GetParent())
+        OnHealthColorUpdate(frame)
+    end
+
+    local targetWatcher = CreateFrame("Frame")
+    targetWatcher:RegisterEvent("PLAYER_TARGET_CHANGED")
+    targetWatcher:SetScript("OnEvent", function()
+        RefreshTargetFrame(previousTargetFrame)
+
+        local namePlate = C_NamePlate.GetNamePlateForUnit("target", false)
+        local frame = namePlate and namePlate.UnitFrame
+        RefreshTargetFrame(frame)
+        previousTargetFrame = frame
     end)
 
     function Health:Update()

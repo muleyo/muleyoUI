@@ -11,6 +11,15 @@ local function Clean(value)
     return value
 end
 
+local function FullUnitName(unit)
+    local name, surname = UnitName(unit)
+    if IsSecret(name) or IsSecret(surname) or name == nil or surname == nil or surname == "" then
+        return name
+    end
+
+    return name .. (Constants.CharacterNameSeparatorConsts.CHARACTERNAME_SURNAME_SEPARATOR or " ") .. surname
+end
+
 function Core:OnInitialize()
     -- Load Database
     Core.db = mUI.db.profile.nameplates
@@ -160,29 +169,37 @@ function Core:OnInitialize()
         end
 
         local padding = Core.db.hitbox or 0
+
+        local reachTop, reachBottom = 0, 0
         local name = frame and frame.name
-        local topFrame, bottomFrame = health, health
         if name and name:IsShown() then
-            if Core.db.name and Core.db.name.anchor == "BELOW" then
-                bottomFrame = name
+            local config = Core.db.name
+            local height = name:GetStringHeight()
+            if not height or height <= 0 then
+                height = (config and config.size) or 12
+            end
+
+            local reach = math.max(0, ((config and config.y) or 0) + height)
+            if config and config.anchor == "BELOW" then
+                reachBottom = reach
             else
-                topFrame = name
+                reachTop = reach
             end
         end
 
-        namePlate:SetHitTestPoints({{
+        namePlate:SetHitTestPoints({ {
             point = "TOPLEFT",
-            relativeTo = topFrame,
+            relativeTo = health,
             relativePoint = "TOPLEFT",
             offsetX = -padding,
-            offsetY = padding
+            offsetY = padding + reachTop
         }, {
             point = "BOTTOMRIGHT",
-            relativeTo = bottomFrame,
+            relativeTo = health,
             relativePoint = "BOTTOMRIGHT",
             offsetX = padding,
-            offsetY = -padding
-        }})
+            offsetY = -(padding + reachBottom)
+        } })
     end
 
     function Core:AcquirePlate(namePlate)
@@ -306,7 +323,7 @@ function Core:OnInitialize()
 
         local reaction = UnitReaction(unit, "player")
         local isPlayer = UnitIsPlayer(unit)
-        local displayName = UnitName(unit)
+        local displayName = FullUnitName(unit)
 
         data.stamp = GetTime()
         data.unit = unit

@@ -4,7 +4,8 @@ function Auras:OnInitialize()
     -- Load Database
     Auras.db = mUI.db.profile.nameplates
 
-    if select(4, GetBuildInfo()) < 120100 then
+    local filters = AuraUtil and AuraUtil.AuraFilters
+    if not (filters and filters.CrowdControl and filters.BigDefensive and filters.Important and AuraUtil.CreateFilterString) then
         return
     end
 
@@ -166,7 +167,8 @@ function Auras:OnInitialize()
         })
         plate.AuraLeft = left
 
-        local friendlyCC = NewContainer(plate, "friendlycc", "CENTER", AnchorUtil.FlowDirection.Right, AnchorUtil.FlowDirection.Down)
+        local friendlyCC = NewContainer(plate, "friendlycc", "CENTER", AnchorUtil.FlowDirection.Right,
+            AnchorUtil.FlowDirection.Down)
         friendlyCC:SetFrameLevel(plate:GetFrameLevel() + 6)
         friendlyCC:AddAuraGroup("FriendlyCrowdControl", CC_FILTER, {
             maxFrameCount = 1,
@@ -213,7 +215,8 @@ function Auras:OnInitialize()
     end
 
     local function ShouldShowFriendlyCC(plate, data, showOnlyName)
-        return not showOnlyName and data.isFriend and Auras.db.classicons.enabled and Auras.db.classicons.friendly and plate.ClassIcon ~= nil
+        return not showOnlyName and data.isFriend and Auras.db.classicons.enabled and Auras.db.classicons.friendly and
+        plate.ClassIcon ~= nil
     end
 
     function Auras.handler.Update(plate, data)
@@ -411,10 +414,19 @@ function Auras:OnInitialize()
 end
 
 function Auras:OnEnable()
+    -- OnInitialize leaves Core unset when the client does not support the aura filters
+    if not Auras.Core then
+        return
+    end
+
     Auras.db = mUI.db.profile.nameplates
     Auras.Core:Register("Auras", Auras.handler)
 end
 
 function Auras:OnDisable()
+    if not Auras.Core then
+        return
+    end
+
     Auras.Core:Unregister("Auras")
 end
