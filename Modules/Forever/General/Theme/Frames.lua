@@ -563,20 +563,36 @@ function Theme:PlayerSpells()
     if PlayerSpellsFrame then
         -- Blacklist frames
         Theme.blacklist[select(4, PlayerSpellsFrame.TalentsFrame:GetRegions())] = true
-        Theme.blacklist[select(7, PlayerSpellsFrame.SpellBookFrame.CategoryTabSystem.tabs[1]:GetRegions())] = true
-        Theme.blacklist[select(7, PlayerSpellsFrame.SpellBookFrame.CategoryTabSystem.tabs[2]:GetRegions())] = true
-        Theme.blacklist[select(7, PlayerSpellsFrame.SpellBookFrame.CategoryTabSystem.tabs[3]:GetRegions())] = true
-        Theme.blacklist[select(7, PlayerSpellsFrame.SpellBookFrame.CategoryTabSystem.tabs[4]:GetRegions())] = true
+
+        local function SkinCategoryTab(tab)
+            if not tab then
+                return
+            end
+
+            for _, key in ipairs({ "Icon", "SquareBackgroundActive" }) do
+                if tab[key] then
+                    Theme.blacklist[tab[key]] = true
+                end
+            end
+            mUI:Skin(tab)
+        end
+
+        local categoryTabSystem = PlayerSpellsFrame.SpellBookFrame.CategoryTabSystem
+        for _, tab in ipairs(categoryTabSystem.tabs) do
+            SkinCategoryTab(tab)
+        end
+
+        if not Theme:IsHooked(categoryTabSystem, "AddTab") then
+            Theme:SecureHook(categoryTabSystem, "AddTab", function(tabSystem)
+                SkinCategoryTab(tabSystem.tabs[#tabSystem.tabs])
+            end)
+        end
 
         -- Skin frames
         mUI:Skin(PlayerSpellsFrame)
         mUI:Skin(PlayerSpellsFrame.SpecFrame)
         mUI:Skin(PlayerSpellsFrame.SpellBookFrame)
         mUI:Skin(PlayerSpellsFrame.NineSlice)
-        mUI:Skin(PlayerSpellsFrame.SpellBookFrame.CategoryTabSystem.tabs[1])
-        mUI:Skin(PlayerSpellsFrame.SpellBookFrame.CategoryTabSystem.tabs[2])
-        mUI:Skin(PlayerSpellsFrame.SpellBookFrame.CategoryTabSystem.tabs[3])
-        mUI:Skin(PlayerSpellsFrame.SpellBookFrame.CategoryTabSystem.tabs[4])
         PlayerSpellsFrame.SpellBookFrame.PagedSpellsFrame.PagingControls.PageText:SetVertexColor(0.8, 0.8, 0.8)
         mUI:Skin(PlayerSpellsFrame)
         mUI:Skin(PlayerSpellsFrame.TalentsFrame)
@@ -1030,15 +1046,24 @@ function Theme:Character()
             PaperDollInnerBorderBottom2 }, true)
 end
 
+function Theme:SwingTimers()
+    -- Swing timers (Main Hand, Off Hand and Ranged), the status bar with the fill, pip and labels keeps its own colors
+    for _, frame in ipairs({ SwingTimerMainHandFrame, SwingTimerOffHandFrame, SwingTimerRangedFrame }) do
+        mUI:Skin({ frame.Background, frame.Border }, true)
+    end
+end
+
 function Theme:Chat()
-    -- Chat
-    mUI:Skin(ChatFrame1EditBox)
-    mUI:Skin(ChatFrame2EditBox)
-    mUI:Skin(ChatFrame3EditBox)
-    mUI:Skin(ChatFrame4EditBox)
-    mUI:Skin(ChatFrame5EditBox)
-    mUI:Skin(ChatFrame6EditBox)
-    mUI:Skin(ChatFrame7EditBox)
+    -- Chat, the editboxes belong to the Chat module
+    if mUI.db.profile.chat.enabled then
+        mUI:Skin(ChatFrame1EditBox)
+        mUI:Skin(ChatFrame2EditBox)
+        mUI:Skin(ChatFrame3EditBox)
+        mUI:Skin(ChatFrame4EditBox)
+        mUI:Skin(ChatFrame5EditBox)
+        mUI:Skin(ChatFrame6EditBox)
+        mUI:Skin(ChatFrame7EditBox)
+    end
     mUI:Skin(ChannelFrame)
     mUI:Skin(ChannelFrame.NineSlice)
     mUI:Skin(ChannelFrame.LeftInset.NineSlice)
@@ -1507,7 +1532,8 @@ end
 function Theme:Castbars()
     -- Castbars
     mUI:Skin(
-        { PlayerCastingBarFrame.Background, TargetFrameSpellBar.Background, TargetFrameSpellBar.Border,
+        { PlayerCastingBarFrame.Border, PlayerCastingBarFrame.Background, TargetFrameSpellBar.Background,
+            TargetFrameSpellBar.Border,
             FocusFrameSpellBar
                 .Background,
             FocusFrameSpellBar.Border, Boss1TargetFrameSpellBar.Background, Boss1TargetFrameSpellBar.Border,
@@ -1787,6 +1813,7 @@ function Theme:Update()
     Theme:PlayerSpells()
     Theme:TimeManager()
     Theme:Actionbars()
+    Theme:SwingTimers()
     Theme:AddonList()
     Theme:Bags()
     Theme:Bank()
