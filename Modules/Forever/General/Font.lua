@@ -76,7 +76,16 @@ function Font:OnInitialize()
                   UserScaledFontGameDisableSmall, UserScaledFontGameHighlightSmall, UserScaledFontGameNormalMed2, UserScaledFontGame15Shadow,
                   UserScaledFontGameNormalLarge, UserScaledFontGameHighlightLarge, UserScaledChatFontNormal, UserScaledFontNumberNormalRight,
                   UserScaledFontNumberNormalRightRed, UserScaledFontNumberNormalRightYellow, UserScaledFontNumberNormalRightGray,
-                  UserScaledFontNumberNormalRightGreen, UserScaledFontSystem15Shadow}
+                  UserScaledFontNumberNormalRightGreen, UserScaledFontSystem15Shadow, AchievementCriteriaFont, AchievementDateFont,
+                  AchievementDescriptionFont, AchievementPointsFont, AchievementPointsFontSmall, ArtifactAppearanceSetHighlightFont,
+                  ArtifactAppearanceSetNormalFont, CharacterCreateTooltipFont, CommentatorCCFont, CommentatorDampeningFont, CommentatorFontMedium,
+                  CommentatorFontSmall, CommentatorTeamNameFont, CommentatorTeamScoreFont, CommentatorVictoryFanfare, CommentatorVictoryFanfareTeam,
+                  GlueFontDisable, GlueFontDisableExtraSmall, GlueFontDisableLarge, GlueFontHighlight, GlueFontHighlightExtraSmall,
+                  GlueFontHighlightLarge, GlueFontNormal, GlueFontNormalExtraSmall, GlueFontNormalLarge, NumberFontNormalLargeRightGreen,
+                  NumberFont_GameLarge, NumberFont_Outline_Large2, OptionsFontHighlight, OptionsFontHighlightSmall, OptionsFontLarge,
+                  OptionsFontSmall, QuestDifficulty_Difficult, QuestDifficulty_Header, QuestDifficulty_Impossible, QuestDifficulty_Standard,
+                  QuestDifficulty_Trivial, QuestDifficulty_VeryDifficult, System15Font_Shadow, SystemFont_NamePlateLevel, UserScaledFontSystem_Body,
+                  UserScaledFontSystem_Header, WhiteLargeNumberFont}
 
     -- Functions
     function Font:Update()
