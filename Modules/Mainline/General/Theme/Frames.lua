@@ -997,14 +997,16 @@ function Theme:Character()
 end
 
 function Theme:Chat()
-    -- Chat
-    mUI:Skin(ChatFrame1EditBox)
-    mUI:Skin(ChatFrame2EditBox)
-    mUI:Skin(ChatFrame3EditBox)
-    mUI:Skin(ChatFrame4EditBox)
-    mUI:Skin(ChatFrame5EditBox)
-    mUI:Skin(ChatFrame6EditBox)
-    mUI:Skin(ChatFrame7EditBox)
+    -- Chat, the editboxes belong to the Chat module
+    if mUI.db.profile.chat.enabled then
+        mUI:Skin(ChatFrame1EditBox)
+        mUI:Skin(ChatFrame2EditBox)
+        mUI:Skin(ChatFrame3EditBox)
+        mUI:Skin(ChatFrame4EditBox)
+        mUI:Skin(ChatFrame5EditBox)
+        mUI:Skin(ChatFrame6EditBox)
+        mUI:Skin(ChatFrame7EditBox)
+    end
     mUI:Skin(ChannelFrame)
     mUI:Skin(ChannelFrame.NineSlice)
     mUI:Skin(ChannelFrame.LeftInset.NineSlice)
