@@ -255,11 +255,15 @@ function Core:OnInitialize()
 
         function border:SetThickness(size)
             local px = math.max(1, size or 1)
-            if self.appliedThickness == px then
+            local scale = self:GetEffectiveScale()
+            if self.appliedThickness == px and self.appliedScale and math.abs(self.appliedScale - scale) < 0.001 then
                 return
             end
 
+            -- PixelUtil works out whole pixels for the scale the border has right now
             self.appliedThickness = px
+            self.appliedScale = scale
+            self.thickness = px
 
             self:ClearAllPoints()
             PixelUtil.SetPoint(self, "TOPLEFT", anchorTo, "TOPLEFT", -px, px)
@@ -273,6 +277,21 @@ function Core:OnInitialize()
 
         border:SetThickness(thickness or 1)
         border:SetBorderColor(0, 0, 0, 1)
+
+        -- The engine rescales nameplates (the targeted one, and by distance), and a thickness worked out for the old scale is not a
+        -- whole number of pixels anymore, which shows as an uneven border. Check the scale a few times a second while it is visible.
+        local sinceCheck = 0
+        border:SetScript("OnUpdate", function(self, elapsed)
+            sinceCheck = sinceCheck + elapsed
+            if sinceCheck < 0.1 then
+                return
+            end
+
+            sinceCheck = 0
+            if self.thickness and self.appliedScale and math.abs(self.appliedScale - self:GetEffectiveScale()) >= 0.001 then
+                self:SetThickness(self.thickness)
+            end
+        end)
 
         return border
     end
