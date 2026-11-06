@@ -174,8 +174,9 @@ function Core:OnInitialize()
         local name = frame and frame.name
         if name and name:IsShown() then
             local config = Core.db.name
+            -- The height is protected while the unit name is (a secret string), the configured size stands in for it then
             local height = name:GetStringHeight()
-            if not height or height <= 0 then
+            if not height or IsSecret(height) or height <= 0 then
                 height = (config and config.size) or 12
             end
 

@@ -1080,6 +1080,23 @@ local function RebuildRaidBuffExclude()
 end
 RebuildRaidBuffExclude()
 
+-- Same rule as Blizzard's AuraUtil.ShouldDisplayBuff, which can't be called from here: it reads caches of its own that tainted code
+-- is not allowed to access
+local function ShouldDisplayRaidBuff(sourceUnit, spellId, canApplyAura)
+    local visibilityType = UnitAffectingCombat("player") and Enum.SpellAuraVisibilityType.RaidInCombat or
+        Enum.SpellAuraVisibilityType.RaidOutOfCombat
+    local hasCustom, alwaysShowMine, showForMySpec = C_Spell.GetVisibilityInfo(spellId, visibilityType)
+    local isMine = sourceUnit == "player" or sourceUnit == "pet" or sourceUnit == "vehicle"
+
+    if hasCustom then
+        return showForMySpec or (alwaysShowMine and isMine)
+    elseif isMine and canApplyAura then
+        return not C_Spell.IsSelfBuff(spellId)
+    end
+
+    return false
+end
+
 -- Returns true when the set of hidden spells changed
 local function ClassifyRaidBuff(aura)
     if issecretvalue(aura) then
@@ -1093,7 +1110,7 @@ local function ClassifyRaidBuff(aura)
     end
 
     local hidden = raidBuffHidden[UnitAffectingCombat("player") and true or false]
-    local shown = AuraUtil.ShouldDisplayBuff(sourceUnit, spellId, aura.canApplyAura) and true or false
+    local shown = ShouldDisplayRaidBuff(sourceUnit, spellId, aura.canApplyAura) and true or false
     if shown == (hidden[spellId] == nil) then
         return false
     end
