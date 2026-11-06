@@ -1066,6 +1066,120 @@ for id in pairs(RAID_DEFENSIVES) do
     RAID_CURATED_EXCLUDE[id] = true
 end
 
+local raidBuffHidden = { [true] = {}, [false] = {} }
+local raidBuffExclude = {}
+
+local function RebuildRaidBuffExclude()
+    wipe(raidBuffExclude)
+    for id in pairs(RAID_CURATED_EXCLUDE) do
+        raidBuffExclude[id] = true
+    end
+    for id in pairs(raidBuffHidden[UnitAffectingCombat("player") and true or false]) do
+        raidBuffExclude[id] = true
+    end
+end
+RebuildRaidBuffExclude()
+
+-- Returns true when the set of hidden spells changed
+local function ClassifyRaidBuff(aura)
+    if issecretvalue(aura) then
+        return false
+    end
+
+    local spellId = aura.spellId
+    local sourceUnit = aura.sourceUnit
+    if not spellId or issecretvalue(spellId) or issecretvalue(sourceUnit) or issecretvalue(aura.canApplyAura) then
+        return false
+    end
+
+    local hidden = raidBuffHidden[UnitAffectingCombat("player") and true or false]
+    local shown = AuraUtil.ShouldDisplayBuff(sourceUnit, spellId, aura.canApplyAura) and true or false
+    if shown == (hidden[spellId] == nil) then
+        return false
+    end
+
+    hidden[spellId] = (not shown) or nil
+    return true
+end
+
+local function ScanRaidBuffs(unit)
+    local ok, auras = pcall(C_UnitAuras.GetUnitAuras, unit, "HELPFUL|PLAYER")
+    if not ok or issecretvalue(auras) or type(auras) ~= "table" then
+        return false
+    end
+
+    local changed = false
+    for _, aura in ipairs(auras) do
+        changed = ClassifyRaidBuff(aura) or changed
+    end
+
+    return changed
+end
+
+function Theme:UpdateRaidBuffExclusions()
+    RebuildRaidBuffExclude()
+
+    for frame in pairs(Theme.raidAuraFrames or {}) do
+        local data = frame and frame.mUI_AD
+        if data and data.buffContainer and not frame:IsForbidden() then
+            data.buffsFilters.excludeSpellIDs = raidBuffExclude
+            data.buffContainer:SetAuraGroupCandidateFilters("Buffs", data.buffsFilters)
+        end
+    end
+end
+
+-- New buffs are classified as they show up, the ticker that refreshes the raid frames covers everything else
+function Theme:InstallRaidBuffClassifier()
+    if Theme.raidBuffEvents then
+        return
+    end
+
+    Theme.raidBuffEvents = CreateFrame("Frame")
+    Theme.raidBuffEvents:RegisterEvent("UNIT_AURA")
+    Theme.raidBuffEvents:RegisterEvent("PLAYER_REGEN_DISABLED")
+    Theme.raidBuffEvents:RegisterEvent("PLAYER_REGEN_ENABLED")
+    Theme.raidBuffEvents:SetScript("OnEvent", function(_, event, unit, updateInfo)
+        if event ~= "UNIT_AURA" then
+            -- The visibility data differs in and out of combat, classify what is on the raid frames right now for the new state
+            for frame in pairs(Theme.raidAuraFrames or {}) do
+                local frameUnit = not frame:IsForbidden() and (frame.displayedUnit or frame.unit)
+                if frameUnit then
+                    ScanRaidBuffs(frameUnit)
+                end
+            end
+            Theme:UpdateRaidBuffExclusions()
+            return
+        end
+
+        if issecretvalue(unit) or not (unit == "player" or unit:find("^party") or unit:find("^raid")) then
+            return
+        end
+
+        -- In combat the update info can hold protected values that can't be tested, treat that like a full update and scan the unit
+        local addedAuras
+        if type(updateInfo) == "table" and not issecretvalue(updateInfo) and not issecretvalue(updateInfo.isFullUpdate) and
+            not updateInfo.isFullUpdate and not issecretvalue(updateInfo.addedAuras) then
+            addedAuras = updateInfo.addedAuras
+        end
+
+        local changed = false
+        if addedAuras then
+            for _, aura in ipairs(addedAuras) do
+                if not issecretvalue(aura) and not issecretvalue(aura.isHelpful) and aura.isHelpful and
+                    not issecretvalue(aura.isFromPlayerOrPlayerPet) and aura.isFromPlayerOrPlayerPet then
+                    changed = ClassifyRaidBuff(aura) or changed
+                end
+            end
+        else
+            changed = ScanRaidBuffs(unit)
+        end
+
+        if changed then
+            Theme:UpdateRaidBuffExclusions()
+        end
+    end)
+end
+
 local BLIZZARD_RAID_AURA_CVARS = { "raidFramesDisplayBuffs", "raidFramesDisplayDebuffs", "raidFramesCenterBigDefensive" }
 
 function Theme:DisableDefaultRaidAuras(status)
@@ -1126,22 +1240,23 @@ function Theme:EnsureRaidAuraContainers(frame, data)
     buffContainer.mUI_groupKeys = { "Buffs", "BuffsImportant" }
     buffContainer:SetFlowLayoutAnchorPoint("BOTTOMRIGHT")
     buffContainer:SetFlowLayoutGrowthDirection(AnchorUtil.FlowDirection.Left, AnchorUtil.FlowDirection.Up)
+    Theme:InstallRaidBuffClassifier()
     data.buffsFilters = {
-        excludeSpellIDs = RAID_CURATED_EXCLUDE,
+        -- Shared with all raid frames and kept up to date by the classifier above (Blizzard's raid buff rule)
+        excludeSpellIDs = raidBuffExclude,
         isFriendly = true
     }
-    buffContainer:AddAuraGroup("Buffs",
-        RaidFilter("HELPFUL", "PLAYER", "RAID_IN_COMBAT", "!BIG_DEFENSIVE", "!EXTERNAL_DEFENSIVE"), {
-            maxFrameCount = RAID_MAX_BUFFS,
-            candidateFilters = data.buffsFilters,
-            initializeFrame = function(auraFrame)
-                InitRaidAuraButton(auraFrame, buffContainer, "Buffs", false)
-            end,
-            layout = {
-                elementSpacing = RAID_ICON_GAP,
-                lineSpacing = RAID_ICON_GAP
-            }
-        })
+    buffContainer:AddAuraGroup("Buffs", RaidFilter("HELPFUL", "PLAYER", "!BIG_DEFENSIVE", "!EXTERNAL_DEFENSIVE"), {
+        maxFrameCount = RAID_MAX_BUFFS,
+        candidateFilters = data.buffsFilters,
+        initializeFrame = function(auraFrame)
+            InitRaidAuraButton(auraFrame, buffContainer, "Buffs", false)
+        end,
+        layout = {
+            elementSpacing = RAID_ICON_GAP,
+            lineSpacing = RAID_ICON_GAP
+        }
+    })
     buffContainer:AddAuraGroup("BuffsImportant", RaidFilter("HELPFUL", "PLAYER"), {
         maxFrameCount = RAID_MAX_BUFFS,
         candidateFilters = {
@@ -1337,6 +1452,10 @@ function Theme:UpdateRaidAuraContainers(frame, data, unit, unreachable, notAssis
     end
 
     Theme:ApplyRaidAuraDurationFilters(data)
+
+    if ScanRaidBuffs(unit) then
+        Theme:UpdateRaidBuffExclusions()
+    end
 
     -- Sizes
     local buffS = buffContainer.mUI_groupSizes.Buffs or buffSize
