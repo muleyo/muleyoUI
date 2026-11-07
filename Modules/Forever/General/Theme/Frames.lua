@@ -1701,6 +1701,17 @@ function Theme:Frames()
     mUI:Skin(ReadyStatus.Border)
     Theme:StyleTooltip(QueueStatusFrame)
 
+    -- LFG Frame
+    mUI:Skin(LFGListingFrame)
+    mUI:Skin(LFGListingFrame.NineSlice)
+    mUI:Skin(LFGBrowseFrame)
+    mUI:Skin(LFGBrowseFrame.NineSlice)
+    mUI:Skin(LFGWhoListFrame)
+    mUI:Skin(LFGWhoListFrame.NineSlice)
+    mUI:Skin(
+        { LFGParentFrame.ListingTab.Background, LFGParentFrame.BrowsingTab.Background, LFGParentFrame.WhoListingTab
+            .Background }, true)
+
     -- PVP Scoreboard
     mUI:Skin(PVPMatchScoreboard.Content)
     mUI:Skin(PVPScoreboardTab1)
