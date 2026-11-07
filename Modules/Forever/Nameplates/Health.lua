@@ -82,9 +82,10 @@ function Health:OnInitialize()
             return false
         end
 
+        -- Finished objectives stay in the tooltip (with a check mark), only an open one makes it a quest mob
         local isQuestMob = false
         for _, line in ipairs(info.lines) do
-            if line.type == Enum.TooltipDataLineType.QuestObjective then
+            if line.type == Enum.TooltipDataLineType.QuestObjective and not Core:Safe(line.completed, false) then
                 isQuestMob = true
                 break
             end
@@ -104,6 +105,12 @@ function Health:OnInitialize()
 
         local classification = UnitClassification(unit)
         local allowInstanceTiers = inRelevantInstance or not Health.db.classification.instancesonly
+
+        -- Blizzard's own boss test (it puts the winged frame on the target frame). The level checks below compare against the level of the
+        -- dungeon, which doesn't hold for every boss here, and a boss with mana would end up as a caster
+        if allowInstanceTiers and Core:Safe(UnitIsBossMob(unit), false) then
+            return "boss"
+        end
 
         if classification == "elite" then
             if not allowInstanceTiers then
@@ -916,6 +923,26 @@ function Health:OnInitialize()
         previousTargetFrame = frame
     end)
 
+    -- The quest mob colors are cached per mob. A quest update drops the cache and recolors the plates that are already up, otherwise
+    -- they keep the color until something else touches them. Quest updates come in bursts, so this waits a moment.
+    local questRefreshPending
+
+    function Health:OnQuestLogUpdate()
+        wipe(questMobCache)
+
+        if questRefreshPending then
+            return
+        end
+
+        questRefreshPending = true
+        C_Timer.After(0.2, function()
+            questRefreshPending = nil
+            for frame in pairs(activeFrames) do
+                OnHealthColorUpdate(frame)
+            end
+        end)
+    end
+
     function Health:Update()
         RefreshCachedStyle()
         ApplyNamePlateFontObjects()
@@ -930,7 +957,7 @@ function Health:OnEnable()
     Health:RefreshCachedStyle()
     Health:RegisterEvent("PLAYER_ENTERING_WORLD", "RefreshInstanceInfo")
     Health:RegisterEvent("ZONE_CHANGED_NEW_AREA", "RefreshInstanceInfo")
-    Health:RegisterEvent("QUEST_LOG_UPDATE", "RefreshInstanceInfo")
+    Health:RegisterEvent("QUEST_LOG_UPDATE", "OnQuestLogUpdate")
     Health:RefreshInstanceInfo()
 end
 
