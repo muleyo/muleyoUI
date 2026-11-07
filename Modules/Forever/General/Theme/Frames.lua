@@ -364,10 +364,10 @@ end
 
 function Theme:FlightMap()
     -- Flightmap
-    if FlightMapFrame then
-        mUI:Skin(FlightMapFrame)
-        mUI:Skin(FlightMapFrame.BorderFrame)
-        mUI:Skin(FlightMapFrame.BorderFrame.NineSlice)
+    if TaxiFrame then
+        mUI:Skin(TaxiFrame)
+        TaxiFrame.InsetBg:SetDesaturated(false)
+        TaxiFrame.InsetBg:SetVertexColor(1, 1, 1)
     end
 end
 
