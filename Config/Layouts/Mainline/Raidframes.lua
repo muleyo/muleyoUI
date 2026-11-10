@@ -290,7 +290,7 @@ function Raidframes:OnInitialize()
             },
             extraMouseButtons = {
                 name = "Mouse4/Mouse5 Keybinds",
-                desc = "Allow keybinds on Mouse4/Mouse5 (e.g. mouseover macros) to work while hovering over a Party/Raidframe\n\n|cffffff00Info:|r Blizzard's frames block these buttons, so the click is forwarded to the bound actionbutton",
+                desc = "Allow keybinds on Mouse4/Mouse5 (e.g. mouseover macros) to work while hovering over a Party/Raidframe or the Player/Target/Focus frame\n\n|cffffff00Info:|r Blizzard's frames block these buttons, so the click is forwarded to the bound actionbutton\n\nHolding Shift, Ctrl or Alt uses the keybind of the plain button, unless that modifier has a keybind of its own",
                 type = "toggle",
                 set = function(_, val)
                     mUI.db.profile.unitframes.raidframes.extraMouseButtons = val

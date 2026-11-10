@@ -1,12 +1,14 @@
 local RF_ExtraMouseButtons = mUI:NewModule("mUI.Modules.Unitframes.Raidframes_ExtraMouseButtons", "AceHook-3.0", "AceEvent-3.0")
 
--- Mouse4/Mouse5 on Blizzard raid/party frames.
+-- Mouse4/Mouse5 on Blizzard raid/party frames and the player/target/focus frames.
 -- The compact frames are secure buttons that consume every mouse click, so keybinds on BUTTON4/BUTTON5 never fire while hovering them.
 -- Instead, the frames forward those clicks to the action button the binding points at (mouseover macros then resolve to the hovered frame).
+-- The other unit frames are secure buttons too and go through the same forwarding, a modifier needs it there as well.
 function RF_ExtraMouseButtons:OnInitialize()
     -- Variables
     RF_ExtraMouseButtons.frames = {}
     RF_ExtraMouseButtons.pending = false
+    RF_ExtraMouseButtons.unitFrames = {}
 
     -- Tables
     RF_ExtraMouseButtons.multiBars = {
@@ -40,7 +42,13 @@ function RF_ExtraMouseButtons:OnInitialize()
         for _, mod in ipairs(RF_ExtraMouseButtons.modifiers) do
             local prefix = mod:lower()
             for i = 4, 5 do
-                local button = RF_ExtraMouseButtons:ResolveButton(GetBindingAction(mod .. "BUTTON" .. i, true))
+                local action = GetBindingAction(mod .. "BUTTON" .. i, true)
+                if not action or action == "" then
+                    -- A modifier without a binding of its own uses the plain button's, like the game does for keybinds (macros
+                    -- with [mod:shift] and the like are bound once, not once per modifier)
+                    action = GetBindingAction("BUTTON" .. i, true)
+                end
+                local button = RF_ExtraMouseButtons:ResolveButton(action)
                 frame:SetAttribute(prefix .. "type" .. i, button and "click" or nil)
                 frame:SetAttribute(prefix .. "clickbutton" .. i, button)
             end
@@ -131,6 +139,22 @@ function RF_ExtraMouseButtons:OnEnable()
     -- SetUnit re-runs SecureUnitButton_OnLoad, which resets the click registration, so hook after it
     RF_ExtraMouseButtons:SecureHook("CompactUnitFrame_SetUnit", function(frame)
         if RF_ExtraMouseButtons:IsCompactFrame(frame) then
+            RF_ExtraMouseButtons:FixFrame(frame)
+        end
+    end)
+
+    -- Player, target and focus frame. They exist long before this module does, so they are picked up by name (and again if Blizzard
+    -- sets their secure click handling up again)
+    wipe(RF_ExtraMouseButtons.unitFrames)
+    for _, name in ipairs({"PlayerFrame", "TargetFrame", "FocusFrame"}) do
+        local frame = _G[name]
+        if frame then
+            RF_ExtraMouseButtons.unitFrames[frame] = true
+            RF_ExtraMouseButtons:FixFrame(frame)
+        end
+    end
+    RF_ExtraMouseButtons:SecureHook("SecureUnitButton_OnLoad", function(frame)
+        if RF_ExtraMouseButtons.unitFrames[frame] then
             RF_ExtraMouseButtons:FixFrame(frame)
         end
     end)
