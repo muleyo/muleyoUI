@@ -353,6 +353,28 @@ function Unitframes:OnInitialize()
                 end,
                 order = 18
             },
+            threat = {
+                name = "Always show Threat %",
+                desc = "Show the Threat Percentage above the Target and Focus Frame, in a group or not\n\n|cffffff00Info:|r Sets the CVars threatShowNumeric and threatWarning, which have no option in the settings",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.threat = val
+
+                    if not Unitframes.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Unitframes.Module.Threat:Enable()
+                    else
+                        Unitframes.Module.Threat:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.threat
+                end,
+                order = 19
+            },
             overshields = {
                 name = "Overshields",
                 desc = "Show Absorbshields on Unitframes\n\n|cffffff00Info:|r Requires Reload",

@@ -1553,6 +1553,19 @@ function Theme:Unitframes()
     mUI:Skin({PetFrameTexture, TargetFrameToT.FrameTexture, FocusFrameToT.FrameTexture,
               PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PlayerPortraitCornerIcon}, true)
 
+    -- Threat percentage above the frames: the border is skinned, the bar behind the number shows the threat color
+    for _, frame in ipairs({TargetFrame, FocusFrame, Boss1TargetFrame, Boss2TargetFrame, Boss3TargetFrame, Boss4TargetFrame,
+                            Boss5TargetFrame}) do
+        local content = frame.TargetFrameContent
+        local threat = content and content.TargetFrameContentContextual and content.TargetFrameContentContextual.NumericalThreat
+        if threat then
+            if threat.bg then
+                Theme.blacklist[threat.bg] = true
+            end
+            mUI:Skin(threat)
+        end
+    end
+
     -- Move Target-of-Target/Focus-of-Target frames further out from their parent.
     if mUI.db.profile.unitframes.enabled and not InCombatLockdown() then
         TargetFrameToT:ClearAllPoints()

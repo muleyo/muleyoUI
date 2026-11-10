@@ -110,6 +110,7 @@ local defaults = {
             elitecolor = false,
             overshields = true,
             smooth = false,
+            threat = false,
             buffsdebuffs = {
                 enabled = true,
                 buffsize = 24,

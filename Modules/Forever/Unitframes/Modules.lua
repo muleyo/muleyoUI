@@ -24,6 +24,7 @@ function Modules:OnInitialize()
     Modules.Elitecolor = mUI:GetModule("mUI.Modules.Unitframes.Elitecolor")
     Modules.Smooth = mUI:GetModule("mUI.Modules.Unitframes.SmoothHealth")
     Modules.Overshields = mUI:GetModule("mUI.Modules.Unitframes.Overshields")
+    Modules.Threat = mUI:GetModule("mUI.Modules.Unitframes.Threat")
 end
 
 function Modules:OnEnable()
@@ -71,6 +72,9 @@ function Modules:OnEnable()
         end
         if Modules.db.overshields then
             Modules.Overshields:Enable()
+        end
+        if Modules.db.threat then
+            Modules.Threat:Enable()
         end
     end
 
@@ -130,4 +134,5 @@ function Modules:OnDisable()
     Modules.RF_ExtraMouseButtons:Disable()
     Modules.Smooth:Disable()
     Modules.Overshields:Disable()
+    Modules.Threat:Disable()
 end
