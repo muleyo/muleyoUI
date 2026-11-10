@@ -410,6 +410,22 @@ function Unitframes:OnInitialize()
                 end,
                 order = 21.6
             },
+            allPlayerDebuffs = {
+                name = "Show other player debuffs",
+                desc = "Show the Debuffs of other players on enemies (Target / Focus) instead of only your own\n\n|cffffff00Info:|r Crowd Control from other players is always shown",
+                type = "toggle",
+                hidden = function()
+                    return not mUI.db.profile.unitframes.buffsdebuffs.enabled
+                end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.buffsdebuffs.allPlayerDebuffs = val
+                    Unitframes.Theme:UpdateAllUnitframeDebuffFilters()
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.buffsdebuffs.allPlayerDebuffs
+                end,
+                order = 21.65
+            },
             debuffcolors = {
                 name = "Debuff Colors",
                 desc = "Color borders of Debuffs by their type on Target/Focus Frames\n\n|cffffff00Info:|r Requires Reload",

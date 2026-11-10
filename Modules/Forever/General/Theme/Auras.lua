@@ -486,6 +486,9 @@ local IMPORTANT_BUFFS = {
 local UNITFRAME_DEBUFF_FILTER_MINE = AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Harmful,
     AuraUtil.AuraFilters.Player)
 local UNITFRAME_DEBUFF_FILTER_ALL = AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Harmful)
+-- Crowd control cast by somebody else, your own is already part of the normal debuff groups
+local UNITFRAME_DEBUFF_FILTER_OTHERS_CC = AuraUtil.AuraFilters.CrowdControl and
+    AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Harmful, AuraUtil.AuraFilters.CrowdControl, "!" .. AuraUtil.AuraFilters.Player)
 local UNITFRAME_BUFF_FILTER_ALL = AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Helpful)
 local UNITFRAME_BUFF_FILTER_DISPELLABLE = AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Helpful,
     AuraUtil.AuraFilters.Dispellable,
@@ -727,6 +730,21 @@ function Theme:CreateUnitAuraContainer(frame, unit)
         }
     })
 
+    -- Crowd control of other players (e.g. a Polymorph from a Mage) on enemies, where only your own debuffs show otherwise
+    if UNITFRAME_DEBUFF_FILTER_OTHERS_CC then
+        debuffContainer.mUI_ccGroupKey = "DebuffsCC"
+        debuffContainer:AddAuraGroup("DebuffsCC", UNITFRAME_DEBUFF_FILTER_OTHERS_CC, {
+            maxFrameCount = Theme.MAX_UNITFRAME_DEBUFFS,
+            initializeFrame = function(auraFrame)
+                Theme:InitializeCustomAuraButton(auraFrame, true, nil, debuffSize)
+            end,
+            layout = {
+                elementSpacing = 3,
+                lineSpacing = 3
+            }
+        })
+    end
+
     Theme:UpdateUnitDebuffCasterFilter(frame)
     Theme:UpdateUnitBuffFilter(frame)
 
@@ -761,7 +779,10 @@ function Theme:UpdateUnitDebuffCasterFilter(frame)
     end
 
     local unit = frame.unit or debuffContainer:GetUnit()
-    local showAllCasters = unit ~= nil and not UnitCanAttack("player", unit)
+    -- Friendly units always show every debuff. Enemies do too when "Show other player debuffs" is on, otherwise it is only yours
+    -- (plus the crowd control of others, see the DebuffsCC group).
+    local showAllCasters = unit ~= nil and
+        (not UnitCanAttack("player", unit) or mUI.db.profile.unitframes.buffsdebuffs.allPlayerDebuffs == true)
 
     local filterString = showAllCasters and UNITFRAME_DEBUFF_FILTER_ALL or UNITFRAME_DEBUFF_FILTER_MINE
     for _, groupInfo in ipairs(groups) do
@@ -776,6 +797,25 @@ function Theme:UpdateUnitDebuffCasterFilter(frame)
     local importantKey = debuffContainer.mUI_importantGroupKey
     if importantKey then
         debuffContainer:SetAuraGroupMaxFrameCount(importantKey, showAllCasters and 0 or Theme.MAX_UNITFRAME_DEBUFFS)
+    end
+
+    -- Everything is shown already when all casters are, no need to show the crowd control twice
+    local ccKey = debuffContainer.mUI_ccGroupKey
+    if ccKey then
+        debuffContainer:SetAuraGroupMaxFrameCount(ccKey, showAllCasters and 0 or Theme.MAX_UNITFRAME_DEBUFFS)
+    end
+end
+
+-- Re-applies it to every live target/focus frame, for the config option's
+-- live-update path.
+function Theme:UpdateAllUnitframeDebuffFilters()
+    for frame in pairs(Theme.unitframeAuraFrames or {}) do
+        Theme:UpdateUnitDebuffCasterFilter(frame)
+
+        local debuffContainer = frame.mUI_debuffContainer
+        if debuffContainer then
+            debuffContainer:UpdateAllAuras()
+        end
     end
 end
 

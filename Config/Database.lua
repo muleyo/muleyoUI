@@ -117,7 +117,8 @@ local defaults = {
                 debuffcolors = false,
                 durationTextSize = 100,
                 countTextSize = 100,
-                dispellableOnly = false
+                dispellableOnly = false,
+                allPlayerDebuffs = false
             },
             raidframes = {
                 enabled = true,
