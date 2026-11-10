@@ -150,15 +150,6 @@ function Gui:OnInitialize()
     scrollFrame:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 16, -16)
     scrollFrame:SetPoint("BOTTOMRIGHT", contentFrame, "BOTTOMRIGHT", -30, 16)
 
-    -- ScrollFrameTemplate's OnLoad picks its scroll bar template from the
-    -- global SCROLL_FRAME_SCROLL_BAR_TEMPLATE (Blizzard_SharedXML/
-    -- ScrollDefine.lua): "MinimalScrollBar" (retail look) on Mainline, but
-    -- the old chunky "WoWClassicScrollBar" on Mists/TBC/Vanilla. The Mists
-    -- client build DOES still ship/use "MinimalScrollBar" (its own
-    -- AuctionHouse/CharacterFrame/Collections panels use it) - it's just not
-    -- the generic default there - so replace the auto-created bar with our
-    -- own explicit "MinimalScrollBar" for a consistent retail-style
-    -- scrollbar on every version. Offsets match Mainline's own ScrollDefine.
     if scrollFrame.ScrollBar then
         scrollFrame.ScrollBar:Hide()
         scrollFrame.ScrollBar:ClearAllPoints()
@@ -188,7 +179,7 @@ function Gui:OnInitialize()
 
     -- Sidebar Tabs
     Gui.tabs = {}
-    local tabData = {{
+    local tabData = { {
         name = "General",
         app = "mUIOptions_General_Tab",
         atlas = "poi-transmogrifier"
@@ -201,7 +192,7 @@ function Gui:OnInitialize()
         app = "mUIOptions_Unitframes_Tab",
         atlas = [[Interface\AddOns\mUI\Media\Textures\Config\charactercreateicons.png]],
         customAtlas = true,
-        texCoords = {0.44482421875, 0.50732421875, 0.1279296875, 0.2529296875}
+        texCoords = { 0.44482421875, 0.50732421875, 0.1279296875, 0.2529296875 }
     }, {
         name = "Castbars",
         app = "mUIOptions_Castbars_Tab",
@@ -211,7 +202,7 @@ function Gui:OnInitialize()
         app = "mUIOptions_Nameplates_Tab",
         atlas = [[Interface\AddOns\mUI\Media\Textures\Config\uitutorialnameplates.png]],
         customAtlas = true,
-        texCoords = {0.3662109375, 0.7294921875, 0.2607421875, 0.5185546875}
+        texCoords = { 0.3662109375, 0.7294921875, 0.2607421875, 0.5185546875 }
     }, {
         name = "Tooltips",
         app = "mUIOptions_Tooltips_Tab",
@@ -221,7 +212,7 @@ function Gui:OnInitialize()
         app = "mUIOptions_MapMinimap_Tab",
         atlas = [[Interface\AddOns\mUI\Media\Textures\Config\objecticonsatlas.png]],
         customAtlas = true,
-        texCoords = {0.2998046875, 0.3369140625, 0.2939453125, 0.3310546875}
+        texCoords = { 0.2998046875, 0.3369140625, 0.2939453125, 0.3310546875 }
     }, {
         name = "Chat",
         app = "mUIOptions_Chat_Tab",
@@ -238,11 +229,8 @@ function Gui:OnInitialize()
         name = "About",
         app = "mUIOptions_About_Tab",
         icon = [[Interface\AddOns\mUI\Media\Logo.png]]
-    }}
+    } }
 
-    -- Raidframes is currently only split out into its own tab for Mainline and
-    -- Forever - Mists/TBC/Vanilla still have raidframe options folded into the
-    -- Unitframes tab (see Core.lua), so there's no category for them here.
     if mUI:GameVersion()["Mainline"] or mUI:GameVersion()["Forever"] then
         table.insert(tabData, 4, {
             name = "Raidframes",
@@ -325,7 +313,7 @@ function Gui:OnInitialize()
             local action = toggle:GetChecked() and "off" or "on"
             return ("Toggle this module %s.\n\n|cffffff00Info:|r Requires Reload"):format(action)
         end, function()
-            return toggle:GetChecked() and {0, 1, 0} or {1, 0, 0}
+            return toggle:GetChecked() and { 0, 1, 0 } or { 1, 0, 0 }
         end)
         button.toggle = toggle
 

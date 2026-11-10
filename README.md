@@ -20,7 +20,7 @@ mUI enhances the default Blizzard UI instead of replacing it: a clean dark theme
 
 ## 🎮 Supported Versions
 
-Retail · Mists of Pandaria Classic · TBC Classic · Classic Era · WoW: Forever
+Retail · Forever
 
 Available options vary slightly between versions.
 

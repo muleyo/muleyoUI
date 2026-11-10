@@ -60,7 +60,7 @@ do
         })
 
         -- Disable pixel snapping on backdrop textures
-        for _, region in next, {frame:GetRegions()} do
+        for _, region in next, { frame:GetRegions() } do
             if region and region.IsObjectType then
                 mUI:DisablePixelSnap(region)
             end
@@ -86,12 +86,12 @@ function Functions:OnInitialize()
     -- Get Player Class, Colors and Theme
     local _, class = UnitClass("player")
     local classColor = C_ClassColor.GetClassColor(class)
-    local customColor = Functions.db.general.color or {0, 0, 0, 1}
+    local customColor = Functions.db.general.color or { 0, 0, 0, 1 }
     local themes = {
-        Disabled = {1, 1, 1},
-        Dark = {0.3, 0.3, 0.3},
-        Class = {classColor.r, classColor.g, classColor.b},
-        Custom = {customColor[1], customColor[2], customColor[3], customColor[4]}
+        Disabled = { 1, 1, 1 },
+        Dark = { 0.3, 0.3, 0.3 },
+        Class = { classColor.r, classColor.g, classColor.b },
+        Custom = { customColor[1], customColor[2], customColor[3], customColor[4] }
     }
     local theme = themes[Functions.db.general.theme]
 
@@ -107,9 +107,6 @@ function Functions:OnInitialize()
 
     function mUI:GameVersion()
         return {
-            ["Vanilla"] = WOW_PROJECT_CLASSIC == WOW_PROJECT_ID,
-            ["TBC"] = WOW_PROJECT_BURNING_CRUSADE_CLASSIC == WOW_PROJECT_ID,
-            ["Mists"] = WOW_PROJECT_MISTS_CLASSIC == WOW_PROJECT_ID,
             ["Mainline"] = WOW_PROJECT_MAINLINE == WOW_PROJECT_ID,
             ["Forever"] = WOW_PROJECT_CAMELOT == WOW_PROJECT_ID
         }
@@ -144,7 +141,8 @@ function Functions:OnInitialize()
     function mUI:ReceiveVersion(_, version, _, sender)
         if not Functions.db.new_version then
             if (version > currentVersion) then
-                mUI:Debug("A newer version is available. If you experience any errors or bugs, updating is highly recommended.")
+                mUI:Debug(
+                    "A newer version is available. If you experience any errors or bugs, updating is highly recommended.")
                 Functions.db.new_version = version
             end
         elseif (Functions.db.new_version == currentVersion) or (Functions.db.new_version <= currentVersion) then
@@ -208,7 +206,8 @@ function Functions:OnInitialize()
     function mUI:Reload(module)
         StaticPopupDialogs["mUIReloadPopup"] = nil -- Clear Popup before creating a new one
         StaticPopupDialogs["mUIReloadPopup"] = {
-            text = "|cff009cffmuleyo|r|cffffd100UI|r\n\n|cffffcc00Your UI requires a reload.\n\nReason: " .. module .. "|r",
+            text = "|cff009cffmuleyo|r|cffffd100UI|r\n\n|cffffcc00Your UI requires a reload.\n\nReason: " ..
+                module .. "|r",
             button1 = "Reload UI",
             OnAccept = function()
                 ReloadUI()
@@ -233,8 +232,8 @@ function Functions:OnInitialize()
     -- Theme Functions
     function mUI:Color(sub, alpha)
         -- Update Custom Color & Theme
-        customColor = mUI.db.profile.general.color or {0, 0, 0, 1}
-        themes["Custom"] = {customColor[1], customColor[2], customColor[3], customColor[4]}
+        customColor = mUI.db.profile.general.color or { 0, 0, 0, 1 }
+        themes["Custom"] = { customColor[1], customColor[2], customColor[3], customColor[4] }
         if not General:IsEnabled() then
             theme = themes["Disabled"]
         else
@@ -248,7 +247,7 @@ function Functions:OnInitialize()
             if not alpha then
                 alpha = 1
             end
-            local color = {0, 0, 0, alpha}
+            local color = { 0, 0, 0, alpha }
             if sub then
                 color[1] = theme[1] - sub
                 color[2] = theme[2] - sub
@@ -260,8 +259,8 @@ function Functions:OnInitialize()
 
     function mUI:Skin(frame, isTable)
         -- Update Custom Color & Theme
-        customColor = mUI.db.profile.general.color or {0, 0, 0, 1}
-        themes["Custom"] = {customColor[1], customColor[2], customColor[3], customColor[4]}
+        customColor = mUI.db.profile.general.color or { 0, 0, 0, 1 }
+        themes["Custom"] = { customColor[1], customColor[2], customColor[3], customColor[4] }
         if not General:IsEnabled() then
             theme = themes["Disabled"]
         else
@@ -276,7 +275,7 @@ function Functions:OnInitialize()
 
         if frame then
             if not isTable then
-                for _, v in pairs({frame:GetRegions()}) do
+                for _, v in pairs({ frame:GetRegions() }) do
                     if (not blacklist[v:GetName()]) and (not blacklist[v]) then
                         if v:GetObjectType() == "Texture" then
                             if themes["Disabled"] == theme then

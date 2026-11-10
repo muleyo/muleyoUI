@@ -1,5 +1,0 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Include file="Export.lua" />
-    <Include file="Import.lua" />
-    <Include file="Modules.lua" />
-</Ui>

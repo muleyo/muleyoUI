@@ -12,9 +12,6 @@
 
 # Libs
 Libs\Load.xml [AllowLoadGameType standard, forever]
-Libs\Load_Mists.xml [AllowLoadGameType mists]
-Libs\Load_TBC.xml [AllowLoadGameType tbc]
-Libs\Load_Vanilla.xml [AllowLoadGameType vanilla]
 
 # Init
 Core\Load.xml
@@ -25,9 +22,6 @@ Config\Load.xml
 
 # Config Layouts
 Config\Layouts\Mainline\Load.xml [AllowLoadGameType standard]
-Config\Layouts\Mists\Load.xml [AllowLoadGameType mists]
-Config\Layouts\TBC\Load.xml [AllowLoadGameType tbc]
-Config\Layouts\Vanilla\Load.xml [AllowLoadGameType vanilla]
 Config\Layouts\Forever\Load.xml [AllowLoadGameType forever][ExcludeLoadGameType standard, classic]
 
 # Core
@@ -35,9 +29,6 @@ Core.lua
 
 # Modules
 Modules\Mainline\Load.xml [AllowLoadGameType standard]
-Modules\Mists\Load.xml [AllowLoadGameType mists]
-Modules\TBC\Load.xml [AllowLoadGameType tbc]
-Modules\Vanilla\Load.xml [AllowLoadGameType vanilla]
 Modules\Forever\Load.xml [AllowLoadGameType forever][ExcludeLoadGameType standard, classic]
 
 # EditMode

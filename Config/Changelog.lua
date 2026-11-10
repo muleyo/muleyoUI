@@ -4,8 +4,8 @@ local Changelog = mUI:NewModule("mUI.Config.Changelog")
 -- Keep this as a single entry and update it each release.
 local CHANGELOG = {
     version = "4.1.24",
-    affected = {"Mainline"},
-    changes = {"Added a slider which allows you to choose how many debuffs you'd like to see on nameplates"}
+    affected = { "Mainline", "Forever" },
+    changes = { "Added a slider which allows you to choose how many debuffs you'd like to see on nameplates" }
 }
 
 function Changelog:OnInitialize()
@@ -122,12 +122,8 @@ function Changelog:Show(currentVersion)
     local currentFlavor = "Unknown"
     if gameVersion.Mainline then
         currentFlavor = "Mainline"
-    elseif gameVersion.Mists then
-        currentFlavor = "Mists"
-    elseif gameVersion.TBC then
-        currentFlavor = "TBC"
-    elseif gameVersion.Vanilla then
-        currentFlavor = "Vanilla"
+    elseif gameVersion.Forever then
+        currentFlavor = "Forever"
     end
 
     local affected = CHANGELOG.affected or {}
