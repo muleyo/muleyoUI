@@ -432,7 +432,7 @@ function Nameplates:OnInitialize()
             },
             classificationInstancesOnly = {
                 name = "Instance Only",
-                desc = "Only use the Boss, Miniboss and Caster colors inside a Dungeon or Raid\n\n|cffffff00Info:|r These tiers are worked out from Dungeon Level scaling, so they are only meaningful inside an Instance. Quest coloring always applies, indoors or out.",
+                desc = "Only use the Boss, Miniboss and Caster colors inside a Dungeon or Raid\n\n|cffffff00Info:|r Quest coloring always applies, indoors or out.",
                 type = "toggle",
                 disabled = function()
                     return not db().classification.enabled
@@ -445,6 +445,22 @@ function Nameplates:OnInitialize()
                     return db().classification.instancesonly
                 end,
                 order = 21
+            },
+            classificationThreat = {
+                name = "Color by Threat",
+                desc = "Color the Health Bar of NPCs in combat by your Threat\n\nTank: no threat is red, low threat is orange, aggro keeps the NPC Color\nHealer / DPS: no threat keeps the NPC Color, low threat is orange, aggro is red\n\n|cffffff00Info:|r Requires Color by NPC Type. Only while you are in a group",
+                type = "toggle",
+                disabled = function()
+                    return not db().classification.enabled
+                end,
+                set = function(_, val)
+                    db().classification.threat = val
+                    Refresh(Nameplates.Module.Health)
+                end,
+                get = function()
+                    return db().classification.threat
+                end,
+                order = 22
             },
             classificationBoss = {
                 name = "Boss",

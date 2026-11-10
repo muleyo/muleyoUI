@@ -37,22 +37,13 @@ function Health:OnInitialize()
 
     Health.HideFriendlyBar = HideFriendlyBar
 
-    local instanceLevel = UnitEffectiveLevel("player")
-    local lieutenantLevel
     local inRelevantInstance = false
     local questMobCache = {}
 
     local function RefreshInstanceInfo()
-        local _, instanceType, _, _, _, _, _, _, _, lfgDungeonID = GetInstanceInfo()
+        local _, instanceType = GetInstanceInfo()
 
         inRelevantInstance = instanceType == "party" or instanceType == "raid"
-        lieutenantLevel = nil
-
-        if lfgDungeonID then
-            instanceLevel = GetMaxLevelForExpansionLevel(GetMaximumExpansionLevel())
-        else
-            instanceLevel = UnitEffectiveLevel("player")
-        end
 
         wipe(questMobCache)
     end
@@ -98,6 +89,9 @@ function Health:OnInitialize()
         return isQuestMob
     end
 
+    -- The tiers come from what the client reports about the unit. Retail can also tell them apart by comparing the level of the unit
+    -- with the level of the player, because its dungeons scale to the player. Mobs are not scaled here and the elites around are
+    -- often a level or two above you, so a level check colors plain elites as minibosses and bosses.
     local function NpcType(unit)
         if IsQuestMob(unit) then
             return "quest"
@@ -106,9 +100,8 @@ function Health:OnInitialize()
         local classification = UnitClassification(unit)
         local allowInstanceTiers = inRelevantInstance or not Health.db.classification.instancesonly
 
-        -- Blizzard's own boss test (it puts the winged frame on the target frame). The level checks below compare against the level of the
-        -- dungeon, which doesn't hold for every boss here, and a boss with mana would end up as a caster
-        if allowInstanceTiers and Core:Safe(UnitIsBossMob(unit), false) then
+        -- Blizzard's own boss test (it puts the winged frame on the target frame), a boss with mana would otherwise end up as a caster
+        if allowInstanceTiers and (classification == "worldboss" or Core:Safe(UnitIsBossMob(unit), false)) then
             return "boss"
         end
 
@@ -117,20 +110,11 @@ function Health:OnInitialize()
                 return nil
             end
 
-            local level = UnitEffectiveLevel(unit)
-
-            if level == instanceLevel + 1 or UnitIsLieutenant(unit) then
-                -- Remember what a lieutenant weighs here: the boss test
-                -- keys off being one level above it.
-                lieutenantLevel = level
+            if Core:Safe(UnitIsLieutenant(unit), false) then
                 return "miniboss"
             end
 
-            if level == -1 or level == instanceLevel + 2 or (lieutenantLevel and level == lieutenantLevel + 1) then
-                return "boss"
-            end
-
-            -- Elite melee falls through to reaction/class coloring below.
+            -- A plain elite falls through to reaction/class coloring below.
             return HasMana(unit) and "caster" or nil
         end
 
@@ -159,6 +143,49 @@ function Health:OnInitialize()
         return cachedTexture
     end
 
+    -- Threat colors speak the same language as Blizzard's own threat health bar color: no threat, low threat (about to gain or lose it)
+    -- and high threat. The tank API reports the lead over the second highest threat, everybody else gets their own threat state.
+    local THREAT_RED = { 1, 0.1, 0.1 }
+    local THREAT_ORANGE = { 1, 0.55, 0.1 }
+
+    -- Tank: no threat = red, low threat = orange, aggro = normal color
+    -- Healer / DPS: no threat = normal color, low threat = orange, aggro = red
+    -- Returns nothing when the normal color applies
+    local function ThreatColor(unit)
+        if not Health.db.classification.threat or not IsInGroup() or not Core:Safe(UnitAffectingCombat(unit), false) then
+            return nil
+        end
+
+        local state
+        local isTank = PlayerUtil and PlayerUtil.IsPlayerEffectivelyTank and PlayerUtil.IsPlayerEffectivelyTank()
+        if isTank then
+            if not UnitThreatLeadSituation then
+                return nil
+            end
+            -- 0 = comfortable lead, 1 and 2 = about to lose it, 3 = not the highest threat (or not on the threat list)
+            state = UnitThreatLeadSituation("player", unit)
+        else
+            -- 0 = no threat (or not on the threat list), 1 and 2 = about to gain it, 3 = aggro
+            state = UnitThreatSituation("player", unit)
+        end
+
+        if issecretvalue(state) then
+            return nil
+        end
+
+        if state == nil then
+            state = isTank and 3 or 0
+        end
+
+        if state == 3 then
+            return THREAT_RED[1], THREAT_RED[2], THREAT_RED[3]
+        elseif state >= 1 then
+            return THREAT_ORANGE[1], THREAT_ORANGE[2], THREAT_ORANGE[3]
+        end
+
+        return nil
+    end
+
     local Totem
 
     local function BarColor(data)
@@ -179,6 +206,11 @@ function Health:OnInitialize()
 
         local npc = Health.db.classification
         if npc.enabled and not data.isPlayer then
+            local r, g, b = ThreatColor(data.unit)
+            if r then
+                return r, g, b
+            end
+
             local npcType = NpcType(data.unit)
             local color = npcType and npc[npcType]
             if color then
@@ -425,12 +457,16 @@ function Health:OnInitialize()
 
         local config = Health.db.name
         local anchor = NAME_ANCHORS[config.anchor] or NAME_ANCHORS.ABOVE
-        local align = config.align or "CENTER"
+
+        -- Only Show Names takes the bar away, the name stays centered then, whatever alignment and horizontal offset are set
+        local onlyName = frame.IsShowOnlyName and frame:IsShowOnlyName()
+        local align = onlyName and "CENTER" or config.align or "CENTER"
+        local x = onlyName and 0 or config.x
         local suffix = NAME_ALIGN_SUFFIX[align] or ""
 
         name:ClearAllPoints()
         name:SetJustifyH(align)
-        name:SetPoint(anchor.point .. suffix, container, anchor.relativePoint .. suffix, config.x,
+        name:SetPoint(anchor.point .. suffix, container, anchor.relativePoint .. suffix, x,
             config.y * anchor.ySign)
 
         name:SetTextHeight(config.size)
@@ -943,7 +979,43 @@ function Health:OnInitialize()
         end)
     end
 
+    -- Threat changes per unit and the role can change at any time, plates that are already up are recolored when they do. Only
+    -- listening while threat colors are in use, the threat events are busy in combat.
+    local THREAT_EVENTS = { "UNIT_THREAT_LIST_UPDATE", "UNIT_THREAT_SITUATION_UPDATE", "GROUP_ROSTER_UPDATE", "PLAYER_ROLES_ASSIGNED",
+        "PLAYER_SPECIALIZATION_CHANGED", "PLAYER_REGEN_ENABLED", "PLAYER_REGEN_DISABLED" }
+
+    local threatWatcher = CreateFrame("Frame")
+    threatWatcher:SetScript("OnEvent", function(_, event, unit)
+        if event == "UNIT_THREAT_LIST_UPDATE" or event == "UNIT_THREAT_SITUATION_UPDATE" then
+            if unit and not issecretvalue(unit) then
+                local frame = unitToFrame[unit]
+                if frame then
+                    OnHealthColorUpdate(frame)
+                end
+            end
+            return
+        end
+
+        for frame in pairs(activeFrames) do
+            OnHealthColorUpdate(frame)
+        end
+    end)
+
+    function Health:UpdateThreatWatcher()
+        local config = Health.db.classification
+        local active = Health:IsEnabled() and config.enabled and config.threat
+
+        for _, event in ipairs(THREAT_EVENTS) do
+            if active then
+                threatWatcher:RegisterEvent(event)
+            else
+                threatWatcher:UnregisterEvent(event)
+            end
+        end
+    end
+
     function Health:Update()
+        Health:UpdateThreatWatcher()
         RefreshCachedStyle()
         ApplyNamePlateFontObjects()
         for frame in pairs(activeFrames) do
@@ -959,10 +1031,12 @@ function Health:OnEnable()
     Health:RegisterEvent("ZONE_CHANGED_NEW_AREA", "RefreshInstanceInfo")
     Health:RegisterEvent("QUEST_LOG_UPDATE", "OnQuestLogUpdate")
     Health:RefreshInstanceInfo()
+    Health:UpdateThreatWatcher()
 end
 
 function Health:OnDisable()
     Health:UnregisterEvent("QUEST_LOG_UPDATE")
     Health:UnregisterEvent("PLAYER_ENTERING_WORLD")
     Health:UnregisterEvent("ZONE_CHANGED_NEW_AREA")
+    Health:UpdateThreatWatcher()
 end
