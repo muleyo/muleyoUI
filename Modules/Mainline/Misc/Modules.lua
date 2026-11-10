@@ -13,6 +13,7 @@ function Modules:OnInitialize()
     Modules.Fastloot = mUI:GetModule("mUI.Modules.Misc.Fastloot")
     Modules.PlayerLinks = mUI:GetModule("mUI.Modules.Misc.PlayerLinks")
     Modules.LFGDeclined = mUI:GetModule("mUI.Modules.Misc.LFGDeclined")
+    Modules.QuestAnnounce = mUI:GetModule("mUI.Modules.Misc.QuestAnnounce")
 end
 
 function Modules:OnEnable()
@@ -51,6 +52,9 @@ function Modules:OnEnable()
     if Modules.db.lfgdeclined then
         Modules.LFGDeclined:Enable()
     end
+    if Modules.db.questannounce then
+        Modules.QuestAnnounce:Enable()
+    end
 end
 
 function Modules:OnDisable()
@@ -66,4 +70,5 @@ function Modules:OnDisable()
     Modules.Fastloot:Disable()
     Modules.PlayerLinks:Disable()
     Modules.LFGDeclined:Disable()
+    Modules.QuestAnnounce:Disable()
 end
