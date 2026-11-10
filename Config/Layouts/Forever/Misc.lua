@@ -139,6 +139,28 @@ function Misc:OnInitialize()
                 end,
                 order = 7
             },
+            questannounce = {
+                name = "Announce Quest Objectives",
+                desc = "Announce completed quest objectives, including a link to the quest, in party / raid / instance chat\n\n|cffffff00Info:|r Only announces while you are in a group",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.misc.questannounce = val
+
+                    if not Misc.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Misc.Module.QuestAnnounce:Enable()
+                    else
+                        Misc.Module.QuestAnnounce:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.misc.questannounce
+                end,
+                order = 7.5
+            },
             header2 = {
                 name = "Hide Frames",
                 type = "header",
