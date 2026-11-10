@@ -43,6 +43,17 @@ function Theme:OnInitialize()
         return Theme.BorderStyles[key] or Theme.BorderStyles.Style1
     end
 
+    -- Icon borders are tinted from the theme color. Without a theme they get the brown of the default UI instead.
+    local DISABLED_ICON_BORDER_COLOR = { 0x5D / 255, 0x4D / 255, 0x3E / 255, 1 }
+
+    function Theme:IconBorderColor()
+        if mUI.db.profile.general.theme == "Disabled" or not mUI:GetModule("mUI.Modules.General"):IsEnabled() then
+            return DISABLED_ICON_BORDER_COLOR
+        end
+
+        return mUI:Color(0.25)
+    end
+
     -- Re-skins a single registered record. rec fields:
     function Theme:SkinBorderRecord(rec, style)
         style = style or Theme:GetBorderStyle()

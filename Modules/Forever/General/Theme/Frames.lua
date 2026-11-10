@@ -1606,7 +1606,7 @@ function Theme:Castbars()
 
     -- Castbar Icon Skinning
     for castbar in pairs(Theme.castbarIcons) do
-        castbar.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
+        castbar.mUIBorder:SetVertexColor(unpack(Theme:IconBorderColor()))
     end
 end
 
@@ -1621,7 +1621,7 @@ function Theme:Auras()
             if c then
                 pcall(button.mUIBorder.SetVertexColor, button.mUIBorder, c.r, c.g, c.b, 1)
             else
-                pcall(button.mUIBorder.SetVertexColor, button.mUIBorder, unpack(mUI:Color(0.25)))
+                pcall(button.mUIBorder.SetVertexColor, button.mUIBorder, unpack(Theme:IconBorderColor()))
             end
         end
     end

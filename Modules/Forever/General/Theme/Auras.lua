@@ -176,7 +176,7 @@ local function CreateAuraButton(auraFrame, isDebuff, opts)
             -- buff borders to the default shade don't clobber it (e.g. stealable).
             auraFrame.mUIBorderColor = opts.borderColor
         else
-            auraFrame.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
+            auraFrame.mUIBorder:SetVertexColor(unpack(Theme:IconBorderColor()))
         end
 
         -- Apply the selected border style (and keep it re-skinnable on change)
@@ -839,7 +839,7 @@ function Theme:UpdateUnitBuffFilter(frame)
                 STEALABLE_BORDER_COLOR.b, 1)
         else
             auraFrame.mUIBorderColor = nil
-            pcall(auraFrame.mUIBorder.SetVertexColor, auraFrame.mUIBorder, unpack(mUI:Color(0.25)))
+            pcall(auraFrame.mUIBorder.SetVertexColor, auraFrame.mUIBorder, unpack(Theme:IconBorderColor()))
         end
     end
 

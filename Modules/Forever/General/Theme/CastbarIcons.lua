@@ -20,7 +20,8 @@ function Theme:CreateCastbarIcons(unit, castbar)
 
         -- Create Border
         castbar.mUIBorder = castbar:CreateTexture(nil, "OVERLAY", nil, 7)
-        castbar.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
+        castbar.mUIBorder:SetDesaturated(true)
+        castbar.mUIBorder:SetVertexColor(unpack(Theme:IconBorderColor()))
 
         -- Set Icon Mask
         castbar.mUIBorder.mask = castbar:CreateMaskTexture()
@@ -46,7 +47,7 @@ function Theme:CreateCastbarIcons(unit, castbar)
             end
         })
 
-        castbar.mUIBorder:SetVertexColor(unpack(mUI:Color(0.25)))
+        castbar.mUIBorder:SetVertexColor(unpack(Theme:IconBorderColor()))
 
         Theme.castbarIcons[castbar] = true
     end
