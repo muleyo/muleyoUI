@@ -1315,6 +1315,68 @@ function Theme:Merchant()
     mUI:Skin({ MerchantBuyBackItemSlotTexture }, true)
 end
 
+local function SkinButtonBorder(button, border)
+    local state = button and button.StateTexture
+    if not state then
+        return
+    end
+
+    local atlas = state:GetAtlas()
+    local info = atlas and C_Texture.GetAtlasInfo(atlas)
+    local file = info and (info.file or info.filename)
+    local width, height = state:GetSize()
+    if not file or not width or width <= border * 2 or not height or height <= border * 2 then
+        return
+    end
+
+    mUI:Skin({ state }, true)
+
+    if not button.mUIIcon then
+        -- Above the state texture, below the hover glow
+        local icon = button:CreateTexture(nil, "ARTWORK", nil, 1)
+        button.mUIIcon = icon
+
+        if button.AddTexture then
+            button.AddTexture:SetDrawLayer("ARTWORK", 2)
+        end
+    end
+
+    local left, right = info.leftTexCoord, info.rightTexCoord
+    local top, bottom = info.topTexCoord, info.bottomTexCoord
+    local insetX = (right - left) * border / width
+    local insetY = (bottom - top) * border / height
+
+    local icon = button.mUIIcon
+    icon:ClearAllPoints()
+    icon:SetPoint("TOPLEFT", state, "TOPLEFT", border, -border)
+    icon:SetPoint("BOTTOMRIGHT", state, "BOTTOMRIGHT", -border, border)
+    icon:SetTexture(file)
+    icon:SetTexCoord(left + insetX, right - insetX, top + insetY, bottom - insetY)
+end
+
+function Theme:MinimapButtons()
+    -- Day / night indicator: the ring is skinned, the sun / moon in it is not
+    local diel = MinimapCluster.DielFrame
+    if diel then
+        if diel.Background then
+            Theme.blacklist[diel.Background] = true
+        end
+        mUI:Skin(diel)
+    end
+
+    -- Zone text and addon compartment have no icon in their state texture
+    if MinimapCluster.ZoneTextButton and MinimapCluster.ZoneTextButton.StateTexture then
+        mUI:Skin({ MinimapCluster.ZoneTextButton.StateTexture }, true)
+    end
+    if AddonCompartmentFrame and AddonCompartmentFrame.StateTexture then
+        mUI:Skin({ AddonCompartmentFrame.StateTexture }, true)
+    end
+
+    -- Tracking and calendar have the icon in their state texture, only the border is skinned
+    SkinButtonBorder(MinimapCluster.Tracking and MinimapCluster.Tracking.Button, 4)
+    SkinButtonBorder(GameTimeFrame, 4)
+end
+
 function Theme:Map()
     -- Map
 
@@ -1841,6 +1903,7 @@ function Theme:Update()
     Theme:Mail()
     Theme:Merchant()
     Theme:Map()
+    Theme:MinimapButtons()
     Theme:Reforging()
     Theme:ItemUpgrade()
     Theme:Petition()
