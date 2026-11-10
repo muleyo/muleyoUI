@@ -11,6 +11,11 @@ function Theme:Blacklist()
         ["QuestFrameDetailPanelBg"] = true,
         ["OpenMailFrameIcon"] = true,
         ["ItemTextFramePageBg"] = true,
+        -- Page of books that don't use the parchment (Marble, Stone, Silver, ...)
+        ["ItemTextMaterialTopLeft"] = true,
+        ["ItemTextMaterialTopRight"] = true,
+        ["ItemTextMaterialBotLeft"] = true,
+        ["ItemTextMaterialBotRight"] = true,
         [select(4, StaticPopup1:GetRegions())] = true,
         [select(4, StaticPopup2:GetRegions())] = true,
         [select(4, StaticPopup3:GetRegions())] = true,
