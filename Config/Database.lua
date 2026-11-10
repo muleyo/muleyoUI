@@ -229,6 +229,7 @@ local defaults = {
             classification = {
                 enabled = false,
                 instancesonly = true,
+                threat = false,
                 boss = {0.737, 0.11, 0, 1},
                 miniboss = {0.565, 0, 0.737, 1},
                 caster = {0, 0.455, 0.737, 1},
@@ -424,6 +425,7 @@ local defaults = {
             fastloot = false,
             playerlinks = true,
             lfgdeclined = true,
+            questannounce = false,
             gryphons = false
         },
         edit = {
