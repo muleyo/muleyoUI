@@ -3,6 +3,7 @@
     <Include file="Copy.lua" />
     <Include file="Core.lua" />
     <Include file="WhisperAlert.lua" />
+    <Include file="Profile.lua" />
     <Include file="Components\Backdrop.lua" />
     <Include file="Components\Button.lua" />
     <Include file="Components\Dock.lua" />

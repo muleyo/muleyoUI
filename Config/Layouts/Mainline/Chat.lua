@@ -503,6 +503,91 @@ function Chat:OnInitialize()
                     return mUI.db.profile.chat.whisperalert
                 end,
                 order = 26
+            },
+            headerSetup = {
+                name = "Chat Setup",
+                type = "header",
+                order = 30
+            },
+            profileDesc = {
+                name = "Set up your Chat Tabs on one Character and use them on all your others: the Tabs, the Chat Types and Channels they show, their Colors, Font Size, Position and Order.",
+                type = "description",
+                fontSize = "medium",
+                order = 31
+            },
+            profileInfo = {
+                name = function()
+                    local savedBy, savedAt = Chat.Module.Profile:GetInfo()
+                    if not savedBy then
+                        return "No Chat Setup saved yet"
+                    end
+
+                    return "Saved Chat Setup: |cffffd100" .. savedBy .. "|r, " .. date("%d.%m.%Y %H:%M", savedAt)
+                end,
+                type = "description",
+                order = 32
+            },
+            profileSave = {
+                name = "Save Chat Setup",
+                desc = "Save the Chat Tabs of this Character for all your Characters",
+                type = "execute",
+                confirm = function()
+                    if Chat.Module.Profile:HasSetup() then
+                        return "This replaces the Chat Setup you saved before. Continue?"
+                    end
+                end,
+                func = function()
+                    Chat.Module.Profile:Save()
+                end,
+                order = 33
+            },
+            profileLoad = {
+                name = "Load Chat Setup",
+                desc = "Give this Character the saved Chat Setup\n\n|cffffff00Info:|r Replaces the Chat Tabs of this Character, Undo Load brings them back",
+                type = "execute",
+                disabled = function()
+                    return not Chat.Module.Profile:HasSetup()
+                end,
+                confirm = true,
+                confirmText = "This replaces the Chat Tabs of this Character with the saved Chat Setup. Continue?",
+                func = function()
+                    Chat.Module.Profile:Load()
+                end,
+                order = 34
+            },
+            profileUndo = {
+                name = "Undo Load",
+                desc = "Go back to the Chat Tabs this Character had before the Chat Setup was loaded",
+                type = "execute",
+                disabled = function()
+                    return not Chat.Module.Profile:HasBackup()
+                end,
+                func = function()
+                    Chat.Module.Profile:Undo()
+                end,
+                order = 35
+            },
+            profileSync = {
+                name = "Sync on Login",
+                desc = "Give every Character the saved Chat Setup the first time it logs in after you saved it\n\n|cffffff00Info:|r Replaces the Chat Tabs of that Character",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.chat.sync = val
+
+                    if not Chat.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Chat.Module.Profile:Enable()
+                    else
+                        Chat.Module.Profile:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.chat.sync
+                end,
+                order = 36
             }
         }
     }

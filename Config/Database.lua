@@ -370,6 +370,7 @@ local defaults = {
             link = true,
             copy = true,
             whisperalert = false,
+            sync = false,
             settings = {
                 color = {0.88, 0.74, 0.36},
                 tooltips = true,
@@ -436,6 +437,22 @@ local defaults = {
                 alpha = 0.3,
                 color = {1, 1, 1}
             }
+        }
+    },
+    -- The saved chat setup is shared by all characters
+    global = {
+        chat = {
+            version = 0,
+            setup = false,
+            savedBy = false,
+            savedAt = 0
+        }
+    },
+    -- What this character got of it
+    char = {
+        chat = {
+            version = 0,
+            backup = false
         }
     }
 }
