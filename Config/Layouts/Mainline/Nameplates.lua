@@ -1052,6 +1052,7 @@ function Nameplates:OnInitialize()
                 set = function(_, val)
                     db().target.enabled = val
                     SetFeature(Nameplates.Module.TargetIndicator, val)
+                    Refresh(Nameplates.Module.Health)
                 end,
                 get = function()
                     return db().target.enabled
@@ -1092,15 +1093,16 @@ function Nameplates:OnInitialize()
             },
             targetColor = {
                 name = "Color",
-                desc = "Choose a Color for the Target Indicator",
+                desc = "Choose a Color for the Target Indicator and the Border of the targeted Nameplate\n\n|cffffff00Info:|r The Arrows use the Class Color instead while that is enabled, the Border keeps this Color. Without the Target Indicator the Border is white",
                 type = "color",
                 hasAlpha = true,
                 disabled = function()
-                    return not db().target.enabled or db().target.classcolor
+                    return not db().target.enabled
                 end,
                 set = function(_, r, g, b, a)
                     db().target.color = {r, g, b, a}
                     Refresh(Nameplates.Module.TargetIndicator)
+                    Refresh(Nameplates.Module.Health)
                 end,
                 get = function()
                     return unpack(db().target.color)

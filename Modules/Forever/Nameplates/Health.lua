@@ -655,6 +655,21 @@ function Health:OnInitialize()
         end
     end
 
+    local TargetIndicator
+
+    -- The border of the targeted nameplate has the color picked for the Target Indicator, as long as that is enabled
+    local function TargetBorderColor()
+        if TargetIndicator == nil then
+            TargetIndicator = mUI:GetModule("mUI.Modules.Nameplates.TargetIndicator", true) or false
+        end
+
+        if TargetIndicator and TargetIndicator:IsEnabled() then
+            return TargetIndicator:GetPickedColor()
+        end
+
+        return 1, 1, 1, 1
+    end
+
     local function OnHealthColorUpdate(frame)
         if not Health:IsEnabled() or not IsNamePlate(frame) then
             return
@@ -700,7 +715,7 @@ function Health:OnInitialize()
             border:SetThickness(Health.db.border.size or 1)
 
             if data.isTarget then
-                border:SetBorderColor(1, 1, 1, 1)
+                border:SetBorderColor(TargetBorderColor())
             else
                 border:SetBorderColor(edgeR, edgeG, edgeB, edgeA)
             end

@@ -15,6 +15,26 @@ function TargetIndicator:OnInitialize()
 
     TargetIndicator.handler = {}
 
+    -- The color from the options. The border of the targeted nameplate has it, whatever the arrows are colored by
+    function TargetIndicator:GetPickedColor()
+        local color = TargetIndicator.db.target.color
+        return color[1], color[2], color[3], color[4] or 1
+    end
+
+    -- The color of the arrows: the picked one, or the class of the target
+    function TargetIndicator:GetColor(data)
+        local r, g, b, a = TargetIndicator:GetPickedColor()
+        local classFile = TargetIndicator.db.target.classcolor and Units:GetClassFile(data)
+        if classFile then
+            local classColor = C_ClassColor.GetClassColor(classFile)
+            if classColor then
+                r, g, b, a = classColor.r, classColor.g, classColor.b, 1
+            end
+        end
+
+        return r, g, b, a
+    end
+
     function TargetIndicator.handler.Create(plate)
         local holder = CreateFrame("Frame", nil, plate)
         holder:SetFrameLevel(plate:GetFrameLevel() + 6)
@@ -61,14 +81,7 @@ function TargetIndicator:OnInitialize()
         end
 
         local size = config.size
-        local r, g, b, a = config.color[1], config.color[2], config.color[3], config.color[4] or 1
-        local classFile = config.classcolor and Units:GetClassFile(data)
-        if classFile then
-            local classColor = C_ClassColor.GetClassColor(classFile)
-            if classColor then
-                r, g, b, a = classColor.r, classColor.g, classColor.b, 1
-            end
-        end
+        local r, g, b, a = TargetIndicator:GetColor(data)
 
         holder.left:SetSize(size, size)
         holder.right:SetSize(size, size)
