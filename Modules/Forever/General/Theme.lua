@@ -261,6 +261,13 @@ function Theme:OnEnable()
         end
     end)
 
+    -- Default nameplates
+    Theme.nameplateEvents = Theme.nameplateEvents or CreateFrame("Frame")
+    Theme.nameplateEvents:RegisterEvent("NAME_PLATE_UNIT_ADDED")
+    Theme.nameplateEvents:SetScript("OnEvent", function(_, _, unit)
+        Theme:Nameplate(unit)
+    end)
+
     -- Update Theme
     C_Timer.After(0, Theme.Update)
 end
@@ -268,6 +275,10 @@ end
 function Theme:OnDisable()
     -- Update Theme
     Theme:Update()
+
+    if Theme.nameplateEvents then
+        Theme.nameplateEvents:UnregisterAllEvents()
+    end
 
     -- Unhook Frames
     Theme:UnhookAll()

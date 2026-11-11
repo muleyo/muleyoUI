@@ -1604,6 +1604,48 @@ function Theme:Unitframes()
     end
 end
 
+-- Default nameplates: the frame behind the health bar and the level indicator. mUI's own nameplates restyle both
+local function SkinNameplateFrame(namePlate)
+    local Nameplates = mUI:GetModule("mUI.Modules.Nameplates", true)
+    if Nameplates and Nameplates:IsEnabled() then
+        return
+    end
+
+    if not namePlate or issecretvalue(namePlate) then
+        return
+    end
+
+    local frame = namePlate.UnitFrame
+    if not frame or issecretvalue(frame) or frame:IsForbidden() then
+        return
+    end
+
+    local container = frame.HealthBarsContainer
+    local healthBar = container and container.healthBar
+    if healthBar and healthBar.bgTexture then
+        mUI:Skin({ healthBar.bgTexture }, true)
+    end
+
+    local levelFrame = frame.PlayerLevelDiffFrame
+    if levelFrame and levelFrame.playerLevelDiffIcon then
+        mUI:Skin({ levelFrame.playerLevelDiffIcon }, true)
+    end
+end
+
+-- A nameplate that just appeared. The frames are reused, but every new one needs it once
+function Theme:Nameplate(unit)
+    local ok, namePlate = pcall(C_NamePlate.GetNamePlateForUnit, unit, false)
+    if ok then
+        SkinNameplateFrame(namePlate)
+    end
+end
+
+function Theme:Nameplates()
+    for _, namePlate in pairs(C_NamePlate.GetNamePlates(false)) do
+        SkinNameplateFrame(namePlate)
+    end
+end
+
 function Theme:Castbars()
     -- Castbars
     mUI:Skin(
@@ -1926,6 +1968,7 @@ function Theme:Update()
     Theme:Trade()
     Theme:Rewards()
     Theme:Unitframes()
+    Theme:Nameplates()
     Theme:Castbars()
     Theme:Auras()
     Theme:Frames()
