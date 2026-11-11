@@ -50,6 +50,7 @@ function Theme:Blacklist()
         [select(2, CommunitiesFrame.RosterTab:GetRegions())] = true,
         [select(2, CommunitiesFrame.GuildBenefitsTab:GetRegions())] = true,
         [select(2, CommunitiesFrame.GuildInfoTab:GetRegions())] = true,
+        [select(2, CommunitiesFrame.GuildPreferredPlaySettingsTab:GetRegions())] = true,
         [select(2, ClubFinderCommunityAndGuildFinderFrame.ClubFinderSearchTab:GetRegions())] = true,
         [select(2, ClubFinderCommunityAndGuildFinderFrame.ClubFinderPendingTab:GetRegions())] = true,
         [select(2, ClubFinderGuildFinderFrame.ClubFinderSearchTab:GetRegions())] = true,

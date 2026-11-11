@@ -1095,6 +1095,7 @@ function Theme:Communities()
     mUI:Skin(CommunitiesFrame.RosterTab)
     mUI:Skin(CommunitiesFrame.GuildBenefitsTab)
     mUI:Skin(CommunitiesFrame.GuildInfoTab)
+    mUI:Skin(CommunitiesFrame.GuildPreferredPlaySettingsTab)
     mUI:Skin(CommunitiesFrameInset)
     mUI:Skin(CommunitiesFrameInset.NineSlice)
     mUI:Skin(CommunitiesFrameCommunitiesList)
@@ -1586,7 +1587,8 @@ function Theme:Unitframes()
     for _, frame in ipairs({ TargetFrame, FocusFrame, Boss1TargetFrame, Boss2TargetFrame, Boss3TargetFrame, Boss4TargetFrame,
         Boss5TargetFrame }) do
         local content = frame.TargetFrameContent
-        local threat = content and content.TargetFrameContentContextual and content.TargetFrameContentContextual.NumericalThreat
+        local threat = content and content.TargetFrameContentContextual and
+            content.TargetFrameContentContextual.NumericalThreat
         if threat then
             if threat.bg then
                 Theme.blacklist[threat.bg] = true
