@@ -161,6 +161,28 @@ function Misc:OnInitialize()
                 end,
                 order = 7.5
             },
+            wowheadlinks = {
+                name = "Wowhead Links",
+                desc = "Alt + Left Click on a link in the chat, an item or a quest to get its Wowhead link to copy",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.misc.wowheadlinks = val
+
+                    if not Misc.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Misc.Module.WowheadLinks:Enable()
+                    else
+                        Misc.Module.WowheadLinks:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.misc.wowheadlinks
+                end,
+                order = 7.6
+            },
             header2 = {
                 name = "Hide Frames",
                 type = "header",

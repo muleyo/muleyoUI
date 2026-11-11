@@ -427,6 +427,7 @@ local defaults = {
             playerlinks = true,
             lfgdeclined = true,
             questannounce = false,
+            wowheadlinks = true,
             gryphons = false
         },
         edit = {
