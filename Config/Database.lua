@@ -294,7 +294,6 @@ local defaults = {
                 enabled = false,
                 arrows = true,
                 glow = false,
-                classcolor = false,
                 color = {1, 1, 1, 1},
                 size = 16,
                 offset = 4

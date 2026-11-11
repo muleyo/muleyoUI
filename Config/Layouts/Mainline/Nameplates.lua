@@ -1075,25 +1075,9 @@ function Nameplates:OnInitialize()
                 end,
                 order = 61
             },
-            targetClasscolor = {
-                name = "Class Color",
-                desc = "Color the Indicator by the Target's Class",
-                type = "toggle",
-                disabled = function()
-                    return not db().target.enabled
-                end,
-                set = function(_, val)
-                    db().target.classcolor = val
-                    Refresh(Nameplates.Module.TargetIndicator)
-                end,
-                get = function()
-                    return db().target.classcolor
-                end,
-                order = 62
-            },
             targetColor = {
                 name = "Color",
-                desc = "Choose a Color for the Target Indicator and the Border of the targeted Nameplate\n\n|cffffff00Info:|r The Arrows use the Class Color instead while that is enabled, the Border keeps this Color. Without the Target Indicator the Border is white",
+                desc = "Choose a Color for the Target Indicator and the Border of the targeted Nameplate\n\n|cffffff00Info:|r Without the Target Indicator the Border is white",
                 type = "color",
                 hasAlpha = true,
                 disabled = function()

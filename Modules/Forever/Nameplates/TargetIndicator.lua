@@ -5,34 +5,18 @@ function TargetIndicator:OnInitialize()
     TargetIndicator.db = mUI.db.profile.nameplates
 
     TargetIndicator.Core = mUI:GetModule("mUI.Modules.Nameplates.Core")
-    TargetIndicator.Units = mUI:GetModule("mUI.Modules.Nameplates.Units")
 
     local Core = TargetIndicator.Core
-    local Units = TargetIndicator.Units
 
     local ARROW_LEFT = [[Interface\AddOns\mUI\Media\Textures\Nameplates\arrowLeft.png]]
     local ARROW_RIGHT = [[Interface\AddOns\mUI\Media\Textures\Nameplates\arrowRight.png]]
 
     TargetIndicator.handler = {}
 
-    -- The color from the options. The border of the targeted nameplate has it, whatever the arrows are colored by
-    function TargetIndicator:GetPickedColor()
+    -- The color of the indicator, the border of the targeted nameplate has it as well
+    function TargetIndicator:GetColor()
         local color = TargetIndicator.db.target.color
         return color[1], color[2], color[3], color[4] or 1
-    end
-
-    -- The color of the arrows: the picked one, or the class of the target
-    function TargetIndicator:GetColor(data)
-        local r, g, b, a = TargetIndicator:GetPickedColor()
-        local classFile = TargetIndicator.db.target.classcolor and Units:GetClassFile(data)
-        if classFile then
-            local classColor = C_ClassColor.GetClassColor(classFile)
-            if classColor then
-                r, g, b, a = classColor.r, classColor.g, classColor.b, 1
-            end
-        end
-
-        return r, g, b, a
     end
 
     function TargetIndicator.handler.Create(plate)
@@ -81,7 +65,7 @@ function TargetIndicator:OnInitialize()
         end
 
         local size = config.size
-        local r, g, b, a = TargetIndicator:GetColor(data)
+        local r, g, b, a = TargetIndicator:GetColor()
 
         holder.left:SetSize(size, size)
         holder.right:SetSize(size, size)

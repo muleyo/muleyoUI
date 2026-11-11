@@ -657,14 +657,14 @@ function Health:OnInitialize()
 
     local TargetIndicator
 
-    -- The border of the targeted nameplate has the color picked for the Target Indicator, as long as that is enabled
+    -- The border of the targeted nameplate has the color of the Target Indicator, as long as that is enabled
     local function TargetBorderColor()
         if TargetIndicator == nil then
             TargetIndicator = mUI:GetModule("mUI.Modules.Nameplates.TargetIndicator", true) or false
         end
 
         if TargetIndicator and TargetIndicator:IsEnabled() then
-            return TargetIndicator:GetPickedColor()
+            return TargetIndicator:GetColor()
         end
 
         return 1, 1, 1, 1
