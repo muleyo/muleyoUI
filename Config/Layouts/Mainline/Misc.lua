@@ -346,6 +346,20 @@ function Misc:OnInitialize()
                     return mUI.db.profile.misc.achievements
                 end,
                 order = 17
+            },
+            header4 = {
+                name = "Tools",
+                type = "header",
+                order = 20
+            },
+            cvarbrowser = {
+                name = "CVar Browser",
+                desc = "Browse all CVars of the game: their values (red when they are not the default), their defaults and which AddOn changed them last. Values you set there are saved and enforced, mUI sets them again on login and whenever something else changes them.\n\n|cffffff00Info:|r Also available with /mui cvars",
+                type = "execute",
+                func = function()
+                    mUI:GetModule("mUI.Config.CVarBrowser"):Open()
+                end,
+                order = 21
             }
         }
     }

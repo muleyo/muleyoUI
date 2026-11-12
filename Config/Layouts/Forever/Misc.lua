@@ -184,24 +184,18 @@ function Misc:OnInitialize()
                 order = 7.6
             },
             navigation = {
-                name = "In-Game Navigation Setting",
-                desc = "Adds the \"Show in-game navigation\" setting back to Interface > Display, like Retail has it. It turns on the marker in the world that points to the tracked quest or the waypoint on the map.\n\n|cffffff00Info:|r Requires UI reload to take effect.",
+                name = "Show In-Game Navigation",
+                desc = "Shows the marker in the world that points to the tracked quest or the waypoint on the map, like \"Show in-game navigation\" on Retail. This changes the CVar of the game, nothing else.",
                 type = "toggle",
+                -- The game decides if it has the CVar
+                disabled = function()
+                    return C_CVar.GetCVar("showInGameNavigation") == nil
+                end,
                 set = function(_, val)
-                    mUI.db.profile.misc.navigation = val
-
-                    if not Misc.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val then
-                        Misc.Module.Navigation:Enable()
-                    else
-                        Misc.Module.Navigation:Disable()
-                    end
+                    C_CVar.SetCVar("showInGameNavigation", val and 1 or 0)
                 end,
                 get = function()
-                    return mUI.db.profile.misc.navigation
+                    return C_CVar.GetCVarBool("showInGameNavigation")
                 end,
                 order = 7.7
             },
@@ -368,6 +362,20 @@ function Misc:OnInitialize()
                     return mUI.db.profile.misc.achievements
                 end,
                 order = 17
+            },
+            header4 = {
+                name = "Tools",
+                type = "header",
+                order = 20
+            },
+            cvarbrowser = {
+                name = "CVar Browser",
+                desc = "Browse all CVars of the game: their values (red when they are not the default), their defaults and which AddOn changed them last. Values you set there are saved and enforced, mUI sets them again on login and whenever something else changes them.\n\n|cffffff00Info:|r Also available with /mui cvars",
+                type = "execute",
+                func = function()
+                    mUI:GetModule("mUI.Config.CVarBrowser"):Open()
+                end,
+                order = 21
             }
         }
     }

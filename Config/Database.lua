@@ -428,7 +428,6 @@ local defaults = {
             lfgdeclined = true,
             questannounce = false,
             wowheadlinks = true,
-            navigation = true,
             gryphons = false
         },
         edit = {
@@ -447,6 +446,11 @@ local defaults = {
             setup = false,
             savedBy = false,
             savedAt = 0
+        },
+        -- The CVar Browser: who changed a CVar last, and the values it enforces. For the whole account.
+        cvars = {
+            sources = {},
+            enforced = {}
         }
     },
     -- What this character got of it

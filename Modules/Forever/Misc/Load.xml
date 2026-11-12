@@ -12,6 +12,5 @@
     <Include file="LFGDeclined.lua" />
     <Include file="QuestAnnounce.lua" />
     <Include file="WowheadLinks.lua" />
-    <Include file="Navigation.lua" />
     <Include file="Modules.lua" />
 </Ui>

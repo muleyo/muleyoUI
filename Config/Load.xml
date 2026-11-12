@@ -19,6 +19,7 @@
     <Include file="GUI\Search.lua" />
     <Include file="GUI\Preview.lua" />
     <Include file="Gui.lua" />
+    <Include file="CVarBrowser.lua" />
     <Include file="Install.lua" />
     <Include file="Changelog.lua" />
 </Ui>

@@ -15,7 +15,6 @@ function Modules:OnInitialize()
     Modules.LFGDeclined = mUI:GetModule("mUI.Modules.Misc.LFGDeclined")
     Modules.QuestAnnounce = mUI:GetModule("mUI.Modules.Misc.QuestAnnounce")
     Modules.WowheadLinks = mUI:GetModule("mUI.Modules.Misc.WowheadLinks")
-    Modules.Navigation = mUI:GetModule("mUI.Modules.Misc.Navigation")
 end
 
 function Modules:OnEnable()
@@ -60,9 +59,6 @@ function Modules:OnEnable()
     if Modules.db.wowheadlinks then
         Modules.WowheadLinks:Enable()
     end
-    if Modules.db.navigation then
-        Modules.Navigation:Enable()
-    end
 end
 
 function Modules:OnDisable()
@@ -80,5 +76,4 @@ function Modules:OnDisable()
     Modules.LFGDeclined:Disable()
     Modules.QuestAnnounce:Disable()
     Modules.WowheadLinks:Disable()
-    Modules.Navigation:Disable()
 end

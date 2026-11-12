@@ -29,7 +29,13 @@ function mUI:OnInitialize()
     end)
 
     -- Slash Command
-    function self:SlashCommand()
+    function self:SlashCommand(msg)
+        local input = strtrim(msg or ""):lower()
+        if input == "cvars" or input == "cvar" then
+            mUI:GetModule("mUI.Config.CVarBrowser"):Toggle()
+            return
+        end
+
         self:GUI()
     end
 
