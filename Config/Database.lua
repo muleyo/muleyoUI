@@ -428,6 +428,7 @@ local defaults = {
             lfgdeclined = true,
             questannounce = false,
             wowheadlinks = true,
+            navigation = true,
             gryphons = false
         },
         edit = {

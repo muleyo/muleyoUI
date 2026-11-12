@@ -183,6 +183,28 @@ function Misc:OnInitialize()
                 end,
                 order = 7.6
             },
+            navigation = {
+                name = "In-Game Navigation Setting",
+                desc = "Adds the \"Show in-game navigation\" setting back to Interface > Display, like Retail has it. It turns on the marker in the world that points to the tracked quest or the waypoint on the map.\n\n|cffffff00Info:|r Requires UI reload to take effect.",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.misc.navigation = val
+
+                    if not Misc.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Misc.Module.Navigation:Enable()
+                    else
+                        Misc.Module.Navigation:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.misc.navigation
+                end,
+                order = 7.7
+            },
             header2 = {
                 name = "Hide Frames",
                 type = "header",
