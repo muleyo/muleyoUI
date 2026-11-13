@@ -421,6 +421,48 @@ local function PlayerMana()
     return PlayerFrame_GetManaBar and PlayerFrame_GetManaBar() or PlayerMain().ManaBarArea.ManaBar
 end
 
+-- Heal prediction and absorb segments draw Blizzard's bar art, which has a
+-- dark rim and shading of its own. Next to mUI's flat bar texture that rim
+-- makes them look thinner than the health fill, so while the layout is on
+-- they take the health bar's texture (keeping their own colour).
+local SEGMENT_KEYS = { "MyHealPredictionBar", "OtherHealPredictionBar", "HealAbsorbBar", "TotalAbsorbBar" }
+
+-- The bar texture's file when it is a plain texture (mUI's bar texture),
+-- nil when it is Blizzard's art.
+local function FlatBarFile(barTexture)
+    if not barTexture or barTexture:GetAtlas() then return nil end
+    local file = barTexture:GetTexture()
+    if file == nil or IsSecret(file) then return nil end
+    return file
+end
+
+-- `file` nil puts Blizzard's art back.
+local function SetFlatFill(fill, file)
+    if file then
+        if fill.mUIStockAtlas == nil then
+            fill.mUIStockAtlas = fill:GetAtlas() or false
+        end
+        fill:SetTexture(file)
+        fill:SetTexCoord(0, 1, 0, 1)
+    elseif fill.mUIStockAtlas ~= nil then
+        if fill.mUIStockAtlas then
+            fill:SetAtlas(fill.mUIStockAtlas, TextureKitConstants.IgnoreAtlasSize)
+        end
+        fill.mUIStockAtlas = nil
+    end
+end
+
+local function SetPlayerSegmentFills(on)
+    local _, bar = PlayerHealth()
+    local file = on and FlatBarFile(bar:GetStatusBarTexture()) or nil
+    for _, key in ipairs(SEGMENT_KEYS) do
+        local segment = bar[key]
+        if segment and segment.Fill then
+            SetFlatFill(segment.Fill, file)
+        end
+    end
+end
+
 local function PlayerAltBar()
     return PlayerFrame_GetAlternatePowerBar and PlayerFrame_GetAlternatePowerBar() or nil
 end
@@ -518,6 +560,7 @@ local function RestorePlayerStock(art)
         RestorePoints(loss, s.lossPoints)
         SetSizeIf(loss, s.lossWidth, s.lossHeight)
     end
+    SetPlayerSegmentFills(false)
 
     RestorePowerText(mana)
     SetSizeIf(mana, s.manaWidth, s.manaHeight)
@@ -773,6 +816,7 @@ local function ApplyPlayerNow()
         loss:ClearAllPoints()
         loss:SetAllPoints(bar)
     end
+    SetPlayerSegmentFills(true)
     SetPlayerNameBgHidden(bigOn)
     if R and bigOn then
         SetNameOnStrip(PlayerName, PlayerArtTexture(), R)
@@ -945,6 +989,24 @@ local function CopyColor(mirror)
     mirror.bar:SetStatusBarColor(r, g, b)
 end
 
+-- The segment fills take the health fill's flat texture when it has one
+-- (see FlatBarFile), the source segment's art otherwise.
+local function SyncSegmentFill(mirror, seg)
+    local src = seg.source
+    local file = FlatBarFile(mirror.fill)
+    local atlas = not file and src.Fill and src.Fill:GetAtlas()
+    local fill = file or atlas or (src.Fill and src.Fill:GetTexture())
+    if fill and fill ~= seg.mUIBigFill then
+        seg.mUIBigFill = fill
+        if atlas then
+            seg.Fill:SetAtlas(atlas, TextureKitConstants.IgnoreAtlasSize)
+        else
+            seg.Fill:SetTexture(fill)
+            seg.Fill:SetTexCoord(0, 1, 0, 1)
+        end
+    end
+end
+
 local CopyTexture
 
 local function HookFill(mirror, src)
@@ -991,6 +1053,9 @@ CopyTexture = function(mirror)
     dst:SetVertexColor(src:GetVertexColor())
     dst:SetDesaturated(src:IsDesaturated())
     HookFill(mirror, src)
+    for _, seg in ipairs(mirror.segments) do
+        SyncSegmentFill(mirror, seg)
+    end
 end
 
 local function SegmentEnd(segment)
@@ -1032,16 +1097,7 @@ local function UpdateSegment(mirror, seg)
         seg.offsetHelper:SetValue(seg.lastOffset)
     end
     seg.sizeHelper:SetValue(seg.lastFill)
-    local atlas = src.Fill and src.Fill:GetAtlas()
-    local fill = atlas or (src.Fill and src.Fill:GetTexture())
-    if fill and fill ~= seg.mUIBigFill then
-        seg.mUIBigFill = fill
-        if atlas then
-            seg.Fill:SetAtlas(atlas, TextureKitConstants.IgnoreAtlasSize)
-        else
-            seg.Fill:SetTexture(fill)
-        end
-    end
+    SyncSegmentFill(mirror, seg)
     seg:SetShown(src:IsShown())
 end
 
@@ -1749,6 +1805,18 @@ local function InstallHooks()
     end
     if PlayerMain().StatusTexture then
         hooksecurefunc(PlayerMain().StatusTexture, "SetAtlas", Glows)
+    end
+    -- mUI's bar texture option can change the health texture at any time.
+    local _, playerBar = PlayerHealth()
+    local playerBarTexture = playerBar:GetStatusBarTexture()
+    if playerBarTexture then
+        local function Fills()
+            if On() and not applying then
+                Guarded("player bar fills", function() SetPlayerSegmentFills(true) end)
+            end
+        end
+        hooksecurefunc(playerBarTexture, "SetTexture", Fills)
+        hooksecurefunc(playerBarTexture, "SetAtlas", Fills)
     end
 
     for _, frame in ipairs({ TargetFrame, FocusFrame }) do
