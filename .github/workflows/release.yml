@@ -41,6 +41,11 @@ jobs:
             echo ""
           } > CHANGELOG.md
 
+      # In-game Changelog
+      - name: Generate in-game changelog
+        continue-on-error: true
+        run: python3 -I .github/scripts/generate_changelog.py "${GITHUB_REF#refs/tags/}"
+
       - name: Package and Release
         uses: BigWigsMods/packager@master
         env:

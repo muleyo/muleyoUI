@@ -36,6 +36,11 @@ function mUI:OnInitialize()
             return
         end
 
+        if input == "changelog" then
+            mUI:GetModule("mUI.Config.Changelog"):Open()
+            return
+        end
+
         self:GUI()
     end
 

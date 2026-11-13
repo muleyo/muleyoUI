@@ -21,5 +21,6 @@
     <Include file="Gui.lua" />
     <Include file="CVarBrowser.lua" />
     <Include file="Install.lua" />
+    <Include file="ChangelogData.lua" />
     <Include file="Changelog.lua" />
 </Ui>
