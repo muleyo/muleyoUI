@@ -375,6 +375,75 @@ function Unitframes:OnInitialize()
                 end,
                 order = 19
             },
+            bighealthbar = {
+                name = "Big Healthbar",
+                desc = "Bigger Healthbar on Player, Target and Focus: the Healthbar takes over the name row (from BetterBlizzFrames)",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.bighealthbar = val
+
+                    if not Unitframes.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Unitframes.Module.BigHealthbar:Enable()
+                    else
+                        Unitframes.Module.BigHealthbar:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.bighealthbar
+                end,
+                order = 19.4
+            },
+            retailtextures = {
+                name = "Retail Textures",
+                desc = "Retail-style frame art on Player, Target and Focus, with the bars fitted to it (from BetterBlizzFrames)",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.retailtextures = val
+
+                    if not Unitframes.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Unitframes.Module.RetailTextures:Enable()
+                    else
+                        Unitframes.Module.RetailTextures:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.retailtextures
+                end,
+                order = 19.5
+            },
+            symmetricplayer = {
+                name = "Symmetric Player Frame",
+                desc = "Player frame with the Target art mirrored: round portrait ring like the Target's, no square corner (from BetterBlizzFrames)\n\n|cffffff00Info:|r Needs Retail Textures",
+                type = "toggle",
+                disabled = function()
+                    return not mUI.db.profile.unitframes.retailtextures
+                end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.symmetricplayer = val
+
+                    if not Unitframes.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Unitframes.Module.SymmetricPlayer:Enable()
+                    else
+                        Unitframes.Module.SymmetricPlayer:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.symmetricplayer
+                end,
+                order = 19.6
+            },
             overshields = {
                 name = "Overshields",
                 desc = "Show Absorbshields on Unitframes\n\n|cffffff00Info:|r Requires Reload",

@@ -25,5 +25,8 @@
     <Include file="Smooth.lua" />
     <Include file="Overshields.lua" />
     <Include file="Threat.lua" />
+    <Include file="RetailTextures.lua" />
+    <Include file="BigHealthbar.lua" />
+    <Include file="SymmetricPlayer.lua" />
     <Include file="Modules.lua" />
 </Ui>
