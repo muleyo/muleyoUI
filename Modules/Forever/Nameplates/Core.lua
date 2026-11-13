@@ -673,7 +673,8 @@ function Core:OnInitialize()
 
     if not Core:IsHooked(NamePlateUnitFrameMixin, "OnUnitFactionChanged") then
         Core:SecureHook(NamePlateUnitFrameMixin, "OnUnitFactionChanged", function(unitFrame)
-            if unitFrame:IsForbidden() or not unitFrame.unit then
+            -- The hooks stay when the module is off, the default nameplates are left alone then
+            if not Core:IsEnabled() or unitFrame:IsForbidden() or not unitFrame.unit then
                 return
             end
 
@@ -697,7 +698,8 @@ function Core:OnInitialize()
 
     if not Core:IsHooked(NamePlateUnitFrameMixin, "UpdateWidgetsOnlyMode") then
         Core:SecureHook(NamePlateUnitFrameMixin, "UpdateWidgetsOnlyMode", function(unitFrame)
-            if unitFrame:IsForbidden() or not unitFrame.unit then
+            -- Without this, a plate that isn't tracked gets adopted below, and its default auras, level and markers are hidden
+            if not Core:IsEnabled() or unitFrame:IsForbidden() or not unitFrame.unit then
                 return
             end
 
