@@ -1,7 +1,6 @@
 local Functions = mUI:NewModule("mUI.Functions")
 
--- Pixel Perfect Scaling System (ElvUI approach)
--- Must be at file scope so it's available before OnInitialize
+-- Pixel Perfect Scaling System
 do
     local physicalWidth, physicalHeight = GetPhysicalScreenSize()
     mUI.physicalWidth = physicalWidth

@@ -262,7 +262,7 @@ Builders.select = function(parent, option)
 
     local widget = Acquire(widgetType, parent)
     widget:SetLabel(Resolve(option.name, option))
-    widget.optionInfo = InfoFor(option) -- passed to function values on menu open
+    widget.optionInfo = InfoFor(option)              -- passed to function values on menu open
     widget:SetOptions(option.values, option.sorting) -- may be a function; resolved on open
     widget:SetValue(option.get and option.get(InfoFor(option)))
     widget.OnValueChanged = function(_, key)
@@ -542,10 +542,7 @@ function Renderer:RenderCategory(key)
     end
 end
 
--- Lighter-weight alternative to Refresh(): re-evaluates the `disabled` state of
--- widgets already on the page WITHOUT releasing/reacquiring/repositioning them
--- (unlike Refresh(), which re-lays out the whole page), so it's safe to call
--- while a widget (e.g. a multiline EditBox) has active keyboard focus.
+-- Lighter-weight alternative to Refresh()
 function Renderer:RefreshStates()
     for _, widget in ipairs(active) do
         local option = widget.option
@@ -556,7 +553,6 @@ function Renderer:RefreshStates()
 end
 
 -- Re-render the current page (after any set) so dynamic names/hidden/disabled
--- update — replaces AceConfigRegistry:NotifyChange. Keeps the scroll position.
 function Renderer:Refresh()
     if not self.currentKey then
         return

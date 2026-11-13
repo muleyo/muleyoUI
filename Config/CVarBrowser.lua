@@ -917,7 +917,25 @@ local function CreateWindow()
     frame:EnableMouse(true)
     mGUI:ApplyBackdrop(frame, "bg", "border")
     mGUI:ApplyWindowArt(frame)
-    tinsert(UISpecialFrames, "mUICVarBrowser")
+
+    -- ESC closes it with the fade, like the options. UISpecialFrames would hide it right away. Everything else goes on to the game,
+    -- and while the options are open behind this window, ESC only closes this one.
+    frame:EnableKeyboard(true)
+    if not InCombatLockdown() then
+        frame:SetPropagateKeyboardInput(true)
+    end
+    frame:SetScript("OnKeyDown", function(self, key)
+        local escape = key == "ESCAPE"
+
+        -- Protected in combat
+        if not InCombatLockdown() then
+            self:SetPropagateKeyboardInput(not escape)
+        end
+
+        if escape then
+            CVarBrowser:Close()
+        end
+    end)
 
     -- Header
     local header = CreateFrame("Frame", nil, frame, "BackdropTemplate")
@@ -947,7 +965,7 @@ local function CreateWindow()
     close:SetHighlightAtlas("RedButton-Highlight", "ADD")
     mGUI:TintIconButton(close)
     close:SetScript("OnClick", function()
-        frame:Hide()
+        CVarBrowser:Close()
     end)
 
     -- Search and filters
@@ -1034,7 +1052,12 @@ local function CreateWindow()
 
     -- A new frame is shown already, and Show() on a frame that is shown doesn't do OnShow
     frame:Hide()
-    frame:SetScript("OnShow", function()
+    frame:SetScript("OnShow", function(self)
+        -- ESC leaves the propagation off, the first key after opening would be lost
+        if not InCombatLockdown() then
+            self:SetPropagateKeyboardInput(true)
+        end
+
         BuildEntries()
         RefreshAll()
         Rebuild(true)
@@ -1042,17 +1065,24 @@ local function CreateWindow()
     end)
 end
 
+-- Fades in and out, like the options
 function CVarBrowser:Open()
     if not ui.frame then
         CreateWindow()
     end
 
-    ui.frame:Show()
+    mGUI:FadeShow(ui.frame)
+end
+
+function CVarBrowser:Close()
+    if ui.frame then
+        mGUI:FadeHide(ui.frame)
+    end
 end
 
 function CVarBrowser:Toggle()
     if ui.frame and ui.frame:IsShown() then
-        ui.frame:Hide()
+        CVarBrowser:Close()
     else
         CVarBrowser:Open()
     end

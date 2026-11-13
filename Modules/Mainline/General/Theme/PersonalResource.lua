@@ -1,13 +1,8 @@
 local Theme = mUI:GetModule("mUI.Modules.General.Theme")
 
--- The Personal Resource Display: its health, power and alternate power bars get the texture of the Unitframes (Healthbar / Powerbar),
--- the artwork behind the bars is skinned, and so are the points of the class resource (combo points, runes and so on).
 local LSM = LibStub("LibSharedMedia-3.0")
-
 local BAR_BACKGROUND_ATLAS = "ui-hud-cooldownmanager-bar-bg"
-
--- The textures behind the points of the class resource, their names differ per class
-local POINT_BACKGROUNDS = {"BGActive", "BGInactive", "BGShadow", "BG_Active", "BG_Inactive", "BG_Shadow"}
+local POINT_BACKGROUNDS = { "BGActive", "BGInactive", "BGShadow", "BG_Active", "BG_Inactive", "BG_Shadow" }
 
 -- The texture of the Unitframes, nothing when it is set to the default
 local function GetTexturePath()
@@ -80,9 +75,9 @@ local function SkinBarBackground(bar)
         return
     end
 
-    for _, region in pairs({bar:GetRegions()}) do
+    for _, region in pairs({ bar:GetRegions() }) do
         if region.GetAtlas and (region:GetAtlas() or ""):lower() == BAR_BACKGROUND_ATLAS then
-            mUI:Skin({region}, true)
+            mUI:Skin({ region }, true)
         end
     end
 end
@@ -127,7 +122,7 @@ function Theme:PersonalResourceClassBar()
         return
     end
 
-    for _, point in pairs({classFrame:GetChildren()}) do
+    for _, point in pairs({ classFrame:GetChildren() }) do
         local textures = {}
         for _, key in ipairs(POINT_BACKGROUNDS) do
             textures[#textures + 1] = point[key]
@@ -165,7 +160,7 @@ function Theme:PersonalResource()
     end
 
     -- Some classes put their own texture on the alternate power bar when it is set up or shown
-    for _, method in ipairs({"SetupAlternatePowerBar", "UpdateAlternatePowerBar"}) do
+    for _, method in ipairs({ "SetupAlternatePowerBar", "UpdateAlternatePowerBar" }) do
         if frame[method] and not Theme:IsHooked(frame, method) then
             Theme:SecureHook(frame, method, function()
                 StyleBar(frame.AlternatePowerBar, GetTexturePath())

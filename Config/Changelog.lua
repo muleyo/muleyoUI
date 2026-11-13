@@ -1,7 +1,5 @@
 local Changelog = mUI:NewModule("mUI.Config.Changelog")
 
--- Maintainer note: this window intentionally shows ONLY the latest update.
--- Keep this as a single entry and update it each release.
 local CHANGELOG = {
     version = "4.1.24",
     affected = { "Mainline", "Forever" },

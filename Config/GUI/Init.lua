@@ -77,8 +77,8 @@ function mGUI:ApplyEdgeBorder(frame, color, thickness)
         border = CreateFrame("Frame", nil, frame, "BackdropTemplate")
         PixelUtil.SetPoint(border, "TOPLEFT", frame, "TOPLEFT", 0, 0)
         PixelUtil.SetPoint(border, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
+        -- On top of what is in the frame, in the strata of that frame: a higher strata draws the border over other windows
         border:SetFrameLevel(frame:GetFrameLevel() + 50)
-        border:SetFrameStrata("TOOLTIP")
         frame.mGUIBorderFrame = border
     end
     border:Show()
@@ -111,8 +111,8 @@ function mGUI:ApplyQuadBorder(frame, color, thickness)
         overlay = CreateFrame("Frame", nil, frame)
         PixelUtil.SetPoint(overlay, "TOPLEFT", frame, "TOPLEFT", 0, 0)
         PixelUtil.SetPoint(overlay, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
+        -- Same as the edge border: in the strata of the frame
         overlay:SetFrameLevel(frame:GetFrameLevel() + 50)
-        overlay:SetFrameStrata("TOOLTIP")
         frame.mGUIQuadOverlay = overlay
     end
     overlay:Show()
