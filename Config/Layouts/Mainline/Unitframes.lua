@@ -47,12 +47,17 @@ function Unitframes:OnInitialize()
             },
             textures_unitframes = {
                 name = "Healthbar / Powerbar",
-                desc = "Select a Texture for the Health-/Powerbars of Unitframes (Player, Target, Focus, etc.)",
+                desc = "Select a Texture for the Health-/Powerbars of Unitframes (Player, Target, Focus, etc.) and the Personal Resource Display",
                 type = "select",
                 values = function() return mUI.mGUI.LSMValues("statusbar") end,
                 dialogControl = 'mUI_LSM30_Status',
                 set = function(_, val)
                     mUI.db.profile.unitframes.textures.unitframes = val
+
+                    local Theme = mUI:GetModule("mUI.Modules.General.Theme", true)
+                    if Theme and Theme:IsEnabled() and Theme.PersonalResourceBars then
+                        Theme:PersonalResourceBars()
+                    end
 
                     if not Unitframes.Module:IsEnabled() then
                         return

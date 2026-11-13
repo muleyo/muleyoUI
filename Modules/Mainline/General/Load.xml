@@ -7,6 +7,7 @@
     <Include file="Theme\CastbarIcons.lua" />
     <Include file="Theme\ClassBar.lua" />
     <Include file="Theme\Frames.lua" />
+    <Include file="Theme\PersonalResource.lua" />
     <Include file="Theme\Tooltips.lua" />
 
     <Include file="Font.lua" />
