@@ -59,6 +59,11 @@ function Unitframes:OnInitialize()
                         Theme:PersonalResourceBars()
                     end
 
+                    local DruidMana = mUI:GetModule("mUI.Modules.Unitframes.DruidMana", true)
+                    if DruidMana and DruidMana:IsEnabled() then
+                        DruidMana:UpdateTexture()
+                    end
+
                     if not Unitframes.Module:IsEnabled() then
                         return
                     end
@@ -379,6 +384,34 @@ function Unitframes:OnInitialize()
                     return mUI.db.profile.unitframes.threat
                 end,
                 order = 19
+            },
+            druidmana = {
+                name = "Druid Mana Bar",
+                desc = "Show the mana of a Druid in cat, bear or another form as a bar under the Player Frame, with the Unitframes texture",
+                type = "toggle",
+                hidden = function()
+                    return select(2, UnitClass("player")) ~= "DRUID"
+                end,
+                disabled = function()
+                    return C_AddOns.IsAddOnLoaded("MiniDruidMana")
+                end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.druidmana = val
+
+                    if not Unitframes.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Unitframes.Module.DruidMana:Enable()
+                    else
+                        Unitframes.Module.DruidMana:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.druidmana == true
+                end,
+                order = 19.1
             },
             overshields = {
                 name = "Overshields",

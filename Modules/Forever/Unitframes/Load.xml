@@ -25,5 +25,6 @@
     <Include file="Smooth.lua" />
     <Include file="Overshields.lua" />
     <Include file="Threat.lua" />
+    <Include file="DruidMana.lua" />
     <Include file="Modules.lua" />
 </Ui>

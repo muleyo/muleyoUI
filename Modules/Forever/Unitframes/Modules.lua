@@ -25,6 +25,7 @@ function Modules:OnInitialize()
     Modules.Smooth = mUI:GetModule("mUI.Modules.Unitframes.SmoothHealth")
     Modules.Overshields = mUI:GetModule("mUI.Modules.Unitframes.Overshields")
     Modules.Threat = mUI:GetModule("mUI.Modules.Unitframes.Threat")
+    Modules.DruidMana = mUI:GetModule("mUI.Modules.Unitframes.DruidMana")
 end
 
 function Modules:OnEnable()
@@ -75,6 +76,9 @@ function Modules:OnEnable()
         end
         if Modules.db.threat then
             Modules.Threat:Enable()
+        end
+        if Modules.db.druidmana == true then
+            Modules.DruidMana:Enable()
         end
     end
 
@@ -135,4 +139,5 @@ function Modules:OnDisable()
     Modules.Smooth:Disable()
     Modules.Overshields:Disable()
     Modules.Threat:Disable()
+    Modules.DruidMana:Disable()
 end
