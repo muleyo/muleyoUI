@@ -570,10 +570,26 @@ function General:OnInitialize()
                 type = "header",
                 order = 26
             },
+            playerAurasEnabled = {
+                name = "Enable Player Auras",
+                desc = "Use the mUI Buffs/Debuffs on the player instead of the ones of the game\n\n|cffffff00Info:|r Requires Reload",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.general.playerauras.enabled = val
+                    mUI:Reload(val and "Enable Player Auras" or "Disable Player Auras")
+                end,
+                get = function()
+                    return mUI.db.profile.general.playerauras.enabled
+                end,
+                order = 26.5
+            },
             playerAuraDurationTextSize = {
                 name = "Cooldown Text Size",
                 desc = "Scale the aura cooldown/duration text on the player buff/debuff icons (percent of the default size).",
                 type = "range",
+                hidden = function()
+                    return not mUI.db.profile.general.playerauras.enabled
+                end,
                 min = 50,
                 max = 200,
                 step = 5,
@@ -594,6 +610,9 @@ function General:OnInitialize()
                 name = "Stack Count Text Size",
                 desc = "Scale the aura stack count text on the player buff/debuff icons (percent of the default size).",
                 type = "range",
+                hidden = function()
+                    return not mUI.db.profile.general.playerauras.enabled
+                end,
                 min = 50,
                 max = 200,
                 step = 5,

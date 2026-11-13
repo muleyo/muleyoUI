@@ -38,6 +38,7 @@ local defaults = {
                 mousecursor = false
             },
             playerauras = {
+                enabled = true,
                 durationTextSize = 100,
                 countTextSize = 100
             }

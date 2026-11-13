@@ -139,18 +139,19 @@ function Theme:OnEnable()
         ["Blizzard_HouseList"] = Theme.Housing
     }
 
-    -- Player, Target and Focus Auras. BetterBlizzFrames takes care of those itself, so they are left alone then
-    if not C_AddOns.IsAddOnLoaded("BetterBlizzFrames") then
+    -- Player Auras
+    if mUI.db.profile.general.playerauras.enabled then
         Theme:InitPlayerAuraContainers()
+    end
 
-        if mUI.db.profile.unitframes.enabled then
-            if mUI.db.profile.unitframes.buffsdebuffs.enabled then
-                Theme:CreateUnitAuraContainer(TargetFrame, "target")
-                Theme:CreateUnitAuraContainer(FocusFrame, "focus")
-            else
-                Theme:DisableDefaultUnitAuraContainer(TargetFrame)
-                Theme:DisableDefaultUnitAuraContainer(FocusFrame)
-            end
+    -- Target and Focus Auras
+    if mUI.db.profile.unitframes.enabled then
+        if mUI.db.profile.unitframes.buffsdebuffs.enabled then
+            Theme:CreateUnitAuraContainer(TargetFrame, "target")
+            Theme:CreateUnitAuraContainer(FocusFrame, "focus")
+        else
+            Theme:DisableDefaultUnitAuraContainer(TargetFrame)
+            Theme:DisableDefaultUnitAuraContainer(FocusFrame)
         end
     end
 
