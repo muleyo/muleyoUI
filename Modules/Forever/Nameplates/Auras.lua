@@ -24,6 +24,8 @@ function Auras:OnInitialize()
     }
     local DEFENSIVE_FILTER = AuraUtil.CreateFilterString(AF.Helpful, AF.BigDefensive)
     local IMPORTANT_FILTER = AuraUtil.CreateFilterString(AF.Helpful, AF.Important, "!BIG_DEFENSIVE")
+    -- Enemy NPCs show every buff they have
+    local ALL_BUFFS_FILTER = AuraUtil.CreateFilterString(AF.Helpful)
     local BASE_ICON_SIZE = 20
     local ICON_GAP = 2
     local DEFAULT_DEBUFF_COUNT = 3
@@ -165,6 +167,17 @@ function Auras:OnInitialize()
                 lineSpacing = ICON_GAP
             }
         })
+        -- Takes the place of the two groups above on enemy NPCs (see SetAllBuffs)
+        left:AddAuraGroup("AllBuffs", ALL_BUFFS_FILTER, {
+            maxFrameCount = math.huge,
+            initializeFrame = InitIcon,
+            layout = {
+                elementSpacing = ICON_GAP,
+                lineSpacing = ICON_GAP
+            }
+        })
+        left:SetAuraGroupEnabled("AllBuffs", false)
+        left.mUIAllBuffs = false
         plate.AuraLeft = left
 
         local friendlyCC = NewContainer(plate, "friendlycc", "CENTER", AnchorUtil.FlowDirection.Right,
@@ -214,6 +227,22 @@ function Auras:OnInitialize()
         end
     end
 
+    -- Enemy NPCs show every buff they have. Players, and friendly units, only the important ones and the defensives.
+    local function ShowsAllBuffs(data)
+        return not data.isFriend and Core:Safe(data.isPlayer, true) == false
+    end
+
+    local function SetAllBuffs(container, all)
+        if container.mUIAllBuffs == all then
+            return
+        end
+
+        container.mUIAllBuffs = all
+        container:SetAuraGroupEnabled("AllBuffs", all)
+        container:SetAuraGroupEnabled("Important", not all)
+        container:SetAuraGroupEnabled("Defensive", not all)
+    end
+
     local function ShouldShowFriendlyCC(plate, data, showOnlyName)
         return not showOnlyName and data.isFriend and Auras.db.classicons.enabled and Auras.db.classicons.friendly and
         plate.ClassIcon ~= nil
@@ -254,6 +283,7 @@ function Auras:OnInitialize()
             SetContainerUnit(plate.AuraCC, data.unit)
             SetContainerUnit(plate.AuraTop, data.unit)
             SetContainerUnit(plate.AuraLeft, data.unit)
+            SetAllBuffs(plate.AuraLeft, ShowsAllBuffs(data))
         end
 
         plate.AurasShowFriendlyCC = ShouldShowFriendlyCC(plate, data, showOnlyName)
