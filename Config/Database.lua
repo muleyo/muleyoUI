@@ -452,7 +452,9 @@ local defaults = {
         cvars = {
             sources = {},
             enforced = {}
-        }
+        },
+        -- What the user had in the nameplate CVars that mUI changes, until the nameplates are turned off
+        nameplateCvars = {}
     },
     -- What this character got of it
     char = {

@@ -421,6 +421,9 @@ function Health:OnInitialize()
         return flags
     end
 
+    -- What the font objects of the default nameplates were before mUI changed them
+    local originalFonts = {}
+
     local function ApplyNamePlateFontObjects()
         local path = mUI.db.profile.general.fontpath
         if not path then
@@ -436,13 +439,28 @@ function Health:OnInitialize()
         for i = 1, #objects do
             local object, height = objects[i][1], objects[i][2]
             if object then
+                if not originalFonts[object] then
+                    local fontPath, fontHeight, fontFlags = object:GetFont()
+                    originalFonts[object] = {fontPath, fontHeight, fontFlags}
+                end
+
                 object:SetFont(path, height + 1, flags)
                 object:SetFont(path, height, flags)
             end
         end
     end
 
-    ApplyNamePlateFontObjects()
+    -- The font objects are the ones of the default nameplates too, they are only changed while the nameplates are on
+    function Health:ApplyFontObjects()
+        ApplyNamePlateFontObjects()
+    end
+
+    function Health:RestoreFontObjects()
+        for object, font in pairs(originalFonts) do
+            object:SetFont(font[1], font[2], font[3])
+        end
+        wipe(originalFonts)
+    end
 
     local function ApplyNamePosition(frame)
         if not Health:IsEnabled() or not frame then
@@ -921,7 +939,7 @@ function Health:OnInitialize()
 
     if not Health:IsHooked(NamePlateUnitFrameMixin, "UpdateWidgetsOnlyMode") then
         Health:SecureHook(NamePlateUnitFrameMixin, "UpdateWidgetsOnlyMode", function(unitFrame)
-            if unitFrame:IsForbidden() or not unitFrame.unit then
+            if not Health:IsEnabled() or unitFrame:IsForbidden() or not unitFrame.unit then
                 return
             end
 
@@ -1041,6 +1059,7 @@ end
 
 function Health:OnEnable()
     Health.db = mUI.db.profile.nameplates
+    Health:ApplyFontObjects()
     Health:RefreshCachedStyle()
     Health:RegisterEvent("PLAYER_ENTERING_WORLD", "RefreshInstanceInfo")
     Health:RegisterEvent("ZONE_CHANGED_NEW_AREA", "RefreshInstanceInfo")
@@ -1050,6 +1069,7 @@ function Health:OnEnable()
 end
 
 function Health:OnDisable()
+    Health:RestoreFontObjects()
     Health:UnregisterEvent("QUEST_LOG_UPDATE")
     Health:UnregisterEvent("PLAYER_ENTERING_WORLD")
     Health:UnregisterEvent("ZONE_CHANGED_NEW_AREA")

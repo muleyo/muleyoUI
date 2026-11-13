@@ -5,6 +5,7 @@ function Style:OnInitialize()
     Style.db = mUI.db.profile.nameplates
 
     Style.Core = mUI:GetModule("mUI.Modules.Nameplates.Core")
+    Style.Cvars = mUI:GetModule("mUI.Modules.Nameplates.Cvars")
 
     local Core = Style.Core
 
@@ -17,9 +18,9 @@ function Style:OnInitialize()
         Style.pendingScale = nil
 
         local scale = Style.db.scale
-        C_CVar.SetCVar("nameplateSelectedScale", scale.target)
-        C_CVar.SetCVar("nameplateMinScale", scale.other)
-        C_CVar.SetCVar("nameplateShowClassColor", Style.db.showClassColor and "1" or "0")
+        Style.Cvars:Set("nameplateSelectedScale", scale.target)
+        Style.Cvars:Set("nameplateMinScale", scale.other)
+        Style.Cvars:Set("nameplateShowClassColor", Style.db.showClassColor and "1" or "0")
     end
 
     function Style:OnRegenEnabled()
@@ -43,4 +44,8 @@ end
 
 function Style:OnDisable()
     Style:UnregisterAllEvents()
+    Style.pendingScale = nil
+
+    -- The scale and the class colors of the default nameplates are the ones of the user again
+    Style.Cvars:Restore({"nameplateSelectedScale", "nameplateMinScale", "nameplateShowClassColor"})
 end

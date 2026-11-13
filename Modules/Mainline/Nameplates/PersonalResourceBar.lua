@@ -5,6 +5,7 @@ function PersonalResourceBar:OnInitialize()
     PersonalResourceBar.db = mUI.db.profile.nameplates
 
     PersonalResourceBar.Core = mUI:GetModule("mUI.Modules.Nameplates.Core")
+    PersonalResourceBar.Cvars = mUI:GetModule("mUI.Modules.Nameplates.Cvars")
     local Core = PersonalResourceBar.Core
 
     local ANCHORS = {
@@ -69,9 +70,20 @@ function PersonalResourceBar:OnInitialize()
     end
 
     function PersonalResourceBar:Apply()
-        C_CVar.SetCVar("nameplateShowSelf", "1")
+        PersonalResourceBar.Cvars:Set("nameplateShowSelf", "1")
 
         local frame = PersonalResourceDisplayFrame
+
+        -- What the frame was before, for when this is turned off
+        if not PersonalResourceBar.original then
+            PersonalResourceBar.original = {
+                health = frame.hideHealth and true or false,
+                power = frame.hidePower and true or false,
+                altPower = frame.hideAltPower and true or false,
+                classInfo = frame.hideClassInfo and true or false
+            }
+        end
+
         frame:SetHideHealth(true)
         frame:SetHidePower(true)
         frame:SetHideAltPower(true)
@@ -101,4 +113,18 @@ end
 
 function PersonalResourceBar:OnDisable()
     PersonalResourceBar:UnregisterAllEvents()
+    PersonalResourceBar:UnhookAll()
+
+    -- The personal resource display of the game is how it was, and shown the way the user had it
+    local original = PersonalResourceBar.original
+    local frame = PersonalResourceDisplayFrame
+    if original and frame then
+        frame:SetHideHealth(original.health)
+        frame:SetHidePower(original.power)
+        frame:SetHideAltPower(original.altPower)
+        frame:SetHideClassInfo(original.classInfo)
+    end
+    PersonalResourceBar.original = nil
+
+    PersonalResourceBar.Cvars:Restore({"nameplateShowSelf"})
 end
