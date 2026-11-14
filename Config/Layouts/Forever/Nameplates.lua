@@ -1660,10 +1660,10 @@ function Nameplates:OnInitialize()
                             PersonalResourceBar:Update()
                         end
                     elseif PersonalResourceBar:IsEnabled() then
-                        PersonalResourceBar:Update()
+                        -- Off means off: it gives the display and the CVar back, and stops listening
+                        PersonalResourceBar:Disable()
 
                         if not Nameplates.Module:IsEnabled() then
-                            PersonalResourceBar:Disable()
                             Core:Disable()
                         end
                     end

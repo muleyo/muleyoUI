@@ -45,8 +45,9 @@ function PersonalResourceBar:OnInitialize()
     end
 
     function PersonalResourceBar:Reposition()
+        -- The events go on while the game is shutting down, after the database took the defaults out of its tables
         local config = PersonalResourceBar.db.personalresource
-        if not config.enabled then
+        if not config or not config.enabled then
             return
         end
 
