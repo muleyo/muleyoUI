@@ -1094,6 +1094,7 @@ local RAID_DEFENSIVES = {
     [389539] = true,  -- Sentinel
     [1261872] = true, -- Heart of the Wild (Bear)
     [5487] = true,    -- Bear Form
+    [9634] = true,    -- Dire Bear Form
     [1966] = true,    -- Feint
     [586] = true,     -- Fade
     [23920] = true,   -- Spell Reflect

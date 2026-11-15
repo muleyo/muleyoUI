@@ -26,5 +26,7 @@
     <Include file="Overshields.lua" />
     <Include file="Threat.lua" />
     <Include file="DruidMana.lua" />
+    <Include file="PortraitAuraSpells.lua" />
+    <Include file="PortraitAuras.lua" />
     <Include file="Modules.lua" />
 </Ui>

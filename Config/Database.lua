@@ -112,6 +112,7 @@ local defaults = {
             overshields = true,
             smooth = false,
             threat = false,
+            portraitauras = false,
             -- Forever only: the mana of a Druid in a form
             druidmana = false,
             buffsdebuffs = {

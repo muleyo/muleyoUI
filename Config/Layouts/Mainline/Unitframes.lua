@@ -380,6 +380,28 @@ function Unitframes:OnInitialize()
                 end,
                 order = 19
             },
+            portraitauras = {
+                name = "Portrait Auras",
+                desc = "Show the icon of a Crowd Control, a Big Defensive or an Important Buff on the Portrait of the Player, Target and Focus Frame while it is up. If there are several, Crowd Control comes first, then Big Defensives, then Important Buffs.",
+                type = "toggle",
+                set = function(_, val)
+                    mUI.db.profile.unitframes.portraitauras = val
+
+                    if not Unitframes.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Unitframes.Module.PortraitAuras:Enable()
+                    else
+                        Unitframes.Module.PortraitAuras:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.portraitauras == true
+                end,
+                order = 19.5
+            },
             overshields = {
                 name = "Overshields",
                 desc = "Show Absorbshields on Unitframes\n\n|cffffff00Info:|r Requires Reload",
