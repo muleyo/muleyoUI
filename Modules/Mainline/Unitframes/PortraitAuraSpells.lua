@@ -82,7 +82,10 @@ mUI.PortraitAuraSpells = {
         [19386] = true,  -- Wyvern Sting
         [213691] = true, -- Scatter Shot
         [9484] = true,   -- Shackle Undead
-        -- Roots
+    },
+
+    -- Holds you in place but does not take the control away. Lower than the rest of the crowd control.
+    SoftCrowdControl = {
         [122] = true,    -- Frost Nova
         [33395] = true,  -- Freeze
         [228600] = true, -- Glacial Spike

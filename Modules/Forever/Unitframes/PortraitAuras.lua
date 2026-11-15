@@ -29,10 +29,16 @@ function PortraitAuras:OnInitialize()
     local SPELLS = mUI.PortraitAuraSpells or {}
     local MAX_BUFF_DURATION = 60
     local SOURCES = { {
+        filter = AuraUtil.CreateFilterString(filters.Harmful),
+        list = "CrowdControl",
+        notFor = {
+            player = true
+        }
+    }, {
         filter = AuraUtil.CreateFilterString(filters.Harmful, filters.CrowdControl)
     }, {
         filter = AuraUtil.CreateFilterString(filters.Harmful),
-        list = "CrowdControl",
+        list = "SoftCrowdControl",
         notFor = {
             player = true
         }
