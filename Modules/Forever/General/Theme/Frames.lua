@@ -1606,6 +1606,17 @@ function Theme:Unitframes()
     end
 end
 
+-- The combo points around the target portrait. The points are made once and only change alpha, so once is enough
+function Theme:ComboFrame()
+    if not (ComboFrame and ComboFrame.ComboPoints) then
+        return
+    end
+
+    for _, point in ipairs(ComboFrame.ComboPoints) do
+        mUI:Skin({ point.BGActive, point.BGInactive, point.BGShadow }, true)
+    end
+end
+
 -- Default nameplates: the frame behind the health bar and the level indicator. mUI's own nameplates restyle both
 local function SkinNameplateFrame(namePlate)
     local Nameplates = mUI:GetModule("mUI.Modules.Nameplates", true)
@@ -1970,6 +1981,7 @@ function Theme:Update()
     Theme:Trade()
     Theme:Rewards()
     Theme:Unitframes()
+    Theme:ComboFrame()
     Theme:PersonalResource()
     Theme:Nameplates()
     Theme:Castbars()
