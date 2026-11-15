@@ -488,7 +488,8 @@ local UNITFRAME_DEBUFF_FILTER_MINE = AuraUtil.CreateFilterString(AuraUtil.AuraFi
 local UNITFRAME_DEBUFF_FILTER_ALL = AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Harmful)
 -- Crowd control cast by somebody else, your own is already part of the normal debuff groups
 local UNITFRAME_DEBUFF_FILTER_OTHERS_CC = AuraUtil.AuraFilters.CrowdControl and
-    AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Harmful, AuraUtil.AuraFilters.CrowdControl, "!" .. AuraUtil.AuraFilters.Player)
+    AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Harmful, AuraUtil.AuraFilters.CrowdControl,
+        "!" .. AuraUtil.AuraFilters.Player)
 local UNITFRAME_BUFF_FILTER_ALL = AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Helpful)
 local UNITFRAME_BUFF_FILTER_DISPELLABLE = AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Helpful,
     AuraUtil.AuraFilters.Dispellable,
@@ -1095,7 +1096,8 @@ local RAID_DEFENSIVES = {
     [5487] = true,    -- Bear Form
     [1966] = true,    -- Feint
     [586] = true,     -- Fade
-    [23920] = true    -- Spell Reflect
+    [23920] = true,   -- Spell Reflect
+    [22812] = true,   -- Iron Bark
 }
 
 local RAID_CURATED_EXCLUDE = {}
