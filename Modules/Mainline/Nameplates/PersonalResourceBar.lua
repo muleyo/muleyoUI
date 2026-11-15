@@ -55,8 +55,9 @@ function PersonalResourceBar:OnInitialize()
             return
         end
 
-        local plate = Core:GetPlateForUnit("target")
-        local health = plate and Core:GetHealthBar(plate)
+        -- never on a friendly plate
+        local plate, data = Core:GetPlateForUnit("target")
+        local health = plate and not (data and data.isFriend) and Core:GetHealthBar(plate)
 
         classFrame:ClearAllPoints()
         if health then
