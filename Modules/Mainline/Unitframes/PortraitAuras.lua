@@ -9,6 +9,7 @@ function PortraitAuras:OnInitialize()
     local CIRCLE_MASK = [[Interface\Masks\CircleMaskScalable]]
     local CIRCLE_SWIPE = [[Interface\CharacterFrame\TempPortraitAlphaMask]]
     local SWIPE_ALPHA = 0.75
+    -- one strata under the unit frame, so its ring and art stay on top
     local STRATA_BELOW = {
         BACKGROUND = "BACKGROUND",
         LOW = "BACKGROUND",
@@ -22,15 +23,18 @@ function PortraitAuras:OnInitialize()
 
     local PORTRAIT_LEVEL = 1
 
+    -- two levels per source: its icon, then its cooldown
     local function IconLevel(step)
         return PORTRAIT_LEVEL + 1 + (step - 1) * 2
     end
 
     local SPELLS = mUI.PortraitAuraSpells or {}
     local MAX_BUFF_DURATION = 60
+    -- highest priority first
     local SOURCES = { {
         filter = AuraUtil.CreateFilterString(filters.Harmful),
         list = "CrowdControl",
+        -- spell IDs only match on hostile units
         notFor = {
             player = true
         }
@@ -76,6 +80,7 @@ function PortraitAuras:OnInitialize()
         end
     } }
 
+    -- the portrait's own mask so the icon fits the ring, circle as fallback
     local function SetIconShape(mask, portraitMask)
         local atlas = portraitMask and portraitMask:GetAtlas()
 
@@ -87,6 +92,7 @@ function PortraitAuras:OnInitialize()
         end
     end
 
+    -- the game locks the frame once auras are secret, so do it all here
     local function InitializeIcon(auraFrame, size, strata, level, portraitMask)
         auraFrame:SetSize(size, size)
         auraFrame:SetFrameStrata(strata)
@@ -106,6 +112,7 @@ function PortraitAuras:OnInitialize()
 
         local cooldown = CreateFrame("Cooldown", nil, auraFrame, "CooldownFrameTemplate")
         cooldown:SetFrameStrata(strata)
+        -- one above the icon, otherwise the swipe hides under it
         cooldown:SetFrameLevel(level + 1)
         cooldown:SetAllPoints(auraFrame)
         cooldown:SetReverse(true)
@@ -118,6 +125,7 @@ function PortraitAuras:OnInitialize()
 
     local function Build(unit, content, portrait, mask)
         local size = portrait:GetWidth()
+        -- the portrait moves into a frame below the ring
         local art = portrait:GetParent()
         local strata = STRATA_BELOW[art:GetFrameStrata()] or "BACKGROUND"
         local home = CreateFrame("Frame", nil, art)
@@ -141,6 +149,7 @@ function PortraitAuras:OnInitialize()
 
             if not skip then
                 local container = CreateFrame("AuraContainer", nil, content, "CustomAuraContainerTemplate")
+                -- set before AddAuraGroup, the group's frame copies it
                 container:SetFrameStrata(strata)
                 container:SetFrameLevel(level)
                 container:SetFlowLayoutAnchorPoint("CENTER")
@@ -192,6 +201,7 @@ function PortraitAuras:OnInitialize()
         end
     end
 
+    -- portrait and mask go below the ring, or back to the game's frame
     function PortraitAuras:MovePortraits(under)
         for _, entry in pairs(PortraitAuras.portraits) do
             local parent = under and entry.home or entry.art
@@ -218,6 +228,7 @@ function PortraitAuras:OnInitialize()
 end
 
 function PortraitAuras:OnEnable()
+    -- client without the aura filters
     if not PortraitAuras.Setup then
         return
     end

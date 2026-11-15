@@ -1,4 +1,5 @@
 mUI.PortraitAuraSpells = {
+    -- hard CC: stuns, fears, polymorphs
     CrowdControl = {
         -- Stuns
         [853] = true,    -- Hammer of Justice
@@ -84,7 +85,7 @@ mUI.PortraitAuraSpells = {
         [9484] = true,   -- Shackle Undead
     },
 
-    -- Holds you in place but does not take the control away. Lower than the rest of the crowd control.
+    -- soft CC: roots, shown after the rest
     SoftCrowdControl = {
         [122] = true,    -- Frost Nova
         [33395] = true,  -- Freeze
