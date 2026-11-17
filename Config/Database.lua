@@ -330,6 +330,27 @@ local defaults = {
                 x = 0,
                 y = 4
             },
+            rarity = {
+                enabled = false,
+                elite = true,
+                rare = true,
+                rareelite = true,
+                alpha = 1,
+                size = 18,
+                anchor = "LEFT",
+                x = 2,
+                y = 0
+            },
+            -- Forever only: the level of the game's nameplate, which has no such thing on Mainline
+            leveltext = {
+                enabled = true,
+                anchor = "RIGHT",
+                x = 5,
+                y = 0,
+                size = 12,
+                alpha = 1,
+                background = "AUTO"
+            },
             auras = {
                 enabled = false,
                 cc = {

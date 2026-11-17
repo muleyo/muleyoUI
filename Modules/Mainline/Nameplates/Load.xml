@@ -15,6 +15,7 @@
     <Include file="Healer.lua" />
     <Include file="TargetIndicator.lua" />
     <Include file="RaidMarker.lua" />
+    <Include file="Rarity.lua" />
     <Include file="Auras.lua" />
     <Include file="Totem.lua" />
 
