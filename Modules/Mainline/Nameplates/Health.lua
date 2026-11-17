@@ -152,14 +152,44 @@ function Health:OnInitialize()
         return cachedTexture
     end
 
-    -- Threat colors speak the same language as Blizzard's own threat health bar color: no threat, low threat (about to gain or lose it)
-    -- and high threat. The tank API reports the lead over the second highest threat, everybody else gets their own threat state.
-    local THREAT_RED = { 1, 0.1, 0.1 }
-    local THREAT_ORANGE = { 1, 0.55, 0.1 }
+    -- other tanks in the group, reset when the group changes
+    local otherTanks
 
-    -- Tank: no threat = red, low threat = orange, aggro = normal color
-    -- Healer / DPS: no threat = normal color, low threat = orange, aggro = red
-    -- Returns nothing when the normal color applies
+    local function GetOtherTanks()
+        if otherTanks then
+            return otherTanks
+        end
+
+        otherTanks = {}
+        local inRaid = IsInRaid()
+        local count = inRaid and GetNumGroupMembers() or GetNumSubgroupMembers()
+        for i = 1, count do
+            local member = (inRaid and "raid" or "party") .. i
+            if Core:Safe(UnitGroupRolesAssigned(member), nil) == "TANK" and not Core:Safe(UnitIsUnit(member, "player"), true) then
+                otherTanks[#otherTanks + 1] = member
+            end
+        end
+
+        return otherTanks
+    end
+
+    local function OtherTankHasAggro(unit)
+        for _, member in ipairs(GetOtherTanks()) do
+            local status = UnitThreatSituation(member, unit)
+            -- 2 and 3: it has aggro
+            if status and not issecretvalue(status) and status >= 2 then
+                return true
+            end
+        end
+
+        return false
+    end
+
+    local function Unpack(color)
+        return color[1], color[2], color[3]
+    end
+
+    -- Returns nothing when the NPC color applies
     local function ThreatColor(unit)
         if not Health.db.classification.threat or not IsInGroup() or not Core:Safe(UnitAffectingCombat(unit), false) then
             return nil
@@ -186,10 +216,25 @@ function Health:OnInitialize()
             state = isTank and 3 or 0
         end
 
-        if state == 3 then
-            return THREAT_RED[1], THREAT_RED[2], THREAT_RED[3]
-        elseif state >= 1 then
-            return THREAT_ORANGE[1], THREAT_ORANGE[2], THREAT_ORANGE[3]
+        local colors = Health.db.classification.threatcolors
+        if isTank then
+            local tank = colors.tank
+            if state == 3 then
+                return Unpack(OtherTankHasAggro(unit) and tank.offtank or tank.none)
+            elseif state >= 1 then
+                return Unpack(tank.medium)
+            elseif not tank.keepAggro then
+                return Unpack(tank.aggro)
+            end
+        else
+            local dps = colors.dps
+            if state == 3 then
+                return Unpack(dps.aggro)
+            elseif state >= 1 then
+                return Unpack(dps.medium)
+            elseif not dps.keepNone then
+                return Unpack(dps.none)
+            end
         end
 
         return nil
@@ -215,7 +260,11 @@ function Health:OnInitialize()
 
         local npc = Health.db.classification
         if npc.enabled and not data.isPlayer then
-            local r, g, b = ThreatColor(data.unit)
+            -- friendly NPCs have no threat
+            local r, g, b
+            if not data.isFriend then
+                r, g, b = ThreatColor(data.unit)
+            end
             if r then
                 return r, g, b
             end
@@ -910,12 +959,14 @@ function Health:OnInitialize()
             return
         end
 
+        otherTanks = nil
         for frame in pairs(activeFrames) do
             OnHealthColorUpdate(frame)
         end
     end)
 
     function Health:UpdateThreatWatcher()
+        otherTanks = nil
         local config = Health.db.classification
         local active = Health:IsEnabled() and config.enabled and config.threat
 

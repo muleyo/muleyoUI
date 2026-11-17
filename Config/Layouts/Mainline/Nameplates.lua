@@ -29,6 +29,47 @@ function Nameplates:OnInitialize()
         end
     end
 
+    -- keepKey: the "keep NPC color" toggle of that state
+    local function ThreatColorOption(role, key, name, desc, order, keepKey)
+        return {
+            name = name,
+            desc = desc,
+            type = "color",
+            disabled = function()
+                local config = db().classification
+                return not config.enabled or not config.threat or (keepKey and config.threatcolors[role][keepKey])
+            end,
+            set = function(_, r, g, b)
+                db().classification.threatcolors[role][key] = {r, g, b}
+                Refresh(Nameplates.Module.Health)
+            end,
+            get = function()
+                return unpack(db().classification.threatcolors[role][key])
+            end,
+            order = order
+        }
+    end
+
+    local function ThreatKeepOption(role, key, name, desc, order)
+        return {
+            name = name,
+            desc = desc,
+            type = "toggle",
+            disabled = function()
+                local config = db().classification
+                return not config.enabled or not config.threat
+            end,
+            set = function(_, val)
+                db().classification.threatcolors[role][key] = val
+                Refresh(Nameplates.Module.Health)
+            end,
+            get = function()
+                return db().classification.threatcolors[role][key]
+            end,
+            order = order
+        }
+    end
+
     local ANCHOR_VALUES = {
         LEFT = "Left",
         RIGHT = "Right",
@@ -448,7 +489,7 @@ function Nameplates:OnInitialize()
             },
             classificationThreat = {
                 name = "Color by Threat",
-                desc = "Color the Health Bar of NPCs in combat by your Threat\n\nTank: no threat is red, low threat is orange, aggro keeps the NPC Color\nHealer / DPS: no threat keeps the NPC Color, low threat is orange, aggro is red\n\n|cffffff00Info:|r Requires Color by NPC Type. Only while you are in a group",
+                desc = "Color the Health Bar of NPCs in combat by your Threat\n\nTank: aggro, medium threat, no threat and offtank (another tank has aggro)\nHealer / DPS: aggro, medium threat and no threat\n\nThe colors are set below.\n\n|cffffff00Info:|r Requires Color by NPC Type. Only while you are in a group",
                 type = "toggle",
                 disabled = function()
                     return not db().classification.enabled
@@ -530,6 +571,30 @@ function Nameplates:OnInitialize()
                 end,
                 order = 26
             },
+            headerThreatTank = {
+                name = "Threat Colors: Tank",
+                type = "header",
+                order = 26.01
+            },
+            threatTankKeepAggro = ThreatKeepOption("tank", "keepAggro", "Keep NPC Color on Aggro",
+                "While you have aggro, the Health Bar keeps the NPC Color instead of the Aggro Color\n\n|cffffff00Info:|r Hostile NPCs are red, the same as the default No Threat Color", 26.02),
+            threatTankAggro = ThreatColorOption("tank", "aggro", "Aggro", "You have aggro, with a comfortable lead", 26.03,
+                "keepAggro"),
+            threatTankMedium = ThreatColorOption("tank", "medium", "Medium Threat",
+                "You have aggro, but another unit is close to taking it", 26.04),
+            threatTankNone = ThreatColorOption("tank", "none", "No Threat",
+                "You don't have aggro, and no other tank has it either", 26.05),
+            threatTankOfftank = ThreatColorOption("tank", "offtank", "Offtank", "Another tank of your group has aggro", 26.06),
+            headerThreatDps = {
+                name = "Threat Colors: DPS / Healer",
+                type = "header",
+                order = 26.07
+            },
+            threatDpsKeepNone = ThreatKeepOption("dps", "keepNone", "Keep NPC Color without Threat",
+                "While you have little or no threat, the Health Bar keeps the NPC Color instead of the No Threat Color\n\n|cffffff00Info:|r Hostile NPCs are red, the same as the default Aggro Color", 26.08),
+            threatDpsAggro = ThreatColorOption("dps", "aggro", "Aggro", "You have aggro", 26.09),
+            threatDpsMedium = ThreatColorOption("dps", "medium", "Medium Threat", "You are about to gain aggro", 26.1),
+            threatDpsNone = ThreatColorOption("dps", "none", "No Threat", "You have little or no threat", 26.11, "keepNone"),
             header4 = {
                 name = "Friendly",
                 type = "header",

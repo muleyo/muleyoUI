@@ -238,7 +238,23 @@ local defaults = {
                 boss = {0.737, 0.11, 0, 1},
                 miniboss = {0.565, 0, 0.737, 1},
                 caster = {0, 0.455, 0.737, 1},
-                quest = {0.965, 0.816, 0.184, 1}
+                quest = {0.965, 0.816, 0.184, 1},
+                -- keepAggro / keepNone: use the NPC color for that state
+                threatcolors = {
+                    tank = {
+                        keepAggro = false,
+                        aggro = {0.2, 0.8, 0.2},
+                        medium = {1, 0.55, 0.1},
+                        none = {1, 0.1, 0.1},
+                        offtank = {0.65, 0.4, 1}
+                    },
+                    dps = {
+                        keepNone = false,
+                        aggro = {1, 0.1, 0.1},
+                        medium = {1, 0.55, 0.1},
+                        none = {0.2, 0.8, 0.2}
+                    }
+                }
             },
             scale = {
                 target = 1.2,

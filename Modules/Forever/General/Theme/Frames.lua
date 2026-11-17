@@ -1608,7 +1608,7 @@ function Theme:Unitframes()
     end
 end
 
--- The combo points around the target portrait. The points are made once and only change alpha, so once is enough
+-- combo points around the target portrait
 function Theme:ComboFrame()
     if not (ComboFrame and ComboFrame.ComboPoints) then
         return
