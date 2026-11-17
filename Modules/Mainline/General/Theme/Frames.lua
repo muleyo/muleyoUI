@@ -957,6 +957,11 @@ function Theme:Bank()
     mUI:Skin(BankFrame.TabSystem.tabs[2])
     mUI:Skin(BankPanel.MoneyFrame.Border)
     mUI:Skin({BankItemSearchBox.Left, BankItemSearchBox.Middle, BankItemSearchBox.Right}, true)
+
+    -- The "sort items?" confirmation
+    if BankCleanUpConfirmationPopup then
+        mUI:Skin(BankCleanUpConfirmationPopup.Border)
+    end
 end
 
 function Theme:Character()

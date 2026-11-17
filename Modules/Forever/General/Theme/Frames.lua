@@ -392,23 +392,38 @@ function Theme:Inspect()
         mUI:Skin(PaperDollFrame.TopBackgroundStripHost)
         mUI:Skin(InspectPaperDollItemsFrame.InspectTalents)
         mUI:Skin(InspectPVPFrame)
-        mUI:Skin(
-            { InspectModelFrameBorderLeft, InspectModelFrameBorderRight, InspectModelFrameBorderTop,
-                InspectModelFrameBorderTopLeft,
-                InspectModelFrameBorderTopRight, InspectModelFrameBorderBottom, InspectModelFrameBorderBottomLeft,
-                InspectModelFrameBorderBottomRight, InspectModelFrameBorderBottom2, InspectFeetSlotFrame,
-                InspectHandsSlotFrame,
-                InspectWaistSlotFrame, InspectLegsSlotFrame, InspectFinger0SlotFrame, InspectFinger1SlotFrame,
-                InspectTrinket0SlotFrame,
-                InspectTrinket1SlotFrame, InspectWristSlotFrame, InspectTabardSlotFrame, InspectShirtSlotFrame,
-                InspectChestSlotFrame,
-                InspectBackSlotFrame, InspectShoulderSlotFrame, InspectNeckSlotFrame, InspectHeadSlotFrame,
-                InspectSecondaryHandSlotFrame }, true)
         mUI:Skin(InspectFrameTab1)
         mUI:Skin(InspectFrameTab2)
         mUI:Skin(InspectFrameTab3)
         mUI:Skin(InspectFrameTab4)
-        mUI:Skin({ InspectFrameModeTab1.Background, InspectFrameModeTab2.Background }, true)
+        mUI:Skin(
+            { InspectFrameModeTab1.Background, InspectFrameModeTab2.Background, InspectFrameModeTab3.Background,
+                InspectModelFrameBorderBottom, InspectModelFrameBorderBottom2, InspectModelFrameBorderLeft,
+                InspectModelFrameBorderRight,
+                InspectModelFrameBorderTop, InspectModelFrameBorderBottomLeft, InspectModelFrameBorderBottomRight,
+                InspectModelFrameBorderTopLeft, InspectModelFrameBorderTopRight },
+            true)
+
+        -- Item Slots
+        mUI:Skin(InspectHeadSlot.BorderFrame)
+        mUI:Skin(InspectNeckSlot.BorderFrame)
+        mUI:Skin(InspectShoulderSlot.BorderFrame)
+        mUI:Skin(InspectBackSlot.BorderFrame)
+        mUI:Skin(InspectChestSlot.BorderFrame)
+        mUI:Skin(InspectShirtSlot.BorderFrame)
+        mUI:Skin(InspectTabardSlot.BorderFrame)
+        mUI:Skin(InspectWristSlot.BorderFrame)
+        mUI:Skin(InspectHandsSlot.BorderFrame)
+        mUI:Skin(InspectWaistSlot.BorderFrame)
+        mUI:Skin(InspectLegsSlot.BorderFrame)
+        mUI:Skin(InspectFeetSlot.BorderFrame)
+        mUI:Skin(InspectFinger0Slot.BorderFrame)
+        mUI:Skin(InspectFinger1Slot.BorderFrame)
+        mUI:Skin(InspectTrinket0Slot.BorderFrame)
+        mUI:Skin(InspectTrinket1Slot.BorderFrame)
+        mUI:Skin(InspectMainHandSlot.BorderFrame)
+        mUI:Skin(InspectSecondaryHandSlot.BorderFrame)
+        mUI:Skin(InspectRangedSlot.BorderFrame)
     end
 end
 
@@ -462,7 +477,10 @@ function Theme:Professions()
         mUI:Skin(InspectRecipeFrame.NineSlice)
         mUI:Skin(ProfessionsFrame)
         mUI:Skin(ProfessionsFrame.NineSlice)
-        mUI:Skin({ ProfessionsFrame.ProfessionsOverviewTab.Background }, true)
+        mUI:Skin(
+            { ProfessionsFrame.ProfessionsOverviewTab.Background, ProfessionsFrame.Professions1Tab.Background,
+                ProfessionsFrame.Professions2Tab.Background, ProfessionsFrame.Professions3Tab.Background,
+                ProfessionsFrame.Professions4Tab.Background, ProfessionsFrame.Professions5Tab.Background }, true)
     end
 end
 
@@ -736,11 +754,28 @@ function Theme:Actionbars()
     end
 
     -- Bag Buttons
-    mUI:Skin({
-        KeyRingButtonNormalTexture, MainMenuBarBackpackButtonNormalTexture, CharacterBag0SlotNormalTexture,
-        CharacterBag1SlotNormalTexture, CharacterBag2SlotNormalTexture, CharacterBag3SlotNormalTexture,
-        CharacterReagentBag0SlotNormalTexture
-    }, true)
+    local bagButtonNames = {
+        "KeyRingButton", "MainMenuBarBackpackButton", "CharacterBag0Slot", "CharacterBag1Slot", "CharacterBag2Slot",
+        "CharacterBag3Slot", "CharacterReagentBag0Slot"
+    }
+
+    local function SkinBagButton(button)
+        local normal = button:GetNormalTexture()
+        if normal then
+            mUI:Skin({ normal }, true)
+        end
+    end
+
+    for _, name in ipairs(bagButtonNames) do
+        local button = _G[name]
+        if button then
+            SkinBagButton(button)
+            -- UpdateTextures re-sets the atlas on every bag change, which drops our colour
+            if button.UpdateTextures and not Theme:IsHooked(button, "UpdateTextures") then
+                Theme:SecureHook(button, "UpdateTextures", SkinBagButton)
+            end
+        end
+    end
 
     -- MicroMenu Borders
     mUI:Skin({
@@ -894,11 +929,28 @@ function Theme:Bags()
     mUI:Skin(ContainerFrame6.Bg)
     mUI:Skin({ BagItemSearchBox.Left, BagItemSearchBox.Middle, BagItemSearchBox.Right }, true)
 
+    -- Empty slots draw Blizzard's beige slot art in the icon; filled slots get the icon color reset by Blizzard
+    local function SkinEmptySlots(frame)
+        if frame.itemButtonPool then
+            for button in frame.itemButtonPool:EnumerateActive() do
+                local icon = button.icon or button.Icon
+                if icon and button.HasItem and not button:HasItem() then
+                    mUI:Skin({ icon }, true)
+                end
+            end
+        end
+    end
+
     for i = 1, 13 do
         local container = _G["ContainerFrame" .. i]
 
         -- Only proceed if container exists
         if container then
+            if container.UpdateItems and not Theme:IsHooked(container, "UpdateItems") then
+                Theme:SecureHook(container, "UpdateItems", SkinEmptySlots)
+            end
+            SkinEmptySlots(container)
+
             -- Bag Slots - only hook if Update method exists
             if container.Update then
                 if not Theme:IsHooked(container, "Update") then
@@ -995,6 +1047,11 @@ function Theme:Bank()
     mUI:Skin(BankFrameMoneyFrameBorder)
     mUI:Skin(BankPanel.MoneyFrame.Border)
     mUI:Skin({ BankItemSearchBox.Left, BankItemSearchBox.Middle, BankItemSearchBox.Right }, true)
+
+    -- The "sort items?" confirmation
+    if BankCleanUpConfirmationPopup then
+        mUI:Skin(BankCleanUpConfirmationPopup.Border)
+    end
 end
 
 function Theme:Character()
@@ -1030,20 +1087,26 @@ function Theme:Character()
         end
     end
 
-    mUI:Skin(
-        { CharacterFeetSlotFrame, CharacterHandsSlotFrame, CharacterWaistSlotFrame, CharacterLegsSlotFrame,
-            CharacterFinger0SlotFrame,
-            CharacterFinger1SlotFrame, CharacterTrinket0SlotFrame, CharacterTrinket1SlotFrame, CharacterWristSlotFrame,
-            CharacterTabardSlotFrame,
-            CharacterShirtSlotFrame, CharacterChestSlotFrame, CharacterBackSlotFrame, CharacterShoulderSlotFrame,
-            CharacterNeckSlotFrame,
-            CharacterHeadSlotFrame, CharacterMainHandSlotFrame, CharacterSecondaryHandSlotFrame,
-            _G.select(CharacterMainHandSlot:GetNumRegions(), CharacterMainHandSlot:GetRegions()),
-            _G.select(CharacterSecondaryHandSlot:GetNumRegions(), CharacterSecondaryHandSlot:GetRegions()),
-            PaperDollInnerBorderLeft,
-            PaperDollInnerBorderRight, PaperDollInnerBorderTop, PaperDollInnerBorderTopLeft, PaperDollInnerBorderTopRight,
-            PaperDollInnerBorderBottom, PaperDollInnerBorderBottomLeft, PaperDollInnerBorderBottomRight,
-            PaperDollInnerBorderBottom2 }, true)
+    -- Item Slots
+    mUI:Skin(CharacterHeadSlot.BorderFrame)
+    mUI:Skin(CharacterNeckSlot.BorderFrame)
+    mUI:Skin(CharacterShoulderSlot.BorderFrame)
+    mUI:Skin(CharacterBackSlot.BorderFrame)
+    mUI:Skin(CharacterChestSlot.BorderFrame)
+    mUI:Skin(CharacterShirtSlot.BorderFrame)
+    mUI:Skin(CharacterTabardSlot.BorderFrame)
+    mUI:Skin(CharacterWristSlot.BorderFrame)
+    mUI:Skin(CharacterHandsSlot.BorderFrame)
+    mUI:Skin(CharacterWaistSlot.BorderFrame)
+    mUI:Skin(CharacterLegsSlot.BorderFrame)
+    mUI:Skin(CharacterFeetSlot.BorderFrame)
+    mUI:Skin(CharacterFinger0Slot.BorderFrame)
+    mUI:Skin(CharacterFinger1Slot.BorderFrame)
+    mUI:Skin(CharacterTrinket0Slot.BorderFrame)
+    mUI:Skin(CharacterTrinket1Slot.BorderFrame)
+    mUI:Skin(CharacterMainHandSlot.BorderFrame)
+    mUI:Skin(CharacterSecondaryHandSlot.BorderFrame)
+    mUI:Skin(CharacterRangedSlot.BorderFrame)
 end
 
 function Theme:SwingTimers()
@@ -1140,6 +1203,7 @@ function Theme:DressUp()
     mUI:Skin(DressUpFrame.OutfitDetailsPanel)
     mUI:Skin(DressUpFrameInset)
     mUI:Skin(DressUpFrameInset.NineSlice)
+    mUI:Skin(DressUpFrame.CustomSetDetailsPanel)
 end
 
 function Theme:Friendlist()
@@ -1883,6 +1947,10 @@ function Theme:Frames()
     mUI:Skin(CooldownViewerImportLayoutDialog)
     mUI:Skin(CooldownViewerImportLayoutDialog.Border)
     mUI:Skin(CooldownViewerSettingsEditAlert.BG)
+
+    -- QuickKeybinds
+    mUI:Skin(QuickKeybindFrame.Header)
+    mUI:Skin(QuickKeybindFrame.BG)
 
     -- Guild Invite Frame
     mUI:Skin(
