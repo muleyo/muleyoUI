@@ -23,9 +23,6 @@ function DruidMana:OnInitialize()
         art.FrameFlash:SetAtlas(
             "UI-HUD-UnitFrame-Player-PortraitOn-" .. (shown and "ClassResource-" or "") .. "InCombat",
             TextureKitConstants.UseAtlasSize)
-        PlayerFrame_GetManaBar().ManaBarMask:SetAtlas(
-            shown and "Unit_BarMask" or "UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana-Mask",
-            TextureKitConstants.UseAtlasSize)
     end
 
     function DruidMana:Refresh()
@@ -56,7 +53,8 @@ function DruidMana:OnInitialize()
 
         bar:SetParent(content)
         bar:ClearAllPoints()
-        bar:SetPoint("TOPLEFT", content, "TOPLEFT", 85, -73)
+        -- Forever's bars start at 87, the template's 85 is retail's and covers the slot border
+        bar:SetPoint("TOPLEFT", content, "TOPLEFT", 87, -73)
         bar:SetFrameLevel(content:GetFrameLevel())
         bar:SetMouseClickEnabled(false)
         bar.unit = "player"
