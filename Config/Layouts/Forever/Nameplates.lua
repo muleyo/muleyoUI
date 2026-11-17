@@ -432,7 +432,7 @@ function Nameplates:OnInitialize()
             },
             classificationInstancesOnly = {
                 name = "Instance Only",
-                desc = "Only use the Boss, Miniboss and Caster colors inside a Dungeon or Raid\n\n|cffffff00Info:|r Quest coloring always applies, indoors or out.",
+                desc = "Only use the Caster color inside a Dungeon or Raid\n\n|cffffff00Info:|r Quest coloring always applies, indoors or out.",
                 type = "toggle",
                 disabled = function()
                     return not db().classification.enabled
@@ -461,40 +461,6 @@ function Nameplates:OnInitialize()
                     return db().classification.threat
                 end,
                 order = 22
-            },
-            classificationBoss = {
-                name = "Boss",
-                desc = "Choose a Color for Bosses",
-                type = "color",
-                hasAlpha = true,
-                disabled = function()
-                    return not db().classification.enabled
-                end,
-                set = function(_, r, g, b, a)
-                    db().classification.boss = {r, g, b, a}
-                    Refresh(Nameplates.Module.Health)
-                end,
-                get = function()
-                    return unpack(db().classification.boss)
-                end,
-                order = 23
-            },
-            classificationMiniboss = {
-                name = "Miniboss",
-                desc = "Choose a Color for Minibosses (Lieutenants)",
-                type = "color",
-                hasAlpha = true,
-                disabled = function()
-                    return not db().classification.enabled
-                end,
-                set = function(_, r, g, b, a)
-                    db().classification.miniboss = {r, g, b, a}
-                    Refresh(Nameplates.Module.Health)
-                end,
-                get = function()
-                    return unpack(db().classification.miniboss)
-                end,
-                order = 24
             },
             classificationCaster = {
                 name = "Caster",

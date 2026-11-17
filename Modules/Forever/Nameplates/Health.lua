@@ -89,9 +89,7 @@ function Health:OnInitialize()
         return isQuestMob
     end
 
-    -- The tiers come from what the client reports about the unit. Retail can also tell them apart by comparing the level of the unit
-    -- with the level of the player, because its dungeons scale to the player. Mobs are not scaled here and the elites around are
-    -- often a level or two above you, so a level check colors plain elites as minibosses and bosses.
+    -- Forever doesn't flag bosses or minibosses and hides names in dungeons, so only quest mobs and casters are told apart
     local function NpcType(unit)
         if IsQuestMob(unit) then
             return "quest"
@@ -100,30 +98,9 @@ function Health:OnInitialize()
         local classification = UnitClassification(unit)
         local allowInstanceTiers = inRelevantInstance or not Health.db.classification.instancesonly
 
-        -- Blizzard's own boss test (it puts the winged frame on the target frame), a boss with mana would otherwise end up as a caster
-        if allowInstanceTiers and (classification == "worldboss" or Core:Safe(UnitIsBossMob(unit), false)) then
-            return "boss"
-        end
-
-        if classification == "elite" then
-            if not allowInstanceTiers then
-                return nil
-            end
-
-            if Core:Safe(UnitIsLieutenant(unit), false) then
-                return "miniboss"
-            end
-
-            -- A plain elite falls through to reaction/class coloring below.
+        if allowInstanceTiers and (classification == "elite" or classification == "normal" or classification == "trivial" or classification == "minus") then
+            -- Without mana it falls through to reaction/class coloring
             return HasMana(unit) and "caster" or nil
-        end
-
-        if classification == "normal" or classification == "trivial" or classification == "minus" then
-            if allowInstanceTiers and HasMana(unit) then
-                return "caster"
-            end
-            -- Trivial mobs fall through to reaction/class coloring below.
-            return nil
         end
 
         return nil
