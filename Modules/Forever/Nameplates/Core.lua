@@ -734,6 +734,7 @@ function Core:OnEnable()
     Core:RegisterEvent("PLAYER_ENTERING_WORLD", "OnNameplateEvent")
     Core:RegisterEvent("UNIT_FACTION", "OnUnitEvent")
     Core:RegisterEvent("UNIT_NAME_UPDATE", "OnUnitEvent")
+    Core:RegisterEvent("UNIT_CLASSIFICATION_CHANGED", "OnUnitEvent")
 
     Core:RefreshInstanceType()
 

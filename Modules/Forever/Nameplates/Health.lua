@@ -658,13 +658,14 @@ function Health:OnInitialize()
         end
     end
 
-    local function UpdateLevelFrame(frame, hideBar)
+    -- restoring: back to the game's own level, whatever the settings say
+    local function UpdateLevelFrame(frame, hideBar, restoring)
         local levelFrame = frame.PlayerLevelDiffFrame
         if not levelFrame then
             return
         end
 
-        if hideBar then
+        if hideBar or (not restoring and not Health.db.leveltext.enabled) then
             levelFrame:Hide()
             frame.mUILevelHidden = true
         elseif frame.mUILevelHidden then
@@ -673,30 +674,58 @@ function Health:OnInitialize()
         end
     end
 
-    -- On attackable units the level indicator loses its background box and the level text gets a bit bigger
-    local LEVEL_TEXT_SIZE_BONUS = 2
+    -- Right of the bar, a bit taller than it, is how the game has it
+    local function PlaceLevelFrame(levelFrame, bar, anchor, x, y)
+        levelFrame:ClearAllPoints()
 
+        if anchor == "LEFT" then
+            levelFrame:SetPoint("TOPRIGHT", bar, "TOPLEFT", -x, 3 + y)
+            levelFrame:SetPoint("BOTTOMRIGHT", bar, "BOTTOMLEFT", -x, -2 + y)
+        elseif anchor == "TOP" then
+            levelFrame:SetPoint("BOTTOM", bar, "TOP", x, y)
+        elseif anchor == "BOTTOM" then
+            levelFrame:SetPoint("TOP", bar, "BOTTOM", x, -y)
+        else
+            levelFrame:SetPoint("TOPLEFT", bar, "TOPRIGHT", x, 3 + y)
+            levelFrame:SetPoint("BOTTOMLEFT", bar, "BOTTOMRIGHT", x, -2 + y)
+        end
+    end
+
+    -- No data: hand the level back to the game
     local function StyleLevelFrame(frame, data)
         local levelFrame = frame.PlayerLevelDiffFrame
         local icon = levelFrame and levelFrame.playerLevelDiffIcon
         local text = levelFrame and levelFrame.playerLevelDiffText
-        if not icon or not text then
+        local bar = frame.HealthBarsContainer and frame.HealthBarsContainer.healthBar
+        if not icon or not text or not bar then
             return
         end
 
-        -- Blizzard sets the base height in ApplyFrameOptions, the same value is used to hand it back
-        local height = (NamePlateSetupOptions and NamePlateSetupOptions.levelFontHeight) or
-            NamePlateConstants.LEVEL_FONT_HEIGHT
+        if not data then
+            if levelFrame.mUILevelStyled then
+                levelFrame.mUILevelStyled = nil
 
-        if data and Core:Safe(data.canAttack, false) then
-            levelFrame.mUILevelStyled = true
-            icon:SetAlpha(0)
-            text:SetTextHeight(height + LEVEL_TEXT_SIZE_BONUS)
-        elseif levelFrame.mUILevelStyled then
-            levelFrame.mUILevelStyled = nil
-            icon:SetAlpha(1)
-            text:SetTextHeight(height)
+                -- Blizzard sets the base height in ApplyFrameOptions, the same value is used to hand it back
+                local height = (NamePlateSetupOptions and NamePlateSetupOptions.levelFontHeight) or
+                    NamePlateConstants.LEVEL_FONT_HEIGHT
+
+                icon:SetAlpha(1)
+                text:SetTextHeight(height)
+                levelFrame:SetAlpha(1)
+                PlaceLevelFrame(levelFrame, bar, "RIGHT", 5, 0)
+            end
+            return
         end
+
+        local config = Health.db.leveltext
+        local background = config.background
+        local showBackground = background == "SHOW" or (background ~= "HIDE" and not Core:Safe(data.canAttack, false))
+
+        levelFrame.mUILevelStyled = true
+        icon:SetAlpha(showBackground and 1 or 0)
+        text:SetTextHeight(config.size)
+        levelFrame:SetAlpha(config.alpha)
+        PlaceLevelFrame(levelFrame, bar, config.anchor, config.x, config.y)
     end
 
     local TargetIndicator
@@ -824,7 +853,7 @@ function Health:OnInitialize()
             end
 
             local data = GetInfo(frame, frame.unit)
-            if data and HideFriendlyBar(data) then
+            if not Health.db.leveltext.enabled or (data and HideFriendlyBar(data)) then
                 UpdateLevelFrame(frame, true)
             end
         end)
@@ -893,7 +922,7 @@ function Health:OnInitialize()
         bar:SetShown(false)
 
         if frame.mUILevelHidden then
-            UpdateLevelFrame(frame, false)
+            UpdateLevelFrame(frame, false, true)
         end
         StyleLevelFrame(frame, nil)
 

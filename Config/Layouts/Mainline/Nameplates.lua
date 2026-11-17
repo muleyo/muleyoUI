@@ -40,7 +40,7 @@ function Nameplates:OnInitialize()
                 return not config.enabled or not config.threat or (keepKey and config.threatcolors[role][keepKey])
             end,
             set = function(_, r, g, b)
-                db().classification.threatcolors[role][key] = {r, g, b}
+                db().classification.threatcolors[role][key] = { r, g, b }
                 Refresh(Nameplates.Module.Health)
             end,
             get = function()
@@ -76,7 +76,7 @@ function Nameplates:OnInitialize()
         TOP = "Top",
         BOTTOM = "Bottom"
     }
-    local ANCHOR_SORTING = {"LEFT", "RIGHT", "TOP", "BOTTOM"}
+    local ANCHOR_SORTING = { "LEFT", "RIGHT", "TOP", "BOTTOM" }
 
     -- Initialize Layout
     Nameplates.layout = {
@@ -232,7 +232,7 @@ function Nameplates:OnInitialize()
                     ABOVE = "Top",
                     BELOW = "Bottom"
                 },
-                sorting = {"ABOVE", "BELOW"},
+                sorting = { "ABOVE", "BELOW" },
                 set = function(_, val)
                     db().name.anchor = val
                     Refresh(Nameplates.Module.Health)
@@ -251,7 +251,7 @@ function Nameplates:OnInitialize()
                     CENTER = "Center",
                     RIGHT = "Right"
                 },
-                sorting = {"LEFT", "CENTER", "RIGHT"},
+                sorting = { "LEFT", "CENTER", "RIGHT" },
                 set = function(_, val)
                     db().name.align = val
                     Refresh(Nameplates.Module.Health)
@@ -334,7 +334,8 @@ function Nameplates:OnInitialize()
             },
             namesArena = {
                 name = "Arena Number",
-                desc = "Show the Arena Number instead of the Name on Enemy Player Nameplates\n\n|cffffff00Info:|r Always Class Colored",
+                desc =
+                "Show the Arena Number instead of the Name on Enemy Player Nameplates\n\n|cffffff00Info:|r Always Class Colored",
                 type = "toggle",
                 set = function(_, val)
                     db().names.arena = val
@@ -347,7 +348,8 @@ function Nameplates:OnInitialize()
             },
             namesSpec = {
                 name = "Specialization Name",
-                desc = "Show the Specialization instead of the Name on Enemy Player Nameplates\n\n|cffffff00Info:|r Combines with Arena Number, e.g. |cffffffffHoly 1|r",
+                desc =
+                "Show the Specialization instead of the Name on Enemy Player Nameplates\n\n|cffffff00Info:|r Combines with Arena Number, e.g. |cffffffffHoly 1|r",
                 type = "toggle",
                 set = function(_, val)
                     db().names.spec = val
@@ -360,7 +362,8 @@ function Nameplates:OnInitialize()
             },
             showClassColor = {
                 name = "Class Colors",
-                desc = "Color Enemy Player Health Bars by Class\n\n|cffffff00Info:|r Also sets Blizzard's nameplateShowClassColor CVar",
+                desc =
+                "Color Enemy Player Health Bars by Class\n\n|cffffff00Info:|r Also sets Blizzard's nameplateShowClassColor CVar",
                 type = "toggle",
                 set = function(_, val)
                     db().classcolor = val
@@ -379,7 +382,8 @@ function Nameplates:OnInitialize()
             },
             healthDisplay = {
                 name = "Health Text",
-                desc = "Show the Unit's Health as a Percentage and/or a Value on the Health Bar\n\n|cffffff00Info:|r Disables Blizzard's own Health Percentage/Value text\n\n|cffffff00Info:|r With both enabled, Value sits on the Left and Percentage on the Right",
+                desc =
+                "Show the Unit's Health as a Percentage and/or a Value on the Health Bar\n\n|cffffff00Info:|r Disables Blizzard's own Health Percentage/Value text\n\n|cffffff00Info:|r With both enabled, Value sits on the Left and Percentage on the Right",
                 type = "multiselect",
                 values = {
                     percent = "Percentage",
@@ -434,7 +438,8 @@ function Nameplates:OnInitialize()
             },
             hitbox = {
                 name = "Clickable Area",
-                desc = "Grow or shrink the area of the Nameplate that responds to the mouse\n\n|cffffff00Info:|r Always covers the Health Bar; positive values extend further past their edges, negative values shrink inside them",
+                desc =
+                "Grow or shrink the area of the Nameplate that responds to the mouse\n\n|cffffff00Info:|r Always covers the Health Bar; positive values extend further past their edges, negative values shrink inside them",
                 type = "range",
                 min = -20,
                 max = 40,
@@ -454,13 +459,14 @@ function Nameplates:OnInitialize()
                 order = 17.1
             },
             header35 = {
-                name = "NPC Type",
+                name = "NPC Colors",
                 type = "header",
                 order = 19
             },
             classificationEnabled = {
                 name = "Color by NPC Type",
-                desc = "Color the Health Bar by the Unit's Type instead of its Reaction\n\n|cffffff00Info:|r Players keep their Class Color. Rares keep their Reaction Color",
+                desc =
+                "Color the Health Bar by the Unit's Type instead of its Reaction\n\n|cffffff00Info:|r Players keep their Class Color. Rares keep their Reaction Color",
                 type = "toggle",
                 set = function(_, val)
                     db().classification.enabled = val
@@ -473,7 +479,8 @@ function Nameplates:OnInitialize()
             },
             classificationInstancesOnly = {
                 name = "Instance Only",
-                desc = "Only use the Boss, Miniboss and Caster colors inside a Dungeon or Raid\n\n|cffffff00Info:|r These tiers are worked out from Dungeon Level scaling, so they are only meaningful inside an Instance. Quest coloring always applies, indoors or out.",
+                desc =
+                "Only use the Boss, Miniboss and Caster colors inside a Dungeon or Raid\n\n|cffffff00Info:|r These tiers are worked out from Dungeon Level scaling, so they are only meaningful inside an Instance. Quest coloring always applies, indoors or out.",
                 type = "toggle",
                 disabled = function()
                     return not db().classification.enabled
@@ -489,7 +496,8 @@ function Nameplates:OnInitialize()
             },
             classificationThreat = {
                 name = "Color by Threat",
-                desc = "Color the Health Bar of NPCs in combat by your Threat\n\nTank: aggro, medium threat, no threat and offtank (another tank has aggro)\nHealer / DPS: aggro, medium threat and no threat\n\nThe colors are set below.\n\n|cffffff00Info:|r Requires Color by NPC Type. Only while you are in a group",
+                desc =
+                "Color the Health Bar of NPCs in combat by your Threat\n\nTank: aggro, medium threat, no threat and offtank (another tank has aggro)\nHealer / DPS: aggro, medium threat and no threat\n\nThe colors are set below.\n\n|cffffff00Info:|r Requires Color by NPC Type. Only while you are in a group",
                 type = "toggle",
                 disabled = function()
                     return not db().classification.enabled
@@ -512,7 +520,7 @@ function Nameplates:OnInitialize()
                     return not db().classification.enabled
                 end,
                 set = function(_, r, g, b, a)
-                    db().classification.boss = {r, g, b, a}
+                    db().classification.boss = { r, g, b, a }
                     Refresh(Nameplates.Module.Health)
                 end,
                 get = function()
@@ -529,7 +537,7 @@ function Nameplates:OnInitialize()
                     return not db().classification.enabled
                 end,
                 set = function(_, r, g, b, a)
-                    db().classification.miniboss = {r, g, b, a}
+                    db().classification.miniboss = { r, g, b, a }
                     Refresh(Nameplates.Module.Health)
                 end,
                 get = function()
@@ -546,7 +554,7 @@ function Nameplates:OnInitialize()
                     return not db().classification.enabled
                 end,
                 set = function(_, r, g, b, a)
-                    db().classification.caster = {r, g, b, a}
+                    db().classification.caster = { r, g, b, a }
                     Refresh(Nameplates.Module.Health)
                 end,
                 get = function()
@@ -563,7 +571,7 @@ function Nameplates:OnInitialize()
                     return not db().classification.enabled
                 end,
                 set = function(_, r, g, b, a)
-                    db().classification.quest = {r, g, b, a}
+                    db().classification.quest = { r, g, b, a }
                     Refresh(Nameplates.Module.Health)
                 end,
                 get = function()
@@ -577,24 +585,29 @@ function Nameplates:OnInitialize()
                 order = 26.01
             },
             threatTankKeepAggro = ThreatKeepOption("tank", "keepAggro", "Keep NPC Color on Aggro",
-                "While you have aggro, the Health Bar keeps the NPC Color instead of the Aggro Color\n\n|cffffff00Info:|r Hostile NPCs are red, the same as the default No Threat Color", 26.02),
-            threatTankAggro = ThreatColorOption("tank", "aggro", "Aggro", "You have aggro, with a comfortable lead", 26.03,
+                "While you have aggro, the Health Bar keeps the NPC Color instead of the Aggro Color\n\n|cffffff00Info:|r Hostile NPCs are red, the same as the default No Threat Color",
+                26.02),
+            threatTankAggro = ThreatColorOption("tank", "aggro", "Aggro", "You have aggro, with a comfortable lead",
+                26.03,
                 "keepAggro"),
             threatTankMedium = ThreatColorOption("tank", "medium", "Medium Threat",
                 "You have aggro, but another unit is close to taking it", 26.04),
             threatTankNone = ThreatColorOption("tank", "none", "No Threat",
                 "You don't have aggro, and no other tank has it either", 26.05),
-            threatTankOfftank = ThreatColorOption("tank", "offtank", "Offtank", "Another tank of your group has aggro", 26.06),
+            threatTankOfftank = ThreatColorOption("tank", "offtank", "Offtank", "Another tank of your group has aggro",
+                26.06),
             headerThreatDps = {
                 name = "Threat Colors: DPS / Healer",
                 type = "header",
                 order = 26.07
             },
             threatDpsKeepNone = ThreatKeepOption("dps", "keepNone", "Keep NPC Color without Threat",
-                "While you have little or no threat, the Health Bar keeps the NPC Color instead of the No Threat Color\n\n|cffffff00Info:|r Hostile NPCs are red, the same as the default Aggro Color", 26.08),
+                "While you have little or no threat, the Health Bar keeps the NPC Color instead of the No Threat Color\n\n|cffffff00Info:|r Hostile NPCs are red, the same as the default Aggro Color",
+                26.08),
             threatDpsAggro = ThreatColorOption("dps", "aggro", "Aggro", "You have aggro", 26.09),
             threatDpsMedium = ThreatColorOption("dps", "medium", "Medium Threat", "You are about to gain aggro", 26.1),
-            threatDpsNone = ThreatColorOption("dps", "none", "No Threat", "You have little or no threat", 26.11, "keepNone"),
+            threatDpsNone = ThreatColorOption("dps", "none", "No Threat", "You have little or no threat", 26.11,
+                "keepNone"),
             header4 = {
                 name = "Friendly",
                 type = "header",
@@ -602,7 +615,8 @@ function Nameplates:OnInitialize()
             },
             cvarOnlyShowNames = {
                 name = "Only Show Names",
-                desc = "Hide the Health Bar for Friendly Player Nameplates and only show their Name\n\n|cffffff00CVar:|r nameplateShowOnlyNameForFriendlyPlayerUnits",
+                desc =
+                "Hide the Health Bar for Friendly Player Nameplates and only show their Name\n\n|cffffff00CVar:|r nameplateShowOnlyNameForFriendlyPlayerUnits",
                 type = "toggle",
                 set = function(_, val)
                     db().cvars.onlyShowNames = val
@@ -616,7 +630,8 @@ function Nameplates:OnInitialize()
             },
             friendlyClasscolor = {
                 name = "Class Color",
-                desc = "Color Friendly Player Health Bars and Names by Class\n\n|cffffff00CVar:|r nameplateUseClassColorForFriendlyPlayerUnitNames",
+                desc =
+                "Color Friendly Player Health Bars and Names by Class\n\n|cffffff00CVar:|r nameplateUseClassColorForFriendlyPlayerUnitNames",
                 type = "toggle",
                 set = function(_, val)
                     db().friendly.classcolor = val
@@ -664,7 +679,8 @@ function Nameplates:OnInitialize()
             },
             clickthrough = {
                 name = "Clickthrough",
-                desc = "Stop Friendly Nameplates from responding to the mouse, so they cannot be clicked or targeted\n\n|cffffff00Info:|r Enemy Nameplates always stay clickable",
+                desc =
+                "Stop Friendly Nameplates from responding to the mouse, so they cannot be clicked or targeted\n\n|cffffff00Info:|r Enemy Nameplates always stay clickable",
                 type = "toggle",
                 set = function(_, val)
                     db().clickthrough = val
@@ -682,7 +698,8 @@ function Nameplates:OnInitialize()
             },
             friendlySmall = {
                 name = "Small Friendly Plates",
-                desc = "Narrow the Health Bar and Cast Bar on Friendly Nameplates\n\n|cffffff00Info:|r Bar Height stays on the shared sliders",
+                desc =
+                "Narrow the Health Bar and Cast Bar on Friendly Nameplates\n\n|cffffff00Info:|r Bar Height stays on the shared sliders",
                 type = "toggle",
                 set = function(_, val)
                     db().friendly.small = val
@@ -735,7 +752,8 @@ function Nameplates:OnInitialize()
             },
             classiconsSpec = {
                 name = "Specialization Icon",
-                desc = "Show the Specialization Icon instead of the Class Icon when it is known\n\n|cffffff00Info:|r Falls back to the Class Icon until the Specialization is identified",
+                desc =
+                "Show the Specialization Icon instead of the Class Icon when it is known\n\n|cffffff00Info:|r Falls back to the Class Icon until the Specialization is identified",
                 type = "toggle",
                 disabled = function()
                     return not db().classicons.enabled
@@ -933,7 +951,8 @@ function Nameplates:OnInitialize()
             },
             healerEnabled = {
                 name = "Healer Indicator",
-                desc = "Show an Icon on the Nameplates of Players who are healing\n\n|cffffff00Info:|r Arena opponents are identified immediately; elsewhere the Role has to be inspected first",
+                desc =
+                "Show an Icon on the Nameplates of Players who are healing\n\n|cffffff00Info:|r Arena opponents are identified immediately; elsewhere the Role has to be inspected first",
                 type = "toggle",
                 set = function(_, val)
                     db().healer.enabled = val
@@ -1142,14 +1161,15 @@ function Nameplates:OnInitialize()
             },
             targetColor = {
                 name = "Color",
-                desc = "Choose a Color for the Target Indicator and the Border of the targeted Nameplate\n\n|cffffff00Info:|r Without the Target Indicator the Border is white",
+                desc =
+                "Choose a Color for the Target Indicator and the Border of the targeted Nameplate\n\n|cffffff00Info:|r Without the Target Indicator the Border is white",
                 type = "color",
                 hasAlpha = true,
                 disabled = function()
                     return not db().target.enabled
                 end,
                 set = function(_, r, g, b, a)
-                    db().target.color = {r, g, b, a}
+                    db().target.color = { r, g, b, a }
                     Refresh(Nameplates.Module.TargetIndicator)
                     Refresh(Nameplates.Module.Health)
                 end,
@@ -1309,6 +1329,167 @@ function Nameplates:OnInitialize()
                 end,
                 order = 72
             },
+            headerRarity = {
+                name = "Elite / Rare Icons",
+                type = "header",
+                order = 72.01
+            },
+            rarityEnabled = {
+                name = "Elite / Rare Icons",
+                desc = "Show an Icon on the Nameplate of Elite, Rare and Rare Elite NPCs",
+                type = "toggle",
+                set = function(_, val)
+                    db().rarity.enabled = val
+                    SetFeature(Nameplates.Module.Rarity, val)
+                end,
+                get = function()
+                    return db().rarity.enabled
+                end,
+                order = 72.02
+            },
+            rarityElite = {
+                name = "Elite",
+                desc = "Show the Icon on Elite NPCs and World Bosses",
+                type = "toggle",
+                disabled = function()
+                    return not db().rarity.enabled
+                end,
+                set = function(_, val)
+                    db().rarity.elite = val
+                    Refresh(Nameplates.Module.Rarity)
+                end,
+                get = function()
+                    return db().rarity.elite
+                end,
+                order = 72.03
+            },
+            rarityRare = {
+                name = "Rare",
+                desc = "Show the Icon on Rare NPCs",
+                type = "toggle",
+                disabled = function()
+                    return not db().rarity.enabled
+                end,
+                set = function(_, val)
+                    db().rarity.rare = val
+                    Refresh(Nameplates.Module.Rarity)
+                end,
+                get = function()
+                    return db().rarity.rare
+                end,
+                order = 72.04
+            },
+            rarityRareelite = {
+                name = "Rare Elite",
+                desc = "Show the Icon on Rare Elite NPCs",
+                type = "toggle",
+                disabled = function()
+                    return not db().rarity.enabled
+                end,
+                set = function(_, val)
+                    db().rarity.rareelite = val
+                    Refresh(Nameplates.Module.Rarity)
+                end,
+                get = function()
+                    return db().rarity.rareelite
+                end,
+                order = 72.05
+            },
+            rarityAnchor = {
+                name = "Position",
+                desc = "Select where the Icon is anchored on the Nameplate",
+                type = "select",
+                values = ANCHOR_VALUES,
+                sorting = ANCHOR_SORTING,
+                disabled = function()
+                    return not db().rarity.enabled
+                end,
+                set = function(_, val)
+                    db().rarity.anchor = val
+                    Refresh(Nameplates.Module.Rarity)
+                end,
+                get = function()
+                    return db().rarity.anchor
+                end,
+                order = 72.06
+            },
+            raritySize = {
+                name = "Icon Size",
+                desc = "Set the Size of the Icon",
+                type = "range",
+                min = 8,
+                max = 64,
+                step = 1,
+                disabled = function()
+                    return not db().rarity.enabled
+                end,
+                set = function(_, val)
+                    db().rarity.size = val
+                    Refresh(Nameplates.Module.Rarity)
+                end,
+                get = function()
+                    return db().rarity.size
+                end,
+                order = 72.07
+            },
+            rarityAlpha = {
+                name = "Opacity",
+                desc = "Set the Opacity of the Icon",
+                type = "range",
+                min = 0,
+                max = 1,
+                step = 0.05,
+                isPercent = true,
+                disabled = function()
+                    return not db().rarity.enabled
+                end,
+                set = function(_, val)
+                    db().rarity.alpha = val
+                    Refresh(Nameplates.Module.Rarity)
+                end,
+                get = function()
+                    return db().rarity.alpha
+                end,
+                order = 72.08
+            },
+            rarityX = {
+                name = "Offset X",
+                desc = "Move the Icon horizontally away from the Nameplate",
+                type = "range",
+                min = -100,
+                max = 100,
+                step = 1,
+                disabled = function()
+                    return not db().rarity.enabled
+                end,
+                set = function(_, val)
+                    db().rarity.x = val
+                    Refresh(Nameplates.Module.Rarity)
+                end,
+                get = function()
+                    return db().rarity.x
+                end,
+                order = 72.09
+            },
+            rarityY = {
+                name = "Offset Y",
+                desc = "Move the Icon vertically away from the Nameplate",
+                type = "range",
+                min = -100,
+                max = 100,
+                step = 1,
+                disabled = function()
+                    return not db().rarity.enabled
+                end,
+                set = function(_, val)
+                    db().rarity.y = val
+                    Refresh(Nameplates.Module.Rarity)
+                end,
+                get = function()
+                    return db().rarity.y
+                end,
+                order = 72.1
+            },
             header9 = {
                 name = "Auras",
                 type = "header",
@@ -1316,7 +1497,8 @@ function Nameplates:OnInitialize()
             },
             aurasEnabled = {
                 name = "Nameplate Auras",
-                desc = "Show three Aura groups on Nameplates\n\n|cffffff00Crowd Control|r: right of the Health Bar\n|cffffff00Your Debuffs|r: above the Nameplate\n|cffffff00Important Buffs|r: left of the Health Bar",
+                desc =
+                "Show three Aura groups on Nameplates\n\n|cffffff00Crowd Control|r: right of the Health Bar\n|cffffff00Your Debuffs|r: above the Nameplate\n|cffffff00Important Buffs|r: left of the Health Bar",
                 type = "toggle",
                 set = function(_, val)
                     db().auras.enabled = val
@@ -1339,7 +1521,7 @@ function Nameplates:OnInitialize()
                     LEFT = "Left",
                     RIGHT = "Right"
                 },
-                sorting = {"LEFT", "RIGHT"},
+                sorting = { "LEFT", "RIGHT" },
                 disabled = function()
                     return not db().auras.enabled
                 end,
@@ -1360,7 +1542,7 @@ function Nameplates:OnInitialize()
                     LEFT = "Left",
                     RIGHT = "Right"
                 },
-                sorting = {"LEFT", "RIGHT"},
+                sorting = { "LEFT", "RIGHT" },
                 disabled = function()
                     return not db().auras.enabled
                 end,
@@ -1550,7 +1732,8 @@ function Nameplates:OnInitialize()
             },
             totemEnabled = {
                 name = "Totem Indicator",
-                desc = "Flag a totem's nameplate with an icon when it's casting/channeling an interruptible effect, or carrying a notable buff",
+                desc =
+                "Flag a totem's nameplate with an icon when it's casting/channeling an interruptible effect, or carrying a notable buff",
                 type = "toggle",
                 set = function(_, val)
                     db().totem.enabled = val
@@ -1618,7 +1801,7 @@ function Nameplates:OnInitialize()
                     return not db().totem.enabled
                 end,
                 set = function(_, r, g, b, a)
-                    db().totem.color = {r, g, b, a}
+                    db().totem.color = { r, g, b, a }
                     Refresh(Nameplates.Module.Totem)
                 end,
                 get = function()
@@ -1708,7 +1891,8 @@ function Nameplates:OnInitialize()
             },
             personalresourceEnabled = {
                 name = "Personal Resource Bar",
-                desc = "Show your Class Resources (Combo Points, Runes, Holy Power, etc.) above your own Character\n\n|cffffff00Info:|r Wraps Blizzard's native Personal Resource Display, Health / Power Bars hidden\n\n|cffffff00Note:|r Works independently of the \"Enable Module\" toggle above.",
+                desc =
+                "Show your Class Resources (Combo Points, Runes, Holy Power, etc.) above your own Character\n\n|cffffff00Info:|r Wraps Blizzard's native Personal Resource Display, Health / Power Bars hidden\n\n|cffffff00Note:|r Works independently of the \"Enable Module\" toggle above.",
                 type = "toggle",
                 set = function(_, val)
                     db().personalresource.enabled = val
@@ -1823,7 +2007,8 @@ function Nameplates:OnInitialize()
             },
             castbarColors = {
                 name = "Interrupt on Cooldown",
-                desc = "Recolor the Cast Bar of Interruptible Spells while your own Interrupt is on Cooldown\n\n|cffffff00Info:|r Does nothing if your Class has no Interrupt",
+                desc =
+                "Recolor the Cast Bar of Interruptible Spells while your own Interrupt is on Cooldown\n\n|cffffff00Info:|r Does nothing if your Class has no Interrupt",
                 type = "toggle",
                 set = function(_, val)
                     db().castbar.colors = val
@@ -1842,7 +2027,7 @@ function Nameplates:OnInitialize()
                     return not db().castbar.colors
                 end,
                 set = function(_, r, g, b)
-                    db().castbar.cooldowncolor = {r, g, b}
+                    db().castbar.cooldowncolor = { r, g, b }
                     Refresh(Nameplates.Module.Castbar)
                 end,
                 get = function()
@@ -1857,13 +2042,14 @@ function Nameplates:OnInitialize()
             },
             cvarStack = {
                 name = "Stack Nameplates",
-                desc = "Stack overlapping Nameplates instead of pushing them apart\n\n|cffffff00CVar:|r nameplateStackingTypes",
+                desc =
+                "Stack overlapping Nameplates instead of pushing them apart\n\n|cffffff00CVar:|r nameplateStackingTypes",
                 type = "multiselect",
                 values = {
                     enemy = "Enemy Units",
                     friendly = "Friendly Units"
                 },
-                sorting = {"enemy", "friendly"},
+                sorting = { "enemy", "friendly" },
                 set = function(_, key, val)
                     db().cvars.stacking[key] = val
                     Refresh(Nameplates.Module.Cvars)
@@ -1875,7 +2061,8 @@ function Nameplates:OnInitialize()
             },
             cvarSimplify = {
                 name = "Simplify Nameplates",
-                desc = "Show a simplified Nameplate for the selected unit types\n\n|cffffff00CVar:|r nameplateSimplifiedTypes",
+                desc =
+                "Show a simplified Nameplate for the selected unit types\n\n|cffffff00CVar:|r nameplateSimplifiedTypes",
                 type = "multiselect",
                 values = {
                     minions = "Minions",
@@ -1883,7 +2070,7 @@ function Nameplates:OnInitialize()
                     friendlyPlayers = "Friendly Players",
                     friendlyNpcs = "Friendly NPCs"
                 },
-                sorting = {"minions", "minor", "friendlyPlayers", "friendlyNpcs"},
+                sorting = { "minions", "minor", "friendlyPlayers", "friendlyNpcs" },
                 set = function(_, key, val)
                     db().cvars.simplify[key] = val
                     Refresh(Nameplates.Module.Cvars)
@@ -1895,7 +2082,8 @@ function Nameplates:OnInitialize()
             },
             cvarRealmName = {
                 name = "Realm Name",
-                desc = "Show the Realm Name on Friendly Player Nameplates\n\n|cffffff00CVar:|r nameplateShowFriendlyRealmName",
+                desc =
+                "Show the Realm Name on Friendly Player Nameplates\n\n|cffffff00CVar:|r nameplateShowFriendlyRealmName",
                 type = "toggle",
                 set = function(_, val)
                     db().cvars.realmName = val
@@ -1921,7 +2109,8 @@ function Nameplates:OnInitialize()
             },
             cvarOffscreen = {
                 name = "Show Offscreen Nameplates",
-                desc = "Show indicators for Nameplates that are currently offscreen\n\n|cffffff00CVar:|r nameplateShowOffscreen",
+                desc =
+                "Show indicators for Nameplates that are currently offscreen\n\n|cffffff00CVar:|r nameplateShowOffscreen",
                 type = "toggle",
                 set = function(_, val)
                     db().cvars.offscreen = val
