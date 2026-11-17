@@ -32,6 +32,12 @@ function RF_Textures:OnInitialize()
         power = [[Interface\RaidFrame\Raid-Bar-Resource-Fill]]
     }
 
+    -- Blizzard draws the incoming heals as a flat color (pet frames have their own), a texture needs that color as tint
+    local function HealPredictionColors(frame)
+        local pet = frame:GetName():find("Pet", 1, true)
+        return CUF_MY_HEAL_PREDICTION_COLOR, (pet and CUF_OTHER_HEAL_PREDICTION_COLOR_MINI) or CUF_OTHER_HEAL_PREDICTION_COLOR
+    end
+
     function RF_Textures:SetTextures(frame)
         if not frame then
             return
@@ -50,19 +56,22 @@ function RF_Textures:OnInitialize()
         end
 
         local texture = RF_Textures.LSM:Fetch('statusbar', RF_Textures.db.raidframes)
+        local myHealColor, otherHealColor = HealPredictionColors(frame)
         if RF_Textures.db.raidframes ~= "None" then
             frame.healthBar:SetStatusBarTexture(texture)
             frame.powerBar:SetStatusBarTexture(texture)
             frame.myHealPrediction:SetTexture(texture)
+            frame.myHealPrediction:SetVertexColor(myHealColor:GetRGBA())
             frame.otherHealPrediction:SetTexture(texture)
+            frame.otherHealPrediction:SetVertexColor(otherHealColor:GetRGBA())
 
             frame.healthBar:GetStatusBarTexture():SetDrawLayer("BORDER")
             frame.powerBar:GetStatusBarTexture():SetDrawLayer("BORDER")
         else
             frame.healthBar:SetStatusBarTexture(RF_Textures.defaultTextures.health)
             frame.powerBar:SetStatusBarTexture(RF_Textures.defaultTextures.power)
-            frame.myHealPrediction:SetTexture(RF_Textures.defaultTextures.health)
-            frame.otherHealPrediction:SetTexture(RF_Textures.defaultTextures.health)
+            frame.myHealPrediction:SetColorTexture(myHealColor:GetRGBA())
+            frame.otherHealPrediction:SetColorTexture(otherHealColor:GetRGBA())
         end
 
         -- Use custom selection highlight texture
