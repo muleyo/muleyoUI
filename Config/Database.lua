@@ -115,6 +115,9 @@ local defaults = {
             portraitauras = false,
             -- Forever only: the mana of a Druid in a form
             druidmana = false,
+            -- Forever only: the five second rule on the mana bar
+            fivesecondrule = false,
+            fivesecondmigrated = false,
             buffsdebuffs = {
                 enabled = true,
                 buffsize = 24,
@@ -503,9 +506,23 @@ function Database:OnInitialize()
             color = {1, 0.82, 0, 1}
         }
     end
+
+    Database:Migrate()
+end
+
+-- The five second rule used to come with the Druid Mana Bar
+function Database:Migrate()
+    local unitframes = mUI.db.profile.unitframes
+    if not unitframes.fivesecondmigrated then
+        unitframes.fivesecondmigrated = true
+        if unitframes.druidmana then
+            unitframes.fivesecondrule = true
+        end
+    end
 end
 
 function Database:RefreshConfig()
+    Database:Migrate()
     mUI:Disable()
     mUI:Enable()
 end

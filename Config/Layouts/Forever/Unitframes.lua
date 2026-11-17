@@ -413,6 +413,31 @@ function Unitframes:OnInitialize()
                 end,
                 order = 19.1
             },
+            fivesecondrule = {
+                name = "Five Second Rule",
+                desc = "After you cast a spell that costs mana, show a marker with a countdown on your mana bar for 5 seconds, until your mana regenerates again",
+                type = "toggle",
+                hidden = function()
+                    return UnitPowerMax("player", Enum.PowerType.Mana) <= 0
+                end,
+                set = function(_, val)
+                    mUI.db.profile.unitframes.fivesecondrule = val
+
+                    if not Unitframes.Module:IsEnabled() then
+                        return
+                    end
+
+                    if val then
+                        Unitframes.Module.FiveSecondRule:Enable()
+                    else
+                        Unitframes.Module.FiveSecondRule:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.fivesecondrule == true
+                end,
+                order = 19.2
+            },
             portraitauras = {
                 name = "Portrait Auras",
                 desc = "Show the icon of a Crowd Control, a Big Defensive or an Important Buff on the Portrait of the Player, Target and Focus Frame while it is up. If there are several, Crowd Control comes first, then Big Defensives, then Important Buffs.",

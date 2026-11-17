@@ -27,6 +27,7 @@ function Modules:OnInitialize()
     Modules.Threat = mUI:GetModule("mUI.Modules.Unitframes.Threat")
     Modules.PortraitAuras = mUI:GetModule("mUI.Modules.Unitframes.PortraitAuras")
     Modules.DruidMana = mUI:GetModule("mUI.Modules.Unitframes.DruidMana")
+    Modules.FiveSecondRule = mUI:GetModule("mUI.Modules.Unitframes.FiveSecondRule")
 end
 
 function Modules:OnEnable()
@@ -83,6 +84,9 @@ function Modules:OnEnable()
         end
         if Modules.db.druidmana == true then
             Modules.DruidMana:Enable()
+        end
+        if Modules.db.fivesecondrule == true then
+            Modules.FiveSecondRule:Enable()
         end
     end
 
@@ -145,4 +149,5 @@ function Modules:OnDisable()
     Modules.Threat:Disable()
     Modules.PortraitAuras:Disable()
     Modules.DruidMana:Disable()
+    Modules.FiveSecondRule:Disable()
 end

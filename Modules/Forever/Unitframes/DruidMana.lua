@@ -49,85 +49,6 @@ function DruidMana:OnInitialize()
         end
     end
 
-    local function SpendsMana(spellID)
-        if not spellID or issecretvalue(spellID) then
-            return false
-        end
-
-        local ok, costs = pcall(C_Spell.GetSpellPowerCost, spellID)
-        for _, cost in ipairs(ok and costs or {}) do
-            if cost.type == MANA and not issecretvalue(cost.cost) and cost.cost > 0 then
-                return true
-            end
-        end
-
-        return false
-    end
-
-    local function GetManaBar()
-        if DruidMana.bar and DruidMana.bar:IsShown() then
-            return DruidMana.bar
-        end
-
-        if UnitPowerType("player") == MANA then
-            return PlayerFrame_GetManaBar()
-        end
-    end
-
-    function DruidMana:StopFiveSecondRule()
-        DruidMana.endTime = nil
-        DruidMana.rule:SetScript("OnUpdate", nil)
-        DruidMana.marker:Hide()
-    end
-
-    function DruidMana:UpdateFiveSecondRule()
-        local remaining = DruidMana.endTime and (DruidMana.endTime - GetTime()) or 0
-        local bar = GetManaBar()
-        if remaining <= 0 or not bar then
-            DruidMana:StopFiveSecondRule()
-            return
-        end
-
-        -- The marker goes with the bar, and a change of form can change the bar
-        local marker = DruidMana.marker
-        if marker:GetParent() ~= bar then
-            marker:SetParent(bar)
-            marker:SetAllPoints(bar)
-        end
-
-        marker.line:SetPoint("CENTER", marker, "LEFT", (1 - remaining / 5) * bar:GetWidth(), 0)
-        marker.text:SetFormattedText("%.1f", remaining)
-        marker:Show()
-    end
-
-    function DruidMana:StartFiveSecondRule()
-        DruidMana.endTime = GetTime() + 5
-        DruidMana.rule:SetScript("OnUpdate", function()
-            DruidMana:UpdateFiveSecondRule()
-        end)
-        DruidMana:UpdateFiveSecondRule()
-    end
-
-    local function BuildRule()
-        local rule = CreateFrame("Frame")
-        rule:SetScript("OnEvent", function(_, _, _, _, spellID)
-            if SpendsMana(spellID) then
-                DruidMana:StartFiveSecondRule()
-            end
-        end)
-
-        local marker = CreateFrame("Frame", nil, UIParent)
-        marker:Hide()
-        marker.line = marker:CreateTexture(nil, "OVERLAY")
-        marker.line:SetColorTexture(1, 1, 1, 0.95)
-        marker.line:SetSize(2, 12)
-        marker.text = marker:CreateFontString(nil, "OVERLAY", "TextStatusBarText")
-        marker.text:SetPoint("TOP", marker, "BOTTOM", 0, -2)
-
-        DruidMana.rule = rule
-        DruidMana.marker = marker
-    end
-
     local function Build()
         local content = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain
         local bar = CreateFrame("StatusBar", "mUIDruidManaBar", content,
@@ -192,7 +113,6 @@ function DruidMana:OnInitialize()
     function DruidMana:Setup()
         if not DruidMana.bar then
             Build()
-            BuildRule()
         end
     end
 end
@@ -204,8 +124,6 @@ function DruidMana:OnEnable()
     end
 
     DruidMana:Setup()
-
-    DruidMana.rule:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "player")
 
     DruidMana:SecureHook(DruidMana.bar, "UpdateArt", "ApplyTexture")
     DruidMana:SecureHook("PlayerFrame_ToPlayerArt", "Refresh")
@@ -220,7 +138,5 @@ function DruidMana:OnDisable()
     -- Gone, and the frame gets the art it has without it
     if DruidMana.bar then
         DruidMana.bar:SetBarEnabled(false)
-        DruidMana.rule:UnregisterAllEvents()
-        DruidMana:StopFiveSecondRule()
     end
 end
