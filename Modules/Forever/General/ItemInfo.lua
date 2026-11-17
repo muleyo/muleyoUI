@@ -35,52 +35,33 @@ function ItemInfo:OnInitialize()
         }
     }
 
-    ItemInfo.expansionEnchantableSlots = {
-        [11] = {
-            [INVSLOT_HEAD] = true,
-            [INVSLOT_SHOULDER] = true,
-            [INVSLOT_CHEST] = true,
-            [INVSLOT_LEGS] = true,
-            [INVSLOT_FEET] = true,
-            [INVSLOT_MAINHAND] = true,
-            [INVSLOT_FINGER1] = true,
-            [INVSLOT_FINGER2] = true
-        },
-        [10] = {
-            [INVSLOT_BACK] = true,
-            [INVSLOT_CHEST] = true,
-            [INVSLOT_WRIST] = true,
-            [INVSLOT_LEGS] = true,
-            [INVSLOT_FEET] = true,
-            [INVSLOT_MAINHAND] = true,
-            [INVSLOT_FINGER1] = true,
-            [INVSLOT_FINGER2] = true
-        },
-        [9] = {
-            [INVSLOT_HEAD] = true,
-            [INVSLOT_BACK] = true,
-            [INVSLOT_CHEST] = true,
-            [INVSLOT_WRIST] = true,
-            [INVSLOT_WAIST] = true,
-            [INVSLOT_LEGS] = true,
-            [INVSLOT_FEET] = true,
-            [INVSLOT_MAINHAND] = true,
-            [INVSLOT_FINGER1] = true,
-            [INVSLOT_FINGER2] = true
-        }
-    }
-
-    ItemInfo.slotsThatHaveEnchants = {
+    -- Armor slots that have an enchant of any kind: Enchanting, Arcanums (head/legs), signets (shoulders), Forever's necklaces
+    ItemInfo.enchantableSlots = {
+        [INVSLOT_HEAD] = true,
+        [INVSLOT_NECK] = true,
         [INVSLOT_SHOULDER] = true,
         [INVSLOT_BACK] = true,
         [INVSLOT_CHEST] = true,
         [INVSLOT_WRIST] = true,
-        [INVSLOT_LEGS] = true,
         [INVSLOT_HAND] = true,
-        [INVSLOT_FEET] = true,
-        [INVSLOT_MAINHAND] = true,
-        [INVSLOT_OFFHAND] = true
+        [INVSLOT_LEGS] = true,
+        [INVSLOT_FEET] = true
     }
+
+    local function WeaponSubclasses(names)
+        local result = {}
+        for _, name in ipairs(names) do
+            local subclass = Enum.ItemWeaponSubclass[name]
+            if subclass then
+                result[subclass] = true
+            end
+        end
+        return result
+    end
+
+    -- Melee weapons take Enchanting enchants, bows/guns/crossbows take Engineering scopes. Not thrown weapons, wands or tools
+    ItemInfo.enchantableWeapons = WeaponSubclasses({"Axe1H", "Axe2H", "Mace1H", "Mace2H", "Polearm", "Sword1H", "Sword2H", "Staff", "Unarmed", "Dagger"})
+    ItemInfo.scopeWeapons = WeaponSubclasses({"Bows", "Guns", "Crossbow"})
 
     ItemInfo.buttonLayout = {
         [INVSLOT_HEAD] = "left",
@@ -100,7 +81,8 @@ function ItemInfo:OnInitialize()
         [INVSLOT_TRINKET2] = "right",
 
         [INVSLOT_MAINHAND] = "center",
-        [INVSLOT_OFFHAND] = "center"
+        [INVSLOT_OFFHAND] = "center",
+        [INVSLOT_RANGED] = "center"
     }
 
     ItemInfo.characterSlots = { "CharacterHeadSlot", "CharacterNeckSlot", "CharacterShoulderSlot", "CharacterChestSlot",
@@ -108,7 +90,7 @@ function ItemInfo:OnInitialize()
         "CharacterLegsSlot", "CharacterFeetSlot", "CharacterWristSlot", "CharacterHandsSlot", "CharacterFinger0Slot",
         "CharacterFinger1Slot", "CharacterTrinket0Slot", "CharacterTrinket1Slot", "CharacterBackSlot",
         "CharacterMainHandSlot",
-        "CharacterSecondaryHandSlot" }
+        "CharacterSecondaryHandSlot", "CharacterRangedSlot" }
 
     ItemInfo.gemsWeCareAbout = { 192991, -- Increased Primary Stat and Versatility
         192985,                          -- Increased Primary Stat and Haste
@@ -293,7 +275,7 @@ function ItemInfo:OnInitialize()
 
         local _, _, enchantId = strsplit(":", itemString)
 
-        return enchantId and enchantId ~= ""
+        return enchantId ~= nil and enchantId ~= "" and enchantId ~= "0"
     end
 
     -- Functions
@@ -402,25 +384,30 @@ function ItemInfo:OnInitialize()
     end
 
     function ItemInfo:CanEnchantSlot(unit, slot)
-        local expansion = GetExpansionForLevel(UnitLevel(unit))
-        local slotsThatHaveEnchants = expansion and ItemInfo.expansionEnchantableSlots[expansion] or {}
-
-        -- all classes have something that increases power or survivability on chest/cloak/weapons/rings/wrist/boots/legs
-        if (slotsThatHaveEnchants[slot]) then
+        if ItemInfo.enchantableSlots[slot] then
             return true
         end
 
-        -- Offhand filtering smile :)
-        if (slot == INVSLOT_OFFHAND) then
-            local offHandItemLink = GetInventoryItemLink(unit, slot)
-            if (offHandItemLink) then
-                local itemEquipLoc = select(4, C_Item.GetItemInfoInstant(offHandItemLink))
-                return itemEquipLoc ~= "INVTYPE_HOLDABLE" and itemEquipLoc ~= "INVTYPE_SHIELD"
-            end
+        if slot ~= INVSLOT_MAINHAND and slot ~= INVSLOT_OFFHAND and slot ~= INVSLOT_RANGED then
             return false
         end
 
-        return false
+        local itemLink = GetInventoryItemLink(unit, slot)
+        if not itemLink then
+            return false
+        end
+
+        local _, _, _, equipLoc, _, classID, subclassID = C_Item.GetItemInfoInstant(itemLink)
+        if slot == INVSLOT_RANGED then
+            return classID == Enum.ItemClass.Weapon and ItemInfo.scopeWeapons[subclassID] == true
+        end
+
+        -- Forever has an off-hand enchant for held items too
+        if equipLoc == "INVTYPE_SHIELD" or (slot == INVSLOT_OFFHAND and equipLoc == "INVTYPE_HOLDABLE") then
+            return true
+        end
+
+        return classID == Enum.ItemClass.Weapon and ItemInfo.enchantableWeapons[subclassID] == true
     end
 
     function ItemInfo:pairsByKeys(t, f)
@@ -579,7 +566,12 @@ function ItemInfo:OnInitialize()
             additionalFrame.enchantDisplay:SetPoint("BOTTOMRIGHT", button, "BOTTOMLEFT", -5, 0)
             ItemInfo:AnchorTextureLeftOfParent(additionalFrame.ilvlDisplay, additionalFrame.socketDisplay)
         else
-            additionalFrame.enchantDisplay:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT", 5, 0)
+            if (buttonId == INVSLOT_RANGED) then
+                -- the ammo slot sits right next to it, so the enchant goes below
+                additionalFrame.enchantDisplay:SetPoint("TOP", button, "BOTTOM", 0, -8)
+            else
+                additionalFrame.enchantDisplay:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT", 5, 0)
+            end
             ItemInfo:AnchorTextureRightOfParent(additionalFrame.ilvlDisplay, additionalFrame.socketDisplay)
         end
     end
@@ -624,7 +616,8 @@ function ItemInfo:OnInitialize()
             local canEnchant = ItemInfo:CanEnchantSlot(unit, slot)
 
             if (not enchantText) then
-                local shouldDisplayEchantMissingText = canEnchant and itemLink and IsUnitAtEffectiveMaxLevel(unit)
+                -- an enchant we couldn't read from the tooltip is still an enchant
+                local shouldDisplayEchantMissingText = canEnchant and itemLink and not ItemInfo:HasEnchant(itemLink) and IsUnitAtEffectiveMaxLevel(unit)
                 additionalFrame.enchantDisplay:SetText(shouldDisplayEchantMissingText and "|cffff0000No Enchant|r" or "")
             else
                 -- trim size
