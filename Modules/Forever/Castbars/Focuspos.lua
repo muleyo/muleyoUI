@@ -3,7 +3,7 @@ local Focuspos = mUI:NewModule("mUI.Modules.Castbars.Focuspos", "AceHook-3.0")
 function Focuspos:OnInitialize()
     function Focuspos:Update()
         FocusFrameSpellBar:ClearAllPoints()
-        FocusFrameSpellBar:SetPoint("TOPLEFT", FocusFrame, "TOPLEFT", 47.5, 10)
+        FocusFrameSpellBar:SetPoint("TOPLEFT", FocusFrame, "TOPLEFT", 47.5, 10 + (FocusFrame.mUI_castbarOffset or 0))
     end
 end
 

@@ -3,7 +3,7 @@ local Targetpos = mUI:NewModule("mUI.Modules.Castbars.Targetpos", "AceHook-3.0")
 function Targetpos:OnInitialize()
     function Targetpos:Update()
         TargetFrameSpellBar:ClearAllPoints()
-        TargetFrameSpellBar:SetPoint("TOPLEFT", TargetFrame, "TOPLEFT", 47.5, 10)
+        TargetFrameSpellBar:SetPoint("TOPLEFT", TargetFrame, "TOPLEFT", 47.5, 10 + (TargetFrame.mUI_castbarOffset or 0))
     end
 end
 

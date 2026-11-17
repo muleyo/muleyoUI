@@ -182,6 +182,8 @@ local defaults = {
             focusscale = 100,
             targetpos = false,
             focuspos = false,
+            targety = 0,
+            focusy = 0,
             texture = "D1"
         },
         nameplates = {

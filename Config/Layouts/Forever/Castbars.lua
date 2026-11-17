@@ -4,6 +4,24 @@ function Castbars:OnInitialize()
     -- Get Modules
     Castbars.Module = mUI:GetModule("mUI.Modules.Castbars")
 
+    -- The Y offset module only runs while one of the two is set
+    local function RefreshOffset()
+        if not Castbars.Module:IsEnabled() then
+            return
+        end
+
+        local db = mUI.db.profile.castbars
+        if db.targety ~= 0 or db.focusy ~= 0 then
+            if Castbars.Module.Offset:IsEnabled() then
+                Castbars.Module.Offset:Refresh(true)
+            else
+                Castbars.Module.Offset:Enable()
+            end
+        else
+            Castbars.Module.Offset:Disable()
+        end
+    end
+
     -- Initialize Layout
     Castbars.layout = {
         type = "group",
@@ -223,6 +241,38 @@ function Castbars:OnInitialize()
                     return mUI.db.profile.castbars.focuspos
                 end,
                 order = 11
+            },
+            targety = {
+                name = "Target Castbar Y Offset",
+                desc = "Move the Target Castbar up (positive) or down (negative), for example when it ends up below the Target of Target frame\n\n|cffffff00Info:|r Below an aura block it can only move up as far as the auras allow",
+                type = "range",
+                min = -100,
+                max = 100,
+                step = 1,
+                set = function(_, val)
+                    mUI.db.profile.castbars.targety = val
+                    RefreshOffset()
+                end,
+                get = function()
+                    return mUI.db.profile.castbars.targety
+                end,
+                order = 12
+            },
+            focusy = {
+                name = "Focus Castbar Y Offset",
+                desc = "Move the Focus Castbar up (positive) or down (negative), for example when it ends up below the Target of Target frame\n\n|cffffff00Info:|r Below an aura block it can only move up as far as the auras allow",
+                type = "range",
+                min = -100,
+                max = 100,
+                step = 1,
+                set = function(_, val)
+                    mUI.db.profile.castbars.focusy = val
+                    RefreshOffset()
+                end,
+                get = function()
+                    return mUI.db.profile.castbars.focusy
+                end,
+                order = 13
             }
         }
     }

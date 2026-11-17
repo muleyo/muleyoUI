@@ -9,6 +9,7 @@ function Modules:OnInitialize()
     Modules.Focusscale = mUI:GetModule("mUI.Modules.Castbars.Focusscale")
     Modules.Targetpos = mUI:GetModule("mUI.Modules.Castbars.Targetpos")
     Modules.Focuspos = mUI:GetModule("mUI.Modules.Castbars.Focuspos")
+    Modules.Offset = mUI:GetModule("mUI.Modules.Castbars.Offset")
 end
 
 function Modules:OnEnable()
@@ -36,6 +37,9 @@ function Modules:OnEnable()
     if Modules.db.focuspos then
         Modules.Focuspos:Enable()
     end
+    if Modules.db.targety ~= 0 or Modules.db.focusy ~= 0 then
+        Modules.Offset:Enable()
+    end
 end
 
 function Modules:OnDisable()
@@ -47,4 +51,5 @@ function Modules:OnDisable()
     Modules.Focusscale:Disable()
     Modules.Targetpos:Disable()
     Modules.Focuspos:Disable()
+    Modules.Offset:Disable()
 end

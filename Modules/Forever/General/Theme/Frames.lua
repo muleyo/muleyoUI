@@ -1060,6 +1060,15 @@ function Theme:Character()
     mUI:Skin(CharacterFrame.NineSlice)
     mUI:Skin(CharacterFrameLeftPaneHost)
     mUI:Skin(CharacterFrameRightPaneHost)
+
+    for _, child in ipairs({ CharacterFrameRightPaneHost:GetChildren() }) do
+        for _, region in ipairs({ child:GetRegions() }) do
+            if region.GetAtlas and region:GetAtlas() == "common-framedivider" then
+                mUI:Skin({ region }, true)
+            end
+        end
+    end
+
     mUI:Skin(PaperDollFrame.TopBackgroundStripHost)
     mUI:Skin(CharacterFrameInset)
     mUI:Skin(CharacterStatsPane)

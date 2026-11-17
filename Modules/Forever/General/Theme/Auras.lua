@@ -941,10 +941,14 @@ function Theme:UpdateSpellbarClearance(frame)
         return
     end
 
+    local scale = buffContainer:GetScale() or 1
     local padding = AURA_BOTTOM_PADDING
     if frame.haveToT and frame.buffsOnTop ~= true and IsAuraContainerEmpty(debuffContainer) and IsAuraContainerEmpty(buffContainer) then
-        padding = padding + TOT_SPELLBAR_CLEARANCE / (buffContainer:GetScale() or 1)
+        padding = padding + TOT_SPELLBAR_CLEARANCE / scale
     end
+
+    -- The castbar offset (Castbars module) moves the bar through the container height too, positive is up
+    padding = math.max(padding - (frame.mUI_castbarOffset or 0) / scale, 0)
 
     local _, _, _, current = buffContainer:GetFlowLayoutPadding()
     if not current or math.abs(current - padding) > 0.01 then
@@ -952,12 +956,14 @@ function Theme:UpdateSpellbarClearance(frame)
     end
 end
 
-local function AnchorSpellbarToFrame(frame, spellbar)
+-- Blizzard's own spot under the frame (plus the castbar offset), the Castbars module uses it too
+function Theme:AnchorSpellbarToFrame(frame, spellbar)
     local pointX = frame.smallSize and 38 or 43
     local pointY = frame.smallSize and 3 or 5
     if frame.haveToT then
         pointY = frame.smallSize and -48 or -46
     end
+    pointY = pointY + (frame.mUI_castbarOffset or 0)
     spellbar.mUI_reanchoring = true
     spellbar:ClearAllPoints()
     spellbar:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", pointX, pointY)
@@ -998,7 +1004,7 @@ function Theme:AnchorSpellbarToContainer(frame)
         if relTo ~= container then
             return
         end
-        AnchorSpellbarToFrame(frame, spellbar)
+        Theme:AnchorSpellbarToFrame(frame, spellbar)
         return
     end
 
@@ -1021,7 +1027,7 @@ function Theme:AnchorSpellbarToContainer(frame)
     if not anchored then
         -- Not allowed (see UpdateSpellbarClearance), leave the bar where Blizzard puts it and stop trying
         frame.mUI_spellbarAnchorBlocked = true
-        AnchorSpellbarToFrame(frame, spellbar)
+        Theme:AnchorSpellbarToFrame(frame, spellbar)
     end
 end
 
