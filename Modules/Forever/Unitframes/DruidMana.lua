@@ -23,6 +23,24 @@ function DruidMana:OnInitialize()
         art.FrameFlash:SetAtlas(
             "UI-HUD-UnitFrame-Player-PortraitOn-" .. (shown and "ClassResource-" or "") .. "InCombat",
             TextureKitConstants.UseAtlasSize)
+
+        local Style = mUI:GetModule("mUI.Modules.Unitframes.Style", true)
+        if Style then
+            Style:UpdatePlayerFlash()
+        end
+    end
+
+    function DruidMana:UpdatePosition()
+        local bar = DruidMana.bar
+        if not bar then
+            return
+        end
+
+        local Style = mUI:GetModule("mUI.Modules.Unitframes.Style", true)
+        local content = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain
+
+        bar:ClearAllPoints()
+        bar:SetPoint("TOPLEFT", content, "TOPLEFT", (Style and Style.active) and 85 or 87, -73)
     end
 
     function DruidMana:Refresh()
@@ -52,9 +70,8 @@ function DruidMana:OnInitialize()
             "PlayerFrameAlternatePowerBarBaseTemplate, AlternatePowerBarTemplate")
 
         bar:SetParent(content)
-        bar:ClearAllPoints()
-        -- Forever's bars start at 87, the template's 85 is retail's and covers the slot border
-        bar:SetPoint("TOPLEFT", content, "TOPLEFT", 87, -73)
+        DruidMana.bar = bar
+        DruidMana:UpdatePosition()
         bar:SetFrameLevel(content:GetFrameLevel())
         bar:SetMouseClickEnabled(false)
         bar.unit = "player"
@@ -104,13 +121,17 @@ function DruidMana:OnInitialize()
         bar:HookScript("OnHide", function()
             DruidMana:SyncArt()
         end)
-
-        DruidMana.bar = bar
     end
 
     function DruidMana:Setup()
         if not DruidMana.bar then
             Build()
+
+            -- The Retail style has art for its mask
+            local Style = mUI:GetModule("mUI.Modules.Unitframes.Style", true)
+            if Style then
+                Style:UpdateArt()
+            end
         end
     end
 end

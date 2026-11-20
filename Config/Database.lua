@@ -92,6 +92,7 @@ local defaults = {
         },
         unitframes = {
             enabled = true,
+            style = "Forever",
             textures = {
                 unitframes = "D1",
                 raidframes = "D1"

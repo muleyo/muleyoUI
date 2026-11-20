@@ -40,6 +40,43 @@ function Unitframes:OnInitialize()
                 end,
                 order = 1
             },
+            headerStyle = {
+                name = "Style",
+                type = "header",
+                order = 1.6
+            },
+            style = {
+                name = "Unitframe Style",
+                desc =
+                "Choose the look of the Player, Target and Focus Unitframes\n\n|cffffff00Forever:|r The Frames of World of Warcraft: Forever\n|cffffff00Retail:|r The Frames of Retail, art and layout\n\n|cffffff00Info:|r The bars can only be moved out of combat",
+                type = "select",
+                values = {
+                    Forever = "Forever",
+                    Retail = "Retail"
+                },
+                sorting = { "Forever", "Retail" },
+                set = function(_, val)
+                    mUI.db.profile.unitframes.style = val
+
+                    if not Unitframes.Module:IsEnabled() or not mUI.db.profile.unitframes.enabled then
+                        return
+                    end
+
+                    if val == "Retail" then
+                        if Unitframes.Module.Style:IsEnabled() then
+                            Unitframes.Module.Style:Apply()
+                        else
+                            Unitframes.Module.Style:Enable()
+                        end
+                    else
+                        Unitframes.Module.Style:Disable()
+                    end
+                end,
+                get = function()
+                    return mUI.db.profile.unitframes.style
+                end,
+                order = 1.7
+            },
             header1 = {
                 name = "Textures",
                 type = "header",

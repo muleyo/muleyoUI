@@ -27,6 +27,7 @@ function Modules:OnInitialize()
     Modules.PortraitAuras = mUI:GetModule("mUI.Modules.Unitframes.PortraitAuras")
     Modules.DruidMana = mUI:GetModule("mUI.Modules.Unitframes.DruidMana")
     Modules.FiveSecondRule = mUI:GetModule("mUI.Modules.Unitframes.FiveSecondRule")
+    Modules.Style = mUI:GetModule("mUI.Modules.Unitframes.Style")
 end
 
 function Modules:OnEnable()
@@ -34,6 +35,10 @@ function Modules:OnEnable()
 
     -- Unitframe modules
     if Modules.db.enabled then
+        -- First: the Druid mana bar and the flash look at the layout
+        if Modules.db.style == "Retail" then
+            Modules.Style:Enable()
+        end
         if Modules.db.textures.unitframes ~= "None" then
             Modules.UF_Textures:Enable()
         end
@@ -120,6 +125,7 @@ end
 
 function Modules:OnDisable()
     -- Disable Modules
+    Modules.Style:Disable()
     Modules.Color:Disable()
     Modules.Combatindicator:Disable()
     Modules.Hitindicator:Disable()
