@@ -157,9 +157,10 @@ function Health:OnInitialize()
         return color[1], color[2], color[3]
     end
 
-    -- Returns nothing when the NPC color applies
+    -- Returns nothing when the NPC color applies, which is always the case while the player is out of combat
     local function ThreatColor(unit)
-        if not Health.db.classification.threat or not IsInGroup() or not Core:Safe(UnitAffectingCombat(unit), false) then
+        if not Health.db.classification.threat or not UnitAffectingCombat("player") or not IsInGroup() or
+            not Core:Safe(UnitAffectingCombat(unit), false) then
             return nil
         end
 
@@ -784,6 +785,9 @@ function Health:OnInitialize()
         background:SetShown(shown)
         border:SetShown(shown)
 
+        -- The target watcher looks for this to find the plate that has to lose its border
+        frame.mUITargetBorder = (shown and data.isTarget) or nil
+
         if shown then
             border:SetThickness(Health.db.border.size or 1)
 
@@ -1023,8 +1027,6 @@ function Health:OnInitialize()
         previousFocusFrame = frame
     end)
 
-    local previousTargetFrame
-
     -- Nothing in Blizzard's target change flow touches the health color, so mUI's border would keep showing the previous target state
     local function RefreshTargetFrame(frame)
         if not frame or frame:IsForbidden() or not frame.unit then
@@ -1039,12 +1041,15 @@ function Health:OnInitialize()
     local targetWatcher = CreateFrame("Frame")
     targetWatcher:RegisterEvent("PLAYER_TARGET_CHANGED")
     targetWatcher:SetScript("OnEvent", function()
-        RefreshTargetFrame(previousTargetFrame)
+        -- Every plate that still shows the border, not just the one that was the target last time: that plate can have shown up later
+        for frame in pairs(activeFrames) do
+            if frame.mUITargetBorder then
+                RefreshTargetFrame(frame)
+            end
+        end
 
         local namePlate = C_NamePlate.GetNamePlateForUnit("target", false)
-        local frame = namePlate and namePlate.UnitFrame
-        RefreshTargetFrame(frame)
-        previousTargetFrame = frame
+        RefreshTargetFrame(namePlate and namePlate.UnitFrame)
     end)
 
     -- The quest mob colors are cached per mob. A quest update drops the cache and recolors the plates that are already up, otherwise
