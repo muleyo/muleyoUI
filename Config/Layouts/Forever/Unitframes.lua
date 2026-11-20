@@ -250,28 +250,6 @@ function Unitframes:OnInitialize()
                 end,
                 order = 13
             },
-            cornericon = {
-                name = "Hide Corner Icon",
-                desc = "Hide the Corner Icon on the Player Unitframe",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.unitframes.cornericon = val
-
-                    if not Unitframes.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val then
-                        Unitframes.Module.Cornericon:Enable()
-                    else
-                        Unitframes.Module.Cornericon:Disable()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.unitframes.cornericon
-                end,
-                order = 14
-            },
             restingtextures = {
                 name = "Hide Rest Textures",
                 desc = "Hide Resting Textures on Player Unitframe",

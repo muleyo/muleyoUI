@@ -14,7 +14,6 @@ function Modules:OnInitialize()
     Modules.Color = mUI:GetModule("mUI.Modules.Unitframes.Color")
     Modules.Reputationcolor = mUI:GetModule("mUI.Modules.Unitframes.Reputationcolor")
     Modules.Combatindicator = mUI:GetModule("mUI.Modules.Unitframes.Combatindicator")
-    Modules.Cornericon = mUI:GetModule("mUI.Modules.Unitframes.Cornericon")
     Modules.Hitindicator = mUI:GetModule("mUI.Modules.Unitframes.Hitindicator")
     Modules.Pvpbadge = mUI:GetModule("mUI.Modules.Unitframes.Pvpbadge")
     Modules.Totemicons = mUI:GetModule("mUI.Modules.Unitframes.Totemicons")
@@ -57,9 +56,6 @@ function Modules:OnEnable()
         end
         if Modules.db.totemicons then
             Modules.Totemicons:Enable()
-        end
-        if Modules.db.cornericon then
-            Modules.Cornericon:Enable()
         end
         if Modules.db.restingtextures then
             Modules.Restingtextures:Enable()
@@ -126,7 +122,6 @@ function Modules:OnDisable()
     -- Disable Modules
     Modules.Color:Disable()
     Modules.Combatindicator:Disable()
-    Modules.Cornericon:Disable()
     Modules.Hitindicator:Disable()
     Modules.Pvpbadge:Disable()
     Modules.UF_Textures:Disable()

@@ -10,7 +10,6 @@ function Modules:OnInitialize()
     Modules.Cvars = mUI:GetModule("mUI.Modules.Nameplates.Cvars")
     Modules.PersonalResourceBar = mUI:GetModule("mUI.Modules.Nameplates.PersonalResourceBar")
     Modules.ClassIcon = mUI:GetModule("mUI.Modules.Nameplates.ClassIcon")
-    Modules.Healer = mUI:GetModule("mUI.Modules.Nameplates.Healer")
     Modules.TargetIndicator = mUI:GetModule("mUI.Modules.Nameplates.TargetIndicator")
     Modules.RaidMarker = mUI:GetModule("mUI.Modules.Nameplates.RaidMarker")
     Modules.Rarity = mUI:GetModule("mUI.Modules.Nameplates.Rarity")
@@ -38,9 +37,6 @@ function Modules:OnEnable()
         Modules.ClassIcon:Enable()
     end
 
-    if Modules.db.healer.enabled then
-        Modules.Healer:Enable()
-    end
 
     if Modules.db.target.enabled then
         Modules.TargetIndicator:Enable()
@@ -65,7 +61,6 @@ end
 
 function Modules:OnDisable()
     Modules.ClassIcon:Disable()
-    Modules.Healer:Disable()
     Modules.TargetIndicator:Disable()
     Modules.RaidMarker:Disable()
     Modules.Rarity:Disable()

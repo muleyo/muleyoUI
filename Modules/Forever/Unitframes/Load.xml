@@ -13,7 +13,6 @@
     <Include file="UF_Textures.lua" />
     <Include file="Color.lua" />
     <Include file="Combatindicator.lua" />
-    <Include file="Cornericon.lua" />
     <Include file="Hitindicator.lua" />
     <Include file="Pvpbadge.lua" />
     <Include file="Reputationcolor.lua" />

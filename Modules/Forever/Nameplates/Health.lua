@@ -10,27 +10,6 @@ function Health:OnInitialize()
     local Core = mUI:GetModule("mUI.Modules.Nameplates.Core")
     local Units = Health.Units
 
-    local function DisplayName(data)
-        if data.isPlayer and data.isEnemy then
-            local config = Health.db.names
-
-            local arena = config.arena and Units:GetArenaIndex(data)
-
-            local info = config.spec and Units:GetSpecInfo(Units:GetSpecID(data))
-            local spec = info and info.name
-
-            if spec and arena then
-                return spec .. " " .. arena, true
-            elseif spec then
-                return spec, true
-            elseif arena then
-                return tostring(arena), true
-            end
-        end
-
-        return data.displayName, false
-    end
-
     local function HideFriendlyBar(data)
         return data.isFriend and data.isPlayer and not data.canAttack and Health.db.friendly.hidehealthbar
     end
@@ -812,14 +791,12 @@ function Health:OnInitialize()
         local data = GetInfo(frame, frame.unit)
         local hideBar = HideFriendlyBar(data)
 
-        local label, replaced = DisplayName(data)
-        name:SetText(label)
+        name:SetText(data.displayName)
 
         -- Players only
         name:SetShown(not (hideBar or (data.isFriend and data.isPlayer and Health.db.friendly.hidenames)))
 
-        local classcolor = replaced or
-            (data.isFriend and Health.db.friendly.classcolor or (not data.isFriend and Health.db.classcolor))
+        local classcolor = data.isFriend and Health.db.friendly.classcolor or (not data.isFriend and Health.db.classcolor)
         local classFile = data.classFileSecret
         if not Core:Exists(classFile) then
             classFile = Units:GetClassFile(data)

@@ -117,28 +117,6 @@ function Misc:OnInitialize()
                 end,
                 order = 6
             },
-            lfgdeclined = {
-                name = "LFG Declined",
-                desc = "Allows you to queue up for groups you've been declined before.",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.misc.lfgdeclined = val
-
-                    if not Misc.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val then
-                        Misc.Module.LFGDeclined:Enable()
-                    else
-                        Misc.Module.LFGDeclined:Disable()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.misc.lfgdeclined
-                end,
-                order = 7
-            },
             questannounce = {
                 name = "Announce Quest Objectives",
                 desc = "Announce completed quest objectives, including a link to the quest, in party / raid / instance chat\n\n|cffffff00Info:|r Only announces while you are in a group",
@@ -253,50 +231,6 @@ function Misc:OnInitialize()
                 end,
                 order = 12
             },
-            dampening = {
-                name = "Dampening",
-                desc = "Display Dampening below Arena Timer",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.misc.dampening = val
-
-                    if not Misc.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val then
-                        Misc.Module.Dampening:Enable()
-                    else
-                        Misc.Module.Dampening:Disable()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.misc.dampening
-                end,
-                order = 13
-            },
-            surrender = {
-                name = "Surrender",
-                desc = "Surrender an Arena Match by typing '/gg' in the Chat",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.misc.surrender = val
-
-                    if not Misc.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val then
-                        Misc.Module.Surrender:Enable()
-                    else
-                        Misc.Module.Surrender:Disable()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.misc.surrender
-                end,
-                order = 14
-            },
             safequeue = {
                 name = "Safe Queue",
                 desc = "Displays a Timer and remove the Leave-Button on Queuepop Window",
@@ -340,28 +274,6 @@ function Misc:OnInitialize()
                     return mUI.db.profile.misc.losecontrol
                 end,
                 order = 16
-            },
-            achievements = {
-                name = "Track Achievements",
-                desc = "Click to Track Achievements (Gladiator / Strategist / Legend) in the Conquest Frame",
-                type = "toggle",
-                set = function(_, val)
-                    mUI.db.profile.misc.achievements = val
-
-                    if not Misc.Module:IsEnabled() then
-                        return
-                    end
-
-                    if val then
-                        Misc.Module.Achievements:Enable()
-                    else
-                        Misc.Module.Achievements:Disable()
-                    end
-                end,
-                get = function()
-                    return mUI.db.profile.misc.achievements
-                end,
-                order = 17
             },
             header4 = {
                 name = "Tools",

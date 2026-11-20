@@ -12,7 +12,6 @@
 
     <!-- Features -->
     <Include file="ClassIcon.lua" />
-    <Include file="Healer.lua" />
     <Include file="TargetIndicator.lua" />
     <Include file="RaidMarker.lua" />
     <Include file="Rarity.lua" />
