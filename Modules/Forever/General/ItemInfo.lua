@@ -871,7 +871,8 @@ function ItemInfo:OnInitialize()
         for _, slot in ipairs(ItemInfo.characterSlots) do
             local button = _G[slot]
             if (button) then
-                ItemInfo:UpdateAdditionalDisplay(button, "player")
+                -- A slot that the game hasn't updated since the hook has no display yet, this makes it
+                ItemInfo:updateButton(button, "player")
             end
         end
     end
