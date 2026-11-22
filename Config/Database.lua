@@ -475,6 +475,8 @@ local defaults = {
             lfgdeclined = true,
             questannounce = false,
             wowheadlinks = true,
+            -- Forever only
+            hidenavigation = false,
             gryphons = false
         },
         edit = {

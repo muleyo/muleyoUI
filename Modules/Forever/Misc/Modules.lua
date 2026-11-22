@@ -11,6 +11,7 @@ function Modules:OnInitialize()
     Modules.PlayerLinks = mUI:GetModule("mUI.Modules.Misc.PlayerLinks")
     Modules.QuestAnnounce = mUI:GetModule("mUI.Modules.Misc.QuestAnnounce")
     Modules.WowheadLinks = mUI:GetModule("mUI.Modules.Misc.WowheadLinks")
+    Modules.Navigation = mUI:GetModule("mUI.Modules.Misc.Navigation")
 end
 
 function Modules:OnEnable()
@@ -43,6 +44,7 @@ function Modules:OnEnable()
     if Modules.db.wowheadlinks then
         Modules.WowheadLinks:Enable()
     end
+    Modules.Navigation:Enable()
 end
 
 function Modules:OnDisable()
@@ -56,4 +58,5 @@ function Modules:OnDisable()
     Modules.PlayerLinks:Disable()
     Modules.QuestAnnounce:Disable()
     Modules.WowheadLinks:Disable()
+    Modules.Navigation:Disable()
 end

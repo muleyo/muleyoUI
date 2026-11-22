@@ -163,17 +163,19 @@ function Misc:OnInitialize()
             },
             navigation = {
                 name = "Show In-Game Navigation",
-                desc = "Shows the marker in the world that points to the tracked quest or the waypoint on the map, like \"Show in-game navigation\" on Retail. This changes the CVar of the game, nothing else.",
+                desc = "Shows the marker in the world that points to the tracked quest or the waypoint on the map, like \"Show in-game navigation\" on Retail. Forever has no setting for it: on shows the marker of Blizzard, off hides it.\n\n|cffffff00Info:|r The client of Forever gives no height for a waypoint, so the marker follows your own height (it moves when you jump).",
                 type = "toggle",
-                -- The game decides if it has the CVar
-                disabled = function()
-                    return C_CVar.GetCVar("showInGameNavigation") == nil
-                end,
                 set = function(_, val)
-                    C_CVar.SetCVar("showInGameNavigation", val and 1 or 0)
+                    mUI.db.profile.misc.hidenavigation = not val
+
+                    if not Misc.Module:IsEnabled() then
+                        return
+                    end
+
+                    Misc.Module.Navigation:Apply()
                 end,
                 get = function()
-                    return C_CVar.GetCVarBool("showInGameNavigation")
+                    return not mUI.db.profile.misc.hidenavigation
                 end,
                 order = 7.7
             },
