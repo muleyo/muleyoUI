@@ -212,39 +212,74 @@ local function TargetHealth(frame, classification)
     local container = main.HealthBarsContainer
     local bar = container.HealthBar
     local mask = container.HealthBarMask
+    local minus = classification == "minus"
 
-    if classification == "minus" then
+    -- The bar hangs 3 above the container like in Forever, so Blizzard's layout in combat lands in the same spot
+    if minus then
         mask:SetAtlas("UI-HUD-UnitFrame-Target-MinusMob-PortraitOn-Bar-Health-Mask", USE_ATLAS_SIZE)
-        mask:SetPoint("TOPLEFT", -1, 2)
-    else
-        mask:SetPoint("TOPLEFT", -1, 6)
     end
-    container.RightText:ClearAllPoints()
-    container.RightText:SetPoint("RIGHT", container, "RIGHT", -5, 0)
+    mask:SetPoint("TOPLEFT", -1, minus and 5 or 9)
+
+    -- The texts follow the bar, the container is not the size they were made for
+    local textY = minus and 4 or 0
+    local texts = {
+        { container.HealthBarText, "CENTER", 0 },
+        { container.LeftText, "LEFT", 2 },
+        { container.RightText, "RIGHT", -5 },
+        { container.DeadText, "CENTER", 0 },
+        { container.UnconsciousText, "CENTER", 0 }
+    }
+    for _, text in ipairs(texts) do
+        if text[1] then
+            text[1]:ClearAllPoints()
+            text[1]:SetPoint(text[2], bar, text[2], text[3], textY)
+        end
+    end
 
     OutOfCombat(function()
-        if classification == "minus" then
-            container:SetHeight(12)
-            container:SetWidth(125)
-            container:SetPoint("BOTTOMRIGHT", frame.TargetFrameContainer, "LEFT", 148, -1)
-        else
-            container:SetHeight(20)
-            container:SetWidth(126)
-            container:SetPoint("BOTTOMRIGHT", frame.TargetFrameContainer, "LEFT", 149, -10)
-        end
+        local frameContainer = frame.TargetFrameContainer
+
+        container:ClearAllPoints()
+        container:SetPoint("TOPLEFT", frameContainer, "LEFT", 23, minus and 8 or 7)
+        container:SetPoint("BOTTOMRIGHT", frameContainer, "LEFT", minus and 148 or 149, minus and -1 or -10)
 
         bar:ClearAllPoints()
-        bar:SetPoint("TOPLEFT", container, "TOPLEFT", 0, 0)
+        bar:SetPoint("TOPLEFT", container, "TOPLEFT", 0, 3)
 
         local mana = main.ManaBar
         mana:SetWidth(134)
         mana:ClearAllPoints()
-        mana:SetPoint("TOPRIGHT", container, "BOTTOMRIGHT", 8, -1)
+        mana:SetPoint("TOPRIGHT", frameContainer, "LEFT", minus and 156 or 157, minus and -2 or -11)
     end)
 end
 
 local function CurrentClassification(frame)
     return UnitExists(frame.unit) and UnitClassification(frame.unit) or nil
+end
+
+-- Pet frame
+local function PetLayout()
+    PetName:SetJustifyH("LEFT")
+    PetName:ClearAllPoints()
+    PetName:SetPoint("TOPLEFT", PetPortrait, "TOPRIGHT", 2, 0)
+
+    PetAttackModeTexture:ClearAllPoints()
+    PetAttackModeTexture:SetPoint("TOPLEFT", PetFrame, "TOPLEFT", 0, 1)
+    PetFrameFlash:ClearAllPoints()
+    PetFrameFlash:SetPoint("TOPLEFT", PetFrame, "TOPLEFT", 1, 0)
+
+    PetFrameHealthBarMask:ClearAllPoints()
+    PetFrameHealthBarMask:SetPoint("TOPLEFT", PetFrameHealthBar, "TOPLEFT", -29, 3)
+
+    OutOfCombat(function()
+        PetFrameHealthBar:ClearAllPoints()
+        PetFrameHealthBar:SetPoint("BOTTOMLEFT", PetPortrait, "RIGHT", 2, -3.5)
+        PetFrameHealthBar:SetHeight(10)
+
+        PetFrameManaBar:ClearAllPoints()
+        PetFrameManaBar:SetPoint("TOPLEFT", PetFrameHealthBar, "BOTTOMLEFT", -4, -1)
+        PetFrameManaBar:SetWidth(74)
+    end)
 end
 
 local function Capture(region, what)
@@ -326,8 +361,17 @@ local function CaptureAll()
         Add(mana.LeftText, { points = true })
         Add(mana.RightText, { points = true })
         Add(mana.ManaBarText, { points = true })
-        Add(main.HealthBarsContainer.RightText, { points = true })
+        for _, key in ipairs({ "HealthBarText", "LeftText", "RightText", "DeadText", "UnconsciousText" }) do
+            Add(main.HealthBarsContainer[key], { points = true })
+        end
     end
+
+    Add(PetName, { points = true, justify = true })
+    Add(PetAttackModeTexture, { points = true })
+    Add(PetFrameFlash, { points = true })
+    Add(PetFrameHealthBar, { points = true, height = true })
+    Add(PetFrameHealthBarMask, { points = true })
+    Add(PetFrameManaBar, { points = true, width = true })
 
     return saved
 end
@@ -383,6 +427,16 @@ local function Track(texture, size, flip)
     RetailArt(texture, atlas, size, flip)
 end
 
+local SEGMENTS = { "MyHealPredictionBar", "OtherHealPredictionBar", "HealAbsorbBar", "TotalAbsorbBar" }
+
+local function TrackSegments(healthBar)
+    for _, key in ipairs(SEGMENTS) do
+        if healthBar[key] then
+            Track(healthBar[key].Fill, false)
+        end
+    end
+end
+
 local function TrackAll()
     local container = PlayerFrame.PlayerFrameContainer
     Track(container.FrameTexture, true)
@@ -395,6 +449,7 @@ local function TrackAll()
     Track(PlayerMain().ReputationColor, false, true)
     Track(PlayerFrame_GetHealthBarContainer().HealthBarMask, true)
     Track(PlayerFrame_GetManaBar().ManaBarMask, true)
+    TrackSegments(PlayerFrame_GetHealthBar())
 
     local DruidMana = mUI:GetModule("mUI.Modules.Unitframes.DruidMana", true)
     if DruidMana and DruidMana.bar then
@@ -409,6 +464,19 @@ local function TrackAll()
         Track(main.ReputationColor, true)
         Track(main.HealthBarsContainer.HealthBarMask, true)
         Track(main.ManaBar.ManaBarMask, true)
+        TrackSegments(main.HealthBarsContainer.HealthBar)
+    end
+
+    Track(PetFrameTexture, true)
+    Track(PetFrameFlash, true)
+    Track(PetAttackModeTexture, true)
+    Track(PetFrameHealthBarMask, true)
+    Track(PetFrameManaBarMask, true)
+    for _, key in ipairs(SEGMENTS) do
+        local segment = _G["PetFrame" .. key]
+        if segment then
+            Track(segment.Fill, false)
+        end
     end
 end
 
@@ -437,6 +505,7 @@ function Style:Apply()
     for _, name in ipairs(TARGET_FRAMES) do
         TargetRegions(_G[name])
     end
+    PetLayout()
 
     OutOfCombat(function()
         PlayerHealth()
@@ -474,6 +543,7 @@ function Style:Restore()
     PlayerFrame_UpdateRolesAssigned()
     for _, name in ipairs(TARGET_FRAMES) do
         local frame = _G[name]
+        TargetMain(frame).HealthBarsContainer:ClearAllPoints()
         frame:UpdateHealthBarVisuals(CurrentClassification(frame))
     end
 
