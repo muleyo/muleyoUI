@@ -2,9 +2,12 @@ local StyleArt = mUI:NewModule("mUI.Modules.Unitframes.StyleArt")
 
 StyleArt.path = [[Interface\AddOns\mUI\Media\Textures\Unitframes\Retail\]]
 StyleArt.atlases = {
+    ["ui-hud-unitframe-party-portraiton-bar-health-mask"] = { 128, 16 },
+    ["ui-hud-unitframe-party-portraiton-bar-mana-mask"] = { 128, 16 },
     ["ui-hud-unitframe-player-portrait-mask"] = { 64, 64 },
     ["ui-hud-unitframe-player-portraiton"] = { 198, 71 },
     ["ui-hud-unitframe-player-portraiton-bar-health-mask"] = { 128, 32 },
+    ["ui-hud-unitframe-player-portraiton-bar-health-status"] = { 124, 20 },
     ["ui-hud-unitframe-player-portraiton-bar-mana-mask"] = { 128, 16 },
     ["ui-hud-unitframe-player-portraiton-classresource"] = { 198, 74 },
     ["ui-hud-unitframe-player-portraiton-classresource-incombat"] = { 192, 71 },
@@ -19,8 +22,13 @@ StyleArt.atlases = {
     ["ui-hud-unitframe-target-minusmob-portraiton-incombat"] = { 188, 67 },
     ["ui-hud-unitframe-target-portraiton"] = { 192, 67 },
     ["ui-hud-unitframe-target-portraiton-bar-health-mask"] = { 128, 32 },
+    ["ui-hud-unitframe-target-portraiton-bar-health-status"] = { 126, 20 },
     ["ui-hud-unitframe-target-portraiton-bar-mana-mask"] = { 256, 16 },
     ["ui-hud-unitframe-target-portraiton-incombat"] = { 188, 67 },
     ["ui-hud-unitframe-target-portraiton-type"] = { 135, 18 },
-    ["ui-hud-unitframe-target-rare-portraiton"] = { 192, 67 }
+    ["ui-hud-unitframe-target-rare-portraiton"] = { 192, 67 },
+    ["ui-hud-unitframe-targetoftarget-portraiton"] = { 120, 49 },
+    ["ui-hud-unitframe-targetoftarget-portraiton-bar-health-status"] = { 70, 10 },
+    ["ui-hud-unitframe-targetoftarget-portraiton-incombat"] = { 114, 47 },
+    ["ui-hud-unitframe-targetoftarget-portraiton-status"] = { 120, 49 }
 }
